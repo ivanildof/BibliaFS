@@ -1,0 +1,106 @@
+Bíblia+” (v2.0)
+Um aplicativo bíblico premium, personalizável, inteligente e voltado para leitura, estudo profundo e comunidade. 
+
+🎨 1. Personalização de Cores (Novo!)
+O usuário pode alterar a paleta do app inteiro nas configurações.
+Opções pré-definidas (temas):
+Clássico: #5711D9 (roxo) + branco + dourado (#FFD700)
+Noite Sagrada: Preto (#000000) + roxo neon (#9D44C0) + cinza claro
+Luz do Dia: Branco (#FFFFFF) + azul celeste (#00A0E3) + cinza escuro
+Terra Santa: Bege (#F5F0E6) + marrom suave (#8B4513) + dourado antigo
+Custom RGB: Permite escolher cor primária via seletor de cores (hexadecimal ou palheta)
+Mudança reflete em:
+Barras de navegação
+Botões principais
+Destaques de versículos
+Fundos de cards
+As mudanças são salvas no perfil e sincronizadas na nuvem.
+🤖 2. Integração com Inteligência Artificial (IA) para Estudo Bíblico (Novo!)
+Módulo “Estude com IA” — assistente teológico integrado.
+Funcionalidades:
+Pergunte: "O que significa 'olho por olho' em Êxodo 21?" → IA responde com contexto histórico, cultural e teológico.
+Compare doutrinas: "Qual a diferença entre predestinação calvinista e arminiana?"
+Gere resumos: "Resuma o livro de Ezequiel em 3 parágrafos."
+Crie devocionais: "Monte um plano de 7 dias sobre fé e provações."
+Base de conhecimento:
+Dicionários bíblicos (Vine, Strong)
+Comentários clássicos (Matthew Henry, Spurgeon)
+Doutrinas cristãs (protestante, católica, evangélica)
+IA não substitui a Bíblia, mas ajuda a interpretar com responsabilidade.
+Modelo sugerido: OpenAI API (GPT-4-turbo) com fine-tuning em textos teológicos confiáveis.
+👨‍🏫 3. Modo Professor (Novo!)
+Ativado em configurações para usuários com perfil educacional (pastores, professores, líderes).
+Recursos exclusivos:
+Criar aulas bíblicas digitais (título, texto-base, objetivos, perguntas)
+Exportar aulas como PDF ou apresentação (Google Slides / PowerPoint)
+Agendar aulas para grupos (com lembrete automático)
+Sistema de avaliação espiritual: alunos respondem perguntas após aula (modo quiz)
+Painel de progresso: acompanhar participação dos alunos
+Pode ser usado em:
+Escolas dominicais
+Seminários online
+Grupos de discipulado
+🎧 4. Podcast Integrado (Novo!)
+Seção dedicada: “Bíblia+ Radio”
+Funcionalidades:
+Assinar podcasts cristãos populares (ex: Teologia sem Queda, Seara News, Palavra de Deus)
+Download automático de episódios favoritos
+Temporizador de sono (para ouvir enquanto dorme)
+Marcar trechos favoritos com nota
+Sugerir podcasts com base nos planos de leitura do usuário
+Integração com RSS ou plataformas como Buzzsprout, Spotify, Podbean
+Possibilidade de criar seu próprio podcast (para pastores/líderes) com upload direto no app (via painel Premium)
+📱 Atualizações nos Módulos Existentes
+Planos de Leitura
+Agora permite adicionar
+episódios de podcast
+como parte do plano (ex: ler Mateus 5 + ouvir podcast sobre Sermão da Montanha)
+Área de Oração
+Botão “Gravar Oração” — grava áudio curto e salva com data e localização (opcional)
+Comunidade
+Novo feed: “O que você está estudando hoje?” — compartilhe versículo + IA sugere conexões com outros membros
+Gamificação
+Níveis de maturidade espiritual: Iniciante → Crescendo → Discípulo → Professor
+Backup em Nuvem
+Agora inclui: anotações, planos, podcasts baixados, áudios gravados
+
+🔐 Login e Autenticação (Conforme Solicitado)
+Login com Google, Apple, Facebook ou email/senha
+Token armazenado no localStorage → acesso direto ao dashboard ao reabrir o app
+Manter sessão ativa mesmo após fechar o navegador (web) ou sair do app
+Opção de deslogar em todos os dispositivos remotamente
+🌐 Domínio e Hosting
+Usar domínio personalizado (ex: biblia.plus, leituradodia.app)
+Evitar subdomínios genéricos (como .vercel.app)
+Web PWA com SEO otimizado (para aparecer no Google)
+💬 Suporte e Comunicação
+Na página de contato:
+Opção de escolher canal: 📧 E-mail ou 📱 WhatsApp
+Formulário inteligente: seleciona tipo de dúvida antes de enviar
+Chatbot inicial com IA (responde perguntas frequentes)
+Resposta garantida em até 24h
+🎯 Objetivo Final
+Criar um ecossistema espiritual digital completo:
+
+Leitura → Estudo → Aplicação → Comunidade → Ensino
+Tudo com design premium, personalização total e tecnologia avançada
+Posicionado como alternativa superior ao YouVersion, com foco em profundidade, beleza e inovação
+✅ Resumo das Novidades (Destaques v2.0)
+🎨
+Temas Personalizáveis
+5 temas + opção custom RGB
+🤖
+IA Teológica
+Pergunte, entenda, estude com apoio inteligente
+👨‍🏫
+Modo Professor
+Crie aulas, avalie, ensine com ferramentas digitais
+🎧
+Podcasts Integrados
+Ouça, baixe, crie e inclua em planos
+🔁
+Sincronização Total
+Tudo salvo na nuvem: desde anotações até gravações de oração
+🛠️
+Para Todos os Perfis
+Usuário comum, professor, líder, família, criança
