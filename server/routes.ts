@@ -22,7 +22,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      let user = await storage.getUser(userId);
+      
+      if (!user) {
+        user = await storage.upsertUser({
+          id: userId,
+          email: req.user.claims.email || 'dev@example.com',
+          firstName: req.user.claims.first_name || 'Dev',
+          lastName: req.user.claims.last_name || 'User',
+          profileImageUrl: req.user.claims.profile_image_url,
+        });
+      }
+      
       res.json(user);
     } catch (error: any) {
       console.error("Error fetching user:", error);
