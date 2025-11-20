@@ -5,8 +5,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, BookmarkIcon, Highlighter, FileText } from "lucide-react";
 import type { Bookmark, Highlight, Note } from "@shared/schema";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Favorites() {
+  const { t } = useLanguage();
+  
   const { data: bookmarks = [], isLoading: loadingBookmarks } = useQuery<Bookmark[]>({
     queryKey: ["/api/bible/bookmarks"],
   });
@@ -54,9 +57,9 @@ export default function Favorites() {
   return (
     <div className="container max-w-6xl mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-display font-bold text-foreground mb-2">Meus Favoritos</h1>
+        <h1 className="text-3xl font-display font-bold text-foreground mb-2">{t.favorites.title}</h1>
         <p className="text-muted-foreground">
-          Seus versículos salvos, destaques e notas
+          {t.favorites.subtitle}
         </p>
       </div>
 
@@ -64,15 +67,15 @@ export default function Favorites() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="bookmarks" className="flex items-center gap-2">
             <BookmarkIcon className="h-4 w-4" />
-            Favoritos ({bookmarks.length})
+            {t.favorites.bookmarks} ({bookmarks.length})
           </TabsTrigger>
           <TabsTrigger value="highlights" className="flex items-center gap-2">
             <Highlighter className="h-4 w-4" />
-            Destaques ({highlights.length})
+            {t.favorites.highlights} ({highlights.length})
           </TabsTrigger>
           <TabsTrigger value="notes" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            Notas ({notes.length})
+            {t.favorites.notes} ({notes.length})
           </TabsTrigger>
         </TabsList>
 
@@ -82,7 +85,7 @@ export default function Favorites() {
               <Card>
                 <CardContent className="pt-6">
                   <p className="text-center text-muted-foreground">
-                    Nenhum favorito ainda. Adicione seus versículos favoritos no leitor da Bíblia!
+                    {t.favorites.no_favorites}. {t.favorites.add_first}!
                   </p>
                 </CardContent>
               </Card>
@@ -119,7 +122,7 @@ export default function Favorites() {
               <Card>
                 <CardContent className="pt-6">
                   <p className="text-center text-muted-foreground">
-                    Nenhum destaque ainda. Clique em versículos na Bíblia para destacá-los!
+                    {t.favorites.no_favorites}. {t.favorites.add_first}!
                   </p>
                 </CardContent>
               </Card>
@@ -153,7 +156,7 @@ export default function Favorites() {
               <Card>
                 <CardContent className="pt-6">
                   <p className="text-center text-muted-foreground">
-                    Nenhuma nota ainda. Adicione notas aos versículos no leitor da Bíblia!
+                    {t.favorites.no_favorites}. {t.favorites.add_first}!
                   </p>
                 </CardContent>
               </Card>

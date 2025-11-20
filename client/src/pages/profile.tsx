@@ -42,6 +42,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { ReadingPlan, Highlight, Note, Bookmark, Prayer, Achievement as AchievementType } from "@shared/schema";
 
 const levelInfo = {
@@ -77,6 +78,7 @@ const levelInfo = {
 
 export default function Profile() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("plans");
   
   // Fetch user data
@@ -191,7 +193,7 @@ export default function Profile() {
                   data-testid="menu-logout"
                 >
                   <LogOut className="h-4 w-4 mr-3" />
-                  Sair
+                  {t.profile.logout}
                 </Button>
               </div>
             </SheetContent>
@@ -235,7 +237,7 @@ export default function Profile() {
                     </div>
                     <div>
                       <p className="text-lg font-bold">{user.readingStreak || 0}</p>
-                      <p className="text-xs text-muted-foreground">Dias de sequência</p>
+                      <p className="text-xs text-muted-foreground">{t.profile.reading_streak}</p>
                     </div>
                   </div>
                   
@@ -247,7 +249,7 @@ export default function Profile() {
                     </div>
                     <div>
                       <p className="text-lg font-bold">{completedPlans.length}</p>
-                      <p className="text-xs text-muted-foreground">Planos completos</p>
+                      <p className="text-xs text-muted-foreground">{t.plans.completedPlans}</p>
                     </div>
                   </div>
                   
@@ -259,7 +261,7 @@ export default function Profile() {
                     </div>
                     <div>
                       <p className="text-lg font-bold">{achievements.length}</p>
-                      <p className="text-xs text-muted-foreground">Conquistas</p>
+                      <p className="text-xs text-muted-foreground">{t.profile.achievements}</p>
                     </div>
                   </div>
                 </div>
@@ -335,7 +337,7 @@ export default function Profile() {
                         data-testid="menu-logout"
                       >
                         <LogOut className="h-4 w-4 mr-3" />
-                        Sair
+                        {t.profile.logout}
                       </Button>
                     </div>
                   </SheetContent>
@@ -347,10 +349,10 @@ export default function Profile() {
             <div className="mt-6 pt-6 border-t">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">
-                  Nível {currentLevel.name}
+                  {t.progress.level} {currentLevel.name}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {xp} / {currentLevel.maxXP} XP
+                  {xp} / {currentLevel.maxXP} {t.progress.xp}
                 </span>
               </div>
               <Progress value={Math.min(xpProgress, 100)} className="h-2" />
@@ -366,11 +368,11 @@ export default function Profile() {
           <TabsList className="grid w-full grid-cols-3 h-auto" data-testid="tabs-profile">
             <TabsTrigger value="plans" className="flex-col gap-1 py-3" data-testid="tab-plans">
               <BookOpen className="h-4 w-4" />
-              <span className="text-xs">Planos</span>
+              <span className="text-xs">{t.profile.my_plans}</span>
             </TabsTrigger>
             <TabsTrigger value="prayers" className="flex-col gap-1 py-3" data-testid="tab-prayers">
               <HandHeart className="h-4 w-4" />
-              <span className="text-xs">Orações</span>
+              <span className="text-xs">{t.nav.prayers}</span>
             </TabsTrigger>
             <TabsTrigger value="donate" className="flex-col gap-1 py-3" data-testid="tab-donate">
               <Heart className="h-4 w-4" />
@@ -543,7 +545,7 @@ export default function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-primary" />
-                    Planos Ativos
+                    {t.plans.activePlans}
                   </CardTitle>
                   <CardDescription>
                     {activePlans.length} plano{activePlans.length !== 1 ? 's' : ''} em andamento
@@ -553,7 +555,7 @@ export default function Profile() {
                   {activePlans.length === 0 ? (
                     <div className="text-center py-8">
                       <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                      <p className="text-muted-foreground mb-4">Nenhum plano ativo</p>
+                      <p className="text-muted-foreground mb-4">{t.plans.noActivePlans}</p>
                       <Link href="/plans">
                         <Button>Explorar Planos</Button>
                       </Link>
@@ -568,7 +570,7 @@ export default function Profile() {
                               <div>
                                 <h3 className="font-semibold">{plan.title}</h3>
                                 <p className="text-sm text-muted-foreground">
-                                  Dia {plan.currentDay || 1} de {plan.totalDays}
+                                  {t.plans.day} {plan.currentDay || 1} de {plan.totalDays}
                                 </p>
                               </div>
                               <Badge variant="secondary">
@@ -589,7 +591,7 @@ export default function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    Planos Completados
+                    {t.plans.completedPlans}
                   </CardTitle>
                   <CardDescription>
                     {completedPlans.length} plano{completedPlans.length !== 1 ? 's' : ''} finalizado{completedPlans.length !== 1 ? 's' : ''}
@@ -608,14 +610,14 @@ export default function Profile() {
                             <div className="flex-1">
                               <h3 className="font-semibold text-sm">{plan.title}</h3>
                               <p className="text-xs text-muted-foreground mt-1">
-                                {plan.totalDays} dias
+                                {plan.totalDays} {t.plans.days}
                               </p>
                             </div>
                             <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
                           </div>
                           {plan.completedAt && (
                             <p className="text-xs text-muted-foreground mt-2">
-                              Completo em {new Date(plan.completedAt).toLocaleDateString()}
+                              {t.plans.completedOn} {new Date(plan.completedAt).toLocaleDateString()}
                             </p>
                           )}
                         </div>
@@ -633,7 +635,7 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="h-5 w-5 text-primary" />
-                  Suas Conquistas
+                  {t.profile.achievements}
                 </CardTitle>
                 <CardDescription>
                   {achievements.length} conquista{achievements.length !== 1 ? 's' : ''} desbloqueada{achievements.length !== 1 ? 's' : ''}

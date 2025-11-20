@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   id: string;
@@ -38,6 +39,7 @@ const suggestionPrompts = [
 export default function AIStudy() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
@@ -92,10 +94,10 @@ export default function AIStudy() {
             </div>
             <div>
               <h1 className="font-display text-3xl font-bold" data-testid="text-page-title">
-                Estudar com IA
+                {t.aiStudy.title}
               </h1>
               <p className="text-muted-foreground">
-                Assistente teológico inteligente
+                {t.aiStudy.subtitle}
               </p>
             </div>
           </div>
@@ -123,7 +125,7 @@ export default function AIStudy() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <MessageCircle className="h-5 w-5" />
-                  Conversa com IA
+                  {t.aiStudy.ai_chat}
                 </CardTitle>
               </CardHeader>
               
@@ -137,7 +139,7 @@ export default function AIStudy() {
                     </div>
                     <h3 className="font-semibold text-lg mb-2">Comece uma conversa</h3>
                     <p className="text-muted-foreground text-sm max-w-md">
-                      Faça uma pergunta teológica ou use uma das sugestões abaixo
+                      {t.aiStudy.ask_question} ou use uma das sugestões abaixo
                     </p>
                   </div>
                 ) : (
@@ -193,7 +195,7 @@ export default function AIStudy() {
               <div className="p-4">
                 <div className="flex gap-2">
                   <Textarea
-                    placeholder="Faça sua pergunta teológica..."
+                    placeholder={t.aiStudy.type_message}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => {

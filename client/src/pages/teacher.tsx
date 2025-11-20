@@ -28,6 +28,7 @@ import { z } from "zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { insertLessonSchema, type Lesson } from "@shared/schema";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Form schema
 const formSchema = insertLessonSchema.extend({
@@ -39,6 +40,7 @@ const formSchema = insertLessonSchema.extend({
 type FormData = z.infer<typeof formSchema>;
 
 export default function Teacher() {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
@@ -137,7 +139,7 @@ export default function Teacher() {
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
-              Modo Professor
+              {t.teacherMode.title}
             </h1>
             <p className="text-lg text-muted-foreground">
               Crie e gerencie aulas bíblicas
@@ -148,7 +150,7 @@ export default function Teacher() {
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-lesson">
                 <Plus className="h-5 w-5 mr-2" />
-                Nova Aula
+                {t.teacherMode.new_lesson}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-3xl">
@@ -167,7 +169,7 @@ export default function Teacher() {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Título da Aula</FormLabel>
+                          <FormLabel>{t.teacherMode.lesson_title}</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="Ex: A Parábola do Filho Pródigo"
@@ -275,7 +277,7 @@ export default function Teacher() {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Alunos Ativos</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.teacherMode.students} Ativos</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -304,7 +306,7 @@ export default function Teacher() {
               Minhas Aulas ({lessons.length})
             </TabsTrigger>
             <TabsTrigger value="students" data-testid="tab-students">
-              Alunos
+              {t.teacherMode.students}
             </TabsTrigger>
             <TabsTrigger value="calendar" data-testid="tab-calendar">
               Calendário
@@ -367,7 +369,7 @@ export default function Teacher() {
                           <CardFooter className="gap-2">
                             <Button variant="outline" size="sm">
                               <BarChart className="h-4 w-4 mr-2" />
-                              Ver Progresso
+                              Ver {t.teacherMode.progress}
                             </Button>
                             <Button variant="outline" size="sm" data-testid="button-export-pdf">
                               <Download className="h-4 w-4 mr-2" />
@@ -410,7 +412,7 @@ export default function Teacher() {
           <TabsContent value="students">
             <Card>
               <CardHeader>
-                <CardTitle>Progresso dos Alunos</CardTitle>
+                <CardTitle>{t.teacherMode.progress} dos {t.teacherMode.students}</CardTitle>
                 <CardDescription>Acompanhe o desempenho da turma</CardDescription>
               </CardHeader>
               <CardContent>
@@ -419,7 +421,7 @@ export default function Teacher() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Aluno</TableHead>
+                        <TableHead>{t.teacherMode.students.slice(0, -1)}</TableHead>
                         <TableHead>Aulas Concluídas</TableHead>
                         <TableHead>Média de Notas</TableHead>
                         <TableHead>Última Atividade</TableHead>
@@ -511,7 +513,7 @@ export default function Teacher() {
               <CardFooter>
                 <Button variant="outline" className="w-full sm:w-auto" data-testid="button-export-students">
                   <Download className="h-4 w-4 mr-2" />
-                  Exportar Relatório
+                  {t.teacherMode.export_report}
                 </Button>
               </CardFooter>
             </Card>

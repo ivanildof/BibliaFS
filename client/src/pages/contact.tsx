@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Send, CheckCircle2 } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const contactSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -20,6 +21,7 @@ const contactSchema = z.object({
 type ContactForm = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [submitted, setSubmitted] = useState(false);
 
@@ -38,7 +40,7 @@ export default function Contact() {
     console.log("Contact form:", data);
     
     toast({
-      title: "Mensagem enviada!",
+      title: t.contact.success,
       description: "Retornaremos em breve. Obrigado pelo contato!",
     });
     
@@ -55,7 +57,7 @@ export default function Contact() {
                 <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
             </div>
-            <CardTitle>Mensagem Enviada!</CardTitle>
+            <CardTitle>{t.contact.success}</CardTitle>
             <CardDescription>
               Recebemos sua mensagem e retornaremos em breve. Obrigado pelo contato!
             </CardDescription>
@@ -84,7 +86,7 @@ export default function Contact() {
               <Mail className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">Fale Conosco</h1>
+          <h1 className="text-3xl font-bold">{t.contact.title}</h1>
           <p className="text-muted-foreground">
             Tem dúvidas, sugestões ou feedback? Adoraríamos ouvir você!
           </p>
@@ -92,7 +94,7 @@ export default function Contact() {
 
         <Card data-testid="card-contact-form">
           <CardHeader>
-            <CardTitle>Envie sua Mensagem</CardTitle>
+            <CardTitle>{t.contact.subtitle}</CardTitle>
             <CardDescription>
               Preencha o formulário abaixo e entraremos em contato o mais breve possível
             </CardDescription>
@@ -100,7 +102,7 @@ export default function Contact() {
           <CardContent>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome *</Label>
+                <Label htmlFor="name">{t.contact.name} *</Label>
                 <Input
                   id="name"
                   placeholder="Seu nome completo"
@@ -113,7 +115,7 @@ export default function Contact() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">E-mail *</Label>
+                <Label htmlFor="email">{t.contact.email} *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -140,7 +142,7 @@ export default function Contact() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message">Mensagem *</Label>
+                <Label htmlFor="message">{t.contact.message} *</Label>
                 <Textarea
                   id="message"
                   placeholder="Escreva sua mensagem aqui..."
@@ -159,7 +161,7 @@ export default function Contact() {
                 data-testid="button-submit-contact"
               >
                 <Send className="h-4 w-4 mr-2" />
-                Enviar Mensagem
+                {t.contact.send}
               </Button>
             </form>
           </CardContent>

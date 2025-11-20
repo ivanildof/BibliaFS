@@ -72,6 +72,7 @@ export interface Translations {
   };
   progress: {
     title: string;
+    subtitle: string;
     level: string;
     xp: string;
     streak: string;
@@ -79,6 +80,18 @@ export interface Translations {
     milestone: string;
     reading: string;
     streakCategory: string;
+    experiencePoints: string;
+    readingStreak: string;
+    totalXpAccumulated: string;
+    consecutiveDays: string;
+    ofTotalUnlocked: string;
+    nextLevel: string;
+    continueReadingToLevel: string;
+    progressToNextLevel: string;
+    xpNeededForLevel: string;
+    unlocked: string;
+    complete: string;
+    loadingProgress: string;
   };
   achievements: {
     firstRead: string;
@@ -311,6 +324,7 @@ export const translations: Record<Language, Translations> = {
     },
     progress: {
       title: 'Seu Progresso',
+      subtitle: 'Acompanhe seu crescimento espiritual',
       level: 'Nível',
       xp: 'XP',
       streak: 'Sequência',
@@ -318,6 +332,18 @@ export const translations: Record<Language, Translations> = {
       milestone: 'Marco',
       reading: 'Leitura',
       streakCategory: 'Sequência',
+      experiencePoints: 'Pontos de Experiência',
+      readingStreak: 'Sequência de Leitura',
+      totalXpAccumulated: 'XP total acumulado',
+      consecutiveDays: 'dias consecutivos',
+      ofTotalUnlocked: 'de {total} desbloqueadas',
+      nextLevel: 'Próximo Nível',
+      continueReadingToLevel: 'Continue lendo para alcançar o nível {level}',
+      progressToNextLevel: 'Progresso para o próximo nível',
+      xpNeededForLevel: 'Faltam {xp} XP para o nível {level}',
+      unlocked: 'Desbloqueada',
+      complete: 'completo',
+      loadingProgress: 'Carregando progresso...',
     },
     achievements: {
       firstRead: 'Primeira Leitura',
@@ -548,6 +574,7 @@ export const translations: Record<Language, Translations> = {
     },
     progress: {
       title: 'Your Progress',
+      subtitle: 'Track your spiritual growth',
       level: 'Level',
       xp: 'XP',
       streak: 'Streak',
@@ -555,6 +582,18 @@ export const translations: Record<Language, Translations> = {
       milestone: 'Milestone',
       reading: 'Reading',
       streakCategory: 'Streak',
+      experiencePoints: 'Experience Points',
+      readingStreak: 'Reading Streak',
+      totalXpAccumulated: 'Total XP accumulated',
+      consecutiveDays: 'consecutive days',
+      ofTotalUnlocked: 'of {total} unlocked',
+      nextLevel: 'Next Level',
+      continueReadingToLevel: 'Keep reading to reach level {level}',
+      progressToNextLevel: 'Progress to next level',
+      xpNeededForLevel: '{xp} XP needed for level {level}',
+      unlocked: 'Unlocked',
+      complete: 'complete',
+      loadingProgress: 'Loading progress...',
     },
     achievements: {
       firstRead: 'First Read',
@@ -785,6 +824,7 @@ export const translations: Record<Language, Translations> = {
     },
     progress: {
       title: 'Jouw Voortgang',
+      subtitle: 'Volg je spirituele groei',
       level: 'Niveau',
       xp: 'XP',
       streak: 'Reeks',
@@ -792,6 +832,18 @@ export const translations: Record<Language, Translations> = {
       milestone: 'Mijlpaal',
       reading: 'Lezen',
       streakCategory: 'Reeks',
+      experiencePoints: 'Ervaringspunten',
+      readingStreak: 'Leesreeks',
+      totalXpAccumulated: 'Totaal verzamelde XP',
+      consecutiveDays: 'opeenvolgende dagen',
+      ofTotalUnlocked: 'van {total} ontgrendeld',
+      nextLevel: 'Volgend Niveau',
+      continueReadingToLevel: 'Blijf lezen om niveau {level} te bereiken',
+      progressToNextLevel: 'Voortgang naar volgend niveau',
+      xpNeededForLevel: '{xp} XP nodig voor niveau {level}',
+      unlocked: 'Ontgrendeld',
+      complete: 'compleet',
+      loadingProgress: 'Voortgang laden...',
     },
     achievements: {
       firstRead: 'Eerste Lezing',
@@ -1022,6 +1074,7 @@ export const translations: Record<Language, Translations> = {
     },
     progress: {
       title: 'Tu Progreso',
+      subtitle: 'Sigue tu crecimiento espiritual',
       level: 'Nivel',
       xp: 'XP',
       streak: 'Racha',
@@ -1029,6 +1082,18 @@ export const translations: Record<Language, Translations> = {
       milestone: 'Hito',
       reading: 'Lectura',
       streakCategory: 'Racha',
+      experiencePoints: 'Puntos de Experiencia',
+      readingStreak: 'Racha de Lectura',
+      totalXpAccumulated: 'XP total acumulado',
+      consecutiveDays: 'días consecutivos',
+      ofTotalUnlocked: 'de {total} desbloqueados',
+      nextLevel: 'Siguiente Nivel',
+      continueReadingToLevel: 'Continúa leyendo para alcanzar el nivel {level}',
+      progressToNextLevel: 'Progreso al siguiente nivel',
+      xpNeededForLevel: 'Faltan {xp} XP para el nivel {level}',
+      unlocked: 'Desbloqueado',
+      complete: 'completo',
+      loadingProgress: 'Cargando progreso...',
     },
     achievements: {
       firstRead: 'Primera Lectura',

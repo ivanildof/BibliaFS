@@ -67,7 +67,7 @@ export default function OfflinePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Modo Offline</h1>
+          <h1 className="text-3xl font-bold">{t.offline.title}</h1>
           <p className="text-muted-foreground mt-1">
             Gerencie o conteúdo disponível para leitura sem internet
           </p>
@@ -84,7 +84,7 @@ export default function OfflinePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <CloudOff className="h-4 w-4" />
-              Capítulos Salvos
+              {t.offline.chapters_saved}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -98,7 +98,7 @@ export default function OfflinePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <HardDrive className="h-4 w-4" />
-              Espaço Usado
+              {t.offline.space_used}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -112,7 +112,7 @@ export default function OfflinePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Download className="h-4 w-4" />
-              Livros
+              {t.offline.books_downloaded}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -136,7 +136,7 @@ export default function OfflinePage() {
               data-testid="button-clear-all"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Limpar Tudo
+              {t.offline.clear_all}
             </Button>
           </div>
         </CardHeader>

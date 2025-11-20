@@ -26,6 +26,7 @@ import { z } from "zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { insertCommunityPostSchema, type CommunityPost } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -42,6 +43,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function Community() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { data: posts = [], isLoading, error } = useQuery<(CommunityPost & { user: any; isLikedByCurrentUser?: boolean })[]>({
@@ -147,7 +149,7 @@ export default function Community() {
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700">
                 <Users className="h-6 w-6 text-white" />
               </div>
-              Comunidade
+              {t.community.title}
             </h1>
             <p className="text-lg text-muted-foreground">
               Compartilhe insights e conecte-se com outros
@@ -158,12 +160,12 @@ export default function Community() {
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-post">
                 <Plus className="h-5 w-5 mr-2" />
-                Publicar
+                {t.community.post}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>O que você está estudando?</DialogTitle>
+                <DialogTitle>{t.community.what_studying}</DialogTitle>
                 <DialogDescription>
                   Compartilhe um versículo e sua reflexão
                 </DialogDescription>
@@ -176,7 +178,7 @@ export default function Community() {
                     name="verseReference"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Referência do Versículo</FormLabel>
+                        <FormLabel>{t.community.verse_reference}</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Ex: João 3:16"
@@ -213,7 +215,7 @@ export default function Community() {
                     name="note"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Sua Reflexão</FormLabel>
+                        <FormLabel>{t.community.your_reflection}</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="Compartilhe o que você aprendeu ou como esse versículo te tocou..."
@@ -247,7 +249,7 @@ export default function Community() {
                           Publicando...
                         </>
                       ) : (
-                        "Publicar"
+                        t.community.post
                       )}
                     </Button>
                   </DialogFooter>
@@ -417,7 +419,7 @@ export default function Community() {
           <CardHeader>
             <h3 className="font-semibold flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Temas em Alta
+              {t.community.trending_topics}
             </h3>
           </CardHeader>
           <CardContent>

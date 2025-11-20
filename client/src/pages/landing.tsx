@@ -12,6 +12,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import heroImage from "@assets/generated_images/Open_Bible_with_warm_sunlight_407fbff0.png";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const features = [
   {
@@ -65,6 +66,8 @@ const comparisonFeatures = [
 ];
 
 export default function Landing() {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -84,12 +87,11 @@ export default function Landing() {
           </Badge>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6" data-testid="text-hero-title">
-            Transforme Seu Estudo Bíblico
+            {t.landing.hero_title}
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Inteligência Artificial, Podcasts, Comunidade e Ensino em uma única plataforma premium. 
-            O futuro do estudo bíblico chegou.
+            {t.landing.hero_subtitle}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -99,7 +101,7 @@ export default function Landing() {
               onClick={() => window.location.href = "/api/login"}
               data-testid="button-start-free"
             >
-              Começar Grátis
+              {t.landing.start_free}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             
@@ -112,7 +114,7 @@ export default function Landing() {
               }}
               data-testid="button-see-features"
             >
-              Ver Recursos
+              {t.landing.see_features}
             </Button>
           </div>
         </div>
@@ -123,10 +125,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Recursos Premium
+              {t.landing.premium_features}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Tudo que você precisa para um estudo bíblico profundo e transformador
+              {t.landing.premium_subtitle}
             </p>
           </div>
           
@@ -157,10 +159,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Personalize Sua Experiência
+              {t.landing.customize_experience}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              4 temas prontos ou crie o seu próprio com cores personalizadas
+              {t.landing.customize_subtitle}
             </p>
           </div>
           
@@ -184,10 +186,10 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Por Que Bíblia+?
+              {t.landing.why_bible_plus}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Muito mais do que um simples aplicativo bíblico
+              {t.landing.why_subtitle}
             </p>
           </div>
           
@@ -216,10 +218,10 @@ export default function Landing() {
       <section className="py-24 px-6 bg-primary text-primary-foreground">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Comece Sua Jornada Hoje
+            {t.landing.cta_title}
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Junte-se a milhares de pessoas transformando seu estudo bíblico
+            {t.landing.cta_subtitle}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -229,7 +231,7 @@ export default function Landing() {
               onClick={() => window.location.href = "/api/login"}
               data-testid="button-cta-start"
             >
-              Começar Gratuitamente
+              {t.landing.start_free_cta}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -246,19 +248,19 @@ export default function Landing() {
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg">Bíblia+</h3>
-                <p className="text-sm text-muted-foreground">Estudo Premium com IA</p>
+                <p className="text-sm text-muted-foreground">{t.landing.footer_description}</p>
               </div>
             </div>
             
             <div className="flex gap-6">
               <a href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
-                Planos
+                {t.landing.footer_plans}
               </a>
               <a href="/contact" className="text-sm text-muted-foreground hover:text-foreground">
-                Contato
+                {t.landing.footer_contact}
               </a>
               <a href="/help" className="text-sm text-muted-foreground hover:text-foreground">
-                Suporte
+                {t.landing.footer_support}
               </a>
               <a href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
                 Privacidade

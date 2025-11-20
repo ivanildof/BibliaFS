@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Achievement, UserAchievement } from "@shared/schema";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface GamificationStats {
   level: number;
@@ -27,6 +28,8 @@ interface UserAchievementWithDetails extends UserAchievement {
 }
 
 export default function Progress() {
+  const { t } = useLanguage();
+  
   const { data: stats, isLoading: statsLoading } = useQuery<GamificationStats>({
     queryKey: ["/api/stats/gamification"],
     retry: 2,
@@ -51,7 +54,7 @@ export default function Progress() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Carregando progresso...</p>
+              <p className="text-muted-foreground">{t.progress.loadingProgress}</p>
             </div>
           </div>
         </div>
@@ -94,17 +97,17 @@ export default function Progress() {
       <div className="max-w-7xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
-            Seu Progresso
+            {t.progress.title}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Acompanhe seu crescimento espiritual
+            {t.progress.subtitle}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Nível</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.progress.level}</CardTitle>
               <Zap className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
@@ -112,7 +115,7 @@ export default function Progress() {
                 {stats?.level || 1}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {xpProgress} / {xpForNextLevel} XP
+                {xpProgress} / {xpForNextLevel} {t.progress.xp}
               </p>
               <ProgressBar value={xpProgressPercent} className="h-2 mt-2" />
             </CardContent>
@@ -120,7 +123,7 @@ export default function Progress() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pontos de Experiência</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.progress.experiencePoints}</CardTitle>
               <Star className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
@@ -128,14 +131,14 @@ export default function Progress() {
                 {stats?.experiencePoints || 0}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                XP total acumulado
+                {t.progress.totalXpAccumulated}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sequência de Leitura</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.progress.readingStreak}</CardTitle>
               <Flame className="h-4 w-4 text-orange-500" />
             </CardHeader>
             <CardContent>
@@ -143,14 +146,14 @@ export default function Progress() {
                 {stats?.readingStreak || 0}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                dias consecutivos
+                {t.progress.consecutiveDays}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conquistas</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.progress.achievements}</CardTitle>
               <Trophy className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
@@ -158,7 +161,7 @@ export default function Progress() {
                 {unlockedAchievements.length}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                de {totalAchievements} desbloqueadas
+                {t.progress.ofTotalUnlocked.replace('{total}', totalAchievements.toString())}
               </p>
             </CardContent>
           </Card>
@@ -168,28 +171,28 @@ export default function Progress() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Próximo Nível
+              {t.progress.nextLevel}
             </CardTitle>
             <CardDescription>
-              Continue lendo para alcançar o nível {(stats?.level || 1) + 1}
+              {t.progress.continueReadingToLevel.replace('{level}', ((stats?.level || 1) + 1).toString())}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Progresso para o próximo nível</span>
+                <span className="text-muted-foreground">{t.progress.progressToNextLevel}</span>
                 <span className="font-medium">{Math.round(xpProgressPercent)}%</span>
               </div>
               <ProgressBar value={xpProgressPercent} className="h-3" />
               <p className="text-xs text-muted-foreground">
-                Faltam {xpForNextLevel - xpProgress} XP para o nível {(stats?.level || 1) + 1}
+                {t.progress.xpNeededForLevel.replace('{xp}', (xpForNextLevel - xpProgress).toString()).replace('{level}', ((stats?.level || 1) + 1).toString())}
               </p>
             </div>
           </CardContent>
         </Card>
 
         <section>
-          <h2 className="font-display text-2xl font-bold mb-6">Conquistas</h2>
+          <h2 className="font-display text-2xl font-bold mb-6">{t.progress.achievements}</h2>
           
           {Object.entries(categoryGroups).map(([category, categoryAchievements]) => (
             <div key={category} className="mb-8">
@@ -222,7 +225,7 @@ export default function Progress() {
                               {unlocked && (
                                 <Badge variant="default" className="text-xs">
                                   <Trophy className="h-3 w-3 mr-1" />
-                                  Desbloqueada
+                                  {t.progress.unlocked}
                                 </Badge>
                               )}
                             </CardTitle>
@@ -247,7 +250,7 @@ export default function Progress() {
                           <div className="mt-3">
                             <ProgressBar value={userAchievement.progress} className="h-1.5" />
                             <p className="text-xs text-muted-foreground mt-1">
-                              {userAchievement.progress}% completo
+                              {userAchievement.progress}% {t.progress.complete}
                             </p>
                           </div>
                         )}
