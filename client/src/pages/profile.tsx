@@ -98,10 +98,10 @@ export default function Profile() {
 
   const currentLevel = levelInfo[user.level as keyof typeof levelInfo] || levelInfo.iniciante;
   const xp = user.experiencePoints || 0;
-  const progress = ((xp - currentLevel.minXP) / (currentLevel.maxXP - currentLevel.minXP)) * 100;
+  const xpProgress = ((xp - currentLevel.minXP) / (currentLevel.maxXP - currentLevel.minXP)) * 100;
 
-  const activePlans = readingPlans.filter(p => p.progress < 100);
-  const completedPlans = readingPlans.filter(p => p.progress === 100);
+  const activePlans = readingPlans.filter(p => !p.isCompleted);
+  const completedPlans = readingPlans.filter(p => p.isCompleted);
 
   return (
     <div className="min-h-screen bg-background">
@@ -189,7 +189,7 @@ export default function Profile() {
                   {xp} / {currentLevel.maxXP} XP
                 </span>
               </div>
-              <Progress value={Math.min(progress, 100)} className="h-2" />
+              <Progress value={Math.min(xpProgress, 100)} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">
                 Próximo nível: {currentLevel.next}
               </p>
@@ -362,22 +362,25 @@ export default function Profile() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {activePlans.map((plan) => (
-                        <div key={plan.id} className="border rounded-lg p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h3 className="font-semibold">{plan.name}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                Dia {plan.currentDay} de {plan.totalDays}
-                              </p>
+                      {activePlans.map((plan) => {
+                        const planProgress = Math.round((plan.currentDay / plan.totalDays) * 100);
+                        return (
+                          <div key={plan.id} className="border rounded-lg p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <h3 className="font-semibold">{plan.title}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  Dia {plan.currentDay} de {plan.totalDays}
+                                </p>
+                              </div>
+                              <Badge variant="secondary">
+                                {planProgress}%
+                              </Badge>
                             </div>
-                            <Badge variant="secondary">
-                              {Math.round(plan.progress)}%
-                            </Badge>
+                            <Progress value={planProgress} className="h-2" />
                           </div>
-                          <Progress value={plan.progress} className="h-2" />
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </CardContent>
@@ -405,7 +408,7 @@ export default function Profile() {
                         <div key={plan.id} className="border rounded-lg p-4 bg-green-50 dark:bg-green-950/20">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <h3 className="font-semibold text-sm">{plan.name}</h3>
+                              <h3 className="font-semibold text-sm">{plan.title}</h3>
                               <p className="text-xs text-muted-foreground mt-1">
                                 {plan.totalDays} dias
                               </p>
