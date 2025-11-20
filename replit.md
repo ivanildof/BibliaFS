@@ -101,6 +101,30 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application tha
 - `client/src/App.tsx` - Integração do LanguageProvider e traduções
 - `client/src/components/app-sidebar.tsx` - Sidebar totalmente traduzida
 
+**Navegação Mobile (BottomNav) IMPLEMENTADA**:
+
+✅ **Funcionalidades Implementadas:**
+- **Bottom Navigation Bar**: Barra de navegação fixa na parte inferior (estilo YouVersion)
+- **5 Tabs Principais**: Início, Bíblia, Planos, Progresso, Você (Profile)
+- **Design Responsivo**:
+  - Visível apenas em mobile (md:hidden)
+  - Escondida em desktop (usa Sidebar ao invés)
+  - Sidebar trigger escondido em mobile
+- **Experiência do Usuário**:
+  - Ícones + labels para cada tab
+  - Tab ativa destacada com cor primária (text-primary)
+  - Ícone preenchido quando tab está ativa (fill-current)
+  - Transições suaves entre estados
+- **Acessibilidade**:
+  - aria-current="page" para tab ativa
+  - Links semânticos (sem aninhamento de elementos interativos)
+  - data-testid em todos os elementos
+- **Internacionalização**: Todas as labels traduzidas em 4 idiomas via i18n
+
+✅ **Arquivos Criados/Modificados:**
+- `client/src/components/BottomNav.tsx` - Componente de navegação mobile
+- `client/src/App.tsx` - Integração do BottomNav com padding-bottom responsivo
+
 **Limitações Conhecidas (FASE 1):**
 - Leitura de capítulos requer internet (exceto Gênesis 1 e Salmo 23 em cache)
 - Expansão de cache offline pode ser implementada em fases futuras
