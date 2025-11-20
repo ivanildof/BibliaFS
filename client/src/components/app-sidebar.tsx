@@ -25,28 +25,30 @@ import {
 import { Link, useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
-
-const menuItems = [
-  { title: "Início", url: "/", icon: Home },
-  { title: "Ler Bíblia", url: "/bible-reader", icon: BookOpen },
-  { title: "Planos de Leitura", url: "/plans", icon: Book },
-  { title: "Meu Progresso", url: "/progress", icon: Trophy },
-  { title: "Minhas Orações", url: "/prayers", icon: MessageSquare },
-];
-
-const studyItems = [
-  { title: "Estudar com IA", url: "/ai-study", icon: Brain },
-  { title: "Comunidade", url: "/community", icon: Users },
-  { title: "Podcasts", url: "/podcasts", icon: Headphones },
-];
-
-const teacherItems = [
-  { title: "Modo Professor", url: "/teacher", icon: GraduationCap },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function AppSidebar() {
   const [location] = useLocation();
   const { user } = useAuth();
+  const { t } = useLanguage();
+
+  const menuItems = [
+    { title: t.nav.home, url: "/", icon: Home },
+    { title: t.nav.bible, url: "/bible-reader", icon: BookOpen },
+    { title: t.nav.plans, url: "/plans", icon: Book },
+    { title: t.nav.progress, url: "/progress", icon: Trophy },
+    { title: "Prayers", url: "/prayers", icon: MessageSquare },
+  ];
+
+  const studyItems = [
+    { title: "AI Study", url: "/ai-study", icon: Brain },
+    { title: t.nav.discover, url: "/community", icon: Users },
+    { title: "Podcasts", url: "/podcasts", icon: Headphones },
+  ];
+
+  const teacherItems = [
+    { title: "Teacher Mode", url: "/teacher", icon: GraduationCap },
+  ];
 
   return (
     <Sidebar>
@@ -56,15 +58,15 @@ export function AppSidebar() {
             <Book className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="font-display text-lg font-bold text-foreground">Bíblia+</h2>
-            <p className="text-xs text-muted-foreground">Estudo Premium</p>
+            <h2 className="font-display text-lg font-bold text-foreground">{t.common.appName}</h2>
+            <p className="text-xs text-muted-foreground">Premium Study</p>
           </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
+          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -82,7 +84,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Estudo</SidebarGroupLabel>
+          <SidebarGroupLabel>Study</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {studyItems.map((item) => (
@@ -101,7 +103,7 @@ export function AppSidebar() {
 
         {user?.isTeacher && (
           <SidebarGroup>
-            <SidebarGroupLabel>Ensino</SidebarGroupLabel>
+            <SidebarGroupLabel>Teaching</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {teacherItems.map((item) => (
@@ -126,7 +128,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild isActive={location === "/settings"} data-testid="link-sidebar-settings">
                   <Link href="/settings">
                     <Settings className="h-4 w-4" />
-                    <span>Configurações</span>
+                    <span>Settings</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
