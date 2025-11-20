@@ -36,14 +36,14 @@ export function DailyVerse() {
     try {
       await navigator.clipboard.writeText(text);
       toast({
-        title: t("dailyVerse.verse_copied"),
-        description: t("dailyVerse.verse_copied_description"),
+        title: t.dailyVerse.verse_copied,
+        description: t.dailyVerse.verse_copied_description,
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: t("dailyVerse.copy_failed"),
-        description: t("dailyVerse.copy_failed_description"),
+        title: t.dailyVerse.copy_failed,
+        description: t.dailyVerse.copy_failed_description,
       });
     }
   };
@@ -63,14 +63,14 @@ export function DailyVerse() {
       link.click();
 
       toast({
-        title: t("dailyVerse.image_downloaded"),
-        description: t("dailyVerse.image_downloaded_description"),
+        title: t.dailyVerse.image_downloaded,
+        description: t.dailyVerse.image_downloaded_description,
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: t("dailyVerse.download_failed"),
-        description: t("dailyVerse.download_failed_description"),
+        title: t.dailyVerse.download_failed,
+        description: t.dailyVerse.download_failed_description,
       });
     }
   };
@@ -93,7 +93,7 @@ export function DailyVerse() {
     <div className="space-y-4">
       <div className="text-center space-y-1">
         <h2 className="text-2xl font-bold text-foreground" data-testid="text-daily-verse-title">
-          {t("dailyVerse.verse_of_the_day")}
+          {t.dailyVerse.verse_of_the_day}
         </h2>
         {verse.theme && (
           <p className="text-sm text-muted-foreground capitalize">
@@ -124,7 +124,7 @@ export function DailyVerse() {
           data-testid="button-copy-verse"
         >
           <Copy className="w-4 h-4 mr-2" />
-          {t("dailyVerse.copy")}
+          {t.dailyVerse.copy}
         </Button>
         
         <Button
@@ -134,7 +134,7 @@ export function DailyVerse() {
           data-testid="button-download-verse"
         >
           <Download className="w-4 h-4 mr-2" />
-          {t("dailyVerse.download_image")}
+          {t.dailyVerse.download_image}
         </Button>
 
         <Button
@@ -144,7 +144,7 @@ export function DailyVerse() {
           data-testid="button-share-verse"
         >
           <Share2 className="w-4 h-4 mr-2" />
-          {t("dailyVerse.share")}
+          {t.dailyVerse.share}
         </Button>
       </div>
     </div>

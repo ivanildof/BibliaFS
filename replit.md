@@ -7,6 +7,7 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application des
 ## Recent Changes
 
 **November 20, 2025**:
+*   **Versículo do Dia (Daily Verse)**: Implemented complete daily verse system with automatic rotation based on day of year (1-365), beautiful gradient card design with sharing capabilities (copy text, download image), multilingual support (PT, EN, NL, ES), and 30+ inspirational verses seeded. Featured prominently on home page for daily spiritual inspiration.
 *   **Offline Mode**: Complete offline reading system with IndexedDB local storage, per-user backend sync via PostgreSQL, automatic fallback when offline, download/delete UI in BibleReader (cloud icon), dedicated `/offline` management page with storage stats, and intelligent toast throttling. Users can download chapters for offline access and the app automatically loads cached content when internet is unavailable.
 *   **Verse Sharing System**: Implemented complete verse sharing functionality with text copy and image download using `html-to-image` library. Users can share verses via formatted text or beautiful visual cards.
 *   **Prayer Journal Enhancement**: Added real audio recording using MediaRecorder API with base64 storage, time counter, mark-as-answered functionality, and delete capability. Full prayer lifecycle management implemented.
@@ -58,6 +59,7 @@ Preferred communication style: Simple, everyday language.
 *   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
 *   **Teacher Mode**: Tools for creating and managing educational lessons.
 *   **Community Platform**: Full-featured community system with verse-based posts, likes system (POST/DELETE mutations), trending topics sidebar, and social engagement metrics. Users can share biblical insights with verse references.
+*   **Versículo do Dia**: Automated daily verse rotation system (1-365 day cycle) with themed inspirational verses, gradient card UI design, sharing capabilities (text copy & image download), and multilingual support. Featured on home page for daily spiritual encouragement.
 *   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling. Gamification includes XP, progressive levels, daily streaks (UTC midnight logic), and 18 automatic achievements across various categories. A dedicated `/progress` dashboard visualizes user advancement.
 *   **Prayer Journal**: Complete prayer management with MediaRecorder API for real audio recording (base64 storage), recording time counter, mark-as-answered functionality, delete capability, and audio playback. Categories include Thanksgiving, Supplication, Intercession, and Confession.
 *   **Verse Sharing**: Integrated sharing system allowing users to copy formatted verse text or download verse cards as images using `html-to-image` library. Shareable cards include verse text, reference, and app branding.
