@@ -154,11 +154,6 @@ export default function ReadingPlans() {
                             <Clock className="h-3 w-3 mr-1" />
                             {template.duration} dias
                           </Badge>
-                          {template.difficulty && (
-                            <Badge variant="outline">
-                              {template.difficulty}
-                            </Badge>
-                          )}
                           {template.category && (
                             <Badge variant="outline">
                               {template.category}
@@ -224,7 +219,7 @@ export default function ReadingPlans() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {activePlans[0]?.currentDay || 0}
+                {activePlans[0]?.currentDay ?? 0}
               </div>
             </CardContent>
           </Card>
@@ -252,7 +247,8 @@ export default function ReadingPlans() {
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {activePlans.map((plan) => {
-                const progress = (plan.currentDay / plan.totalDays) * 100;
+                const currentDay = plan.currentDay ?? 1;
+                const progress = (currentDay / plan.totalDays) * 100;
                 const schedule = plan.schedule as Array<{ day: number; readings: any[]; isCompleted: boolean }>;
                 const completedDays = schedule.filter(s => s.isCompleted).length;
                 
@@ -261,14 +257,14 @@ export default function ReadingPlans() {
                     <CardHeader>
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <CardTitle className="mb-2">{plan.name}</CardTitle>
+                          <CardTitle className="mb-2">{plan.title}</CardTitle>
                           <CardDescription className="text-sm">
                             {plan.description}
                           </CardDescription>
                         </div>
                         <Badge variant="secondary">
                           <Target className="h-3 w-3 mr-1" />
-                          Dia {plan.currentDay}/{plan.totalDays}
+                          Dia {currentDay}/{plan.totalDays}
                         </Badge>
                       </div>
                     </CardHeader>
@@ -288,11 +284,11 @@ export default function ReadingPlans() {
                         <TrendingUp className="h-4 w-4 text-primary" />
                       </div>
 
-                      {schedule[plan.currentDay - 1] && !schedule[plan.currentDay - 1].isCompleted && (
+                      {schedule[currentDay - 1] && !schedule[currentDay - 1].isCompleted && (
                         <div className="pt-2 border-t">
                           <p className="text-sm text-muted-foreground mb-2">Leitura de hoje:</p>
                           <div className="space-y-1">
-                            {schedule[plan.currentDay - 1].readings.map((reading: any, idx: number) => (
+                            {schedule[currentDay - 1].readings.map((reading: any, idx: number) => (
                               <p key={idx} className="text-sm font-medium">
                                 {getBookName(reading.book, language)} {reading.chapter}
                                 {reading.verses ? `:${reading.verses}` : ''}
@@ -305,15 +301,15 @@ export default function ReadingPlans() {
                     <CardFooter>
                       <Button 
                         className="w-full"
-                        onClick={() => completeDayMutation.mutate({ planId: plan.id, day: plan.currentDay })}
+                        onClick={() => completeDayMutation.mutate({ planId: plan.id, day: currentDay })}
                         disabled={
                           completeDayMutation.isPending || 
-                          (schedule[plan.currentDay - 1]?.isCompleted ?? false)
+                          (schedule[currentDay - 1]?.isCompleted ?? false)
                         }
                         data-testid={`button-complete-day-${plan.id}`}
                       >
                         {completeDayMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        {schedule[plan.currentDay - 1]?.isCompleted ? (
+                        {schedule[currentDay - 1]?.isCompleted ? (
                           <>
                             <Check className="h-4 w-4 mr-2" />
                             Dia Completo
@@ -339,7 +335,7 @@ export default function ReadingPlans() {
                   <CardHeader>
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <CardTitle className="mb-2">{plan.name}</CardTitle>
+                        <CardTitle className="mb-2">{plan.title}</CardTitle>
                         <CardDescription className="text-sm">
                           {plan.description}
                         </CardDescription>

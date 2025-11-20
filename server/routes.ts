@@ -916,13 +916,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Template não encontrado" });
       }
 
+      // Add isCompleted: false to each day in schedule
+      const scheduleWithCompletion = template.schedule.map(day => ({
+        ...day,
+        isCompleted: false
+      }));
+
       const data = {
         userId,
-        name: template.name,
+        templateId,
+        title: template.name,
         description: template.description,
         totalDays: template.duration,
         currentDay: 1,
-        schedule: template.schedule,
+        schedule: scheduleWithCompletion,
         isCompleted: false,
       };
 
