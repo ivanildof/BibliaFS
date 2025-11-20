@@ -121,6 +121,74 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Mobile Header with Action Buttons */}
+      <div className="md:hidden sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b px-4 py-3">
+        <div className="flex items-center justify-end gap-2">
+          <Button variant="ghost" size="icon" data-testid="button-share-profile-mobile">
+            <Share2 className="h-5 w-5" />
+          </Button>
+          <Link href="/settings">
+            <Button variant="ghost" size="icon" data-testid="button-settings-mobile">
+              <Settings className="h-5 w-5" />
+            </Button>
+          </Link>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" data-testid="button-menu-mobile">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>
+                  Acesse informações e recursos adicionais
+                </SheetDescription>
+              </SheetHeader>
+              <div className="mt-6 space-y-2">
+                <Link href="/donate">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="menu-donate">
+                    <Heart className="h-4 w-4 mr-3 fill-current text-pink-600" />
+                    Doar
+                  </Button>
+                </Link>
+                <Separator />
+                <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
+                  <HelpCircle className="h-4 w-4 mr-3" />
+                  Ajuda e Suporte
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
+                  <Info className="h-4 w-4 mr-3" />
+                  Sobre o Bíblia+
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
+                  <FileTextIcon className="h-4 w-4 mr-3" />
+                  Termos de Uso
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
+                  <Shield className="h-4 w-4 mr-3" />
+                  Política de Privacidade
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
+                  <Mail className="h-4 w-4 mr-3" />
+                  Fale Conosco
+                </Button>
+                <Separator />
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-destructive hover:text-destructive" 
+                  onClick={() => window.location.href = '/api/logout'}
+                  data-testid="menu-logout"
+                >
+                  <LogOut className="h-4 w-4 mr-3" />
+                  Sair
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
       <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Profile Header */}
         <Card>
@@ -187,19 +255,20 @@ export default function Profile() {
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Button variant="outline" className="w-full sm:w-auto" data-testid="button-share-profile">
+              {/* Desktop Action Buttons */}
+              <div className="hidden md:flex flex-row gap-2">
+                <Button variant="outline" data-testid="button-share-profile">
                   <Share2 className="h-4 w-4 mr-2" />
                   Compartilhar
                 </Button>
                 <Link href="/settings">
-                  <Button variant="outline" className="w-full sm:w-auto" data-testid="button-settings">
+                  <Button variant="outline" data-testid="button-settings">
                     <Settings className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="outline" className="w-full sm:w-auto" data-testid="button-menu">
+                    <Button variant="outline" data-testid="button-menu">
                       <Menu className="h-4 w-4" />
                     </Button>
                   </SheetTrigger>
