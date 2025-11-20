@@ -89,6 +89,22 @@ export async function runMigrations() {
       CREATE INDEX IF NOT EXISTS idx_offline_content_user_book 
       ON offline_content(user_id, book, chapter, version)
     `);
+
+    // Create daily_verses table for Versículo do Dia feature
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS daily_verses (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        day_of_year INTEGER NOT NULL UNIQUE,
+        book VARCHAR NOT NULL,
+        chapter INTEGER NOT NULL,
+        verse_number INTEGER NOT NULL,
+        version VARCHAR DEFAULT 'nvi',
+        "text" TEXT NOT NULL,
+        reference VARCHAR NOT NULL,
+        theme VARCHAR,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {

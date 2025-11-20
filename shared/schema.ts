@@ -657,3 +657,28 @@ export type AudioProgress = typeof audioProgress.$inferSelect;
 export const insertOfflineContentSchema = createInsertSchema(offlineContent).omit({ id: true, createdAt: true, downloadedAt: true, lastAccessedAt: true });
 export type InsertOfflineContent = z.infer<typeof insertOfflineContentSchema>;
 export type OfflineContent = typeof offlineContent.$inferSelect;
+
+// Daily Verses (Versículo do Dia)
+export const dailyVerses = pgTable("daily_verses", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dayOfYear: integer("day_of_year").notNull().unique(), // 1-365
+  
+  // Verse reference
+  book: varchar("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verseNumber: integer("verse_number").notNull(),
+  version: varchar("version").default("nvi"),
+  
+  // Verse content
+  text: text("text").notNull(),
+  reference: varchar("reference").notNull(), // "João 3:16"
+  
+  // Optional theme/category
+  theme: varchar("theme"), // love, faith, hope, courage, etc.
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertDailyVerseSchema = createInsertSchema(dailyVerses).omit({ id: true, createdAt: true });
+export type InsertDailyVerse = z.infer<typeof insertDailyVerseSchema>;
+export type DailyVerse = typeof dailyVerses.$inferSelect;
