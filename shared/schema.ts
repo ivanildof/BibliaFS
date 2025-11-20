@@ -587,7 +587,13 @@ export const insertReadingPlanTemplateSchema = createInsertSchema(readingPlanTem
 export type InsertReadingPlanTemplate = z.infer<typeof insertReadingPlanTemplateSchema>;
 export type ReadingPlanTemplate = typeof readingPlanTemplates.$inferSelect;
 
-export const insertReadingPlanSchema = createInsertSchema(readingPlans).omit({ id: true, createdAt: true, updatedAt: true, startedAt: true, completedAt: true });
+export const insertReadingPlanSchema = createInsertSchema(readingPlans)
+  .omit({ id: true, createdAt: true, updatedAt: true, startedAt: true, completedAt: true })
+  .extend({
+    title: z.string().min(3, "Título deve ter pelo menos 3 caracteres").max(200),
+    totalDays: z.number().int().min(1, "Plano deve ter pelo menos 1 dia").max(365, "Plano não pode ter mais de 365 dias"),
+    currentDay: z.number().int().min(1).max(365).optional().nullable(),
+  });
 export type InsertReadingPlan = z.infer<typeof insertReadingPlanSchema>;
 export type ReadingPlan = typeof readingPlans.$inferSelect;
 
@@ -599,19 +605,52 @@ export const insertUserAchievementSchema = createInsertSchema(userAchievements).
 export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
 export type UserAchievement = typeof userAchievements.$inferSelect;
 
-export const insertPrayerSchema = createInsertSchema(prayers).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertPrayerSchema = createInsertSchema(prayers)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    title: z.string().min(3, "Título deve ter pelo menos 3 caracteres").max(200, "Título muito longo"),
+    content: z.string().min(10, "Oração deve ter pelo menos 10 caracteres").max(10000, "Oração muito longa").optional().nullable(),
+    audioUrl: z.string().max(5000000, "Áudio muito grande").optional().nullable(), // 5MB base64 limit
+    audioDuration: z.number().min(1).max(600).optional().nullable(), // max 10 minutes
+  });
 export type InsertPrayer = z.infer<typeof insertPrayerSchema>;
 export type Prayer = typeof prayers.$inferSelect;
 
-export const insertNoteSchema = createInsertSchema(notes).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertNoteSchema = createInsertSchema(notes)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    book: z.string().min(2, "Nome do livro inválido").max(50),
+    chapter: z.number().int().min(1, "Capítulo deve ser maior que 0").max(150, "Capítulo inválido"),
+    verse: z.number().int().min(1).max(176).optional().nullable(), // longest chapter: Psalm 119 has 176 verses
+    content: z.string().min(1, "Nota não pode estar vazia").max(5000, "Nota muito longa"),
+  });
 export type InsertNote = z.infer<typeof insertNoteSchema>;
 export type Note = typeof notes.$inferSelect;
 
-export const insertHighlightSchema = createInsertSchema(highlights).omit({ id: true, createdAt: true });
+export const insertHighlightSchema = createInsertSchema(highlights)
+  .omit({ id: true, createdAt: true })
+  .extend({
+    book: z.string().min(2, "Nome do livro inválido").max(50),
+    chapter: z.number().int().min(1).max(150),
+    verse: z.number().int().min(1).max(176),
+    verseText: z.string().min(1).max(1000),
+    color: z.enum(["yellow", "green", "blue", "purple", "pink", "orange"], {
+      errorMap: () => ({ message: "Cor deve ser: yellow, green, blue, purple, pink ou orange" })
+    }),
+  });
 export type InsertHighlight = z.infer<typeof insertHighlightSchema>;
 export type Highlight = typeof highlights.$inferSelect;
 
-export const insertBookmarkSchema = createInsertSchema(bookmarks).omit({ id: true, createdAt: true });
+export const insertBookmarkSchema = createInsertSchema(bookmarks)
+  .omit({ id: true, createdAt: true })
+  .extend({
+    book: z.string().min(2).max(50),
+    chapter: z.number().int().min(1).max(150),
+    verse: z.number().int().min(1).max(176),
+    verseText: z.string().min(1).max(1000),
+    version: z.enum(["nvi", "acf", "arc", "ra"]).optional().nullable(),
+    note: z.string().max(1000).optional().nullable(),
+  });
 export type InsertBookmark = z.infer<typeof insertBookmarkSchema>;
 export type Bookmark = typeof bookmarks.$inferSelect;
 
@@ -638,11 +677,21 @@ export const insertLessonProgressSchema = createInsertSchema(lessonProgress).omi
 export type InsertLessonProgress = z.infer<typeof insertLessonProgressSchema>;
 export type LessonProgress = typeof lessonProgress.$inferSelect;
 
-export const insertCommunityPostSchema = createInsertSchema(communityPosts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertCommunityPostSchema = createInsertSchema(communityPosts)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    verseReference: z.string().min(5, "Referência inválida").max(100, "Referência muito longa"),
+    verseText: z.string().min(10, "Texto do versículo muito curto").max(1000, "Texto muito longo"),
+    note: z.string().min(10, "Reflexão deve ter pelo menos 10 caracteres").max(2000, "Reflexão muito longa"),
+  });
 export type InsertCommunityPost = z.infer<typeof insertCommunityPostSchema>;
 export type CommunityPost = typeof communityPosts.$inferSelect;
 
-export const insertPostCommentSchema = createInsertSchema(postComments).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertPostCommentSchema = createInsertSchema(postComments)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    content: z.string().min(1, "Comentário não pode estar vazio").max(1000, "Comentário muito longo"),
+  });
 export type InsertPostComment = z.infer<typeof insertPostCommentSchema>;
 export type PostComment = typeof postComments.$inferSelect;
 
@@ -721,7 +770,23 @@ export const donationsRelations = relations(donations, ({ one }) => ({
   }),
 }));
 
-export const insertDonationSchema = createInsertSchema(donations).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDonationSchema = createInsertSchema(donations)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    amount: z.number().int().min(100, "Valor mínimo: R$ 1,00").max(1000000, "Valor máximo: R$ 10.000,00"), // in cents
+    currency: z.enum(["brl", "usd", "eur"]),
+    type: z.enum(["one_time", "recurring"], {
+      errorMap: () => ({ message: "Tipo deve ser: one_time ou recurring" })
+    }),
+    frequency: z.enum(["daily", "weekly", "monthly"]).optional().nullable(),
+    destination: z.enum(["app_operations", "bible_translation"]),
+    status: z.enum(["pending", "succeeded", "failed", "canceled"]),
+    message: z.string().max(500).optional().nullable(),
+  })
+  .refine(
+    (data) => data.type === "recurring" ? !!data.frequency : true,
+    { message: "Doações recorrentes devem ter uma frequência definida", path: ["frequency"] }
+  );
 export type InsertDonation = z.infer<typeof insertDonationSchema>;
 export type Donation = typeof donations.$inferSelect;
 
