@@ -5,6 +5,8 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import {
   insertReadingPlanSchema,
+  insertReadingPlanTemplateSchema,
+  insertAchievementSchema,
   insertPrayerSchema,
   insertNoteSchema,
   insertHighlightSchema,
@@ -15,6 +17,8 @@ import {
   insertLessonSchema,
   insertCommunityPostSchema,
 } from "@shared/schema";
+import { readingPlanTemplates } from "./seed-reading-plans";
+import { achievements as seedAchievements } from "./seed-achievements";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware (from blueprint)
@@ -619,6 +623,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Reading Plan Templates
+  app.get("/api/reading-plan-templates", isAuthenticated, async (_req, res) => {
+    try {
+      const templates = await storage.getReadingPlanTemplates();
+      if (templates.length === 0) {
+        for (const template of readingPlanTemplates) {
+          await storage.createReadingPlanTemplate(template);
+        }
+        const newTemplates = await storage.getReadingPlanTemplates();
+        return res.json(newTemplates);
+      }
+      res.json(templates);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/reading-plan-templates/:id", isAuthenticated, async (req, res) => {
+    try {
+      const template = await storage.getReadingPlanTemplate(req.params.id);
+      if (!template) {
+        return res.status(404).json({ error: "Template não encontrado" });
+      }
+      res.json(template);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/reading-plans/from-template", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { templateId } = req.body;
+      
+      const template = await storage.getReadingPlanTemplate(templateId);
+      if (!template) {
+        return res.status(404).json({ error: "Template não encontrado" });
+      }
+
+      const data = {
+        userId,
+        name: template.name,
+        description: template.description,
+        totalDays: template.duration,
+        currentDay: 1,
+        schedule: template.schedule,
+        isCompleted: false,
+      };
+
+      const plan = await storage.createReadingPlan(data);
+      res.json(plan);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/reading-plans/:id/complete-day", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { day } = req.body;
+
+      if (typeof day !== 'number') {
+        return res.status(400).json({ error: "Dia inválido" });
+      }
+
+      const plan = await storage.markDayCompleted(req.params.id, day, userId);
+
+      const user = await storage.getUser(userId);
+      if (user) {
+        const newXP = (user.experiencePoints || 0) + 10;
+        const today = new Date();
+        const lastReadDate = user.lastReadDate ? new Date(user.lastReadDate) : null;
+        const isConsecutiveDay = lastReadDate && 
+          (today.getTime() - lastReadDate.getTime()) < 48 * 60 * 60 * 1000;
+        
+        const newStreak = isConsecutiveDay ? (user.readingStreak || 0) + 1 : 1;
+
+        await storage.updateUserStats(userId, {
+          experiencePoints: newXP,
+          readingStreak: newStreak,
+          lastReadDate: today,
+        });
+
+        const allAchievements = await storage.getAchievements();
+        for (const achievement of allAchievements) {
+          if (achievement.category === "streak" && newStreak >= 7) {
+            await storage.unlockAchievement(userId, achievement.id);
+          }
+        }
+      }
+
+      res.json(plan);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Achievements
+  app.get("/api/achievements", isAuthenticated, async (_req, res) => {
+    try {
+      const achievements = await storage.getAchievements();
+      if (achievements.length === 0) {
+        for (const achievement of seedAchievements) {
+          await storage.createAchievement(achievement);
+        }
+        const newAchievements = await storage.getAchievements();
+        return res.json(newAchievements);
+      }
+      res.json(achievements);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/my-achievements", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const userAchievements = await storage.getUserAchievements(userId);
+      res.json(userAchievements);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Gamification Stats
+  app.get("/api/stats/gamification", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      const userAchievements = await storage.getUserAchievements(userId);
+      const unlockedCount = userAchievements.filter(ua => ua.isUnlocked).length;
+      
+      const xp = user.experiencePoints || 0;
+      const level = Math.floor(xp / 100) + 1;
+
+      res.json({
+        level,
+        experiencePoints: xp,
+        readingStreak: user.readingStreak || 0,
+        achievementsUnlocked: unlockedCount,
+        lastReadDate: user.lastReadDate,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   });
 
