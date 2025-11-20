@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import type { ReadingPlan } from "@shared/schema";
+import { DailyVerse } from "@/components/DailyVerse";
 
 export default function Home() {
   const { toast } = useToast();
@@ -86,6 +87,9 @@ export default function Home() {
             Continue sua jornada espiritual hoje
           </p>
         </div>
+
+        {/* Daily Verse */}
+        <DailyVerse />
 
         {/* Stats Overview */}
         <div className="grid md:grid-cols-3 gap-6">

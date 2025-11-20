@@ -74,6 +74,20 @@ export interface Translations {
     streak100: string;
     streak100Desc: string;
   };
+  dailyVerse: {
+    verse_of_the_day: string;
+    copy: string;
+    share: string;
+    download_image: string;
+    verse_copied: string;
+    verse_copied_description: string;
+    copy_failed: string;
+    copy_failed_description: string;
+    image_downloaded: string;
+    image_downloaded_description: string;
+    download_failed: string;
+    download_failed_description: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -168,6 +182,20 @@ export const translations: Record<Language, Translations> = {
       streak100: 'Sequência de 100 Dias',
       streak100Desc: 'Leia por 100 dias seguidos',
     },
+    dailyVerse: {
+      verse_of_the_day: 'Versículo do Dia',
+      copy: 'Copiar',
+      share: 'Compartilhar',
+      download_image: 'Baixar Imagem',
+      verse_copied: 'Versículo copiado!',
+      verse_copied_description: 'Texto copiado para a área de transferência',
+      copy_failed: 'Erro ao copiar',
+      copy_failed_description: 'Não foi possível copiar o texto',
+      image_downloaded: 'Imagem baixada!',
+      image_downloaded_description: 'Versículo salvo como imagem',
+      download_failed: 'Erro ao baixar',
+      download_failed_description: 'Não foi possível salvar a imagem',
+    },
   },
   en: {
     common: {
@@ -259,6 +287,20 @@ export const translations: Record<Language, Translations> = {
       streak30Desc: 'Read for 30 consecutive days',
       streak100: '100-Day Streak',
       streak100Desc: 'Read for 100 consecutive days',
+    },
+    dailyVerse: {
+      verse_of_the_day: 'Verse of the Day',
+      copy: 'Copy',
+      share: 'Share',
+      download_image: 'Download Image',
+      verse_copied: 'Verse copied!',
+      verse_copied_description: 'Text copied to clipboard',
+      copy_failed: 'Copy failed',
+      copy_failed_description: 'Could not copy text',
+      image_downloaded: 'Image downloaded!',
+      image_downloaded_description: 'Verse saved as image',
+      download_failed: 'Download failed',
+      download_failed_description: 'Could not save image',
     },
   },
   nl: {
@@ -352,6 +394,20 @@ export const translations: Record<Language, Translations> = {
       streak100: '100-Daagse Reeks',
       streak100Desc: 'Lees 100 opeenvolgende dagen',
     },
+    dailyVerse: {
+      verse_of_the_day: 'Vers van de Dag',
+      copy: 'Kopiëren',
+      share: 'Delen',
+      download_image: 'Afbeelding Downloaden',
+      verse_copied: 'Vers gekopieerd!',
+      verse_copied_description: 'Tekst gekopieerd naar klembord',
+      copy_failed: 'Kopiëren mislukt',
+      copy_failed_description: 'Kon tekst niet kopiëren',
+      image_downloaded: 'Afbeelding gedownload!',
+      image_downloaded_description: 'Vers opgeslagen als afbeelding',
+      download_failed: 'Download mislukt',
+      download_failed_description: 'Kon afbeelding niet opslaan',
+    },
   },
   es: {
     common: {
@@ -443,6 +499,20 @@ export const translations: Record<Language, Translations> = {
       streak30Desc: 'Lee durante 30 días consecutivos',
       streak100: 'Racha de 100 Días',
       streak100Desc: 'Lee durante 100 días consecutivos',
+    },
+    dailyVerse: {
+      verse_of_the_day: 'Versículo del Día',
+      copy: 'Copiar',
+      share: 'Compartir',
+      download_image: 'Descargar Imagen',
+      verse_copied: '¡Versículo copiado!',
+      verse_copied_description: 'Texto copiado al portapapeles',
+      copy_failed: 'Error al copiar',
+      copy_failed_description: 'No se pudo copiar el texto',
+      image_downloaded: '¡Imagen descargada!',
+      image_downloaded_description: 'Versículo guardado como imagen',
+      download_failed: 'Error al descargar',
+      download_failed_description: 'No se pudo guardar la imagen',
     },
   },
 };
