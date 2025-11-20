@@ -172,12 +172,24 @@ export default function Profile() {
                 </div>
               </div>
               
-              <Link href="/settings">
-                <Button variant="outline" data-testid="button-edit-profile">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Configurações
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Link href="/donate">
+                  <Button variant="default" className="w-full sm:w-auto" data-testid="button-donate">
+                    <Heart className="h-4 w-4 mr-2 fill-current" />
+                    Doar
+                  </Button>
+                </Link>
+                <Button variant="outline" className="w-full sm:w-auto" data-testid="button-share-profile">
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Compartilhar
                 </Button>
-              </Link>
+                <Link href="/settings">
+                  <Button variant="outline" className="w-full sm:w-auto" data-testid="button-edit-profile">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configurações
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             {/* XP Progress Bar */}
