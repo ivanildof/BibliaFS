@@ -21,7 +21,10 @@ import {
   Book,
   BookmarkPlus,
   Settings2,
-  CheckCircle
+  CheckCircle,
+  Share2,
+  Download,
+  Copy
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -79,6 +82,8 @@ export default function BibleReader() {
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
+  const [shareSheetOpen, setShareSheetOpen] = useState(false);
+  const [verseToShare, setVerseToShare] = useState<{ number: number; text: string } | null>(null);
 
   // Fetch all Bible books
   const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
@@ -706,6 +711,24 @@ export default function BibleReader() {
                           </div>
                         </TabsContent>
                       </Tabs>
+                      
+                      {/* Share Button */}
+                      <div className="mt-3 pt-3 border-t">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setVerseToShare(verse);
+                            setShareSheetOpen(true);
+                            setHighlightPopoverOpen(false);
+                          }}
+                          data-testid={`button-share-verse-${verse.number}`}
+                        >
+                          <Share2 className="h-4 w-4 mr-2" />
+                          Compartilhar Versículo
+                        </Button>
+                      </div>
                     </PopoverContent>
                   </Popover>
                 );
@@ -738,6 +761,93 @@ export default function BibleReader() {
           </div>
         )}
       </main>
+
+      {/* Share Sheet */}
+      <Sheet open={shareSheetOpen} onOpenChange={setShareSheetOpen}>
+        <SheetContent side="bottom" className="h-[90vh]">
+          <SheetHeader>
+            <SheetTitle>Compartilhar Versículo</SheetTitle>
+          </SheetHeader>
+          
+          {verseToShare && chapterData && (
+            <div className="mt-6 space-y-6">
+              {/* Preview Card */}
+              <div id="verse-card" className="bg-gradient-to-br from-primary/20 via-background to-primary/10 rounded-lg p-8 border shadow-lg">
+                <div className="space-y-4">
+                  <p className="font-serif text-xl md:text-2xl leading-relaxed text-foreground">
+                    "{verseToShare.text}"
+                  </p>
+                  <p className="text-right font-medium text-muted-foreground">
+                    {chapterData.book.name} {chapterData.chapter.number}:{verseToShare.number}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="grid gap-3">
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const text = `"${verseToShare.text}"\n\n${chapterData.book.name} ${chapterData.chapter.number}:${verseToShare.number}`;
+                      await navigator.clipboard.writeText(text);
+                      toast({
+                        title: "Copiado!",
+                        description: "Versículo copiado para a área de transferência",
+                      });
+                    } catch (error) {
+                      toast({
+                        title: "Erro",
+                        description: "Falha ao copiar texto",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  data-testid="button-copy-text"
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copiar Texto
+                </Button>
+                
+                <Button
+                  onClick={async () => {
+                    try {
+                      const { toPng } = await import('html-to-image');
+                      const element = document.getElementById('verse-card');
+                      if (!element) return;
+                      
+                      const dataUrl = await toPng(element, {
+                        quality: 1,
+                        pixelRatio: 2,
+                      });
+                      
+                      const link = document.createElement('a');
+                      link.download = `${chapterData.book.abbrev}-${chapterData.chapter.number}-${verseToShare.number}.png`;
+                      link.href = dataUrl;
+                      link.click();
+                      
+                      toast({
+                        title: "Download iniciado!",
+                        description: "Imagem do versículo baixada com sucesso",
+                      });
+                    } catch (error) {
+                      toast({
+                        title: "Erro",
+                        description: "Falha ao gerar imagem",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  data-testid="button-download-image"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Baixar como Imagem
+                </Button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-30 px-4">
