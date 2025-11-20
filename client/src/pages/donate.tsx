@@ -181,11 +181,8 @@ export default function Donate() {
               <Heart className="h-8 w-8 text-primary fill-primary" />
             </div>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold">Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</h1>
+          <h1 className="text-3xl font-bold">{t.donate.title}</h1>
           <div className="text-muted-foreground text-base space-y-3 max-w-2xl mx-auto">
-            <p>
-              Sua contribuição faz toda a diferença! Com ela, conseguimos manter o aplicativo totalmente gratuito, desenvolver novos recursos e alcançar ainda mais pessoas com a Palavra de Deus.
-            </p>
             <p className="font-medium">
               🔒 <strong>Doação 100% segura:</strong> Utilizamos o Stripe, a plataforma de pagamento mais confiável do mundo, com criptografia de ponta a ponta. Seus dados estão protegidos e nunca são compartilhados.
             </p>

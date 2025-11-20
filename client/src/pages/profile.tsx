@@ -367,11 +367,9 @@ export default function Profile() {
                   <span>Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
                 <CardDescription className="mt-3">
-                  Sua contribuição faz toda a diferença! Com ela, conseguimos manter o aplicativo totalmente gratuito, desenvolver novos recursos e alcançar ainda mais pessoas com a Palavra de Deus.
+                  Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos.
                   <br /><br />
-                  <strong>🔒 Doação 100% segura:</strong> Utilizamos o Stripe, a plataforma de pagamento mais confiável do mundo, com criptografia de ponta a ponta. Seus dados estão protegidos e nunca são compartilhados.
-                  <br /><br />
-                  Faça parte dessa missão. Doe agora e transforme vidas através da Palavra!
+                  Você não está só doando. Você está sendo parte da história de quem busca a Palavra, onde quer que esteja.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
