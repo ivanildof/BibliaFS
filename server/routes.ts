@@ -19,8 +19,12 @@ import {
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
+import { runMigrations } from "./migrations";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Run database migrations
+  await runMigrations();
+  
   // Auth middleware (from blueprint)
   await setupAuth(app);
 
