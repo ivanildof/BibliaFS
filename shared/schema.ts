@@ -667,7 +667,9 @@ export type InsertPodcastSubscription = z.infer<typeof insertPodcastSubscription
 export type PodcastSubscription = typeof podcastSubscriptions.$inferSelect;
 
 export const insertLessonSchema = createInsertSchema(lessons).omit({ id: true, createdAt: true, updatedAt: true }).extend({
-  // Accept simple text input for MVP
+  title: z.string().min(5, "Título deve ter pelo menos 5 caracteres").max(200, "Título muito longo"),
+  description: z.string().max(2000, "Descrição muito longa").optional().nullable(),
+  content: z.string().min(10, "Conteúdo deve ter pelo menos 10 caracteres").optional().nullable(),
   scriptureBase: z.string().optional(),
 });
 export type InsertLesson = z.infer<typeof insertLessonSchema>;
