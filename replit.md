@@ -7,6 +7,7 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application des
 ## Recent Changes
 
 **November 20, 2025**:
+*   **Offline Mode**: Complete offline reading system with IndexedDB local storage, per-user backend sync via PostgreSQL, automatic fallback when offline, download/delete UI in BibleReader (cloud icon), dedicated `/offline` management page with storage stats, and intelligent toast throttling. Users can download chapters for offline access and the app automatically loads cached content when internet is unavailable.
 *   **Verse Sharing System**: Implemented complete verse sharing functionality with text copy and image download using `html-to-image` library. Users can share verses via formatted text or beautiful visual cards.
 *   **Prayer Journal Enhancement**: Added real audio recording using MediaRecorder API with base64 storage, time counter, mark-as-answered functionality, and delete capability. Full prayer lifecycle management implemented.
 *   **Community Likes System**: Connected like/unlike mutations to community post cards, enabling social engagement within the platform.
@@ -63,6 +64,7 @@ Preferred communication style: Simple, everyday language.
 *   **Bible Reader Redesign**: Mobile-first, minimalist layout inspired by YouVersion, with clear visual hierarchy, superscript verse numbering, and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA) and offline fallback for key passages.
 *   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking directly within the Bible reader via an integrated popover. A `/favorites` page organizes bookmarks, highlights, and notes with filtering and display options.
 *   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs (Home, Bible, Plans, Progress, Profile) visible only on mobile, replacing the desktop sidebar.
+*   **Offline Mode**: Complete offline reading experience with IndexedDB browser storage (no user scoping needed client-side), PostgreSQL backend tracking per authenticated user, API routes at `/api/offline/content` for sync, automatic online/offline detection with `navigator.onLine`, intelligent fallback loading cached chapters when API fails, download/delete controls in BibleReader navigation, and dedicated `/offline` page showing storage stats (chapters saved, space used, books downloaded) with clear-all functionality.
 *   **Security & Resilience**: Robust validation (userId, external API, Zod schema), comprehensive error handling with toast notifications, retry mechanisms, and fallback UI.
 
 ## External Dependencies
