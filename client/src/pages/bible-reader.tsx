@@ -24,13 +24,16 @@ import {
   CheckCircle,
   Share2,
   Download,
-  Copy
+  Copy,
+  CloudOff,
+  Cloud
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAudio } from "@/contexts/AudioContext";
+import { useOffline } from "@/contexts/OfflineContext";
 import type { Bookmark, Highlight, Note } from "@shared/schema";
 import {
   Popover,
@@ -74,6 +77,7 @@ export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { playChapter } = useAudio();
+  const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter } = useOffline();
   const [version, setVersion] = useState("nvi");
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [selectedChapter, setSelectedChapter] = useState(1);
@@ -94,21 +98,52 @@ export default function BibleReader() {
     retryDelay: 1000,
   });
 
-  // Fetch current chapter
+  // Fetch current chapter with offline fallback
   const { data: chapterData, isLoading: loadingChapter, error: chapterError } = useQuery<Chapter>({
     queryKey: selectedBook ? [`/api/bible/${version}/${selectedBook}/${selectedChapter}`] : [""],
     enabled: !!selectedBook,
-    retry: 2,
+    retry: isOnline ? 2 : 0, // Don't retry if offline
     retryDelay: 1000,
     queryFn: async ({ queryKey }) => {
       const url = queryKey[0] as string;
       if (!url || url === "") return null;
       
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Falha ao carregar capítulo");
+      // Try offline first if we're offline
+      if (!isOnline && selectedBook) {
+        const offlineData = await getOfflineChapter(selectedBook, selectedChapter, version);
+        if (offlineData) {
+          return offlineData;
+        }
+        throw new Error("Conteúdo não disponível offline");
       }
-      return response.json();
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("API error");
+        }
+        return response.json();
+      } catch (error) {
+        // Try offline fallback if online request fails
+        if (selectedBook) {
+          const offlineData = await getOfflineChapter(selectedBook, selectedChapter, version);
+          if (offlineData) {
+            // Only show toast once every 5 seconds to avoid spam
+            const now = Date.now();
+            const lastToastKey = 'lastOfflineToast';
+            const lastToast = parseInt(sessionStorage.getItem(lastToastKey) || '0');
+            if (now - lastToast > 5000) {
+              toast({
+                title: "Modo Offline",
+                description: "Carregando conteúdo salvo",
+              });
+              sessionStorage.setItem(lastToastKey, now.toString());
+            }
+            return offlineData;
+          }
+        }
+        throw error; // Re-throw if no offline data available
+      }
     },
   });
 
@@ -854,7 +889,7 @@ export default function BibleReader() {
       {/* Bottom Navigation */}
       <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-30 px-4">
         <div className="max-w-md mx-auto bg-background/95 backdrop-blur border rounded-full shadow-lg px-4 py-2">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2">
             <Button
               variant="ghost"
               size="icon"
@@ -884,10 +919,34 @@ export default function BibleReader() {
             >
               <Volume2 className="h-5 w-5" />
             </Button>
+
+            {/* Offline Download Button */}
+            {selectedBook && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+                onClick={async () => {
+                  if (isChapterOffline(selectedBook, selectedChapter, version)) {
+                    await deleteChapter(selectedBook, selectedChapter, version);
+                  } else {
+                    await downloadChapter(selectedBook, selectedChapter, version);
+                  }
+                }}
+                disabled={!selectedBook}
+                data-testid="button-toggle-offline"
+              >
+                {isChapterOffline(selectedBook, selectedChapter, version) ? (
+                  <CloudOff className="h-5 w-5 text-primary" />
+                ) : (
+                  <Cloud className="h-5 w-5" />
+                )}
+              </Button>
+            )}
             
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-sm font-medium min-w-[120px] text-center hover-elevate px-4 py-2 rounded-full transition-colors"
+              className="text-sm font-medium min-w-[100px] text-center hover-elevate px-3 py-2 rounded-full transition-colors"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}

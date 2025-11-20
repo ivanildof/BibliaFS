@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AudioProvider } from "@/contexts/AudioContext";
+import { OfflineProvider } from "@/contexts/OfflineContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { BottomNav } from "@/components/BottomNav";
@@ -29,6 +30,7 @@ import Teacher from "@/pages/teacher";
 import Community from "@/pages/community";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
+import Offline from "@/pages/offline";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -65,6 +67,7 @@ function Router() {
           <Route path="/community" component={Community} />
           <Route path="/settings" component={Settings} />
           <Route path="/profile" component={Profile} />
+          <Route path="/offline" component={Offline} />
         </>
       )}
       <Route component={NotFound} />
@@ -124,12 +127,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LanguageProvider>
-          <AudioProvider>
-            <TooltipProvider>
-              <AppContent />
-              <Toaster />
-            </TooltipProvider>
-          </AudioProvider>
+          <OfflineProvider>
+            <AudioProvider>
+              <TooltipProvider>
+                <AppContent />
+                <Toaster />
+              </TooltipProvider>
+            </AudioProvider>
+          </OfflineProvider>
         </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>

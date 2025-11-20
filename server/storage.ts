@@ -55,6 +55,9 @@ import {
   type AudioSource,
   type InsertAudioProgress,
   type AudioProgress,
+  offlineContent,
+  type InsertOfflineContent,
+  type OfflineContent,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -141,6 +144,13 @@ export interface IStorage {
   createAudioSource(source: InsertAudioSource): Promise<AudioSource>;
   getAudioProgress(userId: string, book: string, chapter: number, version: string): Promise<AudioProgress | undefined>;
   upsertAudioProgress(progress: InsertAudioProgress): Promise<AudioProgress>;
+  
+  // Offline Content
+  getOfflineContent(userId: string): Promise<OfflineContent[]>;
+  getOfflineChapter(userId: string, book: string, chapter: number, version: string): Promise<OfflineContent | undefined>;
+  saveOfflineContent(content: InsertOfflineContent): Promise<OfflineContent>;
+  deleteOfflineContent(id: string, userId: string): Promise<void>;
+  deleteUserOfflineContent(userId: string): Promise<void>;
   
   // Stats
   getDashboardStats(userId: string): Promise<{ communityPosts: number }>;
@@ -688,6 +698,59 @@ export class DatabaseStorage implements IStorage {
       const [created] = await db.insert(audioProgress).values(progress).returning();
       return created;
     }
+  }
+
+  // Offline Content
+  async getOfflineContent(userId: string): Promise<OfflineContent[]> {
+    return await db.select().from(offlineContent).where(eq(offlineContent.userId, userId)).orderBy(desc(offlineContent.downloadedAt));
+  }
+
+  async getOfflineChapter(userId: string, book: string, chapter: number, version: string): Promise<OfflineContent | undefined> {
+    const [content] = await db.select().from(offlineContent).where(
+      and(
+        eq(offlineContent.userId, userId),
+        eq(offlineContent.book, book),
+        eq(offlineContent.chapter, chapter),
+        eq(offlineContent.version, version)
+      )
+    );
+    return content;
+  }
+
+  async saveOfflineContent(content: InsertOfflineContent): Promise<OfflineContent> {
+    // Check if already exists
+    const existing = await this.getOfflineChapter(
+      content.userId,
+      content.book,
+      content.chapter,
+      content.version
+    );
+
+    if (existing) {
+      // Update last accessed time
+      const [updated] = await db
+        .update(offlineContent)
+        .set({ lastAccessedAt: new Date() })
+        .where(eq(offlineContent.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(offlineContent).values(content).returning();
+      return created;
+    }
+  }
+
+  async deleteOfflineContent(id: string, userId: string): Promise<void> {
+    await db.delete(offlineContent).where(
+      and(
+        eq(offlineContent.id, id),
+        eq(offlineContent.userId, userId)
+      )
+    );
+  }
+
+  async deleteUserOfflineContent(userId: string): Promise<void> {
+    await db.delete(offlineContent).where(eq(offlineContent.userId, userId));
   }
 
   // Stats

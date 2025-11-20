@@ -396,6 +396,28 @@ export const audioProgress = pgTable("audio_progress", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Offline Content (track downloaded chapters for offline access)
+export const offlineContent = pgTable("offline_content", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Bible reference
+  book: varchar("book").notNull(), // book abbreviation
+  chapter: integer("chapter").notNull(),
+  version: varchar("version").notNull(),
+  
+  // Content metadata
+  size: integer("size").default(0), // bytes
+  verseCount: integer("verse_count").default(0),
+  
+  // Timestamps
+  downloadedAt: timestamp("downloaded_at").defaultNow(),
+  lastAccessedAt: timestamp("last_accessed_at").defaultNow(),
+  expiresAt: timestamp("expires_at"), // optional expiration for cache management
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   readingPlans: many(readingPlans),
@@ -549,6 +571,13 @@ export const audioProgressRelations = relations(audioProgress, ({ one }) => ({
   }),
 }));
 
+export const offlineContentRelations = relations(offlineContent, ({ one }) => ({
+  user: one(users, {
+    fields: [offlineContent.userId],
+    references: [users.id],
+  }),
+}));
+
 // Zod Schemas for validation
 export const upsertUserSchema = createInsertSchema(users);
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
@@ -624,3 +653,7 @@ export type AudioSource = typeof audioSources.$inferSelect;
 export const insertAudioProgressSchema = createInsertSchema(audioProgress).omit({ id: true, createdAt: true, updatedAt: true, lastPlayedAt: true });
 export type InsertAudioProgress = z.infer<typeof insertAudioProgressSchema>;
 export type AudioProgress = typeof audioProgress.$inferSelect;
+
+export const insertOfflineContentSchema = createInsertSchema(offlineContent).omit({ id: true, createdAt: true, downloadedAt: true, lastAccessedAt: true });
+export type InsertOfflineContent = z.infer<typeof insertOfflineContentSchema>;
+export type OfflineContent = typeof offlineContent.$inferSelect;

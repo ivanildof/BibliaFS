@@ -66,6 +66,29 @@ export async function runMigrations() {
         updated_at TIMESTAMP DEFAULT NOW()
       )
     `);
+
+    // Create offline_content table for offline mode
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS offline_content (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR NOT NULL,
+        book VARCHAR NOT NULL,
+        chapter INTEGER NOT NULL,
+        version VARCHAR NOT NULL,
+        size INTEGER DEFAULT 0,
+        verse_count INTEGER DEFAULT 0,
+        downloaded_at TIMESTAMP DEFAULT NOW(),
+        last_accessed_at TIMESTAMP DEFAULT NOW(),
+        expires_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create index for faster offline lookups
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_offline_content_user_book 
+      ON offline_content(user_id, book, chapter, version)
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {

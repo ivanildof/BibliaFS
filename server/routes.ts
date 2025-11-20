@@ -17,6 +17,7 @@ import {
   insertLessonSchema,
   insertCommunityPostSchema,
   insertAudioProgressSchema,
+  insertOfflineContentSchema,
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
@@ -986,6 +987,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         newStreak,
         unlockedAchievements,
       });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Offline Content Routes
+  app.get("/api/offline/content", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const content = await storage.getOfflineContent(userId);
+      res.json(content);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/offline/content", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertOfflineContentSchema.parse({ ...req.body, userId });
+      const content = await storage.saveOfflineContent(data);
+      res.json(content);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/offline/content/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteOfflineContent(req.params.id, userId);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/offline/content", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteUserOfflineContent(userId);
+      res.status(204).send();
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
