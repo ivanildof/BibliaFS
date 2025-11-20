@@ -362,13 +362,10 @@ export default function Profile() {
           <TabsContent value="donate" className="space-y-6 mt-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-pink-600 fill-current" />
-                  Apoie o Bíblia+
+                <CardTitle className="flex items-start gap-2">
+                  <Heart className="h-5 w-5 text-pink-600 fill-current mt-1 shrink-0" />
+                  <span>Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
-                <CardDescription>
-                  Sua doação ajuda a manter o app gratuito e traduzir a Bíblia para mais idiomas
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-muted-foreground">
