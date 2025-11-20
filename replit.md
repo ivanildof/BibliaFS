@@ -75,6 +75,32 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application tha
 - `client/src/pages/progress.tsx` - Dashboard de gamificação
 - `client/src/pages/bible-reader.tsx` - Botão "Marcar como Lido" integrado
 
+**Sistema de Internacionalização (i18n) COMPLETO**:
+
+✅ **Funcionalidades Implementadas:**
+- **Suporte Multi-idioma**: 4 idiomas completos (Português nativo, Inglês, Holandês, Espanhol)
+- **Sistema i18n**:
+  - Context API (LanguageContext) para gerenciamento de idioma
+  - Arquivo central de traduções (`client/src/lib/i18n.ts`)
+  - Persistência do idioma selecionado com localStorage
+  - Componente LanguageSelector com dropdown no header
+- **Traduções Completas**:
+  - Navegação e menus
+  - Páginas (Planos, Progresso, Bíblia, etc.)
+  - Mensagens de estado (loading, error)
+  - Labels e botões da interface
+- **Integração**:
+  - AppSidebar traduzido dinamicamente
+  - App.tsx com mensagens de loading traduzidas
+  - Mudança de idioma em tempo real sem reload
+
+✅ **Arquivos Criados/Modificados:**
+- `client/src/lib/i18n.ts` - Arquivo central de traduções para 4 idiomas
+- `client/src/contexts/LanguageContext.tsx` - Context API para gerenciamento de idioma
+- `client/src/components/LanguageSelector.tsx` - Seletor de idioma com dropdown
+- `client/src/App.tsx` - Integração do LanguageProvider e traduções
+- `client/src/components/app-sidebar.tsx` - Sidebar totalmente traduzida
+
 **Limitações Conhecidas (FASE 1):**
 - Leitura de capítulos requer internet (exceto Gênesis 1 e Salmo 23 em cache)
 - Expansão de cache offline pode ser implementada em fases futuras
@@ -99,8 +125,15 @@ Preferred communication style: Simple, everyday language.
 
 **State Management**:
 - **Server State**: TanStack Query (React Query) for all API data fetching and caching
-- **Client State**: React Context for theme management
+- **Client State**: React Context for theme management and language selection (i18n)
 - **Form Handling**: React Hook Form with Zod validation
+
+**Internationalization (i18n)**:
+- **Framework**: Custom Context API implementation
+- **Supported Languages**: Portuguese (native), English, Dutch, Spanish
+- **Translation Storage**: Centralized in `client/src/lib/i18n.ts` with type-safe interfaces
+- **Persistence**: localStorage for language preference
+- **Coverage**: All UI strings, navigation, messages, and labels
 
 **Routing**: Wouter (lightweight client-side routing)
 
