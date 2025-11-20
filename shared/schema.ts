@@ -682,3 +682,46 @@ export const dailyVerses = pgTable("daily_verses", {
 export const insertDailyVerseSchema = createInsertSchema(dailyVerses).omit({ id: true, createdAt: true });
 export type InsertDailyVerse = z.infer<typeof insertDailyVerseSchema>;
 export type DailyVerse = typeof dailyVerses.$inferSelect;
+
+
+// Donations (Doações) - Stripe integration based on javascript_stripe blueprint
+export const donations = pgTable("donations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  amount: integer("amount").notNull(), // in cents
+  currency: varchar("currency").default("brl").notNull(), // brl, usd, eur
+  
+  type: varchar("type").notNull(), // one_time, recurring
+  frequency: varchar("frequency"), // daily, weekly, monthly (for recurring)
+  
+  destination: varchar("destination").default("app_operations").notNull(), // app_operations, bible_translation
+  
+  // Stripe integration (from javascript_stripe blueprint)
+  stripePaymentIntentId: varchar("stripe_payment_intent_id"),
+  stripeCustomerId: varchar("stripe_customer_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"), // for recurring
+  
+  status: varchar("status").default("pending").notNull(), // pending, succeeded, failed, canceled
+  
+  // Anonymous donation option
+  isAnonymous: boolean("is_anonymous").default(false),
+  
+  // User message (optional)
+  message: text("message"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const donationsRelations = relations(donations, ({ one }) => ({
+  user: one(users, {
+    fields: [donations.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertDonationSchema = createInsertSchema(donations).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertDonation = z.infer<typeof insertDonationSchema>;
+export type Donation = typeof donations.$inferSelect;
+
