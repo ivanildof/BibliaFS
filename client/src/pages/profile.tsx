@@ -62,7 +62,7 @@ const levelInfo = {
 
 export default function Profile() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("activity");
+  const [activeTab, setActiveTab] = useState("plans");
   
   // Fetch user data
   const { data: readingPlans = [] } = useQuery<ReadingPlan[]>({
@@ -212,31 +212,66 @@ export default function Profile() {
 
         {/* Tabs Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 h-auto" data-testid="tabs-profile">
-            <TabsTrigger value="activity" className="flex-col gap-1 py-3" data-testid="tab-activity">
-              <FileText className="h-4 w-4" />
-              <span className="text-xs">Atividade</span>
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 h-auto" data-testid="tabs-profile">
             <TabsTrigger value="plans" className="flex-col gap-1 py-3" data-testid="tab-plans">
               <BookOpen className="h-4 w-4" />
               <span className="text-xs">Planos</span>
-            </TabsTrigger>
-            <TabsTrigger value="achievements" className="flex-col gap-1 py-3" data-testid="tab-achievements">
-              <Award className="h-4 w-4" />
-              <span className="text-xs">Conquistas</span>
             </TabsTrigger>
             <TabsTrigger value="prayers" className="flex-col gap-1 py-3" data-testid="tab-prayers">
               <HandHeart className="h-4 w-4" />
               <span className="text-xs">Orações</span>
             </TabsTrigger>
-            <TabsTrigger value="stats" className="flex-col gap-1 py-3" data-testid="tab-stats">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-xs">Estatísticas</span>
+            <TabsTrigger value="donate" className="flex-col gap-1 py-3" data-testid="tab-donate">
+              <Heart className="h-4 w-4" />
+              <span className="text-xs">Doar</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Activity Tab */}
-          <TabsContent value="activity" className="space-y-6 mt-6">
+          {/* Donate Tab */}
+          <TabsContent value="donate" className="space-y-6 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Heart className="h-5 w-5 text-pink-600 fill-current" />
+                  Apoie o Bíblia+
+                </CardTitle>
+                <CardDescription>
+                  Sua doação ajuda a manter o app gratuito e traduzir a Bíblia para mais idiomas
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  O Bíblia+ é mantido por doações de usuários como você. Cada contribuição faz diferença!
+                </p>
+                <Link href="/donate">
+                  <Button className="w-full" size="lg" data-testid="button-go-donate">
+                    <Heart className="h-4 w-4 mr-2 fill-current" />
+                    Fazer uma Doação
+                  </Button>
+                </Link>
+                <div className="pt-4 border-t space-y-3">
+                  <p className="text-sm font-medium">Suas doações ajudam em:</p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+                      <span>Manter o aplicativo gratuito para todos</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+                      <span>Traduzir a Bíblia para mais idiomas</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+                      <span>Desenvolver novos recursos e melhorias</span>
+                    </li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Old Activity Tab - Removed */}
+          <TabsContent value="activity" className="space-y-6 mt-6 hidden">
             <div className="grid md:grid-cols-3 gap-6">
               {/* Highlights */}
               <Card>
@@ -442,8 +477,8 @@ export default function Profile() {
             </div>
           </TabsContent>
 
-          {/* Achievements Tab */}
-          <TabsContent value="achievements" className="space-y-6 mt-6">
+          {/* Old Achievements Tab - Removed */}
+          <TabsContent value="achievements" className="space-y-6 mt-6 hidden">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -555,8 +590,8 @@ export default function Profile() {
             </Card>
           </TabsContent>
 
-          {/* Stats Tab */}
-          <TabsContent value="stats" className="space-y-6 mt-6">
+          {/* Old Stats Tab - Removed */}
+          <TabsContent value="stats" className="space-y-6 mt-6 hidden">
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
