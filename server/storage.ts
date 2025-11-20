@@ -74,6 +74,9 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserStats(userId: string, data: { experiencePoints?: number; readingStreak?: number; level?: string; lastReadDate?: Date }): Promise<User>;
   
+  // Gamification (transactional)
+  processGamificationRewards(userId: string, xpEarned: number, newStreak: number, lastReadDate: Date): Promise<{ user: User; unlockedAchievements: UserAchievement[] }>;
+  
   // Reading Plan Templates
   getReadingPlanTemplates(): Promise<ReadingPlanTemplate[]>;
   getReadingPlanTemplate(id: string): Promise<ReadingPlanTemplate | undefined>;
@@ -203,6 +206,95 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return user;
+  }
+
+  async processGamificationRewards(
+    userId: string, 
+    xpEarned: number, 
+    newStreak: number, 
+    lastReadDate: Date
+  ): Promise<{ user: User; unlockedAchievements: UserAchievement[] }> {
+    return await db.transaction(async (tx) => {
+      // 1. Get current user data
+      const [currentUser] = await tx.select().from(users).where(eq(users.id, userId));
+      if (!currentUser) {
+        throw new Error("User not found");
+      }
+
+      // 2. Update user stats (XP, streak, lastReadDate) atomically
+      const newXP = (currentUser.experiencePoints || 0) + xpEarned;
+      const [updatedUser] = await tx
+        .update(users)
+        .set({
+          experiencePoints: newXP,
+          readingStreak: newStreak,
+          lastReadDate,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning();
+
+      // 3. Get all achievements and user's current achievements
+      const allAchievements = await tx.select().from(achievements);
+      const userAchs = await tx
+        .select()
+        .from(userAchievements)
+        .where(eq(userAchievements.userId, userId));
+
+      // 4. Check and unlock eligible achievements atomically
+      const newlyUnlocked: UserAchievement[] = [];
+      
+      for (const achievement of allAchievements) {
+        const isUnlocked = userAchs.some(
+          ua => ua.achievementId === achievement.id && ua.isUnlocked
+        );
+
+        if (!isUnlocked && achievement.category === "streak") {
+          let shouldUnlock = false;
+
+          if (achievement.requirement === "Streak de 7 dias" && newStreak >= 7) {
+            shouldUnlock = true;
+          } else if (achievement.requirement === "Streak de 30 dias" && newStreak >= 30) {
+            shouldUnlock = true;
+          } else if (achievement.requirement === "Streak de 100 dias" && newStreak >= 100) {
+            shouldUnlock = true;
+          }
+
+          if (shouldUnlock) {
+            const existingUserAch = userAchs.find(ua => ua.achievementId === achievement.id);
+            
+            let unlocked: UserAchievement;
+            if (existingUserAch) {
+              const [updated] = await tx
+                .update(userAchievements)
+                .set({
+                  isUnlocked: true,
+                  unlockedAt: new Date(),
+                })
+                .where(eq(userAchievements.id, existingUserAch.id))
+                .returning();
+              unlocked = updated;
+            } else {
+              const [created] = await tx
+                .insert(userAchievements)
+                .values({
+                  userId,
+                  achievementId: achievement.id,
+                  isUnlocked: true,
+                  unlockedAt: new Date(),
+                  progress: 100,
+                })
+                .returning();
+              unlocked = created;
+            }
+            
+            newlyUnlocked.push(unlocked);
+          }
+        }
+      }
+
+      return { user: updatedUser, unlockedAchievements: newlyUnlocked };
+    });
   }
 
   // Reading Plan Templates

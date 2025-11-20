@@ -610,138 +610,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible API Routes (ABíbliaDigital)
+  // Bible API Routes (ABíbliaDigital) with robust error handling
   const BIBLE_API_BASE = "https://www.abibliadigital.com.br/api";
   
   // Import fallback Bible books list and chapters
   const { BIBLE_BOOKS_FALLBACK } = await import("./bible-books-fallback");
   const { getFallbackChapter } = await import("./bible-chapters-fallback");
+  const { fetchWithFallback } = await import("./api-client");
   
-  // Get all Bible books
+  // Get all Bible books (with retry + fallback)
   app.get("/api/bible/books", async (req, res) => {
-    try {
-      const response = await fetch(`${BIBLE_API_BASE}/books`);
-      
-      if (!response.ok) {
-        console.warn("Bible API unavailable, using fallback list");
-        return res.json(BIBLE_BOOKS_FALLBACK);
-      }
-      
-      const data = await response.json();
-      
-      // Check for API error responses
-      if (data.error || data.err) {
-        console.warn("Bible API error response, using fallback list");
-        return res.json(BIBLE_BOOKS_FALLBACK);
-      }
-      
-      // Ensure we return an array
-      const books = Array.isArray(data) ? data : (data.books || []);
-      
-      if (books.length === 0) {
-        console.warn("Bible API returned empty book list, using fallback");
-        return res.json(BIBLE_BOOKS_FALLBACK);
-      }
-      
-      res.json(books);
-    } catch (error: any) {
-      console.warn("Error fetching Bible books, using fallback list:", error.message);
-      res.json(BIBLE_BOOKS_FALLBACK);
+    const result = await fetchWithFallback(
+      `${BIBLE_API_BASE}/books`,
+      () => BIBLE_BOOKS_FALLBACK,
+      { timeout: 8000, retries: 2 }
+    );
+    
+    // Handle complete failure (both API and fallback failed)
+    if (result.error) {
+      console.error("Bible books API and fallback failed:", result.error);
+      return res.json(BIBLE_BOOKS_FALLBACK);
     }
+    
+    // Extract books array from response (handles multiple API formats)
+    let books: any[] = [];
+    
+    if (Array.isArray(result.data)) {
+      // API returned array directly: [{...}, {...}] (or fallback)
+      books = result.data;
+    } else if (result.data?.books && Array.isArray(result.data.books)) {
+      // API returned {books: [{...}]} format
+      books = result.data.books;
+    } else if (result.data?.data?.books && Array.isArray(result.data.data.books)) {
+      // API returned nested {data: {books: [{...}]}} format
+      books = result.data.data.books;
+    } else if (result.data?.data && Array.isArray(result.data.data)) {
+      // API returned {data: [{...}]} format
+      books = result.data.data;
+    }
+    
+    // Validate we have books
+    if (books.length === 0) {
+      console.warn("No books found in response, using fallback");
+      return res.json(BIBLE_BOOKS_FALLBACK);
+    }
+    
+    res.json(books);
   });
   
-  // Get specific chapter with fallback
+  // Get specific chapter (with retry + fallback)
   app.get("/api/bible/:version/:abbrev/:chapter", async (req, res) => {
-    try {
-      const { version, abbrev, chapter } = req.params;
-      const response = await fetch(`${BIBLE_API_BASE}/verses/${version}/${abbrev}/${chapter}`);
-      
-      if (!response.ok) {
-        const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
-        if (fallback) {
-          console.warn(`API error, using fallback: ${version}-${abbrev}-${chapter}`);
-          return res.json(fallback);
-        }
-        return res.status(503).json({ 
-          error: "Capítulo não disponível no momento (sem cache)",
-          status: "api_error" 
-        });
-      }
-      
-      const data = await response.json();
-      
-      if (data.error || data.err) {
-        const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
-        if (fallback) {
-          console.warn(`API error response, using fallback: ${version}-${abbrev}-${chapter}`);
-          return res.json(fallback);
-        }
-        return res.status(503).json({ 
-          error: "Capítulo não disponível no momento (sem cache)",
-          status: "api_error" 
-        });
-      }
-      
-      // Validate chapter structure
-      if (!data.verses || !Array.isArray(data.verses) || data.verses.length === 0) {
-        const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
-        if (fallback) {
-          console.warn(`Empty verses, using fallback: ${version}-${abbrev}-${chapter}`);
-          return res.json(fallback);
-        }
-        return res.status(503).json({ 
-          error: "Capítulo sem versículos disponíveis (sem cache)",
-          status: "empty_response" 
-        });
-      }
-      
-      res.json(data);
-    } catch (error: any) {
-      const { version, abbrev, chapter } = req.params;
+    const { version, abbrev, chapter } = req.params;
+    
+    const result = await fetchWithFallback(
+      `${BIBLE_API_BASE}/verses/${version}/${abbrev}/${chapter}`,
+      () => getFallbackChapter(version, abbrev, parseInt(chapter)),
+      { timeout: 8000, retries: 2 }
+    );
+    
+    // Handle complete failure (both API and fallback failed)
+    if (result.error) {
+      console.error(`Chapter fetch failed completely: ${version}-${abbrev}-${chapter}`);
+      return res.status(503).json({ 
+        error: "Capítulo não disponível no momento",
+        status: "failed" 
+      });
+    }
+    
+    // If fallback was used successfully, data is already correct
+    if (result.fromCache && result.data) {
+      return res.json(result.data);
+    }
+    
+    // API succeeded - validate chapter structure
+    if (!result.data?.verses || !Array.isArray(result.data.verses) || result.data.verses.length === 0) {
       const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
       if (fallback) {
-        console.warn(`Network error, using fallback: ${version}-${abbrev}-${chapter}`);
+        console.warn(`Empty verses from API, using fallback: ${version}-${abbrev}-${chapter}`);
         return res.json(fallback);
       }
-      res.status(500).json({ 
-        error: "Erro ao buscar capítulo (sem cache)",
-        status: "network_error" 
+      return res.status(503).json({ 
+        error: "Capítulo sem versículos disponíveis",
+        status: "empty_response" 
       });
     }
+    
+    res.json(result.data);
   });
   
-  // Get specific verse
+  // Get specific verse (with retry logic)
   app.get("/api/bible/:version/:abbrev/:chapter/:verse", async (req, res) => {
-    try {
-      const { version, abbrev, chapter, verse } = req.params;
-      const response = await fetch(`${BIBLE_API_BASE}/verses/${version}/${abbrev}/${chapter}/${verse}`);
-      
-      if (!response.ok) {
-        console.error("Bible API verse error:", response.status);
-        return res.status(503).json({ 
-          error: "Versículo não disponível no momento",
-          status: "api_error" 
-        });
-      }
-      
-      const data = await response.json();
-      
-      if (data.error || data.err) {
-        console.error("Bible API verse error response:", data);
-        return res.status(503).json({ 
-          error: "Versículo não disponível no momento",
-          status: "api_error" 
-        });
-      }
-      
-      res.json(data);
-    } catch (error: any) {
-      console.error("Error fetching verse:", error);
-      res.status(500).json({ 
-        error: "Erro ao buscar versículo",
-        status: "network_error" 
+    const { version, abbrev, chapter, verse } = req.params;
+    const { robustFetch } = await import("./api-client");
+    
+    const result = await robustFetch(
+      `${BIBLE_API_BASE}/verses/${version}/${abbrev}/${chapter}/${verse}`,
+      { timeout: 8000, retries: 2 }
+    );
+    
+    if (result.error) {
+      console.error(`Verse fetch failed: ${version}-${abbrev}-${chapter}:${verse}`, result.error);
+      return res.status(503).json({ 
+        error: "Versículo não disponível no momento",
+        status: "failed" 
       });
     }
+    
+    res.json(result.data);
   });
   
   // Search Bible text
@@ -979,13 +954,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lastReadDate.setUTCHours(0, 0, 0, 0);
         }
 
+        // Skip gamification if already read today
         if (lastReadDate && today.getTime() === lastReadDate.getTime()) {
           return res.json(plan);
         }
 
-        const baseXP = 10;
-        const newXP = (user.experiencePoints || 0) + baseXP;
-
+        // Calculate streak logic
         const oneDayMs = 24 * 60 * 60 * 1000;
         const daysSinceLastRead = lastReadDate 
           ? Math.floor((today.getTime() - lastReadDate.getTime()) / oneDayMs)
@@ -997,25 +971,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const newStreak = isConsecutiveDay ? (user.readingStreak || 0) + 1 : 
                           isSameDay ? (user.readingStreak || 0) : 1;
 
-        await storage.updateUserStats(userId, {
-          experiencePoints: newXP,
-          readingStreak: newStreak,
-          lastReadDate: today,
-        });
-
-        const allAchievements = await storage.getAchievements();
-        for (const achievement of allAchievements) {
-          const userAchs = await storage.getUserAchievements(userId);
-          const isUnlocked = userAchs.some(ua => ua.achievementId === achievement.id && ua.isUnlocked);
-          
-          if (!isUnlocked && achievement.category === "streak") {
-            if ((achievement.requirement === "Streak de 7 dias" && newStreak >= 7) ||
-                (achievement.requirement === "Streak de 30 dias" && newStreak >= 30) ||
-                (achievement.requirement === "Streak de 100 dias" && newStreak >= 100)) {
-              await storage.unlockAchievement(userId, achievement.id);
-            }
-          }
-        }
+        // TRANSACTIONAL: Process all gamification rewards atomically
+        const baseXP = 10;
+        await storage.processGamificationRewards(userId, baseXP, newStreak, today);
       }
 
       res.json(plan);
