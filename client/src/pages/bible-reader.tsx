@@ -1,29 +1,32 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger,
+  SheetClose 
+} from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Book,
-  BookmarkPlus,
+  Volume2,
   Search,
+  MoreVertical,
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Star,
-  BookOpen,
-  Settings,
-  Menu,
-  CheckCircle,
-  Trophy
+  Book,
+  BookmarkPlus,
+  Settings2,
+  CheckCircle
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { Bookmark } from "@shared/schema";
 
 interface BibleBook {
@@ -45,22 +48,30 @@ interface Chapter {
 }
 
 const VERSIONS = [
-  { value: "nvi", label: "NVI - Nova Versão Internacional" },
-  { value: "acf", label: "ACF - Almeida Corrigida Fiel" },
-  { value: "arc", label: "ARC - Almeida Revista e Corrigida" },
-  { value: "ra", label: "RA - Almeida Revista e Atualizada" },
+  { value: "nvi", label: "NVI" },
+  { value: "acf", label: "ACF" },
+  { value: "arc", label: "ARC" },
+  { value: "ra", label: "RA" },
 ];
+
+const SUPERSCRIPTS = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"];
+
+function toSuperscript(num: number): string {
+  return num.toString().split('').map(d => SUPERSCRIPTS[parseInt(d)]).join('');
+}
 
 export default function BibleReader() {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [version, setVersion] = useState("nvi");
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isBooksMenuOpen, setIsBooksMenuOpen] = useState(false);
+  const [isBooksOpen, setIsBooksOpen] = useState(false);
+  const [isChaptersOpen, setIsChaptersOpen] = useState(false);
 
-  // Fetch all Bible books (backend has offline fallback)
+  // Fetch all Bible books
   const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
     queryKey: ["/api/bible/books"],
     retry: 3,
@@ -88,11 +99,6 @@ export default function BibleReader() {
   // Fetch user bookmarks
   const { data: bookmarks = [] } = useQuery<Bookmark[]>({
     queryKey: ["/api/bible/bookmarks"],
-  });
-
-  // Fetch Bible settings
-  const { data: settings } = useQuery({
-    queryKey: ["/api/bible/settings"],
   });
 
   // Search mutation
@@ -126,7 +132,7 @@ export default function BibleReader() {
       
       let description = `Você ganhou ${data.xpGained} XP!`;
       if (data.unlockedAchievements && data.unlockedAchievements.length > 0) {
-        description += ` 🏆 Conquistas desbloqueadas: ${data.unlockedAchievements.map((a: any) => a.name).join(", ")}`;
+        description += ` 🏆 ${data.unlockedAchievements.map((a: any) => a.name).join(", ")}`;
       }
       
       toast({
@@ -144,23 +150,21 @@ export default function BibleReader() {
     }
   }, [books, selectedBook]);
 
-  // Show error toast when books API fails
   useEffect(() => {
     if (booksError) {
       toast({
-        title: "Erro ao carregar livros da Bíblia",
-        description: "Não foi possível carregar a lista de livros. Tente novamente mais tarde.",
+        title: "Erro ao carregar livros",
+        description: "Tente novamente mais tarde.",
         variant: "destructive",
       });
     }
   }, [booksError, toast]);
 
-  // Show error toast when chapter API fails
   useEffect(() => {
     if (chapterError) {
       toast({
         title: "Erro ao carregar capítulo",
-        description: "Não foi possível carregar o capítulo. Tente novamente mais tarde.",
+        description: "Tente novamente mais tarde.",
         variant: "destructive",
       });
     }
@@ -193,7 +197,6 @@ export default function BibleReader() {
     if (selectedChapter < currentBook.chapters) {
       setSelectedChapter(selectedChapter + 1);
     } else {
-      // Go to next book
       const currentIndex = booksArray.findIndex(b => b.abbrev?.pt === selectedBook);
       if (currentIndex < booksArray.length - 1) {
         setSelectedBook(booksArray[currentIndex + 1].abbrev.pt);
@@ -207,7 +210,6 @@ export default function BibleReader() {
       setSelectedChapter(selectedChapter - 1);
     } else {
       const booksArray = Array.isArray(books) ? books : [];
-      // Go to previous book
       const currentIndex = booksArray.findIndex(b => b.abbrev?.pt === selectedBook);
       if (currentIndex > 0) {
         const prevBook = booksArray[currentIndex - 1];
@@ -222,279 +224,287 @@ export default function BibleReader() {
   const oldTestament = booksArray.filter(b => b.testament === "VT");
   const newTestament = booksArray.filter(b => b.testament === "NT");
 
+  if (loadingBooks) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="font-display text-4xl font-bold" data-testid="text-page-title">
-                Bíblia Sagrada
-              </h1>
-              <p className="text-muted-foreground">
-                {chapterData ? `${chapterData.book.name} ${chapterData.chapter.number}` : "Selecione um livro"}
-              </p>
-            </div>
+      {/* Top Header - Icons only */}
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
+        <div className="flex items-center justify-between px-4 h-14 max-w-4xl mx-auto">
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" disabled data-testid="button-audio">
+              <Volume2 className="h-5 w-5" />
+            </Button>
           </div>
           
-          <div className="flex items-center gap-2">
-            {/* Version Selector */}
-            <Select value={version} onValueChange={setVersion}>
-              <SelectTrigger className="w-[200px]" data-testid="select-bible-version">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {VERSIONS.map(v => (
-                  <SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {/* Books Menu */}
-            <Dialog open={isBooksMenuOpen} onOpenChange={setIsBooksMenuOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" data-testid="button-open-books">
-                  <Menu className="h-4 w-4 mr-2" />
-                  Livros
+          <div className="flex items-center gap-1">
+            <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" data-testid="button-search-open">
+                  <Search className="h-5 w-5" />
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Livros da Bíblia</DialogTitle>
-                </DialogHeader>
-                <Tabs defaultValue="ot">
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[80vh]">
+                <SheetHeader>
+                  <SheetTitle>Buscar Versículos</SheetTitle>
+                </SheetHeader>
+                <div className="mt-4 space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Digite sua busca..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      data-testid="input-search"
+                    />
+                    <Button onClick={handleSearch} disabled={searchMutation.isPending}>
+                      {searchMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {searchMutation.data && (
+                    <ScrollArea className="h-[60vh]">
+                      <div className="space-y-3">
+                        {(searchMutation.data as any).verses?.map((result: any, index: number) => (
+                          <SheetClose asChild key={index}>
+                            <button
+                              className="w-full text-left p-4 rounded-lg border hover-elevate active-elevate-2 transition-colors"
+                              onClick={() => {
+                                setSelectedBook(result.book.abbrev.pt);
+                                setSelectedChapter(result.chapter);
+                              }}
+                            >
+                              <div className="font-semibold text-sm mb-1">
+                                {result.book.name} {result.chapter}:{result.number}
+                              </div>
+                              <p className="text-sm text-muted-foreground font-serif">{result.text}</p>
+                            </button>
+                          </SheetClose>
+                        )) || <p className="text-center text-muted-foreground">Nenhum resultado.</p>}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <Sheet open={isBooksOpen} onOpenChange={setIsBooksOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" data-testid="button-menu">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[80vh]">
+                <SheetHeader>
+                  <SheetTitle>Livros da Bíblia</SheetTitle>
+                </SheetHeader>
+                <Tabs defaultValue="nt" className="mt-4">
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="ot">Antigo Testamento ({oldTestament.length})</TabsTrigger>
-                    <TabsTrigger value="nt">Novo Testamento ({newTestament.length})</TabsTrigger>
+                    <TabsTrigger value="ot">Antigo ({oldTestament.length})</TabsTrigger>
+                    <TabsTrigger value="nt">Novo ({newTestament.length})</TabsTrigger>
                   </TabsList>
                   <TabsContent value="ot" className="mt-4">
-                    <div className="grid grid-cols-3 gap-2">
-                      {oldTestament.map(book => (
-                        <Button
-                          key={book.abbrev.pt}
-                          variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
-                          className="justify-start"
-                          onClick={() => {
-                            setSelectedBook(book.abbrev.pt);
-                            setSelectedChapter(1);
-                            setIsBooksMenuOpen(false);
-                          }}
-                          data-testid={`button-book-${book.abbrev.pt}`}
-                        >
-                          <Book className="h-4 w-4 mr-2" />
-                          {book.name}
-                        </Button>
-                      ))}
-                    </div>
+                    <ScrollArea className="h-[60vh]">
+                      <div className="grid grid-cols-2 gap-2">
+                        {oldTestament.map(book => (
+                          <SheetClose asChild key={book.abbrev.pt}>
+                            <Button
+                              variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
+                              className="justify-start"
+                              onClick={() => {
+                                setSelectedBook(book.abbrev.pt);
+                                setSelectedChapter(1);
+                              }}
+                              data-testid={`button-book-${book.abbrev.pt}`}
+                            >
+                              {book.name}
+                            </Button>
+                          </SheetClose>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </TabsContent>
                   <TabsContent value="nt" className="mt-4">
-                    <div className="grid grid-cols-3 gap-2">
-                      {newTestament.map(book => (
-                        <Button
-                          key={book.abbrev.pt}
-                          variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
-                          className="justify-start"
-                          onClick={() => {
-                            setSelectedBook(book.abbrev.pt);
-                            setSelectedChapter(1);
-                            setIsBooksMenuOpen(false);
-                          }}
-                          data-testid={`button-book-${book.abbrev.pt}`}
-                        >
-                          <Book className="h-4 w-4 mr-2" />
-                          {book.name}
-                        </Button>
-                      ))}
-                    </div>
+                    <ScrollArea className="h-[60vh]">
+                      <div className="grid grid-cols-2 gap-2">
+                        {newTestament.map(book => (
+                          <SheetClose asChild key={book.abbrev.pt}>
+                            <Button
+                              variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
+                              className="justify-start"
+                              onClick={() => {
+                                setSelectedBook(book.abbrev.pt);
+                                setSelectedChapter(1);
+                              }}
+                              data-testid={`button-book-${book.abbrev.pt}`}
+                            >
+                              {book.name}
+                            </Button>
+                          </SheetClose>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </TabsContent>
                 </Tabs>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+              </SheetContent>
+            </Sheet>
 
-        {/* Search Bar */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Buscar versículos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                data-testid="input-search-bible"
-              />
-              <Button onClick={handleSearch} disabled={searchMutation.isPending} data-testid="button-search">
-                {searchMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Search className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {booksError ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-              <Book className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Serviço Temporariamente Indisponível</h3>
-              <p className="text-muted-foreground mb-4">
-                Não foi possível carregar os livros da Bíblia. Por favor, tente novamente mais tarde.
-              </p>
-              <Button onClick={() => window.location.reload()} data-testid="button-reload-page">
-                Tentar Novamente
-              </Button>
-            </CardContent>
-          </Card>
-        ) : loadingBooks || loadingChapter ? (
-          <Card>
-            <CardContent className="flex items-center justify-center py-20">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid lg:grid-cols-4 gap-6">
-            {/* Chapter Navigation Sidebar */}
-            <div className="lg:col-span-1">
-              <Card className="sticky top-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">Capítulos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {currentBook && (
-                    <div className="grid grid-cols-4 gap-2 max-h-[600px] overflow-y-auto">
-                      {Array.from({ length: currentBook.chapters }, (_, i) => i + 1).map(chap => (
+            <Sheet open={isChaptersOpen} onOpenChange={setIsChaptersOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" data-testid="button-version">
+                  {VERSIONS.find(v => v.value === version)?.label || "NVI"}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[60vh]">
+                <SheetHeader>
+                  <SheetTitle>Versão & Capítulos</SheetTitle>
+                </SheetHeader>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <h3 className="text-sm font-medium mb-2">Versão da Bíblia</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {VERSIONS.map(v => (
                         <Button
-                          key={chap}
-                          size="sm"
-                          variant={selectedChapter === chap ? "default" : "outline"}
-                          onClick={() => setSelectedChapter(chap)}
-                          data-testid={`button-chapter-${chap}`}
+                          key={v.value}
+                          variant={version === v.value ? "default" : "outline"}
+                          onClick={() => {
+                            setVersion(v.value);
+                          }}
                         >
-                          {chap}
+                          {v.label}
                         </Button>
                       ))}
                     </div>
+                  </div>
+                  
+                  {currentBook && (
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Capítulos de {currentBook.name}</h3>
+                      <ScrollArea className="h-[30vh]">
+                        <div className="grid grid-cols-6 gap-2">
+                          {Array.from({ length: currentBook.chapters }, (_, i) => i + 1).map(chap => (
+                            <SheetClose asChild key={chap}>
+                              <Button
+                                size="sm"
+                                variant={selectedChapter === chap ? "default" : "outline"}
+                                onClick={() => setSelectedChapter(chap)}
+                                data-testid={`button-chapter-${chap}`}
+                              >
+                                {chap}
+                              </Button>
+                            </SheetClose>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        {loadingChapter ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+        ) : chapterData ? (
+          <>
+            {/* Book Name - Large Centered */}
+            <h1 className="text-center text-3xl md:text-4xl font-serif font-semibold text-foreground mb-2" data-testid="text-book-name">
+              {chapterData.book.name}
+            </h1>
+            
+            {/* Chapter Number - Gigantic Centered */}
+            <div className="text-center text-8xl md:text-9xl font-display font-bold text-foreground/90 mb-8" data-testid="text-chapter-number">
+              {chapterData.chapter.number}
             </div>
 
-            {/* Chapter Text */}
-            <div className="lg:col-span-3">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-2xl font-display">
-                      {chapterData?.book.name} {chapterData?.chapter.number}
-                    </CardTitle>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={goToPreviousChapter}
-                        disabled={!selectedBook || (booksArray.length > 0 && selectedBook === booksArray[0]?.abbrev?.pt && selectedChapter === 1)}
-                        data-testid="button-previous-chapter"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={goToNextChapter}
-                        disabled={!currentBook || (booksArray.length > 0 && selectedBook === booksArray[booksArray.length - 1]?.abbrev?.pt && selectedChapter === currentBook?.chapters)}
-                        data-testid="button-next-chapter"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <Separator />
-                <CardContent className="pt-6">
-                  <div className="space-y-4 font-serif text-lg leading-relaxed">
-                    {chapterData?.verses.map(verse => (
-                      <div key={verse.number} className="group flex gap-3 hover:bg-muted/30 p-2 rounded-lg transition-colors">
-                        <Badge variant="outline" className="shrink-0 h-fit">{verse.number}</Badge>
-                        <p className="flex-1">{verse.text}</p>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleAddBookmark(verse)}
-                          disabled={bookmarkMutation.isPending}
-                          data-testid={`button-bookmark-${verse.number}`}
-                        >
-                          <BookmarkPlus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center border-t pt-4">
-                  <p className="text-sm text-muted-foreground">
-                    {chapterData?.verses.length} versículos
-                  </p>
-                  <Button
-                    onClick={() => markReadMutation.mutate({ 
-                      book: chapterData?.book.name || "", 
-                      chapter: chapterData?.chapter.number || 0 
-                    })}
-                    disabled={markReadMutation.isPending}
-                    data-testid="button-mark-read"
-                  >
-                    {markReadMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                    {markReadMutation.isPending ? "Marcando..." : (
-                      <>
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Marcar como Lido
-                      </>
-                    )}
-                  </Button>
-                </CardFooter>
-              </Card>
+            {/* Verses - Clean Reading Mode */}
+            <div className="prose prose-lg dark:prose-invert max-w-none font-serif leading-relaxed text-foreground">
+              <p className="text-base md:text-lg leading-loose">
+                {chapterData.verses.map((verse, idx) => (
+                  <span key={verse.number}>
+                    <sup className="text-xs font-bold text-muted-foreground mr-1" data-testid={`verse-number-${verse.number}`}>
+                      {toSuperscript(verse.number)}
+                    </sup>
+                    <span className="inline" data-testid={`verse-text-${verse.number}`}>{verse.text}</span>
+                    {idx < chapterData.verses.length - 1 && " "}
+                  </span>
+                ))}
+              </p>
             </div>
+
+            {/* Mark as Read Button */}
+            <div className="mt-8 flex justify-center">
+              <Button
+                size="lg"
+                onClick={() => markReadMutation.mutate({ 
+                  book: chapterData.book.name, 
+                  chapter: chapterData.chapter.number 
+                })}
+                disabled={markReadMutation.isPending}
+                data-testid="button-mark-read"
+              >
+                {markReadMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                )}
+                Marcar como Lido
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-20 text-muted-foreground">
+            Selecione um livro para começar
           </div>
         )}
+      </main>
 
-        {/* Search Results Dialog */}
-        <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Resultados da Busca: "{searchQuery}"</DialogTitle>
-            </DialogHeader>
-            {searchMutation.isPending ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              </div>
-            ) : searchMutation.data ? (
-              <div className="space-y-4">
-                {searchMutation.data.verses?.map((result: any, index: number) => (
-                  <Card key={index} className="hover-elevate cursor-pointer" onClick={() => {
-                    setSelectedBook(result.book.abbrev.pt);
-                    setSelectedChapter(result.chapter);
-                    setIsSearchOpen(false);
-                  }}>
-                    <CardHeader>
-                      <CardTitle className="text-base">
-                        {result.book.name} {result.chapter}:{result.number}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="font-serif">{result.text}</p>
-                    </CardContent>
-                  </Card>
-                )) || <p className="text-center text-muted-foreground">Nenhum resultado encontrado.</p>}
-              </div>
-            ) : null}
-          </DialogContent>
-        </Dialog>
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-30 px-4">
+        <div className="max-w-md mx-auto bg-background/95 backdrop-blur border rounded-full shadow-lg px-4 py-2">
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={goToPreviousChapter}
+              disabled={!selectedBook || (booksArray.length > 0 && selectedBook === booksArray[0]?.abbrev?.pt && selectedChapter === 1)}
+              data-testid="button-previous-chapter"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            
+            <button
+              onClick={() => setIsChaptersOpen(true)}
+              className="text-sm font-medium min-w-[120px] text-center hover-elevate px-4 py-2 rounded-full transition-colors"
+              data-testid="text-chapter-navigation"
+            >
+              {chapterData ? `${chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
+            </button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={goToNextChapter}
+              disabled={!currentBook || (booksArray.length > 0 && selectedBook === booksArray[booksArray.length - 1]?.abbrev?.pt && selectedChapter === currentBook?.chapters)}
+              data-testid="button-next-chapter"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
