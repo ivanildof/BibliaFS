@@ -1,7 +1,10 @@
 // Blueprint: javascript_database and javascript_log_in_with_replit
 import { 
   users,
+  readingPlanTemplates,
   readingPlans,
+  achievements,
+  userAchievements,
   prayers,
   notes,
   highlights,
@@ -16,8 +19,14 @@ import {
   postComments,
   type User,
   type UpsertUser,
+  type InsertReadingPlanTemplate,
+  type ReadingPlanTemplate,
   type InsertReadingPlan,
   type ReadingPlan,
+  type InsertAchievement,
+  type Achievement,
+  type InsertUserAchievement,
+  type UserAchievement,
   type InsertPrayer,
   type Prayer,
   type InsertNote,
@@ -48,14 +57,28 @@ export interface IStorage {
   // User operations (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUserStats(userId: string, data: { experiencePoints?: number; readingStreak?: number; level?: string; lastReadDate?: Date }): Promise<User>;
   
-  // Reading Plans
+  // Reading Plan Templates
+  getReadingPlanTemplates(): Promise<ReadingPlanTemplate[]>;
+  getReadingPlanTemplate(id: string): Promise<ReadingPlanTemplate | undefined>;
+  createReadingPlanTemplate(template: InsertReadingPlanTemplate): Promise<ReadingPlanTemplate>;
+  
+  // User Reading Plans
   getReadingPlans(userId: string): Promise<ReadingPlan[]>;
   getReadingPlan(id: string): Promise<ReadingPlan | undefined>;
   getCurrentReadingPlan(userId: string): Promise<ReadingPlan | undefined>;
   createReadingPlan(plan: InsertReadingPlan): Promise<ReadingPlan>;
   updateReadingPlan(id: string, data: Partial<ReadingPlan>): Promise<ReadingPlan>;
+  markDayCompleted(planId: string, day: number, userId: string): Promise<ReadingPlan>;
   deleteReadingPlan(id: string): Promise<void>;
+  
+  // Achievements
+  getAchievements(): Promise<Achievement[]>;
+  createAchievement(achievement: InsertAchievement): Promise<Achievement>;
+  getUserAchievements(userId: string): Promise<(UserAchievement & { achievement: Achievement })[]>;
+  unlockAchievement(userId: string, achievementId: string): Promise<UserAchievement>;
+  updateAchievementProgress(userId: string, achievementId: string, progress: number): Promise<UserAchievement>;
   
   // Prayers
   getPrayers(userId: string): Promise<Prayer[]>;
@@ -132,7 +155,34 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  // Reading Plans
+  async updateUserStats(userId: string, data: { experiencePoints?: number; readingStreak?: number; level?: string; lastReadDate?: Date }): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  // Reading Plan Templates
+  async getReadingPlanTemplates(): Promise<ReadingPlanTemplate[]> {
+    return await db
+      .select()
+      .from(readingPlanTemplates)
+      .orderBy(readingPlanTemplates.duration);
+  }
+
+  async getReadingPlanTemplate(id: string): Promise<ReadingPlanTemplate | undefined> {
+    const [template] = await db.select().from(readingPlanTemplates).where(eq(readingPlanTemplates.id, id));
+    return template;
+  }
+
+  async createReadingPlanTemplate(template: InsertReadingPlanTemplate): Promise<ReadingPlanTemplate> {
+    const [created] = await db.insert(readingPlanTemplates).values(template).returning();
+    return created;
+  }
+
+  // User Reading Plans
   async getReadingPlans(userId: string): Promise<ReadingPlan[]> {
     return await db
       .select()
@@ -173,8 +223,125 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
+  async markDayCompleted(planId: string, day: number, userId: string): Promise<ReadingPlan> {
+    const plan = await this.getReadingPlan(planId);
+    if (!plan || plan.userId !== userId) {
+      throw new Error("Plan not found or unauthorized");
+    }
+
+    const updatedSchedule = plan.schedule.map((item: any) => 
+      item.day === day ? { ...item, isCompleted: true } : item
+    );
+
+    const completedDays = updatedSchedule.filter((item: any) => item.isCompleted).length;
+    const isCompleted = completedDays >= plan.totalDays;
+
+    const [updated] = await db
+      .update(readingPlans)
+      .set({
+        schedule: updatedSchedule,
+        currentDay: Math.min(day + 1, plan.totalDays),
+        isCompleted,
+        completedAt: isCompleted ? new Date() : plan.completedAt,
+        updatedAt: new Date(),
+      })
+      .where(eq(readingPlans.id, planId))
+      .returning();
+
+    return updated;
+  }
+
   async deleteReadingPlan(id: string): Promise<void> {
     await db.delete(readingPlans).where(eq(readingPlans.id, id));
+  }
+
+  // Achievements
+  async getAchievements(): Promise<Achievement[]> {
+    return await db
+      .select()
+      .from(achievements)
+      .orderBy(achievements.category, achievements.xpReward);
+  }
+
+  async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
+    const [created] = await db.insert(achievements).values(achievement).returning();
+    return created;
+  }
+
+  async getUserAchievements(userId: string): Promise<(UserAchievement & { achievement: Achievement })[]> {
+    return await db
+      .select()
+      .from(userAchievements)
+      .leftJoin(achievements, eq(userAchievements.achievementId, achievements.id))
+      .where(eq(userAchievements.userId, userId))
+      .then(rows => rows.map(row => ({
+        ...row.user_achievements!,
+        achievement: row.achievements!
+      })));
+  }
+
+  async unlockAchievement(userId: string, achievementId: string): Promise<UserAchievement> {
+    const [existing] = await db
+      .select()
+      .from(userAchievements)
+      .where(and(
+        eq(userAchievements.userId, userId),
+        eq(userAchievements.achievementId, achievementId)
+      ));
+
+    if (existing) {
+      const [updated] = await db
+        .update(userAchievements)
+        .set({
+          isUnlocked: true,
+          unlockedAt: new Date(),
+        })
+        .where(eq(userAchievements.id, existing.id))
+        .returning();
+      return updated;
+    }
+
+    const [created] = await db
+      .insert(userAchievements)
+      .values({
+        userId,
+        achievementId,
+        isUnlocked: true,
+        unlockedAt: new Date(),
+        progress: 100,
+      })
+      .returning();
+    return created;
+  }
+
+  async updateAchievementProgress(userId: string, achievementId: string, progress: number): Promise<UserAchievement> {
+    const [existing] = await db
+      .select()
+      .from(userAchievements)
+      .where(and(
+        eq(userAchievements.userId, userId),
+        eq(userAchievements.achievementId, achievementId)
+      ));
+
+    if (existing) {
+      const [updated] = await db
+        .update(userAchievements)
+        .set({ progress })
+        .where(eq(userAchievements.id, existing.id))
+        .returning();
+      return updated;
+    }
+
+    const [created] = await db
+      .insert(userAchievements)
+      .values({
+        userId,
+        achievementId,
+        progress,
+        isUnlocked: false,
+      })
+      .returning();
+    return created;
   }
 
   // Prayers
