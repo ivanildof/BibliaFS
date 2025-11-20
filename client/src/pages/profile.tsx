@@ -22,7 +22,8 @@ import {
   CheckCircle2,
   Clock,
   Heart,
-  Share2
+  Share2,
+  HandHeart
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
@@ -213,7 +214,7 @@ export default function Profile() {
               <span className="text-xs">Conquistas</span>
             </TabsTrigger>
             <TabsTrigger value="prayers" className="flex-col gap-1 py-3" data-testid="tab-prayers">
-              <Heart className="h-4 w-4" />
+              <HandHeart className="h-4 w-4" />
               <span className="text-xs">Orações</span>
             </TabsTrigger>
             <TabsTrigger value="stats" className="flex-col gap-1 py-3" data-testid="tab-stats">
@@ -489,7 +490,7 @@ export default function Profile() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-pink-600" />
+                  <HandHeart className="h-5 w-5 text-pink-600" />
                   Diário de Orações
                 </CardTitle>
                 <CardDescription>
@@ -499,7 +500,7 @@ export default function Profile() {
               <CardContent>
                 {prayers.length === 0 ? (
                   <div className="text-center py-8">
-                    <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <HandHeart className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
                     <p className="text-muted-foreground mb-4">
                       Nenhuma oração registrada ainda
                     </p>
