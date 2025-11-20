@@ -24,7 +24,7 @@ import { getBookName } from "@/lib/i18n";
 
 export default function ReadingPlans() {
   const { toast } = useToast();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [isTemplatesDialogOpen, setIsTemplatesDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<ReadingPlanTemplate | null>(null);
 
@@ -47,13 +47,13 @@ export default function ReadingPlans() {
       setIsTemplatesDialogOpen(false);
       setSelectedTemplate(null);
       toast({
-        title: "Plano iniciado!",
-        description: "Seu plano de leitura foi criado com sucesso.",
+        title: t.plans.dayCompleted,
+        description: t.plans.dayCompleted,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Erro ao criar plano",
+        title: t.common.error,
         description: error.message,
         variant: "destructive",
       });
@@ -91,7 +91,7 @@ export default function ReadingPlans() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Carregando planos...</p>
+              <p className="text-muted-foreground">{t.common.loading}</p>
             </div>
           </div>
         </div>
@@ -105,10 +105,10 @@ export default function ReadingPlans() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
-              Planos de Leitura
+              {t.plans.title}
             </h1>
             <p className="text-lg text-muted-foreground">
-              Organize e acompanhe seu estudo bíblico
+              {t.plans.subtitle}
             </p>
           </div>
           
@@ -116,14 +116,14 @@ export default function ReadingPlans() {
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-plan">
                 <Plus className="h-5 w-5 mr-2" />
-                Iniciar Plano
+                {t.plans.startPlan}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Escolher Plano de Leitura</DialogTitle>
+                <DialogTitle>{t.plans.selectTemplate}</DialogTitle>
                 <DialogDescription>
-                  Selecione um plano predefinido para começar sua jornada
+                  {t.plans.selectTemplate}
                 </DialogDescription>
               </DialogHeader>
               
@@ -152,7 +152,7 @@ export default function ReadingPlans() {
                         <div className="flex flex-wrap gap-2">
                           <Badge variant="secondary">
                             <Clock className="h-3 w-3 mr-1" />
-                            {template.duration} dias
+                            {template.duration} {t.plans.days}
                           </Badge>
                           {template.category && (
                             <Badge variant="outline">
@@ -172,7 +172,7 @@ export default function ReadingPlans() {
                   onClick={() => setIsTemplatesDialogOpen(false)}
                   data-testid="button-cancel"
                 >
-                  Cancelar
+                  {t.common.cancel}
                 </Button>
                 <Button 
                   disabled={!selectedTemplate || createFromTemplateMutation.isPending}
@@ -180,7 +180,7 @@ export default function ReadingPlans() {
                   data-testid="button-start-plan"
                 >
                   {createFromTemplateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                  {createFromTemplateMutation.isPending ? "Iniciando..." : "Iniciar Plano"}
+                  {createFromTemplateMutation.isPending ? t.plans.starting : t.plans.startPlan}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -190,7 +190,7 @@ export default function ReadingPlans() {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Planos Ativos</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.plans.activePlans}</CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -202,7 +202,7 @@ export default function ReadingPlans() {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Planos Concluídos</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.plans.completedPlans}</CardTitle>
               <Check className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -214,7 +214,7 @@ export default function ReadingPlans() {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Dia Atual</CardTitle>
+              <CardTitle className="text-sm font-medium">{t.plans.currentDay}</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -226,7 +226,7 @@ export default function ReadingPlans() {
         </div>
 
         <section className="mb-12">
-          <h2 className="font-display text-2xl font-bold mb-4">Planos Ativos</h2>
+          <h2 className="font-display text-2xl font-bold mb-4">{t.plans.activePlans}</h2>
           
           {activePlans.length === 0 ? (
             <Card className="border-dashed">
@@ -234,13 +234,13 @@ export default function ReadingPlans() {
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
                   <BookOpen className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Nenhum plano ativo</h3>
+                <h3 className="font-semibold text-lg mb-2">{t.plans.noActivePlans}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Escolha um plano predefinido para começar sua jornada
+                  {t.plans.choosePlanDescription}
                 </p>
                 <Button onClick={() => setIsTemplatesDialogOpen(true)} data-testid="button-start-first-plan">
                   <Plus className="h-4 w-4 mr-2" />
-                  Iniciar Primeiro Plano
+                  {t.plans.startFirstPlan}
                 </Button>
               </CardContent>
             </Card>
@@ -264,14 +264,14 @@ export default function ReadingPlans() {
                         </div>
                         <Badge variant="secondary">
                           <Target className="h-3 w-3 mr-1" />
-                          Dia {currentDay}/{plan.totalDays}
+                          {t.plans.day} {currentDay}/{plan.totalDays}
                         </Badge>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted-foreground">Progresso</span>
+                          <span className="text-muted-foreground">{t.plans.progress}</span>
                           <span className="font-medium">{Math.round(progress)}%</span>
                         </div>
                         <Progress value={progress} className="h-2" />
@@ -279,14 +279,14 @@ export default function ReadingPlans() {
                       
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">
-                          {completedDays} de {plan.totalDays} dias completos
+                          {completedDays} {t.plans.of_days_completed.replace('{total}', plan.totalDays.toString())}
                         </span>
                         <TrendingUp className="h-4 w-4 text-primary" />
                       </div>
 
                       {schedule[currentDay - 1] && !schedule[currentDay - 1].isCompleted && (
                         <div className="pt-2 border-t">
-                          <p className="text-sm text-muted-foreground mb-2">Leitura de hoje:</p>
+                          <p className="text-sm text-muted-foreground mb-2">{t.plans.todayReading}</p>
                           <div className="space-y-1">
                             {schedule[currentDay - 1].readings.map((reading: any, idx: number) => (
                               <p key={idx} className="text-sm font-medium">
@@ -312,10 +312,10 @@ export default function ReadingPlans() {
                         {schedule[currentDay - 1]?.isCompleted ? (
                           <>
                             <Check className="h-4 w-4 mr-2" />
-                            Dia Completo
+                            {t.plans.dayCompleted}
                           </>
                         ) : (
-                          "Marcar Dia Como Completo"
+                          t.plans.markDayComplete
                         )}
                       </Button>
                     </CardFooter>
@@ -328,7 +328,7 @@ export default function ReadingPlans() {
 
         {completedPlans.length > 0 && (
           <section>
-            <h2 className="font-display text-2xl font-bold mb-4">Planos Concluídos</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">{t.plans.completedPlans}</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {completedPlans.map((plan) => (
                 <Card key={plan.id} className="bg-muted/30" data-testid={`card-completed-plan-${plan.id}`}>
@@ -342,14 +342,14 @@ export default function ReadingPlans() {
                       </div>
                       <Badge variant="default" className="bg-primary">
                         <Trophy className="h-3 w-3 mr-1" />
-                        Concluído
+                        {t.plans.completed}
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">
-                        Completado em {new Date(plan.completedAt!).toLocaleDateString('pt-BR')}
+                        {t.plans.completedOn} {new Date(plan.completedAt!).toLocaleDateString(language)}
                       </span>
                       <Check className="h-5 w-5 text-primary" />
                     </div>

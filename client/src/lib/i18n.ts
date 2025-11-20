@@ -45,14 +45,30 @@ export interface Translations {
   bibleBooks: Record<string, string>;
   plans: {
     title: string;
+    subtitle: string;
     myPlans: string;
     available: string;
     createPlan: string;
     startPlan: string;
+    starting: string;
     days: string;
+    of_days_completed: string;
     progress: string;
     completeDay: string;
     dayCompleted: string;
+    selectTemplate: string;
+    noPlanTemplate: string;
+    activePlans: string;
+    completedPlans: string;
+    currentDay: string;
+    noActivePlans: string;
+    startFirstPlan: string;
+    choosePlanDescription: string;
+    day: string;
+    todayReading: string;
+    markDayComplete: string;
+    completed: string;
+    completedOn: string;
   };
   progress: {
     title: string;
@@ -268,14 +284,30 @@ export const translations: Record<Language, Translations> = {
     },
     plans: {
       title: 'Planos de Leitura',
+      subtitle: 'Organize e acompanhe seu estudo bíblico',
       myPlans: 'Meus Planos',
       available: 'Planos Disponíveis',
       createPlan: 'Criar Plano',
       startPlan: 'Iniciar Plano',
+      starting: 'Iniciando...',
       days: 'dias',
+      of_days_completed: 'de {total} dias completos',
       progress: 'Progresso',
       completeDay: 'Completar Dia',
       dayCompleted: 'Dia Completo',
+      selectTemplate: 'Selecione um Plano',
+      noPlanTemplate: 'Nenhum plano disponível',
+      activePlans: 'Planos Ativos',
+      completedPlans: 'Planos Concluídos',
+      currentDay: 'Dia Atual',
+      noActivePlans: 'Nenhum plano ativo',
+      startFirstPlan: 'Iniciar Primeiro Plano',
+      choosePlanDescription: 'Escolha um plano predefinido para começar sua jornada',
+      day: 'Dia',
+      todayReading: 'Leitura de hoje:',
+      markDayComplete: 'Marcar Dia Como Completo',
+      completed: 'Concluído',
+      completedOn: 'Completado em',
     },
     progress: {
       title: 'Seu Progresso',
@@ -489,14 +521,30 @@ export const translations: Record<Language, Translations> = {
     },
     plans: {
       title: 'Reading Plans',
+      subtitle: 'Organize and track your Bible study',
       myPlans: 'My Plans',
       available: 'Available Plans',
       createPlan: 'Create Plan',
       startPlan: 'Start Plan',
+      starting: 'Starting...',
       days: 'days',
+      of_days_completed: 'of {total} days completed',
       progress: 'Progress',
       completeDay: 'Complete Day',
       dayCompleted: 'Day Completed',
+      selectTemplate: 'Select a Plan',
+      noPlanTemplate: 'No plan available',
+      activePlans: 'Active Plans',
+      completedPlans: 'Completed Plans',
+      currentDay: 'Current Day',
+      noActivePlans: 'No active plans',
+      startFirstPlan: 'Start First Plan',
+      choosePlanDescription: 'Choose a preset plan to begin your journey',
+      day: 'Day',
+      todayReading: 'Today\'s reading:',
+      markDayComplete: 'Mark Day as Complete',
+      completed: 'Completed',
+      completedOn: 'Completed on',
     },
     progress: {
       title: 'Your Progress',
@@ -710,14 +758,30 @@ export const translations: Record<Language, Translations> = {
     },
     plans: {
       title: 'Leesplannen',
+      subtitle: 'Organiseer en volg je Bijbelstudie',
       myPlans: 'Mijn Plannen',
       available: 'Beschikbare Plannen',
       createPlan: 'Plan Maken',
       startPlan: 'Plan Starten',
+      starting: 'Starten...',
       days: 'dagen',
+      of_days_completed: 'van {total} dagen voltooid',
       progress: 'Voortgang',
       completeDay: 'Dag Voltooien',
       dayCompleted: 'Dag Voltooid',
+      selectTemplate: 'Selecteer een Plan',
+      noPlanTemplate: 'Geen plan beschikbaar',
+      activePlans: 'Actieve Plannen',
+      completedPlans: 'Voltooide Plannen',
+      currentDay: 'Huidige Dag',
+      noActivePlans: 'Geen actieve plannen',
+      startFirstPlan: 'Start Eerste Plan',
+      choosePlanDescription: 'Kies een vooraf ingesteld plan om je reis te beginnen',
+      day: 'Dag',
+      todayReading: 'Lezing van vandaag:',
+      markDayComplete: 'Dag Markeren als Voltooid',
+      completed: 'Voltooid',
+      completedOn: 'Voltooid op',
     },
     progress: {
       title: 'Jouw Voortgang',
@@ -931,14 +995,30 @@ export const translations: Record<Language, Translations> = {
     },
     plans: {
       title: 'Planes de Lectura',
+      subtitle: 'Organiza y sigue tu estudio bíblico',
       myPlans: 'Mis Planes',
       available: 'Planes Disponibles',
       createPlan: 'Crear Plan',
       startPlan: 'Iniciar Plan',
+      starting: 'Iniciando...',
       days: 'días',
+      of_days_completed: 'de {total} días completados',
       progress: 'Progreso',
       completeDay: 'Completar Día',
       dayCompleted: 'Día Completado',
+      selectTemplate: 'Selecciona un Plan',
+      noPlanTemplate: 'Ningún plan disponible',
+      activePlans: 'Planes Activos',
+      completedPlans: 'Planes Completados',
+      currentDay: 'Día Actual',
+      noActivePlans: 'Sin planes activos',
+      startFirstPlan: 'Iniciar Primer Plan',
+      choosePlanDescription: 'Elige un plan predefinido para comenzar tu jornada',
+      day: 'Día',
+      todayReading: 'Lectura de hoy:',
+      markDayComplete: 'Marcar Día como Completo',
+      completed: 'Completado',
+      completedOn: 'Completado el',
     },
     progress: {
       title: 'Tu Progreso',
