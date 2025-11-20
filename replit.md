@@ -35,15 +35,47 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application tha
 - Error handling com toast + retry + fallback UI
 - Backend valida estrutura de dados (verses array) antes de retornar
 
-✅ **Arquivos Criados/Modificados:**
-- `client/src/pages/bible-reader.tsx` - Página de leitura da Bíblia
-- `server/routes.ts` - Endpoints Bible API com fallback
-- `server/bible-books-fallback.ts` - Lista offline dos 66 livros
-- `server/bible-chapters-fallback.ts` - Capítulos offline (Gênesis 1, Salmo 23)
-- `shared/schema.ts` - Tabelas bookmarks e bible_settings
-- `server/storage.ts` - CRUD operations para bookmarks/settings
+**FASE 2 COMPLETA** - Sistema de Planos de Leitura e Gamificação implementado:
 
-**Limitações Conhecidas:**
+✅ **Funcionalidades Implementadas:**
+- **Planos de Leitura Predefinidos**: 6 templates (7, 14, 21, 30, 90, 365 dias) com cronogramas automáticos
+- **Sistema de Gamificação**:
+  - Sistema de XP (10 XP por capítulo lido)
+  - Níveis progressivos (100 XP por nível)
+  - Streak diário com lógica UTC midnight (previne inflação)
+  - 18 conquistas automáticas (categorias: milestone, reading, streak)
+- **Dashboard de Progresso** (`/progress`):
+  - Visualização de nível atual e XP
+  - Contador de streak com ícone de fogo
+  - Grid de conquistas organizadas por categoria
+  - Progresso visual com barras de progresso
+- **Página de Planos** (`/plans`):
+  - Templates predefinidos com descrição e duração
+  - Criação de planos a partir de templates
+  - Visualização de progresso diário
+  - Marcar dias como completos com recompensa de XP
+- **Integração com Leitor de Bíblia**:
+  - Botão "Marcar como Lido" no leitor
+  - Notificação de XP ganho e conquistas desbloqueadas
+  - Guard contra leituras duplicadas no mesmo dia
+
+✅ **Correções Críticas de Lógica:**
+- **Streak Calculation**: UTC midnight normalization em ambas rotas (mark-read, complete-day)
+- **Duplicate Guard**: Rejeita leituras duplicadas no mesmo dia sem inflação de XP/streak
+- **Achievement Logic**: Verifica conquistas já desbloqueadas antes de desbloquear novamente
+- **Consecutive Day Detection**: Streak incrementa APENAS se daysSinceLastRead === 1
+
+✅ **Arquivos Criados/Modificados:**
+- `shared/schema.ts` - Tabelas reading_plan_templates, achievements, user_achievements
+- `server/storage.ts` - CRUD para planos, templates, conquistas, stats
+- `server/seed-reading-plans.ts` - Seed data com 6 planos predefinidos
+- `server/seed-achievements.ts` - Seed data com 18 conquistas
+- `server/routes.ts` - Rotas para templates, planos, conquistas, stats, mark-read
+- `client/src/pages/reading-plans.tsx` - UI de planos com templates e progresso
+- `client/src/pages/progress.tsx` - Dashboard de gamificação
+- `client/src/pages/bible-reader.tsx` - Botão "Marcar como Lido" integrado
+
+**Limitações Conhecidas (FASE 1):**
 - Leitura de capítulos requer internet (exceto Gênesis 1 e Salmo 23 em cache)
 - Expansão de cache offline pode ser implementada em fases futuras
 - API ABíbliaDigital ocasionalmente indisponível (código trata graciosamente)
