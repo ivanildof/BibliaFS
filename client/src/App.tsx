@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -96,15 +97,16 @@ function AppContent() {
           <AppSidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shrink-0">
-              <SidebarTrigger data-testid="button-sidebar-toggle" />
-              <div className="flex items-center gap-2">
+              <SidebarTrigger data-testid="button-sidebar-toggle" className="md:flex hidden" />
+              <div className="flex items-center gap-2 md:ml-0 ml-auto">
                 <LanguageSelector />
                 <ThemeToggle />
               </div>
             </header>
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
               <Router />
             </main>
+            <BottomNav />
           </div>
         </div>
       </SidebarProvider>
