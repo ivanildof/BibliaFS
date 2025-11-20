@@ -61,6 +61,9 @@ import {
   dailyVerses,
   type InsertDailyVerse,
   type DailyVerse,
+  donations,
+  type InsertDonation,
+  type Donation,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -159,6 +162,12 @@ export interface IStorage {
   getDailyVerse(dayOfYear: number): Promise<DailyVerse | undefined>;
   createDailyVerse(verse: InsertDailyVerse): Promise<DailyVerse>;
   getAllDailyVerses(): Promise<DailyVerse[]>;
+  
+  // Donations
+  createDonation(donation: InsertDonation): Promise<Donation>;
+  getDonations(userId: string): Promise<Donation[]>;
+  getDonation(id: string): Promise<Donation | undefined>;
+  updateDonationStatus(id: string, status: string, stripePaymentIntentId?: string): Promise<Donation>;
   
   // Stats
   getDashboardStats(userId: string): Promise<{ communityPosts: number }>;
@@ -774,6 +783,34 @@ export class DatabaseStorage implements IStorage {
 
   async getAllDailyVerses(): Promise<DailyVerse[]> {
     return await db.select().from(dailyVerses);
+  }
+
+  // Donations
+  async createDonation(donation: InsertDonation): Promise<Donation> {
+    const [created] = await db.insert(donations).values(donation).returning();
+    return created;
+  }
+
+  async getDonations(userId: string): Promise<Donation[]> {
+    return await db.select().from(donations).where(eq(donations.userId, userId)).orderBy(desc(donations.createdAt));
+  }
+
+  async getDonation(id: string): Promise<Donation | undefined> {
+    const [donation] = await db.select().from(donations).where(eq(donations.id, id));
+    return donation;
+  }
+
+  async updateDonationStatus(id: string, status: string, stripePaymentIntentId?: string): Promise<Donation> {
+    const [updated] = await db
+      .update(donations)
+      .set({ 
+        status, 
+        ...(stripePaymentIntentId && { stripePaymentIntentId }),
+        updatedAt: new Date() 
+      })
+      .where(eq(donations.id, id))
+      .returning();
+    return updated;
   }
 
   // Stats

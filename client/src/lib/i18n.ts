@@ -88,6 +88,27 @@ export interface Translations {
     download_failed: string;
     download_failed_description: string;
   };
+  donate: {
+    title: string;
+    subtitle: string;
+    one_time: string;
+    recurring: string;
+    monthly: string;
+    amount: string;
+    custom_amount: string;
+    destination: string;
+    app_operations: string;
+    bible_translation: string;
+    anonymous: string;
+    message: string;
+    message_placeholder: string;
+    donate_button: string;
+    processing: string;
+    success_title: string;
+    success_message: string;
+    error_title: string;
+    configure_stripe: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -196,6 +217,27 @@ export const translations: Record<Language, Translations> = {
       download_failed: 'Erro ao baixar',
       download_failed_description: 'Não foi possível salvar a imagem',
     },
+    donate: {
+      title: 'Apoie o Bíblia+',
+      subtitle: 'Ajude-nos a continuar oferecendo estudo bíblico gratuito e de qualidade',
+      one_time: 'Doação Única',
+      recurring: 'Doação Recorrente',
+      monthly: 'Mensal',
+      amount: 'Valor',
+      custom_amount: 'Valor personalizado',
+      destination: 'Destino da doação',
+      app_operations: 'Operações do aplicativo',
+      bible_translation: 'Tradução bíblica',
+      anonymous: 'Doar anonimamente',
+      message: 'Mensagem (opcional)',
+      message_placeholder: 'Deixe uma mensagem de apoio...',
+      donate_button: 'Doar',
+      processing: 'Processando...',
+      success_title: 'Doação realizada!',
+      success_message: 'Muito obrigado pelo seu apoio!',
+      error_title: 'Erro ao processar doação',
+      configure_stripe: 'Sistema de doações não configurado. Configure as chaves do Stripe para habilitar doações.',
+    },
   },
   en: {
     common: {
@@ -301,6 +343,27 @@ export const translations: Record<Language, Translations> = {
       image_downloaded_description: 'Verse saved as image',
       download_failed: 'Download failed',
       download_failed_description: 'Could not save image',
+    },
+    donate: {
+      title: 'Support Bible+',
+      subtitle: 'Help us continue offering free, quality Bible study',
+      one_time: 'One-Time',
+      recurring: 'Recurring',
+      monthly: 'Monthly',
+      amount: 'Amount',
+      custom_amount: 'Custom amount',
+      destination: 'Donation destination',
+      app_operations: 'App operations',
+      bible_translation: 'Bible translation',
+      anonymous: 'Donate anonymously',
+      message: 'Message (optional)',
+      message_placeholder: 'Leave a support message...',
+      donate_button: 'Donate',
+      processing: 'Processing...',
+      success_title: 'Donation successful!',
+      success_message: 'Thank you so much for your support!',
+      error_title: 'Error processing donation',
+      configure_stripe: 'Donation system not configured. Configure Stripe keys to enable donations.',
     },
   },
   nl: {
@@ -408,6 +471,27 @@ export const translations: Record<Language, Translations> = {
       download_failed: 'Download mislukt',
       download_failed_description: 'Kon afbeelding niet opslaan',
     },
+    donate: {
+      title: 'Ondersteun Bijbel+',
+      subtitle: 'Help ons gratis bijbelstudie van hoge kwaliteit te blijven aanbieden',
+      one_time: 'Eenmalig',
+      recurring: 'Terugkerend',
+      monthly: 'Maandelijks',
+      amount: 'Bedrag',
+      custom_amount: 'Aangepast bedrag',
+      destination: 'Donatiebestemming',
+      app_operations: 'App-activiteiten',
+      bible_translation: 'Bijbelvertaling',
+      anonymous: 'Anoniem doneren',
+      message: 'Bericht (optioneel)',
+      message_placeholder: 'Laat een bericht achter...',
+      donate_button: 'Doneren',
+      processing: 'Verwerken...',
+      success_title: 'Donatie geslaagd!',
+      success_message: 'Hartelijk dank voor je steun!',
+      error_title: 'Fout bij verwerken donatie',
+      configure_stripe: 'Donatiesysteem niet geconfigureerd. Configureer Stripe-sleutels om donaties in te schakelen.',
+    },
   },
   es: {
     common: {
@@ -513,6 +597,27 @@ export const translations: Record<Language, Translations> = {
       image_downloaded_description: 'Versículo guardado como imagen',
       download_failed: 'Error al descargar',
       download_failed_description: 'No se pudo guardar la imagen',
+    },
+    donate: {
+      title: 'Apoya Biblia+',
+      subtitle: 'Ayúdanos a continuar ofreciendo estudio bíblico gratuito y de calidad',
+      one_time: 'Donación Única',
+      recurring: 'Donación Recurrente',
+      monthly: 'Mensual',
+      amount: 'Cantidad',
+      custom_amount: 'Cantidad personalizada',
+      destination: 'Destino de la donación',
+      app_operations: 'Operaciones de la aplicación',
+      bible_translation: 'Traducción bíblica',
+      anonymous: 'Donar anónimamente',
+      message: 'Mensaje (opcional)',
+      message_placeholder: 'Deja un mensaje de apoyo...',
+      donate_button: 'Donar',
+      processing: 'Procesando...',
+      success_title: '¡Donación exitosa!',
+      success_message: '¡Muchas gracias por tu apoyo!',
+      error_title: 'Error al procesar donación',
+      configure_stripe: 'Sistema de donaciones no configurado. Configura las claves de Stripe para habilitar donaciones.',
     },
   },
 };

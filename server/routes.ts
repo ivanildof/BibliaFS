@@ -1,8 +1,9 @@
-// Blueprint: javascript_log_in_with_replit and javascript_openai
+// Blueprint: javascript_log_in_with_replit, javascript_openai, and javascript_stripe
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import Stripe from "stripe";
 import {
   insertReadingPlanSchema,
   insertReadingPlanTemplateSchema,
@@ -19,10 +20,22 @@ import {
   insertAudioProgressSchema,
   insertOfflineContentSchema,
   insertDailyVerseSchema,
+  insertDonationSchema,
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
 import { runMigrations } from "./migrations";
+
+// Initialize Stripe (from javascript_stripe blueprint)
+// User will need to configure STRIPE_SECRET_KEY in environment variables
+let stripe: Stripe | null = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2024-11-20.acacia",
+  });
+} else {
+  console.warn("⚠️  STRIPE_SECRET_KEY not found - donation features will be disabled");
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Run database migrations
@@ -1084,6 +1097,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.deleteUserOfflineContent(userId);
       res.status(204).send();
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Donations Routes (Stripe Integration - from javascript_stripe blueprint)
+  app.post("/api/create-payment-intent", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!stripe) {
+        return res.status(503).json({ 
+          error: "Sistema de doações não configurado. Configure STRIPE_SECRET_KEY nas variáveis de ambiente." 
+        });
+      }
+
+      const { amount, currency } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Valor inválido para doação" });
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount), // amount in cents
+        currency: currency || "brl",
+        metadata: {
+          userId: req.user.claims.sub,
+        },
+      });
+
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error: any) {
+      console.error("Erro ao criar payment intent:", error);
+      res.status(500).json({ error: "Falha ao criar payment intent: " + error.message });
+    }
+  });
+
+  app.post("/api/donations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertDonationSchema.parse({ ...req.body, userId });
+      const donation = await storage.createDonation(data);
+      res.json(donation);
+    } catch (error: any) {
+      console.error("Erro ao criar doação:", error);
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/donations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const donations = await storage.getDonations(userId);
+      res.json(donations);
+    } catch (error: any) {
+      console.error("Erro ao buscar doações:", error);
       res.status(500).json({ error: error.message });
     }
   });

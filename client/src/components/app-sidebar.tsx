@@ -11,6 +11,7 @@ import {
   Trophy,
   Bookmark,
   CloudOff,
+  Heart,
 } from "lucide-react";
 import {
   Sidebar,
@@ -128,6 +129,14 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={location === "/donate"} data-testid="link-sidebar-donate">
+                  <Link href="/donate">
+                    <Heart className="h-4 w-4 fill-current" />
+                    <span>Apoiar</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/settings"} data-testid="link-sidebar-settings">
                   <Link href="/settings">

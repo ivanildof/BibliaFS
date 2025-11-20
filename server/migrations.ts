@@ -105,6 +105,27 @@ export async function runMigrations() {
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
+
+    // Create donations table for Stripe integration
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS donations (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        amount INTEGER NOT NULL,
+        currency VARCHAR DEFAULT 'brl' NOT NULL,
+        "type" VARCHAR NOT NULL,
+        frequency VARCHAR,
+        destination VARCHAR DEFAULT 'app_operations' NOT NULL,
+        stripe_payment_intent_id VARCHAR,
+        stripe_customer_id VARCHAR,
+        stripe_subscription_id VARCHAR,
+        status VARCHAR DEFAULT 'pending' NOT NULL,
+        is_anonymous BOOLEAN DEFAULT false,
+        message TEXT,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {

@@ -13,6 +13,7 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application des
 *   **Prayer Journal Enhancement**: Added real audio recording using MediaRecorder API with base64 storage, time counter, mark-as-answered functionality, and delete capability. Full prayer lifecycle management implemented.
 *   **Community Likes System**: Connected like/unlike mutations to community post cards, enabling social engagement within the platform.
 *   **Architecture Cleanup**: Removed duplicate highlight routes, consolidated to `/api/bible/highlights` with proper color validation (6 colors: yellow, green, blue, purple, pink, orange).
+*   **Donation System Foundation (INCOMPLETE)**: Created foundational structure for donations via Stripe including database schema, backend routes, UI page at `/donate`, and sidebar button. **REQUIRES COMPLETION**: Full Stripe integration needs (1) Configure STRIPE_SECRET_KEY and VITE_STRIPE_PUBLIC_KEY, (2) Implement Stripe Elements/Checkout on frontend with client-side confirmation, (3) Add webhook handler at `/api/stripe/webhook` to update donation status, (4) Implement recurring subscriptions flow, (5) Add comprehensive validation and error handling.
 
 ## User Preferences
 
