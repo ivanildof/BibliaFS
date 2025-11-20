@@ -27,7 +27,13 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Bookmark } from "@shared/schema";
+import type { Bookmark, Highlight, Note } from "@shared/schema";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 
 interface BibleBook {
   abbrev: { pt: string };
@@ -70,6 +76,9 @@ export default function BibleReader() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBooksOpen, setIsBooksOpen] = useState(false);
   const [isChaptersOpen, setIsChaptersOpen] = useState(false);
+  const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
+  const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
+  const [noteText, setNoteText] = useState("");
 
   // Fetch all Bible books
   const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
@@ -101,6 +110,16 @@ export default function BibleReader() {
     queryKey: ["/api/bible/bookmarks"],
   });
 
+  // Fetch user highlights
+  const { data: highlights = [] } = useQuery<Highlight[]>({
+    queryKey: ["/api/bible/highlights"],
+  });
+
+  // Fetch user notes
+  const { data: notes = [] } = useQuery<Note[]>({
+    queryKey: ["/api/notes"],
+  });
+
   // Search mutation
   const searchMutation = useMutation({
     mutationFn: async (query: string) => {
@@ -118,6 +137,68 @@ export default function BibleReader() {
       toast({
         title: "Favorito adicionado!",
         description: "Versículo salvo nos seus favoritos.",
+      });
+    },
+  });
+
+  // Highlight mutation
+  const highlightMutation = useMutation({
+    mutationFn: async (data: { book: string; chapter: number; verse: number; verseText: string; color: string }) => {
+      return await apiRequest("POST", "/api/bible/highlights", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/bible/highlights"] });
+      setHighlightPopoverOpen(false);
+      setSelectedVerse(null);
+      toast({
+        title: "Highlight adicionado!",
+        description: "Versículo destacado com sucesso.",
+      });
+    },
+  });
+
+  // Delete highlight mutation
+  const deleteHighlightMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest("DELETE", `/api/bible/highlights/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/bible/highlights"] });
+      setHighlightPopoverOpen(false);
+      setSelectedVerse(null);
+      toast({
+        title: "Highlight removido!",
+        description: "Highlight removido com sucesso.",
+      });
+    },
+  });
+
+  // Note mutation
+  const noteMutation = useMutation({
+    mutationFn: async (data: { book: string; chapter: number; verse: number; content: string }) => {
+      return await apiRequest("POST", "/api/notes", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      setNoteText("");
+      toast({
+        title: "Nota adicionada!",
+        description: "Nota salva com sucesso.",
+      });
+    },
+  });
+
+  // Delete note mutation
+  const deleteNoteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest("DELETE", `/api/notes/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      setNoteText("");
+      toast({
+        title: "Nota removida!",
+        description: "Nota removida com sucesso.",
       });
     },
   });
@@ -149,6 +230,14 @@ export default function BibleReader() {
       setSelectedBook(booksArray[0].abbrev.pt);
     }
   }, [books, selectedBook]);
+
+  // Populate note text when opening popover
+  useEffect(() => {
+    if (selectedVerse !== null && highlightPopoverOpen) {
+      const existingNote = getVerseNote(selectedVerse);
+      setNoteText(existingNote?.content || "");
+    }
+  }, [selectedVerse, highlightPopoverOpen]);
 
   useEffect(() => {
     if (booksError) {
@@ -187,6 +276,85 @@ export default function BibleReader() {
       verseText: verse.text,
       version,
     });
+  };
+
+  const getVerseHighlight = (verseNumber: number) => {
+    if (!chapterData || !highlights) return null;
+    return highlights.find(
+      h => h.book === chapterData.book.name && 
+           h.chapter === chapterData.chapter.number && 
+           h.verse === verseNumber
+    );
+  };
+
+  const getVerseNote = (verseNumber: number) => {
+    if (!chapterData || !notes) return null;
+    return notes.find(
+      n => n.book === chapterData.book.name && 
+           n.chapter === chapterData.chapter.number && 
+           n.verse === verseNumber
+    );
+  };
+
+  const handleAddHighlight = (verse: Verse, color: string) => {
+    if (!chapterData) return;
+    
+    const existingHighlight = getVerseHighlight(verse.number);
+    if (existingHighlight) {
+      deleteHighlightMutation.mutate(existingHighlight.id);
+    }
+    
+    highlightMutation.mutate({
+      book: chapterData.book.name,
+      chapter: chapterData.chapter.number,
+      verse: verse.number,
+      verseText: verse.text,
+      color,
+    });
+  };
+
+  const handleRemoveHighlight = (verseNumber: number) => {
+    const existingHighlight = getVerseHighlight(verseNumber);
+    if (existingHighlight) {
+      deleteHighlightMutation.mutate(existingHighlight.id);
+    }
+  };
+
+  const handleAddNote = (verse: Verse) => {
+    if (!chapterData || !noteText.trim()) return;
+    
+    const existingNote = getVerseNote(verse.number);
+    if (existingNote) {
+      deleteNoteMutation.mutate(existingNote.id);
+    }
+    
+    noteMutation.mutate({
+      book: chapterData.book.name,
+      chapter: chapterData.chapter.number,
+      verse: verse.number,
+      content: noteText.trim(),
+    });
+  };
+
+  const handleDeleteNote = (verseNumber: number) => {
+    const existingNote = getVerseNote(verseNumber);
+    if (existingNote) {
+      deleteNoteMutation.mutate(existingNote.id);
+    }
+  };
+
+  const highlightColors = [
+    { name: "yellow", bg: "bg-yellow-200/50 dark:bg-yellow-900/30", label: "Amarelo" },
+    { name: "green", bg: "bg-green-200/50 dark:bg-green-900/30", label: "Verde" },
+    { name: "blue", bg: "bg-blue-200/50 dark:bg-blue-900/30", label: "Azul" },
+    { name: "purple", bg: "bg-purple-200/50 dark:bg-purple-900/30", label: "Roxo" },
+    { name: "pink", bg: "bg-pink-200/50 dark:bg-pink-900/30", label: "Rosa" },
+    { name: "orange", bg: "bg-orange-200/50 dark:bg-orange-900/30", label: "Laranja" },
+  ];
+
+  const getHighlightBg = (color: string) => {
+    const colorObj = highlightColors.find(c => c.name === color);
+    return colorObj ? colorObj.bg : "";
   };
 
   const goToNextChapter = () => {
@@ -428,18 +596,120 @@ export default function BibleReader() {
               {chapterData.chapter.number}
             </div>
 
-            {/* Verses - Clean Reading Mode */}
+            {/* Verses - Clean Reading Mode with Highlights */}
             <div className="space-y-3 max-w-none">
-              {chapterData.verses.map((verse) => (
-                <div key={verse.number} className="flex items-start gap-2">
-                  <sup className="text-xs font-bold text-muted-foreground min-w-[1.5rem] text-right flex-shrink-0" data-testid={`verse-number-${verse.number}`}>
-                    {toSuperscript(verse.number)}
-                  </sup>
-                  <p className="flex-1 font-serif text-base md:text-lg leading-relaxed text-foreground" data-testid={`verse-text-${verse.number}`}>
-                    {verse.text}
-                  </p>
-                </div>
-              ))}
+              {chapterData.verses.map((verse) => {
+                const verseHighlight = getVerseHighlight(verse.number);
+                const highlightBg = verseHighlight ? getHighlightBg(verseHighlight.color) : "";
+                
+                return (
+                  <Popover 
+                    key={verse.number}
+                    open={selectedVerse === verse.number && highlightPopoverOpen}
+                    onOpenChange={(open) => {
+                      if (open) {
+                        setSelectedVerse(verse.number);
+                        setHighlightPopoverOpen(true);
+                      } else {
+                        setHighlightPopoverOpen(false);
+                        setSelectedVerse(null);
+                      }
+                    }}
+                  >
+                    <PopoverTrigger asChild>
+                      <div 
+                        className={`flex items-start gap-2 cursor-pointer rounded-md px-2 py-1 transition-all hover:bg-accent/50 ${highlightBg}`}
+                        data-testid={`verse-container-${verse.number}`}
+                      >
+                        <sup className="text-xs font-bold text-muted-foreground min-w-[1.5rem] text-right flex-shrink-0" data-testid={`verse-number-${verse.number}`}>
+                          {toSuperscript(verse.number)}
+                        </sup>
+                        <p className="flex-1 font-serif text-base md:text-lg leading-relaxed text-foreground" data-testid={`verse-text-${verse.number}`}>
+                          {verse.text}
+                        </p>
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <Tabs defaultValue="highlight" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="highlight">Destacar</TabsTrigger>
+                          <TabsTrigger value="note">Nota</TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="highlight" className="space-y-3">
+                          <h4 className="font-medium text-sm">Escolha a cor do destaque</h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            {highlightColors.map(color => (
+                              <Button
+                                key={color.name}
+                                variant={verseHighlight?.color === color.name ? "default" : "outline"}
+                                size="sm"
+                                className={`${color.bg} hover:${color.bg}`}
+                                onClick={() => handleAddHighlight(verse, color.name)}
+                                data-testid={`button-highlight-${color.name}`}
+                              >
+                                {color.label}
+                              </Button>
+                            ))}
+                          </div>
+                          {verseHighlight && (
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="w-full"
+                              onClick={() => handleRemoveHighlight(verse.number)}
+                              data-testid="button-remove-highlight"
+                            >
+                              Remover Destaque
+                            </Button>
+                          )}
+                        </TabsContent>
+                        
+                        <TabsContent value="note" className="space-y-3">
+                          <h4 className="font-medium text-sm">Adicionar Nota</h4>
+                          <Textarea
+                            placeholder="Escreva sua nota aqui..."
+                            value={noteText}
+                            onChange={(e) => setNoteText(e.target.value)}
+                            className="min-h-[100px]"
+                            data-testid="textarea-note"
+                          />
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => handleAddNote(verse)}
+                              disabled={!noteText.trim() || noteMutation.isPending}
+                              data-testid="button-save-note"
+                            >
+                              {noteMutation.isPending ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                getVerseNote(verse.number) ? "Atualizar" : "Salvar"
+                              )}
+                            </Button>
+                            {getVerseNote(verse.number) && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteNote(verse.number)}
+                                disabled={deleteNoteMutation.isPending}
+                                data-testid="button-delete-note"
+                              >
+                                {deleteNoteMutation.isPending ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  "Excluir"
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </PopoverContent>
+                  </Popover>
+                );
+              })}
             </div>
 
             {/* Mark as Read Button */}

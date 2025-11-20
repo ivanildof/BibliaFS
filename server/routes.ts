@@ -208,40 +208,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Highlights Routes
-  app.get("/api/highlights", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const highlights = await storage.getHighlights(userId);
-      res.json(highlights);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  app.post("/api/highlights", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const data = insertHighlightSchema.parse({
-        ...req.body,
-        userId,
-      });
-      const highlight = await storage.createHighlight(data);
-      res.json(highlight);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  });
-
-  app.delete("/api/highlights/:id", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      await storage.deleteHighlight(req.params.id, userId);
-      res.json({ success: true });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
 
   // Podcasts Routes
   app.get("/api/podcasts", async (req, res) => {
@@ -599,6 +565,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       await storage.deleteBookmark(req.params.id, userId);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user's Bible highlights
+  app.get("/api/bible/highlights", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const highlights = await storage.getHighlights(userId);
+      res.json(highlights);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Create highlight
+  app.post("/api/bible/highlights", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      // Validate color
+      const allowedColors = ["yellow", "green", "blue", "purple", "pink", "orange"];
+      if (req.body.color && !allowedColors.includes(req.body.color)) {
+        return res.status(400).json({ error: "Invalid color. Allowed colors: yellow, green, blue, purple, pink, orange" });
+      }
+      
+      const payload = { ...req.body, userId };
+      const data = insertHighlightSchema.parse(payload);
+      const highlight = await storage.createHighlight(data);
+      res.json(highlight);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Delete highlight
+  app.delete("/api/bible/highlights/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteHighlight(req.params.id, userId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

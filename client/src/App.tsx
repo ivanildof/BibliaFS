@@ -18,6 +18,7 @@ import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import BibleReader from "@/pages/bible-reader";
+import Favorites from "@/pages/favorites";
 import AIStudy from "@/pages/ai-study";
 import ReadingPlans from "@/pages/reading-plans";
 import Progress from "@/pages/progress";
@@ -53,6 +54,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/bible" component={Bible} />
           <Route path="/bible-reader" component={BibleReader} />
+          <Route path="/favorites" component={Favorites} />
           <Route path="/ai-study" component={AIStudy} />
           <Route path="/plans" component={ReadingPlans} />
           <Route path="/progress" component={Progress} />
