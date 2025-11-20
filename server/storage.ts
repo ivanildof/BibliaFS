@@ -58,6 +58,9 @@ import {
   offlineContent,
   type InsertOfflineContent,
   type OfflineContent,
+  dailyVerses,
+  type InsertDailyVerse,
+  type DailyVerse,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -151,6 +154,11 @@ export interface IStorage {
   saveOfflineContent(content: InsertOfflineContent): Promise<OfflineContent>;
   deleteOfflineContent(id: string, userId: string): Promise<void>;
   deleteUserOfflineContent(userId: string): Promise<void>;
+  
+  // Daily Verse
+  getDailyVerse(dayOfYear: number): Promise<DailyVerse | undefined>;
+  createDailyVerse(verse: InsertDailyVerse): Promise<DailyVerse>;
+  getAllDailyVerses(): Promise<DailyVerse[]>;
   
   // Stats
   getDashboardStats(userId: string): Promise<{ communityPosts: number }>;
@@ -751,6 +759,21 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserOfflineContent(userId: string): Promise<void> {
     await db.delete(offlineContent).where(eq(offlineContent.userId, userId));
+  }
+
+  // Daily Verse
+  async getDailyVerse(dayOfYear: number): Promise<DailyVerse | undefined> {
+    const [verse] = await db.select().from(dailyVerses).where(eq(dailyVerses.dayOfYear, dayOfYear));
+    return verse;
+  }
+
+  async createDailyVerse(verse: InsertDailyVerse): Promise<DailyVerse> {
+    const [created] = await db.insert(dailyVerses).values(verse).returning();
+    return created;
+  }
+
+  async getAllDailyVerses(): Promise<DailyVerse[]> {
+    return await db.select().from(dailyVerses);
   }
 
   // Stats

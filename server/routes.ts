@@ -18,6 +18,7 @@ import {
   insertCommunityPostSchema,
   insertAudioProgressSchema,
   insertOfflineContentSchema,
+  insertDailyVerseSchema,
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
@@ -987,6 +988,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         newStreak,
         unlockedAchievements,
       });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Daily Verse Routes
+  app.get("/api/daily-verse", async (req, res) => {
+    try {
+      // Calculate day of year (1-365)
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now.getTime() - start.getTime();
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+
+      let verse = await storage.getDailyVerse(dayOfYear);
+      
+      // If no verse found for today, return a default inspirational verse
+      if (!verse) {
+        verse = {
+          id: 'default',
+          dayOfYear,
+          book: 'João',
+          chapter: 3,
+          verseNumber: 16,
+          version: 'nvi',
+          text: 'Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.',
+          reference: 'João 3:16',
+          theme: 'amor',
+          createdAt: new Date(),
+        };
+      }
+
+      res.json(verse);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/daily-verse", isAuthenticated, async (req: any, res) => {
+    try {
+      const data = insertDailyVerseSchema.parse(req.body);
+      const verse = await storage.createDailyVerse(data);
+      res.json(verse);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/daily-verses/all", isAuthenticated, async (req: any, res) => {
+    try {
+      const verses = await storage.getAllDailyVerses();
+      res.json(verses);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
