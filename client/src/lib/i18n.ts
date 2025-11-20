@@ -42,6 +42,7 @@ export interface Translations {
     offlineMode: string;
     searchVerses: string;
   };
+  bibleBooks: Record<string, string>;
   plans: {
     title: string;
     myPlans: string;
@@ -118,6 +119,24 @@ export const translations: Record<Language, Translations> = {
       offlineMode: 'Modo Offline',
       searchVerses: 'Buscar versículos',
     },
+    bibleBooks: {
+      'gn': 'Gênesis', 'ex': 'Êxodo', 'lv': 'Levítico', 'nm': 'Números', 'dt': 'Deuteronômio',
+      'js': 'Josué', 'jz': 'Juízes', 'rt': 'Rute', '1sm': '1 Samuel', '2sm': '2 Samuel',
+      '1rs': '1 Reis', '2rs': '2 Reis', '1cr': '1 Crônicas', '2cr': '2 Crônicas',
+      'ed': 'Esdras', 'ne': 'Neemias', 'et': 'Ester', 'job': 'Jó', 'sl': 'Salmos',
+      'pv': 'Provérbios', 'ec': 'Eclesiastes', 'ct': 'Cânticos', 'is': 'Isaías',
+      'jr': 'Jeremias', 'lm': 'Lamentações', 'ez': 'Ezequiel', 'dn': 'Daniel',
+      'os': 'Oseias', 'jl': 'Joel', 'am': 'Amós', 'ob': 'Obadias', 'jn': 'Jonas',
+      'mq': 'Miqueias', 'na': 'Naum', 'hc': 'Habacuque', 'sf': 'Sofonias',
+      'ag': 'Ageu', 'zc': 'Zacarias', 'ml': 'Malaquias',
+      'mt': 'Mateus', 'mc': 'Marcos', 'lc': 'Lucas', 'jo': 'João', 'at': 'Atos',
+      'rm': 'Romanos', '1co': '1 Coríntios', '2co': '2 Coríntios', 'gl': 'Gálatas',
+      'ef': 'Efésios', 'fp': 'Filipenses', 'cl': 'Colossenses',
+      '1ts': '1 Tessalonicenses', '2ts': '2 Tessalonicenses',
+      '1tm': '1 Timóteo', '2tm': '2 Timóteo', 'tt': 'Tito', 'fm': 'Filemom',
+      'hb': 'Hebreus', 'tg': 'Tiago', '1pe': '1 Pedro', '2pe': '2 Pedro',
+      '1jo': '1 João', '2jo': '2 João', '3jo': '3 João', 'jd': 'Judas', 'ap': 'Apocalipse',
+    },
     plans: {
       title: 'Planos de Leitura',
       myPlans: 'Meus Planos',
@@ -191,6 +210,24 @@ export const translations: Record<Language, Translations> = {
       markAsRead: 'Mark as Read',
       offlineMode: 'Offline Mode',
       searchVerses: 'Search verses',
+    },
+    bibleBooks: {
+      'gn': 'Genesis', 'ex': 'Exodus', 'lv': 'Leviticus', 'nm': 'Numbers', 'dt': 'Deuteronomy',
+      'js': 'Joshua', 'jz': 'Judges', 'rt': 'Ruth', '1sm': '1 Samuel', '2sm': '2 Samuel',
+      '1rs': '1 Kings', '2rs': '2 Kings', '1cr': '1 Chronicles', '2cr': '2 Chronicles',
+      'ed': 'Ezra', 'ne': 'Nehemiah', 'et': 'Esther', 'job': 'Job', 'sl': 'Psalms',
+      'pv': 'Proverbs', 'ec': 'Ecclesiastes', 'ct': 'Song of Songs', 'is': 'Isaiah',
+      'jr': 'Jeremiah', 'lm': 'Lamentations', 'ez': 'Ezekiel', 'dn': 'Daniel',
+      'os': 'Hosea', 'jl': 'Joel', 'am': 'Amos', 'ob': 'Obadiah', 'jn': 'Jonah',
+      'mq': 'Micah', 'na': 'Nahum', 'hc': 'Habakkuk', 'sf': 'Zephaniah',
+      'ag': 'Haggai', 'zc': 'Zechariah', 'ml': 'Malachi',
+      'mt': 'Matthew', 'mc': 'Mark', 'lc': 'Luke', 'jo': 'John', 'at': 'Acts',
+      'rm': 'Romans', '1co': '1 Corinthians', '2co': '2 Corinthians', 'gl': 'Galatians',
+      'ef': 'Ephesians', 'fp': 'Philippians', 'cl': 'Colossians',
+      '1ts': '1 Thessalonians', '2ts': '2 Thessalonians',
+      '1tm': '1 Timothy', '2tm': '2 Timothy', 'tt': 'Titus', 'fm': 'Philemon',
+      'hb': 'Hebrews', 'tg': 'James', '1pe': '1 Peter', '2pe': '2 Peter',
+      '1jo': '1 John', '2jo': '2 John', '3jo': '3 John', 'jd': 'Jude', 'ap': 'Revelation',
     },
     plans: {
       title: 'Reading Plans',
@@ -266,6 +303,24 @@ export const translations: Record<Language, Translations> = {
       offlineMode: 'Offline Modus',
       searchVerses: 'Verzen zoeken',
     },
+    bibleBooks: {
+      'gn': 'Genesis', 'ex': 'Exodus', 'lv': 'Leviticus', 'nm': 'Numeri', 'dt': 'Deuteronomium',
+      'js': 'Jozua', 'jz': 'Rechters', 'rt': 'Ruth', '1sm': '1 Samuël', '2sm': '2 Samuël',
+      '1rs': '1 Koningen', '2rs': '2 Koningen', '1cr': '1 Kronieken', '2cr': '2 Kronieken',
+      'ed': 'Ezra', 'ne': 'Nehemia', 'et': 'Esther', 'job': 'Job', 'sl': 'Psalmen',
+      'pv': 'Spreuken', 'ec': 'Prediker', 'ct': 'Hooglied', 'is': 'Jesaja',
+      'jr': 'Jeremia', 'lm': 'Klaagliederen', 'ez': 'Ezechiël', 'dn': 'Daniël',
+      'os': 'Hosea', 'jl': 'Joël', 'am': 'Amos', 'ob': 'Obadja', 'jn': 'Jona',
+      'mq': 'Micha', 'na': 'Nahum', 'hc': 'Habakuk', 'sf': 'Zefanja',
+      'ag': 'Haggaï', 'zc': 'Zacharia', 'ml': 'Maleachi',
+      'mt': 'Matteüs', 'mc': 'Marcus', 'lc': 'Lucas', 'jo': 'Johannes', 'at': 'Handelingen',
+      'rm': 'Romeinen', '1co': '1 Korintiërs', '2co': '2 Korintiërs', 'gl': 'Galaten',
+      'ef': 'Efeziërs', 'fp': 'Filippenzen', 'cl': 'Kolossenzen',
+      '1ts': '1 Tessalonicenzen', '2ts': '2 Tessalonicenzen',
+      '1tm': '1 Timoteüs', '2tm': '2 Timoteüs', 'tt': 'Titus', 'fm': 'Filemon',
+      'hb': 'Hebreeën', 'tg': 'Jakobus', '1pe': '1 Petrus', '2pe': '2 Petrus',
+      '1jo': '1 Johannes', '2jo': '2 Johannes', '3jo': '3 Johannes', 'jd': 'Judas', 'ap': 'Openbaring',
+    },
     plans: {
       title: 'Leesplannen',
       myPlans: 'Mijn Plannen',
@@ -340,6 +395,24 @@ export const translations: Record<Language, Translations> = {
       offlineMode: 'Modo Sin Conexión',
       searchVerses: 'Buscar versículos',
     },
+    bibleBooks: {
+      'gn': 'Génesis', 'ex': 'Éxodo', 'lv': 'Levítico', 'nm': 'Números', 'dt': 'Deuteronomio',
+      'js': 'Josué', 'jz': 'Jueces', 'rt': 'Rut', '1sm': '1 Samuel', '2sm': '2 Samuel',
+      '1rs': '1 Reyes', '2rs': '2 Reyes', '1cr': '1 Crónicas', '2cr': '2 Crónicas',
+      'ed': 'Esdras', 'ne': 'Nehemías', 'et': 'Ester', 'job': 'Job', 'sl': 'Salmos',
+      'pv': 'Proverbios', 'ec': 'Eclesiastés', 'ct': 'Cantares', 'is': 'Isaías',
+      'jr': 'Jeremías', 'lm': 'Lamentaciones', 'ez': 'Ezequiel', 'dn': 'Daniel',
+      'os': 'Oseas', 'jl': 'Joel', 'am': 'Amós', 'ob': 'Abdías', 'jn': 'Jonás',
+      'mq': 'Miqueas', 'na': 'Nahúm', 'hc': 'Habacuc', 'sf': 'Sofonías',
+      'ag': 'Hageo', 'zc': 'Zacarías', 'ml': 'Malaquías',
+      'mt': 'Mateo', 'mc': 'Marcos', 'lc': 'Lucas', 'jo': 'Juan', 'at': 'Hechos',
+      'rm': 'Romanos', '1co': '1 Corintios', '2co': '2 Corintios', 'gl': 'Gálatas',
+      'ef': 'Efesios', 'fp': 'Filipenses', 'cl': 'Colosenses',
+      '1ts': '1 Tesalonicenses', '2ts': '2 Tesalonicenses',
+      '1tm': '1 Timoteo', '2tm': '2 Timoteo', 'tt': 'Tito', 'fm': 'Filemón',
+      'hb': 'Hebreos', 'tg': 'Santiago', '1pe': '1 Pedro', '2pe': '2 Pedro',
+      '1jo': '1 Juan', '2jo': '2 Juan', '3jo': '3 Juan', 'jd': 'Judas', 'ap': 'Apocalipsis',
+    },
     plans: {
       title: 'Planes de Lectura',
       myPlans: 'Mis Planes',
@@ -373,3 +446,8 @@ export const translations: Record<Language, Translations> = {
     },
   },
 };
+
+export function getBookName(bookAbbrev: string, language: Language): string {
+  const lowerAbbrev = bookAbbrev.toLowerCase();
+  return translations[language].bibleBooks[lowerAbbrev] || bookAbbrev;
+}

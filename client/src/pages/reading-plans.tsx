@@ -19,9 +19,12 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { type ReadingPlan, type ReadingPlanTemplate } from "@shared/schema";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getBookName } from "@/lib/i18n";
 
 export default function ReadingPlans() {
   const { toast } = useToast();
+  const { language } = useLanguage();
   const [isTemplatesDialogOpen, setIsTemplatesDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<ReadingPlanTemplate | null>(null);
 
@@ -291,7 +294,7 @@ export default function ReadingPlans() {
                           <div className="space-y-1">
                             {schedule[plan.currentDay - 1].readings.map((reading: any, idx: number) => (
                               <p key={idx} className="text-sm font-medium">
-                                {reading.book} {reading.chapter}
+                                {getBookName(reading.book, language)} {reading.chapter}
                                 {reading.verses ? `:${reading.verses}` : ''}
                               </p>
                             ))}

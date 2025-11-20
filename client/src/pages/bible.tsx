@@ -20,6 +20,8 @@ import {
   StickyNote,
   Type
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getBookName } from "@/lib/i18n";
 
 const highlightColors = [
   { name: "Amarelo", value: "yellow", class: "bg-yellow-200 dark:bg-yellow-900/40" },
@@ -30,26 +32,20 @@ const highlightColors = [
   { name: "Laranja", value: "orange", class: "bg-orange-200 dark:bg-orange-900/40" },
 ];
 
-// Sample Bible books (in Portuguese)
-const bibleBooks = [
-  "Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio",
-  "Josué", "Juízes", "Rute", "1 Samuel", "2 Samuel",
-  "1 Reis", "2 Reis", "1 Crônicas", "2 Crônicas", "Esdras",
-  "Neemias", "Ester", "Jó", "Salmos", "Provérbios",
-  "Eclesiastes", "Cantares", "Isaías", "Jeremias", "Lamentações",
-  "Ezequiel", "Daniel", "Oséias", "Joel", "Amós",
-  "Obadias", "Jonas", "Miquéias", "Naum", "Habacuque",
-  "Sofonias", "Ageu", "Zacarias", "Malaquias",
-  "Mateus", "Marcos", "Lucas", "João", "Atos",
-  "Romanos", "1 Coríntios", "2 Coríntios", "Gálatas", "Efésios",
-  "Filipenses", "Colossenses", "1 Tessalonicenses", "2 Tessalonicenses", "1 Timóteo",
-  "2 Timóteo", "Tito", "Filemom", "Hebreus", "Tiago",
-  "1 Pedro", "2 Pedro", "1 João", "2 João", "3 João",
-  "Judas", "Apocalipse"
+// Bible book abbreviations
+const bibleBookAbbrevs = [
+  'gn', 'ex', 'lv', 'nm', 'dt', 'js', 'jz', 'rt', '1sm', '2sm',
+  '1rs', '2rs', '1cr', '2cr', 'ed', 'ne', 'et', 'job', 'sl', 'pv',
+  'ec', 'ct', 'is', 'jr', 'lm', 'ez', 'dn', 'os', 'jl', 'am',
+  'ob', 'jn', 'mq', 'na', 'hc', 'sf', 'ag', 'zc', 'ml',
+  'mt', 'mc', 'lc', 'jo', 'at', 'rm', '1co', '2co', 'gl', 'ef',
+  'fp', 'cl', '1ts', '2ts', '1tm', '2tm', 'tt', 'fm', 'hb', 'tg',
+  '1pe', '2pe', '1jo', '2jo', '3jo', 'jd', 'ap'
 ];
 
 export default function Bible() {
-  const [selectedBook, setSelectedBook] = useState("João");
+  const { language } = useLanguage();
+  const [selectedBook, setSelectedBook] = useState("jo");
   const [selectedChapter, setSelectedChapter] = useState(3);
   const [fontSize, setFontSize] = useState(18);
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
@@ -77,12 +73,12 @@ export default function Bible() {
               
               <Select value={selectedBook} onValueChange={setSelectedBook}>
                 <SelectTrigger className="w-40" data-testid="select-book">
-                  <SelectValue />
+                  <SelectValue>{getBookName(selectedBook, language)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {bibleBooks.map((book) => (
-                    <SelectItem key={book} value={book}>
-                      {book}
+                  {bibleBookAbbrevs.map((abbrev) => (
+                    <SelectItem key={abbrev} value={abbrev}>
+                      {getBookName(abbrev, language)}
                     </SelectItem>
                   ))}
                 </SelectContent>
