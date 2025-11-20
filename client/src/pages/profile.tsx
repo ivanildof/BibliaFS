@@ -242,7 +242,7 @@ export default function Profile() {
                     <div className="space-y-3">
                       {highlights.slice(0, 5).map((highlight) => (
                         <div key={highlight.id} className="text-sm">
-                          <p className="font-medium">{highlight.verseReference}</p>
+                          <p className="font-medium">{highlight.book} {highlight.chapter}:{highlight.verse}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <div 
                               className="h-3 w-3 rounded-full" 
@@ -256,7 +256,7 @@ export default function Profile() {
                       ))}
                       {highlights.length > 5 && (
                         <Link href="/favorites">
-                          <Button variant="link" size="sm" className="p-0 h-auto">
+                          <Button variant="ghost" size="sm" className="p-0 h-auto text-primary">
                             Ver todos ({highlights.length})
                           </Button>
                         </Link>
@@ -282,7 +282,7 @@ export default function Profile() {
                     <div className="space-y-3">
                       {notes.slice(0, 5).map((note) => (
                         <div key={note.id} className="text-sm">
-                          <p className="font-medium">{note.verseReference}</p>
+                          <p className="font-medium">{note.book} {note.chapter}{note.verse ? `:${note.verse}` : ''}</p>
                           <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
                             {note.content}
                           </p>
@@ -290,7 +290,7 @@ export default function Profile() {
                       ))}
                       {notes.length > 5 && (
                         <Link href="/favorites">
-                          <Button variant="link" size="sm" className="p-0 h-auto">
+                          <Button variant="ghost" size="sm" className="p-0 h-auto text-primary">
                             Ver todas ({notes.length})
                           </Button>
                         </Link>
@@ -316,7 +316,7 @@ export default function Profile() {
                     <div className="space-y-3">
                       {bookmarks.slice(0, 5).map((bookmark) => (
                         <div key={bookmark.id} className="text-sm">
-                          <p className="font-medium">{bookmark.verseReference}</p>
+                          <p className="font-medium">{bookmark.book} {bookmark.chapter}:{bookmark.verse}</p>
                           {bookmark.note && (
                             <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
                               {bookmark.note}
@@ -326,7 +326,7 @@ export default function Profile() {
                       ))}
                       {bookmarks.length > 5 && (
                         <Link href="/favorites">
-                          <Button variant="link" size="sm" className="p-0 h-auto">
+                          <Button variant="ghost" size="sm" className="p-0 h-auto text-primary">
                             Ver todos ({bookmarks.length})
                           </Button>
                         </Link>
@@ -364,14 +364,14 @@ export default function Profile() {
                   ) : (
                     <div className="space-y-4">
                       {activePlans.map((plan) => {
-                        const planProgress = Math.round((plan.currentDay / plan.totalDays) * 100);
+                        const planProgress = Math.round(((plan.currentDay || 1) / plan.totalDays) * 100);
                         return (
                           <div key={plan.id} className="border rounded-lg p-4">
                             <div className="flex items-start justify-between mb-3">
                               <div>
                                 <h3 className="font-semibold">{plan.title}</h3>
                                 <p className="text-sm text-muted-foreground">
-                                  Dia {plan.currentDay} de {plan.totalDays}
+                                  Dia {plan.currentDay || 1} de {plan.totalDays}
                                 </p>
                               </div>
                               <Badge variant="secondary">
@@ -464,11 +464,9 @@ export default function Profile() {
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold mb-1">{achievement.name}</p>
                           <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                          {achievement.unlockedAt && (
-                            <p className="text-xs text-muted-foreground mt-2">
-                              Desbloqueada em {new Date(achievement.unlockedAt).toLocaleDateString()}
-                            </p>
-                          )}
+                          <p className="text-xs text-muted-foreground mt-2">
+                            +{achievement.xpReward} XP
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -520,16 +518,13 @@ export default function Profile() {
                                 {prayer.content}
                               </p>
                             )}
-                            <div className="flex items-center gap-2 mt-2">
-                              <Badge variant="outline" className="text-xs">
-                                {prayer.category}
-                              </Badge>
-                              {prayer.isAnswered && (
+                            {prayer.isAnswered && (
+                              <div className="mt-2">
                                 <Badge className="bg-green-500/10 text-green-700 border-green-200 text-xs">
                                   Respondida
                                 </Badge>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <p className="text-xs text-muted-foreground mt-3">
