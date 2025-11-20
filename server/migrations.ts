@@ -57,7 +57,7 @@ export async function runMigrations() {
         book VARCHAR NOT NULL,
         chapter INTEGER NOT NULL,
         version VARCHAR NOT NULL,
-        current_time INTEGER DEFAULT 0,
+        "current_time" INTEGER DEFAULT 0,
         duration INTEGER DEFAULT 0,
         is_completed BOOLEAN DEFAULT false,
         playback_speed VARCHAR DEFAULT '1.0',
