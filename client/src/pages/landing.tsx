@@ -251,13 +251,16 @@ export default function Landing() {
             </div>
             
             <div className="flex gap-6">
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">
+              <a href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
+                Planos
+              </a>
+              <a href="/contact" className="text-sm text-muted-foreground hover:text-foreground">
                 Contato
               </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">
+              <a href="/help" className="text-sm text-muted-foreground hover:text-foreground">
                 Suporte
               </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">
+              <a href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
                 Privacidade
               </a>
             </div>

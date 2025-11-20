@@ -1,0 +1,77 @@
+Solicitação de Aprimoramento e Responsividade Completa do Sistema
+1. Solicitação de Responsividade:
+Solicito a adaptação completa do sistema para garantir que ele seja totalmente responsivo, funcionando corretamente em todos os tamanhos de tela, incluindo:
+
+Computadores e notebooks (resoluções grandes e médias)
+Tablets (modo retrato e paisagem)
+Smartphones (diferentes tamanhos e resoluções)
+2. Ajustes de Layout e Componentes:
+Verificar todos os componentes de interface (menus, cards, tabelas, formulários, botões, modais, etc.) e garantir que eles:
+
+Se ajustem corretamente ao tamanho da tela
+Não estourem o layout
+Não fiquem sobrepostos ou cortados
+Utilizar boas práticas de responsividade:
+
+Flexbox e Grid do CSS
+Media queries
+Unidades relativas (%, vw, vh, rem) ao invés de fixas (px) quando necessário
+Breakpoints bem definidos para diferentes dispositivos
+3. Menus e Navegação:
+Adaptar menus laterais e superiores para virarem menus tipo "hambúrguer" em telas pequenas
+Garantir que a navegação continue fluida e intuitiva, mesmo em telas reduzidas
+Adicionar funções de botões para abrir e fechar menus em dispositivos móveis
+4. Tabelas e Listagens:
+Para telas pequenas:
+
+Usar tabelas responsivas com rolagem horizontal ou colapsar dados de forma acessível
+Alternativas como cartões empilháveis para visualização de dados
+5. Itens Adicionais Solicitados
+5.1. Criação de Páginas Pendentes:
+Identificar e criar páginas que ainda estão pendentes, como:
+Página de ajuda e suporte com tutoriais em vídeo, documentação completa e formulários de contato direcionados
+Página “Sobre” completamente desenvolvida com base nos botões existentes
+Páginas de planos e preços visualmente organizadas, com elementos centralizados e botões legíveis
+Landing pages com design moderno, cabeçário e logotipo
+5.2. Correção de Narração e Tradução:
+Revisar e corrigir quaisquer textos com problemas de:
+Narração (coerência, estilo, clareza)
+Tradução (gramática, termos técnicos, concordância)
+Garantir que todo o conteúdo esteja em português padrão e alinhado com o idioma do sistema
+5.3. Verificação do Funcionamento dos Livros da Bíblia:
+Verificar se todos os livros da Bíblia estão 100% funcionando, ou seja:
+Links corretos
+Conteúdo carregando corretamente
+Sem erros de navegação ou exibição
+Funcionalidade de busca e filtros operando corretamente
+5.4. Funções de Botões:
+Atribuir funções corretas a todos os botões, garantindo:
+Interações consistentes
+Feedback visual ao usuário (hover, active, loading)
+Navegação e ações funcionando conforme o esperado
+6. Testes em Diferentes Resoluções:
+Testar manualmente (ou com ferramentas como Chrome DevTools) em:
+
+1920x1080
+1366x768
+1024x768
+768x1024
+425x768
+375x667
+320x568
+Corrigir qualquer problema de quebra de layout, sobreposição ou má visualização.
+
+✅ Checklist Final de Aprimoramento e Responsividade:
+Sistema acessível e funcional em telas grandes, médias e pequenas
+Componentes se adaptam sem quebrar layout
+Menus e navegação funcionam em dispositivos móveis
+Textos e botões legíveis e utilizáveis em qualquer resolução
+Tabelas e dados são exibidos corretamente em telas pequenas
+Nenhuma rolagem lateral desnecessária
+Páginas pendentes criadas
+Correções de narração e tradução aplicadas
+Funcionalidade dos livros da Bíblia verificada e 100% operacional
+Funções de botões implementadas e funcionando
+Garantia de conformidade com o design existente e idioma (português)
+❗Importante:
+Garantir que todos os ajustes estejam em conformidade com o design existente e o idioma padrão do sistema (português). O layout deve manter o padrão premium e moderno, alinhado às preferências do usuário, com paleta de cores baseada no roxo #5711D9 e até cinco cores no total.

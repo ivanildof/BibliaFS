@@ -18,7 +18,8 @@ import {
   BarChart,
   BookOpen,
   CheckCircle2,
-  Loader2
+  Loader2,
+  Clock
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -413,39 +414,102 @@ export default function Teacher() {
                 <CardDescription>Acompanhe o desempenho da turma</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Aluno</TableHead>
-                      <TableHead>Aulas Concluídas</TableHead>
-                      <TableHead>Média de Notas</TableHead>
-                      <TableHead>Última Atividade</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">João Silva</TableCell>
-                      <TableCell>8/10</TableCell>
-                      <TableCell>92%</TableCell>
-                      <TableCell className="text-muted-foreground">Há 2 dias</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Maria Santos</TableCell>
-                      <TableCell>10/10</TableCell>
-                      <TableCell>95%</TableCell>
-                      <TableCell className="text-muted-foreground">Ontem</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Pedro Costa</TableCell>
-                      <TableCell>6/10</TableCell>
-                      <TableCell>78%</TableCell>
-                      <TableCell className="text-muted-foreground">Há 1 semana</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                {/* Desktop: Table view */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Aluno</TableHead>
+                        <TableHead>Aulas Concluídas</TableHead>
+                        <TableHead>Média de Notas</TableHead>
+                        <TableHead>Última Atividade</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">João Silva</TableCell>
+                        <TableCell>8/10</TableCell>
+                        <TableCell>92%</TableCell>
+                        <TableCell className="text-muted-foreground">Há 2 dias</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Maria Santos</TableCell>
+                        <TableCell>10/10</TableCell>
+                        <TableCell>95%</TableCell>
+                        <TableCell className="text-muted-foreground">Ontem</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Pedro Costa</TableCell>
+                        <TableCell>6/10</TableCell>
+                        <TableCell>78%</TableCell>
+                        <TableCell className="text-muted-foreground">Há 1 semana</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+                
+                {/* Mobile: Card view */}
+                <div className="md:hidden space-y-4">
+                  <Card className="hover-elevate">
+                    <CardContent className="pt-6 space-y-2">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold">João Silva</h4>
+                        <Badge variant="secondary">92%</Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Aulas</p>
+                          <p className="font-medium">8/10</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Última atividade</p>
+                          <p className="font-medium">Há 2 dias</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover-elevate">
+                    <CardContent className="pt-6 space-y-2">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold">Maria Santos</h4>
+                        <Badge variant="default">95%</Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Aulas</p>
+                          <p className="font-medium">10/10</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Última atividade</p>
+                          <p className="font-medium">Ontem</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover-elevate">
+                    <CardContent className="pt-6 space-y-2">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold">Pedro Costa</h4>
+                        <Badge variant="outline">78%</Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Aulas</p>
+                          <p className="font-medium">6/10</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Última atividade</p>
+                          <p className="font-medium">Há 1 semana</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" data-testid="button-export-students">
+                <Button variant="outline" className="w-full sm:w-auto" data-testid="button-export-students">
                   <Download className="h-4 w-4 mr-2" />
                   Exportar Relatório
                 </Button>

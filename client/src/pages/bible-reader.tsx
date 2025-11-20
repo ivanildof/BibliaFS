@@ -448,7 +448,21 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-4xl mx-auto">
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" disabled data-testid="button-audio">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => {
+                if (selectedBook) {
+                  playChapter(selectedBook, selectedChapter, version);
+                  toast({
+                    title: "Áudio iniciado",
+                    description: "Ouça enquanto navega!",
+                  });
+                }
+              }}
+              disabled={!selectedBook}
+              data-testid="button-audio"
+            >
               <Volume2 className="h-5 w-5" />
             </Button>
           </div>

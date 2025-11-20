@@ -32,6 +32,7 @@ import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
 import Offline from "@/pages/offline";
 import Donate from "@/pages/donate";
+import Pricing from "@/pages/pricing";
 import Help from "@/pages/help";
 import About from "@/pages/about";
 import Terms from "@/pages/terms";
@@ -57,7 +58,10 @@ function Router() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/pricing" component={Pricing} />
+        </>
       ) : (
         <>
           <Route path="/" component={Home} />
@@ -75,6 +79,7 @@ function Router() {
           <Route path="/profile" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
+          <Route path="/pricing" component={Pricing} />
           <Route path="/help" component={Help} />
           <Route path="/about" component={About} />
           <Route path="/terms" component={Terms} />
