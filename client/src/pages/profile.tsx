@@ -366,11 +366,13 @@ export default function Profile() {
                   <Heart className="h-5 w-5 text-pink-600 fill-current mt-1 shrink-0" />
                   <span>Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
+                <CardDescription className="mt-3">
+                  Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos.
+                  <br /><br />
+                  Você não está só doando. Você está sendo parte da história de quem busca a Palavra, onde quer que esteja.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  O Bíblia+ é mantido por doações de usuários como você. Cada contribuição faz diferença!
-                </p>
                 <Link href="/donate">
                   <Button className="w-full" size="lg" data-testid="button-go-donate">
                     <Heart className="h-4 w-4 mr-2 fill-current" />
