@@ -349,6 +349,53 @@ export const postComments = pgTable("post_comments", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Bible Audio Sources (cached from Bible Brain API)
+export const audioSources = pgTable("audio_sources", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  // Bible Brain API identifiers
+  filesetId: varchar("fileset_id").notNull().unique(), // e.g., "PORNTPN2DA"
+  version: varchar("version").notNull(), // e.g., "nvi", "acf"
+  language: varchar("language").notNull(), // e.g., "por"
+  
+  // Audio metadata
+  displayName: text("display_name").notNull(), // e.g., "Nova Versão Internacional"
+  audioType: varchar("audio_type").default("drama"), // drama, non-drama
+  
+  // Cache metadata from Bible Brain API
+  metadata: jsonb("metadata").$type<{
+    bitrate?: string;
+    codec?: string;
+    duration?: number;
+  }>(),
+  
+  isActive: boolean("is_active").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User Audio Progress (track listening progress)
+export const audioProgress = pgTable("audio_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Bible reference
+  book: varchar("book").notNull(), // book abbreviation: "gn", "mt", etc
+  chapter: integer("chapter").notNull(),
+  version: varchar("version").notNull(), // "nvi", "acf", etc
+  
+  // Playback state
+  currentTime: integer("current_time").default(0), // seconds
+  duration: integer("duration").default(0), // seconds
+  isCompleted: boolean("is_completed").default(false),
+  playbackSpeed: varchar("playback_speed").default("1.0"), // "0.5", "1.0", "1.5", "2.0"
+  
+  lastPlayedAt: timestamp("last_played_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   readingPlans: many(readingPlans),
@@ -495,6 +542,13 @@ export const postCommentsRelations = relations(postComments, ({ one }) => ({
   }),
 }));
 
+export const audioProgressRelations = relations(audioProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [audioProgress.userId],
+    references: [users.id],
+  }),
+}));
+
 // Zod Schemas for validation
 export const upsertUserSchema = createInsertSchema(users);
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
@@ -562,3 +616,11 @@ export type CommunityPost = typeof communityPosts.$inferSelect;
 export const insertPostCommentSchema = createInsertSchema(postComments).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertPostComment = z.infer<typeof insertPostCommentSchema>;
 export type PostComment = typeof postComments.$inferSelect;
+
+export const insertAudioSourceSchema = createInsertSchema(audioSources).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAudioSource = z.infer<typeof insertAudioSourceSchema>;
+export type AudioSource = typeof audioSources.$inferSelect;
+
+export const insertAudioProgressSchema = createInsertSchema(audioProgress).omit({ id: true, createdAt: true, updatedAt: true, lastPlayedAt: true });
+export type InsertAudioProgress = z.infer<typeof insertAudioProgressSchema>;
+export type AudioProgress = typeof audioProgress.$inferSelect;

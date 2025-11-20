@@ -16,6 +16,7 @@ import {
   insertPodcastSubscriptionSchema,
   insertLessonSchema,
   insertCommunityPostSchema,
+  insertAudioProgressSchema,
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
@@ -361,6 +362,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Bible Audio Routes (Bible Brain API)
+  const BIBLE_BRAIN_API_BASE = "https://4.dbt.io/api";
+  
+  // Helper: Get Bible Brain API audio URL (with fallback)
+  async function getBibleAudioUrl(version: string, book: string, chapter: number): Promise<string | null> {
+    // For MVP: Return a sample audio URL from Faith Comes By Hearing
+    // In production, this would query Bible Brain API with proper authentication
+    // TODO: Add Bible Brain API key when available
+    
+    // Map version to Bible Brain fileset IDs
+    const filesetMap: Record<string, string> = {
+      'nvi': 'PORNTPN2DA',  // Portuguese NVI Dramatized
+      'acf': 'PORACFN2DA',  // Portuguese ACF
+      'arc': 'PORARCAN2DA', // Portuguese ARC
+    };
+    
+    const filesetId = filesetMap[version.toLowerCase()] || filesetMap['nvi'];
+    
+    // For now, return sample URL format
+    // Real implementation would fetch from: ${BIBLE_BRAIN_API_BASE}/bibles/filesets/${filesetId}/${book}/${chapter}
+    return `https://cdn.bible.com/audio/sample/${filesetId}/${book}/${chapter}.mp3`;
+  }
+
+  // Get available audio sources
+  app.get("/api/bible/audio/sources", async (req, res) => {
+    try {
+      const sources = await storage.getAudioSources();
+      res.json(sources);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get audio URL for a specific chapter
+  app.get("/api/bible/audio/:version/:book/:chapter", async (req, res) => {
+    try {
+      const { version, book, chapter } = req.params;
+      const audioUrl = await getBibleAudioUrl(version, book, parseInt(chapter));
+      
+      if (!audioUrl) {
+        return res.status(404).json({ error: "Audio não disponível para esta versão/livro" });
+      }
+      
+      res.json({ audioUrl, version, book, chapter: parseInt(chapter) });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user's audio progress for a chapter
+  app.get("/api/bible/audio/progress/:book/:chapter/:version", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { book, chapter, version } = req.params;
+      
+      const progress = await storage.getAudioProgress(
+        userId,
+        book,
+        parseInt(chapter),
+        version
+      );
+      
+      res.json(progress || null);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Save/update audio progress
+  app.post("/api/bible/audio/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertAudioProgressSchema.parse({
+        ...req.body,
+        userId,
+      });
+      
+      const progress = await storage.upsertAudioProgress(data);
+      res.json(progress);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   });
 

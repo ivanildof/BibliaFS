@@ -30,6 +30,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAudio } from "@/contexts/AudioContext";
 import type { Bookmark, Highlight, Note } from "@shared/schema";
 import {
   Popover,
@@ -72,6 +73,7 @@ function toSuperscript(num: number): string {
 export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { playChapter } = useAudio();
   const [version, setVersion] = useState("nvi");
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [selectedChapter, setSelectedChapter] = useState(1);
@@ -862,6 +864,25 @@ export default function BibleReader() {
               data-testid="button-previous-chapter"
             >
               <ChevronLeft className="h-5 w-5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={() => {
+                if (selectedBook) {
+                  playChapter(selectedBook, selectedChapter, version);
+                  toast({
+                    title: "Áudio iniciado",
+                    description: "Ouça enquanto navega!",
+                  });
+                }
+              }}
+              disabled={!selectedBook}
+              data-testid="button-play-audio"
+            >
+              <Volume2 className="h-5 w-5" />
             </Button>
             
             <button

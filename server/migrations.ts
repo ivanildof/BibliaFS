@@ -20,6 +20,52 @@ export async function runMigrations() {
       ALTER TABLE bookmarks 
       ADD COLUMN IF NOT EXISTS tags TEXT[]
     `);
+
+    // Add missing column to reading_plans table
+    await db.execute(sql`
+      ALTER TABLE reading_plans 
+      ADD COLUMN IF NOT EXISTS total_days INTEGER
+    `);
+
+    // Update existing plans with total_days from schedule length
+    await db.execute(sql`
+      UPDATE reading_plans 
+      SET total_days = jsonb_array_length(schedule) 
+      WHERE total_days IS NULL
+    `);
+
+    // Create audio tables if they don't exist
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS audio_sources (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        fileset_id VARCHAR NOT NULL UNIQUE,
+        version VARCHAR NOT NULL,
+        language VARCHAR NOT NULL,
+        display_name TEXT NOT NULL,
+        audio_type VARCHAR DEFAULT 'drama',
+        metadata JSONB,
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS audio_progress (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR NOT NULL,
+        book VARCHAR NOT NULL,
+        chapter INTEGER NOT NULL,
+        version VARCHAR NOT NULL,
+        current_time INTEGER DEFAULT 0,
+        duration INTEGER DEFAULT 0,
+        is_completed BOOLEAN DEFAULT false,
+        playback_speed VARCHAR DEFAULT '1.0',
+        last_played_at TIMESTAMP DEFAULT NOW(),
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {
