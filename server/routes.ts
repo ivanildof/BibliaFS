@@ -127,18 +127,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/reading-plans/:id", isAuthenticated, async (req, res) => {
+  app.patch("/api/reading-plans/:id", isAuthenticated, async (req: any, res) => {
     try {
-      const plan = await storage.updateReadingPlan(req.params.id, req.body);
+      const userId = req.user.claims.sub;
+      const planId = req.params.id;
+      
+      // Re-validar com safeParse (partial para PATCH)
+      const partialSchema = insertReadingPlanSchema.partial();
+      const result = partialSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      // updateReadingPlan já valida ownership internamente
+      const plan = await storage.updateReadingPlan(planId, userId, result.data);
+      
+      if (!plan) {
+        return res.status(404).json({ error: "Plano não encontrado ou acesso negado" });
+      }
+      
       res.json(plan);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
-  app.delete("/api/reading-plans/:id", isAuthenticated, async (req, res) => {
+  app.delete("/api/reading-plans/:id", isAuthenticated, async (req: any, res) => {
     try {
-      await storage.deleteReadingPlan(req.params.id);
+      const userId = req.user.claims.sub;
+      const planId = req.params.id;
+      
+      // deleteReadingPlan já valida ownership internamente via WHERE clause
+      await storage.deleteReadingPlan(planId, userId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -159,23 +183,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/prayers", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertPrayerSchema.parse({
+      
+      // Re-validar com safeParse
+      const result = insertPrayerSchema.safeParse({
         ...req.body,
         userId,
       });
-      const prayer = await storage.createPrayer(data);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const prayer = await storage.createPrayer(result.data);
       res.json(prayer);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
-  app.patch("/api/prayers/:id", isAuthenticated, async (req, res) => {
+  app.patch("/api/prayers/:id", isAuthenticated, async (req: any, res) => {
     try {
-      const prayer = await storage.updatePrayer(req.params.id, req.body);
+      const userId = req.user.claims.sub;
+      const prayerId = req.params.id;
+      
+      // Re-validar dados com safeParse (partial para PATCH)
+      const partialSchema = insertPrayerSchema.partial();
+      const result = partialSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      // updatePrayer já valida ownership internamente
+      const prayer = await storage.updatePrayer(prayerId, userId, result.data);
+      
+      if (!prayer) {
+        return res.status(404).json({ error: "Oração não encontrada ou acesso negado" });
+      }
+      
       res.json(prayer);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -203,14 +257,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/notes", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertNoteSchema.parse({
+      
+      // Re-validar com safeParse
+      const result = insertNoteSchema.safeParse({
         ...req.body,
         userId,
       });
-      const note = await storage.createNote(data);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const note = await storage.createNote(result.data);
       res.json(note);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -651,13 +715,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/bible/bookmarks", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      // Merge userId into payload BEFORE validation
-      const payload = { ...req.body, userId };
-      const data = insertBookmarkSchema.parse(payload);
-      const bookmark = await storage.createBookmark(data);
+      
+      // Re-validar com safeParse
+      const result = insertBookmarkSchema.safeParse({ ...req.body, userId });
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const bookmark = await storage.createBookmark(result.data);
       res.json(bookmark);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -688,18 +760,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       
-      // Validate color
-      const allowedColors = ["yellow", "green", "blue", "purple", "pink", "orange"];
-      if (req.body.color && !allowedColors.includes(req.body.color)) {
-        return res.status(400).json({ error: "Invalid color. Allowed colors: yellow, green, blue, purple, pink, orange" });
+      // Re-validar com safeParse (o schema já valida a cor)
+      const result = insertHighlightSchema.safeParse({ ...req.body, userId });
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
       }
       
-      const payload = { ...req.body, userId };
-      const data = insertHighlightSchema.parse(payload);
-      const highlight = await storage.createHighlight(data);
+      const highlight = await storage.createHighlight(result.data);
       res.json(highlight);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 

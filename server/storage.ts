@@ -84,9 +84,9 @@ export interface IStorage {
   getReadingPlan(id: string): Promise<ReadingPlan | undefined>;
   getCurrentReadingPlan(userId: string): Promise<ReadingPlan | undefined>;
   createReadingPlan(plan: InsertReadingPlan): Promise<ReadingPlan>;
-  updateReadingPlan(id: string, data: Partial<ReadingPlan>): Promise<ReadingPlan>;
+  updateReadingPlan(id: string, userId: string, data: Partial<ReadingPlan>): Promise<ReadingPlan | null>;
   markDayCompleted(planId: string, day: number, userId: string): Promise<ReadingPlan>;
-  deleteReadingPlan(id: string): Promise<void>;
+  deleteReadingPlan(id: string, userId: string): Promise<void>;
   
   // Achievements
   getAchievements(): Promise<Achievement[]>;
@@ -97,8 +97,9 @@ export interface IStorage {
   
   // Prayers
   getPrayers(userId: string): Promise<Prayer[]>;
+  getPrayer(id: string, userId: string): Promise<Prayer | undefined>;
   createPrayer(prayer: InsertPrayer): Promise<Prayer>;
-  updatePrayer(id: string, data: Partial<Prayer>): Promise<Prayer>;
+  updatePrayer(id: string, userId: string, data: Partial<Prayer>): Promise<Prayer | null>;
   deletePrayer(id: string, userId: string): Promise<void>;
   
   // Notes
@@ -254,11 +255,17 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateReadingPlan(id: string, data: Partial<ReadingPlan>): Promise<ReadingPlan> {
+  async updateReadingPlan(id: string, userId: string, data: Partial<ReadingPlan>): Promise<ReadingPlan | null> {
+    // Validar ownership
+    const existing = await this.getReadingPlan(id);
+    if (!existing || existing.userId !== userId) {
+      return null;
+    }
+    
     const [updated] = await db
       .update(readingPlans)
       .set({ ...data, updatedAt: new Date() })
-      .where(eq(readingPlans.id, id))
+      .where(and(eq(readingPlans.id, id), eq(readingPlans.userId, userId)))
       .returning();
     return updated;
   }
@@ -291,8 +298,8 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async deleteReadingPlan(id: string): Promise<void> {
-    await db.delete(readingPlans).where(eq(readingPlans.id, id));
+  async deleteReadingPlan(id: string, userId: string): Promise<void> {
+    await db.delete(readingPlans).where(and(eq(readingPlans.id, id), eq(readingPlans.userId, userId)));
   }
 
   // Achievements
@@ -393,16 +400,30 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(prayers.createdAt));
   }
 
+  async getPrayer(id: string, userId: string): Promise<Prayer | undefined> {
+    const [prayer] = await db
+      .select()
+      .from(prayers)
+      .where(and(eq(prayers.id, id), eq(prayers.userId, userId)));
+    return prayer;
+  }
+
   async createPrayer(prayer: InsertPrayer): Promise<Prayer> {
     const [created] = await db.insert(prayers).values(prayer).returning();
     return created;
   }
 
-  async updatePrayer(id: string, data: Partial<Prayer>): Promise<Prayer> {
+  async updatePrayer(id: string, userId: string, data: Partial<Prayer>): Promise<Prayer | null> {
+    // Validar ownership antes de atualizar
+    const existing = await this.getPrayer(id, userId);
+    if (!existing) {
+      return null;
+    }
+    
     const [updated] = await db
       .update(prayers)
       .set({ ...data, updatedAt: new Date() })
-      .where(eq(prayers.id, id))
+      .where(and(eq(prayers.id, id), eq(prayers.userId, userId)))
       .returning();
     return updated;
   }
