@@ -109,6 +109,100 @@ export interface Translations {
     error_title: string;
     configure_stripe: string;
   };
+  landing: {
+    hero_title: string;
+    hero_subtitle: string;
+    start_free: string;
+    see_features: string;
+    premium_features: string;
+    premium_subtitle: string;
+    customize_experience: string;
+    customize_subtitle: string;
+    why_bible_plus: string;
+    why_subtitle: string;
+    cta_title: string;
+    cta_subtitle: string;
+    start_free_cta: string;
+    footer_description: string;
+    footer_plans: string;
+    footer_contact: string;
+    footer_support: string;
+  };
+  pricing: {
+    page_title: string;
+    page_subtitle: string;
+    free_plan: string;
+    premium_plan: string;
+    lifetime_plan: string;
+    per_month: string;
+    one_time: string;
+    select_plan: string;
+    guarantee_title: string;
+    guarantee_description: string;
+    faq_title: string;
+  };
+  community: {
+    title: string;
+    what_studying: string;
+    verse_reference: string;
+    your_reflection: string;
+    post: string;
+    trending_topics: string;
+    likes: string;
+    comments: string;
+  };
+  favorites: {
+    title: string;
+    subtitle: string;
+    bookmarks: string;
+    highlights: string;
+    notes: string;
+    no_favorites: string;
+    add_first: string;
+  };
+  profile: {
+    title: string;
+    my_plans: string;
+    prayer: string;
+    achievements: string;
+    reading_streak: string;
+    spiritual_level: string;
+    edit_profile: string;
+    logout: string;
+  };
+  aiStudy: {
+    title: string;
+    subtitle: string;
+    ai_chat: string;
+    ask_question: string;
+    type_message: string;
+  };
+  teacherMode: {
+    title: string;
+    new_lesson: string;
+    lesson_title: string;
+    students: string;
+    progress: string;
+    export_report: string;
+  };
+  offline: {
+    title: string;
+    chapters_saved: string;
+    space_used: string;
+    books_downloaded: string;
+    download_chapter: string;
+    delete_chapter: string;
+    clear_all: string;
+  };
+  contact: {
+    title: string;
+    subtitle: string;
+    name: string;
+    email: string;
+    message: string;
+    send: string;
+    success: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -238,6 +332,100 @@ export const translations: Record<Language, Translations> = {
       error_title: 'Erro ao processar doação',
       configure_stripe: 'Sistema de doações não configurado. Entre em contato com o suporte para habilitar doações.',
     },
+    landing: {
+      hero_title: 'Transforme Seu Estudo Bíblico',
+      hero_subtitle: 'Inteligência Artificial, Podcasts, Comunidade e Ensino em uma única plataforma premium. O futuro do estudo bíblico chegou.',
+      start_free: 'Começar Grátis',
+      see_features: 'Ver Recursos',
+      premium_features: 'Recursos Premium',
+      premium_subtitle: 'Tudo que você precisa para um estudo bíblico profundo e transformador',
+      customize_experience: 'Personalize Sua Experiência',
+      customize_subtitle: '4 temas prontos ou crie o seu próprio com cores personalizadas',
+      why_bible_plus: 'Por Que Bíblia+?',
+      why_subtitle: 'Muito mais do que um simples aplicativo bíblico',
+      cta_title: 'Comece Hoje Sua Jornada',
+      cta_subtitle: 'Junte-se a milhares de pessoas transformando seu estudo bíblico',
+      start_free_cta: 'Começar Gratuitamente',
+      footer_description: 'Estudo Premium com IA',
+      footer_plans: 'Planos',
+      footer_contact: 'Contato',
+      footer_support: 'Suporte',
+    },
+    pricing: {
+      page_title: 'Planos e Preços',
+      page_subtitle: 'Escolha o plano perfeito para sua jornada espiritual',
+      free_plan: 'Gratuito',
+      premium_plan: 'Premium',
+      lifetime_plan: 'Vitalício',
+      per_month: '/mês',
+      one_time: 'pagamento único',
+      select_plan: 'Escolher Plano',
+      guarantee_title: 'Garantia de 30 Dias',
+      guarantee_description: '100% de reembolso se não ficar satisfeito',
+      faq_title: 'Perguntas Frequentes',
+    },
+    community: {
+      title: 'Comunidade',
+      what_studying: 'O que você está estudando?',
+      verse_reference: 'Referência do Versículo',
+      your_reflection: 'Sua Reflexão',
+      post: 'Publicar',
+      trending_topics: 'Temas em Alta',
+      likes: 'curtidas',
+      comments: 'comentários',
+    },
+    favorites: {
+      title: 'Meus Favoritos',
+      subtitle: 'Versículos salvos, destaques e notas',
+      bookmarks: 'Favoritos',
+      highlights: 'Destaques',
+      notes: 'Notas',
+      no_favorites: 'Nenhum favorito ainda',
+      add_first: 'Comece adicionando seus versículos favoritos',
+    },
+    profile: {
+      title: 'Perfil',
+      my_plans: 'Meus Planos',
+      prayer: 'Oração',
+      achievements: 'Conquistas',
+      reading_streak: 'Sequência de Leitura',
+      spiritual_level: 'Nível Espiritual',
+      edit_profile: 'Editar Perfil',
+      logout: 'Sair',
+    },
+    aiStudy: {
+      title: 'Estudar com IA',
+      subtitle: 'Assistente teológico inteligente',
+      ai_chat: 'Conversa com IA',
+      ask_question: 'Faça uma pergunta teológica',
+      type_message: 'Digite sua mensagem...',
+    },
+    teacherMode: {
+      title: 'Modo Professor',
+      new_lesson: 'Nova Aula',
+      lesson_title: 'Título da Aula',
+      students: 'Alunos',
+      progress: 'Progresso',
+      export_report: 'Exportar Relatório',
+    },
+    offline: {
+      title: 'Modo Offline',
+      chapters_saved: 'Capítulos Salvos',
+      space_used: 'Espaço Usado',
+      books_downloaded: 'Livros Baixados',
+      download_chapter: 'Baixar Capítulo',
+      delete_chapter: 'Excluir',
+      clear_all: 'Limpar Tudo',
+    },
+    contact: {
+      title: 'Fale Conosco',
+      subtitle: 'Envie sua Mensagem',
+      name: 'Nome',
+      email: 'E-mail',
+      message: 'Mensagem',
+      send: 'Enviar',
+      success: 'Mensagem enviada com sucesso!',
+    },
   },
   en: {
     common: {
@@ -364,6 +552,100 @@ export const translations: Record<Language, Translations> = {
       success_message: 'Thank you so much for your support!',
       error_title: 'Error processing donation',
       configure_stripe: 'Donation system not configured. Configure Stripe keys to enable donations.',
+    },
+    landing: {
+      hero_title: 'Transform Your Bible Study',
+      hero_subtitle: 'Artificial Intelligence, Podcasts, Community, and Teaching in one premium platform. The future of Bible study is here.',
+      start_free: 'Start Free',
+      see_features: 'See Features',
+      premium_features: 'Premium Features',
+      premium_subtitle: 'Everything you need for deep and transformative Bible study',
+      customize_experience: 'Customize Your Experience',
+      customize_subtitle: '4 ready-made themes or create your own with custom colors',
+      why_bible_plus: 'Why Bible+?',
+      why_subtitle: 'Much more than just a Bible app',
+      cta_title: 'Start Your Journey Today',
+      cta_subtitle: 'Join thousands of people transforming their Bible study',
+      start_free_cta: 'Start Free',
+      footer_description: 'Premium AI-Powered Study',
+      footer_plans: 'Plans',
+      footer_contact: 'Contact',
+      footer_support: 'Support',
+    },
+    pricing: {
+      page_title: 'Plans & Pricing',
+      page_subtitle: 'Choose the perfect plan for your spiritual journey',
+      free_plan: 'Free',
+      premium_plan: 'Premium',
+      lifetime_plan: 'Lifetime',
+      per_month: '/month',
+      one_time: 'one-time payment',
+      select_plan: 'Select Plan',
+      guarantee_title: '30-Day Guarantee',
+      guarantee_description: '100% refund if not satisfied',
+      faq_title: 'Frequently Asked Questions',
+    },
+    community: {
+      title: 'Community',
+      what_studying: 'What are you studying?',
+      verse_reference: 'Verse Reference',
+      your_reflection: 'Your Reflection',
+      post: 'Post',
+      trending_topics: 'Trending Topics',
+      likes: 'likes',
+      comments: 'comments',
+    },
+    favorites: {
+      title: 'My Favorites',
+      subtitle: 'Saved verses, highlights, and notes',
+      bookmarks: 'Bookmarks',
+      highlights: 'Highlights',
+      notes: 'Notes',
+      no_favorites: 'No favorites yet',
+      add_first: 'Start adding your favorite verses',
+    },
+    profile: {
+      title: 'Profile',
+      my_plans: 'My Plans',
+      prayer: 'Prayer',
+      achievements: 'Achievements',
+      reading_streak: 'Reading Streak',
+      spiritual_level: 'Spiritual Level',
+      edit_profile: 'Edit Profile',
+      logout: 'Logout',
+    },
+    aiStudy: {
+      title: 'Study with AI',
+      subtitle: 'Intelligent theological assistant',
+      ai_chat: 'AI Chat',
+      ask_question: 'Ask a theological question',
+      type_message: 'Type your message...',
+    },
+    teacherMode: {
+      title: 'Teacher Mode',
+      new_lesson: 'New Lesson',
+      lesson_title: 'Lesson Title',
+      students: 'Students',
+      progress: 'Progress',
+      export_report: 'Export Report',
+    },
+    offline: {
+      title: 'Offline Mode',
+      chapters_saved: 'Saved Chapters',
+      space_used: 'Space Used',
+      books_downloaded: 'Downloaded Books',
+      download_chapter: 'Download Chapter',
+      delete_chapter: 'Delete',
+      clear_all: 'Clear All',
+    },
+    contact: {
+      title: 'Contact Us',
+      subtitle: 'Send Your Message',
+      name: 'Name',
+      email: 'Email',
+      message: 'Message',
+      send: 'Send',
+      success: 'Message sent successfully!',
     },
   },
   nl: {
@@ -492,6 +774,100 @@ export const translations: Record<Language, Translations> = {
       error_title: 'Fout bij verwerken donatie',
       configure_stripe: 'Donatiesysteem niet geconfigureerd. Configureer Stripe-sleutels om donaties in te schakelen.',
     },
+    landing: {
+      hero_title: 'Transformeer Je Bijbelstudie',
+      hero_subtitle: 'Kunstmatige Intelligentie, Podcasts, Gemeenschap en Onderwijs in één premium platform. De toekomst van Bijbelstudie is hier.',
+      start_free: 'Gratis Beginnen',
+      see_features: 'Bekijk Functies',
+      premium_features: 'Premium Functies',
+      premium_subtitle: 'Alles wat je nodig hebt voor een diepe en transformerende Bijbelstudie',
+      customize_experience: 'Personaliseer Je Ervaring',
+      customize_subtitle: '4 kant-en-klare thema\'s of creëer je eigen met aangepaste kleuren',
+      why_bible_plus: 'Waarom Bijbel+?',
+      why_subtitle: 'Veel meer dan alleen een Bijbel-app',
+      cta_title: 'Begin Vandaag Je Reis',
+      cta_subtitle: 'Sluit je aan bij duizenden mensen die hun Bijbelstudie transformeren',
+      start_free_cta: 'Gratis Starten',
+      footer_description: 'Premium Studie met AI',
+      footer_plans: 'Plannen',
+      footer_contact: 'Contact',
+      footer_support: 'Ondersteuning',
+    },
+    pricing: {
+      page_title: 'Plannen & Prijzen',
+      page_subtitle: 'Kies het perfecte plan voor jouw spirituele reis',
+      free_plan: 'Gratis',
+      premium_plan: 'Premium',
+      lifetime_plan: 'Levenslang',
+      per_month: '/maand',
+      one_time: 'eenmalige betaling',
+      select_plan: 'Selecteer Plan',
+      guarantee_title: '30 Dagen Garantie',
+      guarantee_description: '100% terugbetaling als je niet tevreden bent',
+      faq_title: 'Veelgestelde Vragen',
+    },
+    community: {
+      title: 'Gemeenschap',
+      what_studying: 'Wat studeer je?',
+      verse_reference: 'Vers Referentie',
+      your_reflection: 'Jouw Reflectie',
+      post: 'Plaatsen',
+      trending_topics: 'Trending Onderwerpen',
+      likes: 'likes',
+      comments: 'reacties',
+    },
+    favorites: {
+      title: 'Mijn Favorieten',
+      subtitle: 'Opgeslagen verzen, highlights en notities',
+      bookmarks: 'Bladwijzers',
+      highlights: 'Highlights',
+      notes: 'Notities',
+      no_favorites: 'Nog geen favorieten',
+      add_first: 'Begin met het toevoegen van je favoriete verzen',
+    },
+    profile: {
+      title: 'Profiel',
+      my_plans: 'Mijn Plannen',
+      prayer: 'Gebed',
+      achievements: 'Prestaties',
+      reading_streak: 'Leesreeks',
+      spiritual_level: 'Spiritueel Niveau',
+      edit_profile: 'Profiel Bewerken',
+      logout: 'Uitloggen',
+    },
+    aiStudy: {
+      title: 'Studeren met AI',
+      subtitle: 'Intelligente theologische assistent',
+      ai_chat: 'AI Chat',
+      ask_question: 'Stel een theologische vraag',
+      type_message: 'Typ je bericht...',
+    },
+    teacherMode: {
+      title: 'Leermodus',
+      new_lesson: 'Nieuwe Les',
+      lesson_title: 'Les Titel',
+      students: 'Studenten',
+      progress: 'Voortgang',
+      export_report: 'Rapport Exporteren',
+    },
+    offline: {
+      title: 'Offline Modus',
+      chapters_saved: 'Opgeslagen Hoofdstukken',
+      space_used: 'Gebruikte Ruimte',
+      books_downloaded: 'Gedownloade Boeken',
+      download_chapter: 'Hoofdstuk Downloaden',
+      delete_chapter: 'Verwijderen',
+      clear_all: 'Alles Wissen',
+    },
+    contact: {
+      title: 'Neem Contact Op',
+      subtitle: 'Verstuur Je Bericht',
+      name: 'Naam',
+      email: 'E-mail',
+      message: 'Bericht',
+      send: 'Verzenden',
+      success: 'Bericht succesvol verzonden!',
+    },
   },
   es: {
     common: {
@@ -618,6 +994,100 @@ export const translations: Record<Language, Translations> = {
       success_message: '¡Muchas gracias por tu apoyo!',
       error_title: 'Error al procesar donación',
       configure_stripe: 'Sistema de donaciones no configurado. Configura las claves de Stripe para habilitar donaciones.',
+    },
+    landing: {
+      hero_title: 'Transforma Tu Estudio Bíblico',
+      hero_subtitle: 'Inteligencia Artificial, Podcasts, Comunidad y Enseñanza en una única plataforma premium. El futuro del estudio bíblico ha llegado.',
+      start_free: 'Comenzar Gratis',
+      see_features: 'Ver Características',
+      premium_features: 'Características Premium',
+      premium_subtitle: 'Todo lo que necesitas para un estudio bíblico profundo y transformador',
+      customize_experience: 'Personaliza Tu Experiencia',
+      customize_subtitle: '4 temas listos o crea el tuyo propio con colores personalizados',
+      why_bible_plus: '¿Por Qué Biblia+?',
+      why_subtitle: 'Mucho más que una simple aplicación bíblica',
+      cta_title: 'Comienza Hoy Tu Jornada',
+      cta_subtitle: 'Únete a miles de personas transformando su estudio bíblico',
+      start_free_cta: 'Comenzar Gratis',
+      footer_description: 'Estudio Premium con IA',
+      footer_plans: 'Planes',
+      footer_contact: 'Contacto',
+      footer_support: 'Soporte',
+    },
+    pricing: {
+      page_title: 'Planes y Precios',
+      page_subtitle: 'Elige el plan perfecto para tu jornada espiritual',
+      free_plan: 'Gratis',
+      premium_plan: 'Premium',
+      lifetime_plan: 'De Por Vida',
+      per_month: '/mes',
+      one_time: 'pago único',
+      select_plan: 'Elegir Plan',
+      guarantee_title: 'Garantía de 30 Días',
+      guarantee_description: '100% de reembolso si no estás satisfecho',
+      faq_title: 'Preguntas Frecuentes',
+    },
+    community: {
+      title: 'Comunidad',
+      what_studying: '¿Qué estás estudiando?',
+      verse_reference: 'Referencia del Versículo',
+      your_reflection: 'Tu Reflexión',
+      post: 'Publicar',
+      trending_topics: 'Temas Destacados',
+      likes: 'me gusta',
+      comments: 'comentarios',
+    },
+    favorites: {
+      title: 'Mis Favoritos',
+      subtitle: 'Versículos guardados, destacados y notas',
+      bookmarks: 'Marcadores',
+      highlights: 'Destacados',
+      notes: 'Notas',
+      no_favorites: 'Aún no hay favoritos',
+      add_first: 'Comienza agregando tus versículos favoritos',
+    },
+    profile: {
+      title: 'Perfil',
+      my_plans: 'Mis Planes',
+      prayer: 'Oración',
+      achievements: 'Logros',
+      reading_streak: 'Racha de Lectura',
+      spiritual_level: 'Nivel Espiritual',
+      edit_profile: 'Editar Perfil',
+      logout: 'Salir',
+    },
+    aiStudy: {
+      title: 'Estudiar con IA',
+      subtitle: 'Asistente teológico inteligente',
+      ai_chat: 'Chat con IA',
+      ask_question: 'Haz una pregunta teológica',
+      type_message: 'Escribe tu mensaje...',
+    },
+    teacherMode: {
+      title: 'Modo Profesor',
+      new_lesson: 'Nueva Lección',
+      lesson_title: 'Título de la Lección',
+      students: 'Estudiantes',
+      progress: 'Progreso',
+      export_report: 'Exportar Informe',
+    },
+    offline: {
+      title: 'Modo Sin Conexión',
+      chapters_saved: 'Capítulos Guardados',
+      space_used: 'Espacio Usado',
+      books_downloaded: 'Libros Descargados',
+      download_chapter: 'Descargar Capítulo',
+      delete_chapter: 'Eliminar',
+      clear_all: 'Borrar Todo',
+    },
+    contact: {
+      title: 'Contáctanos',
+      subtitle: 'Envía Tu Mensaje',
+      name: 'Nombre',
+      email: 'Correo Electrónico',
+      message: 'Mensaje',
+      send: 'Enviar',
+      success: '¡Mensaje enviado exitosamente!',
     },
   },
 };
