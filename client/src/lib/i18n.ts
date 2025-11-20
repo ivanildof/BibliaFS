@@ -219,7 +219,7 @@ export const translations: Record<Language, Translations> = {
     },
     donate: {
       title: 'Apoie o Bíblia+',
-      subtitle: 'Ajude-nos a continuar oferecendo estudo bíblico gratuito e de qualidade',
+      subtitle: 'Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas. Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos. Você não está só doando. Você está sendo parte da história de quem busca a Palavra, onde quer que esteja.',
       one_time: 'Doação Única',
       recurring: 'Doação Recorrente',
       monthly: 'Mensal',
@@ -346,7 +346,7 @@ export const translations: Record<Language, Translations> = {
     },
     donate: {
       title: 'Support Bible+',
-      subtitle: 'Help us continue offering free, quality Bible study',
+      subtitle: 'Your donation keeps Bible+ 100% free and helps bring the Word to more people, in more languages. But that\'s not all: each contribution sustains the developers who work tirelessly — day and night — to improve the experience, fix bugs, add features, and make the app lighter, faster, and accessible to everyone. You\'re not just donating. You\'re being part of the story of those seeking the Word, wherever they are.',
       one_time: 'One-Time',
       recurring: 'Recurring',
       monthly: 'Monthly',
@@ -473,7 +473,7 @@ export const translations: Record<Language, Translations> = {
     },
     donate: {
       title: 'Ondersteun Bijbel+',
-      subtitle: 'Help ons gratis bijbelstudie van hoge kwaliteit te blijven aanbieden',
+      subtitle: 'Jouw donatie houdt Bijbel+ 100% gratis en helpt het Woord naar meer mensen te brengen, in meer talen. Maar dat is niet alles: elke bijdrage ondersteunt de ontwikkelaars die onvermoeibaar werken — dag en nacht — om de ervaring te verbeteren, bugs op te lossen, functies toe te voegen en de app lichter, sneller en toegankelijker te maken voor iedereen. Je doneert niet alleen. Je maakt deel uit van het verhaal van degenen die het Woord zoeken, waar ze ook zijn.',
       one_time: 'Eenmalig',
       recurring: 'Terugkerend',
       monthly: 'Maandelijks',
@@ -600,7 +600,7 @@ export const translations: Record<Language, Translations> = {
     },
     donate: {
       title: 'Apoya Biblia+',
-      subtitle: 'Ayúdanos a continuar ofreciendo estudio bíblico gratuito y de calidad',
+      subtitle: 'Tu donación mantiene Biblia+ 100% gratis y ayuda a llevar la Palabra a más personas, en más idiomas. Pero eso no es todo: cada contribución sustenta a los desarrolladores que trabajan incansablemente — día y noche — para mejorar la experiencia, corregir errores, agregar funciones y hacer la aplicación más ligera, rápida y accesible para todos. No solo estás donando. Estás siendo parte de la historia de quienes buscan la Palabra, donde quiera que estén.',
       one_time: 'Donación Única',
       recurring: 'Donación Recurrente',
       monthly: 'Mensual',
