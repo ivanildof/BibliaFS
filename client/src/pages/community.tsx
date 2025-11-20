@@ -80,6 +80,24 @@ export default function Community() {
     },
   });
 
+  const likeMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      return await apiRequest("POST", `/api/community/posts/${postId}/like`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
+    },
+  });
+
+  const unlikeMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      return await apiRequest("DELETE", `/api/community/posts/${postId}/like`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
+    },
+  });
+
   const onSubmit = (data: FormData) => {
     createMutation.mutate(data);
   };
@@ -361,7 +379,8 @@ export default function Community() {
                         variant="ghost" 
                         size="sm"
                         className="flex-1"
-                        data-testid="button-like-post"
+                        onClick={() => likeMutation.mutate(post.id)}
+                        data-testid={`button-like-post-${post.id}`}
                       >
                         <Heart className="h-4 w-4 mr-2" />
                         {post.likeCount || 0}
