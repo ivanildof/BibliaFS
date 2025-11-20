@@ -153,26 +153,36 @@ export default function Profile() {
                   </Button>
                 </Link>
                 <Separator />
-                <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
-                  <HelpCircle className="h-4 w-4 mr-3" />
-                  Ajuda e Suporte
-                </Button>
-                <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
-                  <Info className="h-4 w-4 mr-3" />
-                  Sobre o Bíblia+
-                </Button>
-                <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
-                  <FileTextIcon className="h-4 w-4 mr-3" />
-                  Termos de Uso
-                </Button>
-                <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                  <Shield className="h-4 w-4 mr-3" />
-                  Política de Privacidade
-                </Button>
-                <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
-                  <Mail className="h-4 w-4 mr-3" />
-                  Fale Conosco
-                </Button>
+                <Link href="/help">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
+                    <HelpCircle className="h-4 w-4 mr-3" />
+                    Ajuda e Suporte
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
+                    <Info className="h-4 w-4 mr-3" />
+                    Sobre o Bíblia+
+                  </Button>
+                </Link>
+                <Link href="/terms">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
+                    <FileTextIcon className="h-4 w-4 mr-3" />
+                    Termos de Uso
+                  </Button>
+                </Link>
+                <Link href="/privacy">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
+                    <Shield className="h-4 w-4 mr-3" />
+                    Política de Privacidade
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
+                    <Mail className="h-4 w-4 mr-3" />
+                    Fale Conosco
+                  </Button>
+                </Link>
                 <Separator />
                 <Button 
                   variant="ghost" 
@@ -287,26 +297,36 @@ export default function Profile() {
                         </Button>
                       </Link>
                       <Separator />
-                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
-                        <HelpCircle className="h-4 w-4 mr-3" />
-                        Ajuda e Suporte
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
-                        <Info className="h-4 w-4 mr-3" />
-                        Sobre o Bíblia+
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
-                        <FileTextIcon className="h-4 w-4 mr-3" />
-                        Termos de Uso
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                        <Shield className="h-4 w-4 mr-3" />
-                        Política de Privacidade
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
-                        <Mail className="h-4 w-4 mr-3" />
-                        Fale Conosco
-                      </Button>
+                      <Link href="/help">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
+                          <HelpCircle className="h-4 w-4 mr-3" />
+                          Ajuda e Suporte
+                        </Button>
+                      </Link>
+                      <Link href="/about">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
+                          <Info className="h-4 w-4 mr-3" />
+                          Sobre o Bíblia+
+                        </Button>
+                      </Link>
+                      <Link href="/terms">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
+                          <FileTextIcon className="h-4 w-4 mr-3" />
+                          Termos de Uso
+                        </Button>
+                      </Link>
+                      <Link href="/privacy">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
+                          <Shield className="h-4 w-4 mr-3" />
+                          Política de Privacidade
+                        </Button>
+                      </Link>
+                      <Link href="/contact">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
+                          <Mail className="h-4 w-4 mr-3" />
+                          Fale Conosco
+                        </Button>
+                      </Link>
                       <Separator />
                       <Button 
                         variant="ghost" 

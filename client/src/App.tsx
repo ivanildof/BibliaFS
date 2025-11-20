@@ -32,6 +32,11 @@ import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
 import Offline from "@/pages/offline";
 import Donate from "@/pages/donate";
+import Help from "@/pages/help";
+import About from "@/pages/about";
+import Terms from "@/pages/terms";
+import Privacy from "@/pages/privacy";
+import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -70,6 +75,11 @@ function Router() {
           <Route path="/profile" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
+          <Route path="/help" component={Help} />
+          <Route path="/about" component={About} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/contact" component={Contact} />
         </>
       )}
       <Route component={NotFound} />
