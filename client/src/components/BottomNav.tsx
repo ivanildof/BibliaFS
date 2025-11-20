@@ -32,18 +32,19 @@ export function BottomNav() {
           const isActive = location === item.url;
           
           return (
-            <Link key={item.url} href={item.url}>
-              <button
-                className={`flex flex-col items-center justify-center gap-1 px-3 py-2 min-w-[4rem] transition-colors ${
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-                data-testid={item.testId}
-              >
-                <Icon className={`h-5 w-5 ${isActive ? 'fill-current' : ''}`} />
-                <span className="text-xs font-medium">{item.title}</span>
-              </button>
+            <Link 
+              key={item.url} 
+              href={item.url}
+              className={`flex flex-col items-center justify-center gap-1 px-3 py-2 min-w-[4rem] transition-colors ${
+                isActive
+                  ? 'text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+              data-testid={item.testId}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon className={`h-5 w-5 ${isActive ? 'fill-current' : ''}`} />
+              <span className="text-xs font-medium">{item.title}</span>
             </Link>
           );
         })}
