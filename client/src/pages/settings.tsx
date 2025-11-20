@@ -150,34 +150,35 @@ export default function Settings() {
                       </div>
                     ))}
                   </div>
-                </RadioGroup>
 
-                {/* Custom Theme */}
-                <div className="pt-4 border-t">
-                  <Label
-                    className="flex flex-col gap-3 rounded-lg border-2 p-4 cursor-pointer hover-elevate [&:has([data-state=checked])]:border-primary"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex gap-2">
-                          <input
-                            type="color"
-                            value={customColor}
-                            onChange={(e) => setCustomColor(e.target.value)}
-                            className="h-8 w-8 rounded-full cursor-pointer"
-                            data-testid="input-custom-color"
-                          />
-                          <div className="h-8 w-8 rounded-full border-2 border-border bg-white" />
+                  {/* Custom Theme */}
+                  <div className="pt-4 border-t">
+                    <Label
+                      htmlFor="custom"
+                      className="flex flex-col gap-3 rounded-lg border-2 p-4 cursor-pointer hover-elevate [&:has([data-state=checked])]:border-primary"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex gap-2">
+                            <input
+                              type="color"
+                              value={customColor}
+                              onChange={(e) => setCustomColor(e.target.value)}
+                              className="h-8 w-8 rounded-full cursor-pointer"
+                              data-testid="input-custom-color"
+                            />
+                            <div className="h-8 w-8 rounded-full border-2 border-border bg-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium">Personalizado</p>
+                            <p className="text-xs text-muted-foreground">Escolha sua própria cor</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">Personalizado</p>
-                          <p className="text-xs text-muted-foreground">Escolha sua própria cor</p>
-                        </div>
+                        <RadioGroupItem value="custom" id="custom" />
                       </div>
-                      <RadioGroupItem value="custom" id="custom" />
-                    </div>
-                  </Label>
-                </div>
+                    </Label>
+                  </div>
+                </RadioGroup>
               </CardContent>
               <CardFooter>
                 <Button onClick={handleSaveTheme} data-testid="button-save-theme">

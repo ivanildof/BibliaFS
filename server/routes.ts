@@ -36,8 +36,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(user);
     } catch (error: any) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
+      console.error("Erro ao buscar usuário:", error);
+      res.status(500).json({ message: "Falha ao buscar usuário" });
     }
   });
 
@@ -390,7 +390,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { question } = req.body;
       
       if (!question) {
-        return res.status(400).json({ error: "Question is required" });
+        return res.status(400).json({ error: "Pergunta é obrigatória" });
       }
 
       // Check if OpenAI API key is configured
