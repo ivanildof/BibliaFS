@@ -16,6 +16,7 @@ import {
   insertPodcastSchema,
   insertPodcastSubscriptionSchema,
   insertLessonSchema,
+  updateLessonSchema,
   insertCommunityPostSchema,
   insertAudioProgressSchema,
   insertOfflineContentSchema,
@@ -104,26 +105,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { totalDays, title, description, ...rest } = req.body;
       
-      // Generate simple schedule array based on totalDays
+      // Generate schedule array matching schema structure
       const schedule = [];
       for (let day = 1; day <= (totalDays || 30); day++) {
         schedule.push({
           day,
-          bibleReading: [], // User can fill this later
+          readings: [], // Matches schema: readings: { book, chapter, verses? }[]
+          isCompleted: false,
         });
       }
       
-      const data = insertReadingPlanSchema.parse({
+      const result = insertReadingPlanSchema.safeParse({
         ...rest,
         title,
         description,
         schedule,
+        totalDays: totalDays || 30,
         userId,
       });
-      const plan = await storage.createReadingPlan(data);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const plan = await storage.createReadingPlan(result.data);
       res.json(plan);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -143,8 +154,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // updateReadingPlan já valida ownership internamente
-      const plan = await storage.updateReadingPlan(planId, userId, result.data);
+      // CRITICAL SECURITY: Strip userId from payload to prevent ownership escalation
+      const { userId: _, ...safeData } = result.data;
+      
+      // updateReadingPlan valida ownership internamente
+      const plan = await storage.updateReadingPlan(planId, userId, safeData);
       
       if (!plan) {
         return res.status(404).json({ error: "Plano não encontrado ou acesso negado" });
@@ -161,8 +175,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const planId = req.params.id;
       
-      // deleteReadingPlan já valida ownership internamente via WHERE clause
-      await storage.deleteReadingPlan(planId, userId);
+      // deleteReadingPlan retorna false se não encontrou/não deletou nada
+      const deleted = await storage.deleteReadingPlan(planId, userId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Plano não encontrado ou acesso negado" });
+      }
+      
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -220,8 +239,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // updatePrayer já valida ownership internamente
-      const prayer = await storage.updatePrayer(prayerId, userId, result.data);
+      // CRITICAL SECURITY: Strip userId from payload to prevent ownership escalation
+      const { userId: _, ...safeData } = result.data;
+      
+      // updatePrayer valida ownership internamente
+      const prayer = await storage.updatePrayer(prayerId, userId, safeData);
       
       if (!prayer) {
         return res.status(404).json({ error: "Oração não encontrada ou acesso negado" });
@@ -312,14 +334,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/podcasts/subscribe", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertPodcastSubscriptionSchema.parse({
+      
+      const result = insertPodcastSubscriptionSchema.safeParse({
         ...req.body,
         userId,
       });
-      const subscription = await storage.subscribeToPodcast(data);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const subscription = await storage.subscribeToPodcast(result.data);
       res.json(subscription);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -372,27 +403,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }];
       }
       
-      // Validate with schema (scriptureReferences is now optional)
-      const validated = insertLessonSchema.parse(finalData);
-      const lesson = await storage.createLesson(validated);
+      // Validate with safeParse
+      const result = insertLessonSchema.safeParse(finalData);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const lesson = await storage.createLesson(result.data);
       res.json(lesson);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
   app.patch("/api/teacher/lessons/:id", isAuthenticated, async (req, res) => {
     try {
-      const lesson = await storage.updateLesson(req.params.id, req.body);
+      const teacherId = req.user.claims.sub;
+      
+      // Use explicit partial schema that preserves nested validation
+      const result = updateLessonSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      // updateLesson valida ownership
+      const lesson = await storage.updateLesson(req.params.id, teacherId, result.data);
+      
+      if (!lesson) {
+        return res.status(404).json({ error: "Aula não encontrada ou acesso negado" });
+      }
+      
       res.json(lesson);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
   app.delete("/api/teacher/lessons/:id", isAuthenticated, async (req, res) => {
     try {
-      await storage.deleteLesson(req.params.id);
+      const teacherId = req.user.claims.sub;
+      
+      // deleteLesson retorna false se não encontrou/não deletou nada
+      const deleted = await storage.deleteLesson(req.params.id, teacherId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Aula não encontrada ou acesso negado" });
+      }
+      
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -413,14 +478,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/community/posts", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertCommunityPostSchema.parse({
+      
+      const result = insertCommunityPostSchema.safeParse({
         ...req.body,
         userId,
       });
-      const post = await storage.createCommunityPost(data);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const post = await storage.createCommunityPost(result.data);
       res.json(post);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -516,15 +590,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/bible/audio/progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertAudioProgressSchema.parse({
+      
+      const result = insertAudioProgressSchema.safeParse({
         ...req.body,
         userId,
       });
       
-      const progress = await storage.upsertAudioProgress(data);
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const progress = await storage.upsertAudioProgress(result.data);
       res.json(progress);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -803,13 +885,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/bible/settings", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      // Merge userId into payload BEFORE validation
-      const payload = { ...req.body, userId };
-      const data = insertBibleSettingsSchema.parse(payload);
-      const settings = await storage.upsertBibleSettings(data);
+      
+      const result = insertBibleSettingsSchema.safeParse({ ...req.body, userId });
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const settings = await storage.upsertBibleSettings(result.data);
       res.json(settings);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -1116,11 +1205,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/daily-verse", isAuthenticated, async (req: any, res) => {
     try {
-      const data = insertDailyVerseSchema.parse(req.body);
-      const verse = await storage.createDailyVerse(data);
+      const result = insertDailyVerseSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const verse = await storage.createDailyVerse(result.data);
       res.json(verse);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -1147,11 +1244,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/offline/content", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertOfflineContentSchema.parse({ ...req.body, userId });
-      const content = await storage.saveOfflineContent(data);
+      
+      const result = insertOfflineContentSchema.safeParse({ ...req.body, userId });
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: result.error.errors 
+        });
+      }
+      
+      const content = await storage.saveOfflineContent(result.data);
       res.json(content);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -1208,12 +1314,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/donations", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertDonationSchema.parse({ ...req.body, userId });
-      const donation = await storage.createDonation(data);
+      
+      const result = insertDonationSchema.safeParse({ ...req.body, userId });
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          error: "Dados inválidos para doação", 
+          details: result.error.errors 
+        });
+      }
+      
+      const donation = await storage.createDonation(result.data);
       res.json(donation);
     } catch (error: any) {
       console.error("Erro ao criar doação:", error);
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
 

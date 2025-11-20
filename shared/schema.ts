@@ -673,6 +673,31 @@ export const insertLessonSchema = createInsertSchema(lessons).omit({ id: true, c
 export type InsertLesson = z.infer<typeof insertLessonSchema>;
 export type Lesson = typeof lessons.$inferSelect;
 
+// Explicit partial schema for PATCH operations on lessons
+// Preserves nested validation while allowing partial updates
+export const updateLessonSchema = z.object({
+  title: z.string().min(3).max(200).optional(),
+  description: z.string().max(2000).optional().nullable(),
+  scriptureReferences: z.array(z.object({
+    book: z.string(),
+    chapter: z.number().int().min(1),
+    verses: z.string().optional(),
+  })).optional().nullable(),
+  content: z.string().optional().nullable(),
+  videoUrl: z.string().url().optional().nullable(),
+  audioUrl: z.string().url().optional().nullable(),
+  quiz: z.object({
+    questions: z.array(z.object({
+      question: z.string(),
+      options: z.array(z.string()),
+      correctAnswer: z.number().int().min(0),
+    })),
+  }).optional().nullable(),
+  tags: z.array(z.string()).optional().nullable(),
+  isPublished: z.boolean().optional(),
+});
+export type UpdateLesson = z.infer<typeof updateLessonSchema>;
+
 export const insertLessonProgressSchema = createInsertSchema(lessonProgress).omit({ id: true, createdAt: true });
 export type InsertLessonProgress = z.infer<typeof insertLessonProgressSchema>;
 export type LessonProgress = typeof lessonProgress.$inferSelect;

@@ -86,7 +86,7 @@ export interface IStorage {
   createReadingPlan(plan: InsertReadingPlan): Promise<ReadingPlan>;
   updateReadingPlan(id: string, userId: string, data: Partial<ReadingPlan>): Promise<ReadingPlan | null>;
   markDayCompleted(planId: string, day: number, userId: string): Promise<ReadingPlan>;
-  deleteReadingPlan(id: string, userId: string): Promise<void>;
+  deleteReadingPlan(id: string, userId: string): Promise<boolean>;
   
   // Achievements
   getAchievements(): Promise<Achievement[]>;
@@ -133,8 +133,8 @@ export interface IStorage {
   getLessons(teacherId: string): Promise<Lesson[]>;
   getLesson(id: string): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
-  updateLesson(id: string, data: Partial<Lesson>): Promise<Lesson>;
-  deleteLesson(id: string): Promise<void>;
+  updateLesson(id: string, teacherId: string, data: Partial<Lesson>): Promise<Lesson | null>;
+  deleteLesson(id: string, teacherId: string): Promise<boolean>;
   getLessonProgress(lessonId: string): Promise<LessonProgress[]>;
   createLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
   
@@ -267,7 +267,7 @@ export class DatabaseStorage implements IStorage {
       .set({ ...data, updatedAt: new Date() })
       .where(and(eq(readingPlans.id, id), eq(readingPlans.userId, userId)))
       .returning();
-    return updated;
+    return updated || null;
   }
 
   async markDayCompleted(planId: string, day: number, userId: string): Promise<ReadingPlan> {
@@ -298,8 +298,11 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async deleteReadingPlan(id: string, userId: string): Promise<void> {
-    await db.delete(readingPlans).where(and(eq(readingPlans.id, id), eq(readingPlans.userId, userId)));
+  async deleteReadingPlan(id: string, userId: string): Promise<boolean> {
+    const result = await db.delete(readingPlans)
+      .where(and(eq(readingPlans.id, id), eq(readingPlans.userId, userId)))
+      .returning();
+    return result.length > 0;
   }
 
   // Achievements
@@ -425,7 +428,7 @@ export class DatabaseStorage implements IStorage {
       .set({ ...data, updatedAt: new Date() })
       .where(and(eq(prayers.id, id), eq(prayers.userId, userId)))
       .returning();
-    return updated;
+    return updated || null;
   }
 
   async deletePrayer(id: string, userId: string): Promise<void> {
@@ -586,17 +589,27 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateLesson(id: string, data: Partial<Lesson>): Promise<Lesson> {
+  async updateLesson(id: string, teacherId: string, data: Partial<Lesson>): Promise<Lesson | null> {
+    // Validar ownership - apenas o professor dono pode editar
+    const existing = await this.getLesson(id);
+    if (!existing || existing.teacherId !== teacherId) {
+      return null;
+    }
+    
     const [updated] = await db
       .update(lessons)
       .set({ ...data, updatedAt: new Date() })
-      .where(eq(lessons.id, id))
+      .where(and(eq(lessons.id, id), eq(lessons.teacherId, teacherId)))
       .returning();
-    return updated;
+    return updated || null;
   }
 
-  async deleteLesson(id: string): Promise<void> {
-    await db.delete(lessons).where(eq(lessons.id, id));
+  async deleteLesson(id: string, teacherId: string): Promise<boolean> {
+    // Validar ownership via WHERE clause e retornar se algo foi deletado
+    const result = await db.delete(lessons)
+      .where(and(eq(lessons.id, id), eq(lessons.teacherId, teacherId)))
+      .returning();
+    return result.length > 0;
   }
 
   async getLessonProgress(lessonId: string): Promise<LessonProgress[]> {
