@@ -2,163 +2,7 @@
 
 ## Overview
 
-Bíblia+ is a premium, personalized, and intelligent Bible study application that combines traditional scripture reading with modern AI-powered theological assistance. The platform features customizable themes, integrated podcasts, teacher mode for educational purposes, community sharing, and comprehensive reading plans with gamification elements.
-
-**Core Value Proposition**: Transform Bible study through AI theological assistance, personalized learning paths, multimedia integration, and community engagement.
-
-**Primary Features**:
-- AI-powered theological study assistant
-- Customizable color themes (5 presets + custom RGB)
-- Integrated podcast player with subscriptions
-- Teacher mode for creating and managing lessons
-- Community platform for sharing insights
-- Reading plans with progress tracking
-- Prayer journal with audio recording
-- Gamification system (levels, XP, streaks, achievements)
-
-## Recent Changes (November 2025)
-
-**FASE 1 COMPLETA** - Leitor de Bíblia com integração API ABíbliaDigital implementado:
-
-✅ **Funcionalidades Implementadas:**
-- Integração completa com ABíbliaDigital API (NVI, ACF, ARC, RA)
-- Navegação por livros, capítulos e versículos
-- Sistema de bookmarks/favoritos
-- Configurações de leitura personalizadas
-- Busca de versículos
-- **Fallback offline**: Lista completa de 66 livros + Gênesis 1 (31 versículos) + Salmo 23 (6 versículos)
-
-✅ **Correções de Segurança e Resiliência:**
-- Validação userId em todos os DELETE endpoints (previne cross-user data tampering)
-- Validação robusta de API externa em TODOS os endpoints
-- Schema validation com Zod antes de inserir no banco
-- Error handling com toast + retry + fallback UI
-- Backend valida estrutura de dados (verses array) antes de retornar
-
-**FASE 2 COMPLETA** - Sistema de Planos de Leitura e Gamificação implementado:
-
-✅ **Funcionalidades Implementadas:**
-- **Planos de Leitura Predefinidos**: 6 templates (7, 14, 21, 30, 90, 365 dias) com cronogramas automáticos
-- **Sistema de Gamificação**:
-  - Sistema de XP (10 XP por capítulo lido)
-  - Níveis progressivos (100 XP por nível)
-  - Streak diário com lógica UTC midnight (previne inflação)
-  - 18 conquistas automáticas (categorias: milestone, reading, streak)
-- **Dashboard de Progresso** (`/progress`):
-  - Visualização de nível atual e XP
-  - Contador de streak com ícone de fogo
-  - Grid de conquistas organizadas por categoria
-  - Progresso visual com barras de progresso
-- **Página de Planos** (`/plans`):
-  - Templates predefinidos com descrição e duração
-  - Criação de planos a partir de templates
-  - Visualização de progresso diário
-  - Marcar dias como completos com recompensa de XP
-- **Integração com Leitor de Bíblia**:
-  - Botão "Marcar como Lido" no leitor
-  - Notificação de XP ganho e conquistas desbloqueadas
-  - Guard contra leituras duplicadas no mesmo dia
-
-✅ **Correções Críticas de Lógica:**
-- **Streak Calculation**: UTC midnight normalization em ambas rotas (mark-read, complete-day)
-- **Duplicate Guard**: Rejeita leituras duplicadas no mesmo dia sem inflação de XP/streak
-- **Achievement Logic**: Verifica conquistas já desbloqueadas antes de desbloquear novamente
-- **Consecutive Day Detection**: Streak incrementa APENAS se daysSinceLastRead === 1
-
-✅ **Arquivos Criados/Modificados:**
-- `shared/schema.ts` - Tabelas reading_plan_templates, achievements, user_achievements
-- `server/storage.ts` - CRUD para planos, templates, conquistas, stats
-- `server/seed-reading-plans.ts` - Seed data com 6 planos predefinidos
-- `server/seed-achievements.ts` - Seed data com 18 conquistas
-- `server/routes.ts` - Rotas para templates, planos, conquistas, stats, mark-read
-- `client/src/pages/reading-plans.tsx` - UI de planos com templates e progresso
-- `client/src/pages/progress.tsx` - Dashboard de gamificação
-- `client/src/pages/bible-reader.tsx` - Botão "Marcar como Lido" integrado
-
-**Sistema de Internacionalização (i18n) COMPLETO**:
-
-✅ **Funcionalidades Implementadas:**
-- **Suporte Multi-idioma**: 4 idiomas completos (Português nativo, Inglês, Holandês, Espanhol)
-- **Sistema i18n**:
-  - Context API (LanguageContext) para gerenciamento de idioma
-  - Arquivo central de traduções (`client/src/lib/i18n.ts`)
-  - Persistência do idioma selecionado com localStorage
-  - Componente LanguageSelector com dropdown no header
-- **Traduções Completas**:
-  - Navegação e menus
-  - Páginas (Planos, Progresso, Bíblia, etc.)
-  - Mensagens de estado (loading, error)
-  - Labels e botões da interface
-- **Integração**:
-  - AppSidebar traduzido dinamicamente
-  - App.tsx com mensagens de loading traduzidas
-  - Mudança de idioma em tempo real sem reload
-
-✅ **Arquivos Criados/Modificados:**
-- `client/src/lib/i18n.ts` - Arquivo central de traduções para 4 idiomas
-- `client/src/contexts/LanguageContext.tsx` - Context API para gerenciamento de idioma
-- `client/src/components/LanguageSelector.tsx` - Seletor de idioma com dropdown
-- `client/src/App.tsx` - Integração do LanguageProvider e traduções
-- `client/src/components/app-sidebar.tsx` - Sidebar totalmente traduzida
-
-**Navegação Mobile (BottomNav) IMPLEMENTADA**:
-
-✅ **Funcionalidades Implementadas:**
-- **Bottom Navigation Bar**: Barra de navegação fixa na parte inferior (estilo YouVersion)
-- **5 Tabs Principais**: Início, Bíblia, Planos, Progresso, Você (Profile)
-- **Design Responsivo**:
-  - Visível apenas em mobile (md:hidden)
-  - Escondida em desktop (usa Sidebar ao invés)
-  - Sidebar trigger escondido em mobile
-- **Experiência do Usuário**:
-  - Ícones + labels para cada tab
-  - Tab ativa destacada com cor primária (text-primary)
-  - Ícone preenchido quando tab está ativa (fill-current)
-  - Transições suaves entre estados
-- **Acessibilidade**:
-  - aria-current="page" para tab ativa
-  - Links semânticos (sem aninhamento de elementos interativos)
-  - data-testid em todos os elementos
-- **Internacionalização**: Todas as labels traduzidas em 4 idiomas via i18n
-
-✅ **Arquivos Criados/Modificados:**
-- `client/src/components/BottomNav.tsx` - Componente de navegação mobile
-- `client/src/App.tsx` - Integração do BottomNav com padding-bottom responsivo
-
-**Redesign do Leitor de Bíblia (YouVersion Style) COMPLETO**:
-
-✅ **Funcionalidades Implementadas:**
-- **Layout Mobile-First Minimalista**:
-  - Header limpo apenas com ícones (Volume, Search, Menu, Version)
-  - Conteúdo focado em leitura sem distrações
-  - Navegação inferior flutuante arredondada
-- **Hierarquia Visual** (conforme YouVersion):
-  - Nome do livro: text-3xl/4xl centralizado
-  - Número do capítulo: text-8xl/9xl gigante centralizado
-  - Texto limpo e focado na leitura
-- **Formatação de Versículos**:
-  - Números em **sobrescrito** usando Unicode (¹, ², ³) via função toSuperscript()
-  - Texto corrido em parágrafo único (não mais em cards/badges)
-  - Font-serif para leitura confortável
-  - Leading relaxed para espaçamento adequado
-- **Navegação e Controles**:
-  - Bottom nav flutuante com setas + nome do capítulo (< João 1 >)
-  - Posicionamento bottom-24 (mobile) para não conflitar com BottomNav global
-  - Sheets/Drawers para: Livros (AT/NT tabs), Busca, Versão + Capítulos
-  - Auto-close dos sheets após seleção para fluidez
-- **Funcionalidades Mantidas**:
-  - Todas as mutations (mark as read, bookmark, search)
-  - Integração com gamificação (XP + conquistas)
-  - Fallback offline
-  - Multi-versão (NVI, ACF, ARC, RA)
-
-✅ **Arquivos Modificados:**
-- `client/src/pages/bible-reader.tsx` - Redesign completo do leitor de Bíblia
-
-**Limitações Conhecidas (FASE 1):**
-- Leitura de capítulos requer internet (exceto Gênesis 1 e Salmo 23 em cache)
-- Expansão de cache offline pode ser implementada em fases futuras
-- API ABíbliaDigital ocasionalmente indisponível (código trata graciosamente)
+Bíblia+ is a premium, personalized, and intelligent Bible study application designed to transform traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The core value proposition is to enhance Bible study through AI, personalized learning paths, multimedia integration, and community engagement, aiming for broad market appeal.
 
 ## User Preferences
 
@@ -168,128 +12,82 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend Architecture
 
-**Framework**: React with TypeScript using Vite as the build tool
+**Framework**: React with TypeScript using Vite.
 
-**UI Component System**:
-- **Design System**: shadcn/ui components built on Radix UI primitives
-- **Styling**: Tailwind CSS with custom design tokens
-- **Typography**: Multi-font system (Playfair Display for headings, Inter for UI, Crimson Text for Bible reading)
-- **Theme Strategy**: CSS variables with light/dark mode support, plus 5 predefined color schemes (Clássico, Noite Sagrada, Luz do Dia, Terra Santa, Custom RGB)
-- **Responsive Design**: Mobile-first approach with sidebar navigation on desktop, bottom tab bar on mobile
+**UI Component System**: Leverages shadcn/ui built on Radix UI primitives, styled with Tailwind CSS. It features a multi-font system, CSS variables for theming with light/dark mode and 5 predefined color schemes, and a mobile-first responsive design.
 
-**State Management**:
-- **Server State**: TanStack Query (React Query) for all API data fetching and caching
-- **Client State**: React Context for theme management and language selection (i18n)
-- **Form Handling**: React Hook Form with Zod validation
+**State Management**: TanStack Query for server state, React Context for client-side theme and internationalization, and React Hook Form with Zod for form handling.
 
-**Internationalization (i18n)**:
-- **Framework**: Custom Context API implementation
-- **Supported Languages**: Portuguese (native), English, Dutch, Spanish
-- **Translation Storage**: Centralized in `client/src/lib/i18n.ts` with type-safe interfaces
-- **Persistence**: localStorage for language preference
-- **Coverage**: All UI strings, navigation, messages, and labels
+**Internationalization (i18n)**: Custom Context API supports Portuguese (native), English, Dutch, and Spanish, with translations centralized in `client/src/lib/i18n.ts` and language preference persisted in localStorage.
 
-**Routing**: Wouter (lightweight client-side routing)
+**Routing**: Wouter for lightweight client-side routing.
 
-**Key Design Decisions**:
-- Component library chosen for accessibility (Radix UI) and customizability (shadcn/ui)
-- Separate concerns between UI components (`client/src/components/ui/`) and page components (`client/src/pages/`)
-- Path aliases configured for clean imports (`@/` for client, `@shared/` for shared types)
+**Key Design Decisions**: Focus on accessibility (Radix UI), customizability (shadcn/ui), clear separation of UI and page components, and path aliases for clean imports.
 
 ### Backend Architecture
 
-**Framework**: Express.js with TypeScript running on Node.js
+**Framework**: Express.js with TypeScript running on Node.js.
 
-**API Design**: RESTful endpoints organized by feature domain
-- `/api/auth/*` - Authentication and user management
-- `/api/reading-plans/*` - Reading plan CRUD operations
-- `/api/prayers/*` - Prayer journal management
-- `/api/podcasts/*` - Podcast browsing and subscriptions
-- `/api/teacher/lessons/*` - Lesson creation and management (teacher mode)
-- `/api/community/posts/*` - Community posts and interactions
-- `/api/ai/study` - AI theological assistant endpoint
-- `/api/stats/dashboard` - Aggregated user statistics
+**API Design**: RESTful endpoints organized by feature domain (e.g., `/api/auth/*`, `/api/reading-plans/*`).
 
-**Authentication Strategy**:
-- OpenID Connect (OIDC) integration via Replit Auth
-- Passport.js for session management
-- Session storage in PostgreSQL using connect-pg-simple
-- Session-based authentication with httpOnly cookies
+**Authentication Strategy**: OpenID Connect (OIDC) via Replit Auth, utilizing Passport.js for session management stored in PostgreSQL with httpOnly cookies.
 
-**Database Access Layer**:
-- Drizzle ORM for type-safe database queries
-- Schema-first approach with Zod validation schemas generated from Drizzle schema
-- Centralized storage interface pattern (`server/storage.ts`) abstracting database operations
+**Database Access Layer**: Drizzle ORM for type-safe queries, following a schema-first approach with Zod validation. A centralized storage interface (`server/storage.ts`) abstracts database operations.
 
-**Key Design Decisions**:
-- Middleware-based logging for all API requests
-- Separation of concerns: routes → storage layer → database
-- Raw body capture for webhook verification support
-- Session TTL set to 7 days for user convenience
+**Key Design Decisions**: Middleware-based logging, clear separation of concerns (routes → storage → database), and support for webhook verification.
 
 ### Data Storage
 
-**Database**: PostgreSQL (via Neon serverless)
+**Database**: PostgreSQL via Neon serverless.
 
-**Schema Design** (`shared/schema.ts`):
+**Schema Design**: Defined in `shared/schema.ts`, including core tables like `users` and `sessions`, and feature-specific tables for `reading_plans`, `prayers`, `notes`, `highlights`, `podcasts`, `lessons`, and `community_posts`. Data modeling uses JSONB for flexible data, composite indexes for optimization, and timestamps for all user-generated content.
 
-**Core Tables**:
-- `users` - User profiles with theme preferences, gamification stats (level, XP, streak), teacher mode flag
-- `sessions` - Authentication session storage (required for Replit Auth)
+### System Design Choices & Feature Specifications
 
-**Feature Tables**:
-- `reading_plans` - Custom reading plans with progress tracking
-- `prayers` - Prayer journal entries with optional audio URL
-- `notes` - Bible study notes linked to specific verses
-- `highlights` - Verse highlights with color categorization
-- `podcasts` - Podcast episodes metadata
-- `podcast_subscriptions` - User podcast subscriptions
-- `lessons` - Teacher mode lesson plans with objectives and questions (JSONB)
-- `lesson_progress` - Student progress tracking for lessons
-- `community_posts` - User-shared Bible insights with verse references
-- `post_likes` - Like tracking for community posts
-- `post_comments` - Comments on community posts
+*   **AI-powered Theological Assistant**: Planned integration for advanced theological queries and content generation.
+*   **Customizable Themes**: 5 presets and custom RGB options for a personalized user interface.
+*   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
+*   **Teacher Mode**: Tools for creating and managing educational lessons.
+*   **Community Platform**: Features for sharing insights, posts, likes, and comments.
+*   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling. Gamification includes XP, progressive levels, daily streaks (UTC midnight logic), and 18 automatic achievements across various categories. A dedicated `/progress` dashboard visualizes user advancement.
+*   **Prayer Journal**: Includes audio recording capabilities.
+*   **Bible Reader Redesign**: Mobile-first, minimalist layout inspired by YouVersion, with clear visual hierarchy, superscript verse numbering, and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA) and offline fallback for key passages.
+*   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking directly within the Bible reader via an integrated popover. A `/favorites` page organizes bookmarks, highlights, and notes with filtering and display options.
+*   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs (Home, Bible, Plans, Progress, Profile) visible only on mobile, replacing the desktop sidebar.
+*   **Security & Resilience**: Robust validation (userId, external API, Zod schema), comprehensive error handling with toast notifications, retry mechanisms, and fallback UI.
 
-**Data Modeling Decisions**:
-- JSONB fields for flexible data (theme settings, lesson objectives/questions)
-- Composite indexes on foreign keys for query optimization
-- Soft deletion approach considered for user content
-- Timestamps on all user-generated content for sorting and analytics
-
-### External Dependencies
+## External Dependencies
 
 **Authentication & Identity**:
-- Replit OIDC - Primary authentication provider
-- OpenID Client library - OIDC protocol implementation
+*   Replit OIDC
+*   OpenID Client library
 
 **Database**:
-- Neon PostgreSQL - Serverless Postgres database
-- Drizzle ORM - Type-safe database toolkit
-- Drizzle Kit - Database migration management
+*   Neon PostgreSQL
+*   Drizzle ORM
+*   Drizzle Kit
 
-**AI Integration** (Planned):
-- OpenAI API (GPT-4) - Theological question answering, doctrine comparison, content generation
-- Fine-tuned on theological texts (Matthew Henry commentaries, Strong's concordance, denominational doctrines)
+**AI Integration**:
+*   OpenAI API (GPT-4) - *Planned*
 
 **Frontend Libraries**:
-- Radix UI - Accessible component primitives
-- TanStack Query - Server state management
-- React Hook Form - Form validation
-- Zod - Runtime type validation
-- date-fns - Date formatting and manipulation
-- Wouter - Client-side routing
-- Lucide React - Icon system
+*   Radix UI
+*   TanStack Query
+*   React Hook Form
+*   Zod
+*   date-fns
+*   Wouter
+*   Lucide React
 
 **Development Tools**:
-- Vite - Build tool with HMR
-- TypeScript - Type safety
-- Tailwind CSS - Utility-first styling
-- PostCSS with Autoprefixer - CSS processing
+*   Vite
+*   TypeScript
+*   Tailwind CSS
+*   PostCSS with Autoprefixer
 
-**Media Integration** (Planned):
-- Podcast RSS feed parsers - For integrating external Christian podcasts
-- Audio player library - For prayer recordings and podcast playback
+**Media Integration**:
+*   Podcast RSS feed parsers - *Planned*
+*   Audio player library - *Planned*
 
 **Deployment Platform**:
-- Replit - Hosting and deployment environment
-- Replit-specific plugins for development experience (cartographer, dev-banner, runtime-error-modal)
+*   Replit
