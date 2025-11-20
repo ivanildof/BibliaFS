@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { 
   User,
   BookOpen,
@@ -23,7 +31,14 @@ import {
   Clock,
   Heart,
   Share2,
-  HandHeart
+  HandHeart,
+  Menu,
+  HelpCircle,
+  Info,
+  FileText as FileTextIcon,
+  Shield,
+  Mail,
+  LogOut
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
@@ -173,22 +188,69 @@ export default function Profile() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2">
-                <Link href="/donate">
-                  <Button variant="default" className="w-full sm:w-auto" data-testid="button-donate">
-                    <Heart className="h-4 w-4 mr-2 fill-current" />
-                    Doar
-                  </Button>
-                </Link>
                 <Button variant="outline" className="w-full sm:w-auto" data-testid="button-share-profile">
                   <Share2 className="h-4 w-4 mr-2" />
                   Compartilhar
                 </Button>
                 <Link href="/settings">
-                  <Button variant="outline" className="w-full sm:w-auto" data-testid="button-edit-profile">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Configurações
+                  <Button variant="outline" className="w-full sm:w-auto" data-testid="button-settings">
+                    <Settings className="h-4 w-4" />
                   </Button>
                 </Link>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" className="w-full sm:w-auto" data-testid="button-menu">
+                      <Menu className="h-4 w-4" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Menu</SheetTitle>
+                      <SheetDescription>
+                        Acesse informações e recursos adicionais
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="mt-6 space-y-2">
+                      <Link href="/donate">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="menu-donate">
+                          <Heart className="h-4 w-4 mr-3 fill-current text-pink-600" />
+                          Doar
+                        </Button>
+                      </Link>
+                      <Separator />
+                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
+                        <HelpCircle className="h-4 w-4 mr-3" />
+                        Ajuda e Suporte
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
+                        <Info className="h-4 w-4 mr-3" />
+                        Sobre o Bíblia+
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
+                        <FileTextIcon className="h-4 w-4 mr-3" />
+                        Termos de Uso
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
+                        <Shield className="h-4 w-4 mr-3" />
+                        Política de Privacidade
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
+                        <Mail className="h-4 w-4 mr-3" />
+                        Fale Conosco
+                      </Button>
+                      <Separator />
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start text-destructive hover:text-destructive" 
+                        onClick={() => window.location.href = '/api/logout'}
+                        data-testid="menu-logout"
+                      >
+                        <LogOut className="h-4 w-4 mr-3" />
+                        Sair
+                      </Button>
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </div>
             </div>
 
