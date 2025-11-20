@@ -125,6 +125,36 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application tha
 - `client/src/components/BottomNav.tsx` - Componente de navegação mobile
 - `client/src/App.tsx` - Integração do BottomNav com padding-bottom responsivo
 
+**Redesign do Leitor de Bíblia (YouVersion Style) COMPLETO**:
+
+✅ **Funcionalidades Implementadas:**
+- **Layout Mobile-First Minimalista**:
+  - Header limpo apenas com ícones (Volume, Search, Menu, Version)
+  - Conteúdo focado em leitura sem distrações
+  - Navegação inferior flutuante arredondada
+- **Hierarquia Visual** (conforme YouVersion):
+  - Nome do livro: text-3xl/4xl centralizado
+  - Número do capítulo: text-8xl/9xl gigante centralizado
+  - Texto limpo e focado na leitura
+- **Formatação de Versículos**:
+  - Números em **sobrescrito** usando Unicode (¹, ², ³) via função toSuperscript()
+  - Texto corrido em parágrafo único (não mais em cards/badges)
+  - Font-serif para leitura confortável
+  - Leading relaxed para espaçamento adequado
+- **Navegação e Controles**:
+  - Bottom nav flutuante com setas + nome do capítulo (< João 1 >)
+  - Posicionamento bottom-24 (mobile) para não conflitar com BottomNav global
+  - Sheets/Drawers para: Livros (AT/NT tabs), Busca, Versão + Capítulos
+  - Auto-close dos sheets após seleção para fluidez
+- **Funcionalidades Mantidas**:
+  - Todas as mutations (mark as read, bookmark, search)
+  - Integração com gamificação (XP + conquistas)
+  - Fallback offline
+  - Multi-versão (NVI, ACF, ARC, RA)
+
+✅ **Arquivos Modificados:**
+- `client/src/pages/bible-reader.tsx` - Redesign completo do leitor de Bíblia
+
 **Limitações Conhecidas (FASE 1):**
 - Leitura de capítulos requer internet (exceto Gênesis 1 e Salmo 23 em cache)
 - Expansão de cache offline pode ser implementada em fases futuras
