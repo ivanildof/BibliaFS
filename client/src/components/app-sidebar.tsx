@@ -27,7 +27,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
-  { title: "Ler Bíblia", url: "/bible", icon: BookOpen },
+  { title: "Ler Bíblia", url: "/bible-reader", icon: BookOpen },
   { title: "Planos de Leitura", url: "/plans", icon: Book },
   { title: "Minhas Orações", url: "/prayers", icon: MessageSquare },
 ];

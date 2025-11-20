@@ -5,6 +5,8 @@ import {
   prayers,
   notes,
   highlights,
+  bookmarks,
+  bibleSettings,
   podcasts,
   podcastSubscriptions,
   lessons,
@@ -22,6 +24,10 @@ import {
   type Note,
   type InsertHighlight,
   type Highlight,
+  type InsertBookmark,
+  type Bookmark,
+  type InsertBibleSettings,
+  type BibleSettings,
   type InsertPodcast,
   type Podcast,
   type InsertPodcastSubscription,
@@ -55,17 +61,26 @@ export interface IStorage {
   getPrayers(userId: string): Promise<Prayer[]>;
   createPrayer(prayer: InsertPrayer): Promise<Prayer>;
   updatePrayer(id: string, data: Partial<Prayer>): Promise<Prayer>;
-  deletePrayer(id: string): Promise<void>;
+  deletePrayer(id: string, userId: string): Promise<void>;
   
   // Notes
   getNotes(userId: string): Promise<Note[]>;
   createNote(note: InsertNote): Promise<Note>;
-  deleteNote(id: string): Promise<void>;
+  deleteNote(id: string, userId: string): Promise<void>;
   
   // Highlights
   getHighlights(userId: string): Promise<Highlight[]>;
   createHighlight(highlight: InsertHighlight): Promise<Highlight>;
-  deleteHighlight(id: string): Promise<void>;
+  deleteHighlight(id: string, userId: string): Promise<void>;
+  
+  // Bookmarks
+  getBookmarks(userId: string): Promise<Bookmark[]>;
+  createBookmark(bookmark: InsertBookmark): Promise<Bookmark>;
+  deleteBookmark(id: string, userId: string): Promise<void>;
+  
+  // Bible Settings
+  getBibleSettings(userId: string): Promise<BibleSettings | undefined>;
+  upsertBibleSettings(settings: InsertBibleSettings): Promise<BibleSettings>;
   
   // Podcasts
   getPodcasts(): Promise<Podcast[]>;
@@ -185,8 +200,8 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async deletePrayer(id: string): Promise<void> {
-    await db.delete(prayers).where(eq(prayers.id, id));
+  async deletePrayer(id: string, userId: string): Promise<void> {
+    await db.delete(prayers).where(and(eq(prayers.id, id), eq(prayers.userId, userId)));
   }
 
   // Notes
@@ -203,8 +218,8 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async deleteNote(id: string): Promise<void> {
-    await db.delete(notes).where(eq(notes.id, id));
+  async deleteNote(id: string, userId: string): Promise<void> {
+    await db.delete(notes).where(and(eq(notes.id, id), eq(notes.userId, userId)));
   }
 
   // Highlights
@@ -221,8 +236,50 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async deleteHighlight(id: string): Promise<void> {
-    await db.delete(highlights).where(eq(highlights.id, id));
+  async deleteHighlight(id: string, userId: string): Promise<void> {
+    await db.delete(highlights).where(and(eq(highlights.id, id), eq(highlights.userId, userId)));
+  }
+
+  // Bookmarks
+  async getBookmarks(userId: string): Promise<Bookmark[]> {
+    return await db
+      .select()
+      .from(bookmarks)
+      .where(eq(bookmarks.userId, userId))
+      .orderBy(desc(bookmarks.createdAt));
+  }
+
+  async createBookmark(bookmark: InsertBookmark): Promise<Bookmark> {
+    const [created] = await db.insert(bookmarks).values(bookmark).returning();
+    return created;
+  }
+
+  async deleteBookmark(id: string, userId: string): Promise<void> {
+    await db.delete(bookmarks).where(and(eq(bookmarks.id, id), eq(bookmarks.userId, userId)));
+  }
+
+  // Bible Settings
+  async getBibleSettings(userId: string): Promise<BibleSettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(bibleSettings)
+      .where(eq(bibleSettings.userId, userId));
+    return settings;
+  }
+
+  async upsertBibleSettings(settingsData: InsertBibleSettings): Promise<BibleSettings> {
+    const [settings] = await db
+      .insert(bibleSettings)
+      .values(settingsData)
+      .onConflictDoUpdate({
+        target: bibleSettings.userId,
+        set: {
+          ...settingsData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return settings;
   }
 
   // Podcasts

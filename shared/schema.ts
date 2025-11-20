@@ -129,6 +129,48 @@ export const highlights = pgTable("highlights", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Bible Bookmarks (Favoritos)
+export const bookmarks = pgTable("bookmarks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Verse reference
+  book: text("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse").notNull(),
+  verseText: text("verse_text").notNull(),
+  version: varchar("version").default("nvi"), // nvi, acf, arc, ra
+  
+  // Optional note
+  note: text("note"),
+  tags: text("tags").array(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Bible Reading Settings
+export const bibleSettings = pgTable("bible_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Preferred Bible version
+  preferredVersion: varchar("preferred_version").default("nvi"), // nvi, acf, arc, ra
+  
+  // Reading preferences
+  fontSize: integer("font_size").default(16),
+  lineHeight: integer("line_height").default(28),
+  verseNumbers: boolean("verse_numbers").default(true),
+  redLetters: boolean("red_letters").default(false), // Jesus' words in red
+  
+  // Last reading position
+  lastBook: text("last_book"),
+  lastChapter: integer("last_chapter"),
+  lastVerse: integer("last_verse"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Podcasts
 export const podcasts = pgTable("podcasts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -262,6 +304,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   prayers: many(prayers),
   notes: many(notes),
   highlights: many(highlights),
+  bookmarks: many(bookmarks),
   podcastSubscriptions: many(podcastSubscriptions),
   lessonsCreated: many(lessons),
   lessonProgress: many(lessonProgress),
@@ -294,6 +337,20 @@ export const notesRelations = relations(notes, ({ one }) => ({
 export const highlightsRelations = relations(highlights, ({ one }) => ({
   user: one(users, {
     fields: [highlights.userId],
+    references: [users.id],
+  }),
+}));
+
+export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+  user: one(users, {
+    fields: [bookmarks.userId],
+    references: [users.id],
+  }),
+}));
+
+export const bibleSettingsRelations = relations(bibleSettings, ({ one }) => ({
+  user: one(users, {
+    fields: [bibleSettings.userId],
     references: [users.id],
   }),
 }));
@@ -388,6 +445,14 @@ export type Note = typeof notes.$inferSelect;
 export const insertHighlightSchema = createInsertSchema(highlights).omit({ id: true, createdAt: true });
 export type InsertHighlight = z.infer<typeof insertHighlightSchema>;
 export type Highlight = typeof highlights.$inferSelect;
+
+export const insertBookmarkSchema = createInsertSchema(bookmarks).omit({ id: true, createdAt: true });
+export type InsertBookmark = z.infer<typeof insertBookmarkSchema>;
+export type Bookmark = typeof bookmarks.$inferSelect;
+
+export const insertBibleSettingsSchema = createInsertSchema(bibleSettings).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertBibleSettings = z.infer<typeof insertBibleSettingsSchema>;
+export type BibleSettings = typeof bibleSettings.$inferSelect;
 
 export const insertPodcastSchema = createInsertSchema(podcasts).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertPodcast = z.infer<typeof insertPodcastSchema>;

@@ -16,6 +16,38 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application tha
 - Prayer journal with audio recording
 - Gamification system (levels, XP, streaks, achievements)
 
+## Recent Changes (November 2025)
+
+**FASE 1 COMPLETA** - Leitor de Bíblia com integração API ABíbliaDigital implementado:
+
+✅ **Funcionalidades Implementadas:**
+- Integração completa com ABíbliaDigital API (NVI, ACF, ARC, RA)
+- Navegação por livros, capítulos e versículos
+- Sistema de bookmarks/favoritos
+- Configurações de leitura personalizadas
+- Busca de versículos
+- **Fallback offline**: Lista completa de 66 livros + Gênesis 1 (31 versículos) + Salmo 23 (6 versículos)
+
+✅ **Correções de Segurança e Resiliência:**
+- Validação userId em todos os DELETE endpoints (previne cross-user data tampering)
+- Validação robusta de API externa em TODOS os endpoints
+- Schema validation com Zod antes de inserir no banco
+- Error handling com toast + retry + fallback UI
+- Backend valida estrutura de dados (verses array) antes de retornar
+
+✅ **Arquivos Criados/Modificados:**
+- `client/src/pages/bible-reader.tsx` - Página de leitura da Bíblia
+- `server/routes.ts` - Endpoints Bible API com fallback
+- `server/bible-books-fallback.ts` - Lista offline dos 66 livros
+- `server/bible-chapters-fallback.ts` - Capítulos offline (Gênesis 1, Salmo 23)
+- `shared/schema.ts` - Tabelas bookmarks e bible_settings
+- `server/storage.ts` - CRUD operations para bookmarks/settings
+
+**Limitações Conhecidas:**
+- Leitura de capítulos requer internet (exceto Gênesis 1 e Salmo 23 em cache)
+- Expansão de cache offline pode ser implementada em fases futuras
+- API ABíbliaDigital ocasionalmente indisponível (código trata graciosamente)
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.

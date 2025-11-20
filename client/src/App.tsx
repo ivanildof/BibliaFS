@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
+import BibleReader from "@/pages/bible-reader";
 import AIStudy from "@/pages/ai-study";
 import ReadingPlans from "@/pages/reading-plans";
 import Prayers from "@/pages/prayers";
@@ -45,6 +46,7 @@ function Router() {
         <>
           <Route path="/" component={Home} />
           <Route path="/bible" component={Bible} />
+          <Route path="/bible-reader" component={BibleReader} />
           <Route path="/ai-study" component={AIStudy} />
           <Route path="/plans" component={ReadingPlans} />
           <Route path="/prayers" component={Prayers} />

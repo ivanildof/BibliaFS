@@ -8,6 +8,8 @@ import {
   insertPrayerSchema,
   insertNoteSchema,
   insertHighlightSchema,
+  insertBookmarkSchema,
+  insertBibleSettingsSchema,
   insertPodcastSchema,
   insertPodcastSubscriptionSchema,
   insertLessonSchema,
@@ -153,9 +155,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/prayers/:id", isAuthenticated, async (req, res) => {
+  app.delete("/api/prayers/:id", isAuthenticated, async (req: any, res) => {
     try {
-      await storage.deletePrayer(req.params.id);
+      const userId = req.user.claims.sub;
+      await storage.deletePrayer(req.params.id, userId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -187,9 +190,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/notes/:id", isAuthenticated, async (req, res) => {
+  app.delete("/api/notes/:id", isAuthenticated, async (req: any, res) => {
     try {
-      await storage.deleteNote(req.params.id);
+      const userId = req.user.claims.sub;
+      await storage.deleteNote(req.params.id, userId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -221,9 +225,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/highlights/:id", isAuthenticated, async (req, res) => {
+  app.delete("/api/highlights/:id", isAuthenticated, async (req: any, res) => {
     try {
-      await storage.deleteHighlight(req.params.id);
+      const userId = req.user.claims.sub;
+      await storage.deleteHighlight(req.params.id, userId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -381,6 +386,239 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Bible API Routes (ABíbliaDigital)
+  const BIBLE_API_BASE = "https://www.abibliadigital.com.br/api";
+  
+  // Import fallback Bible books list and chapters
+  const { BIBLE_BOOKS_FALLBACK } = await import("./bible-books-fallback");
+  const { getFallbackChapter } = await import("./bible-chapters-fallback");
+  
+  // Get all Bible books
+  app.get("/api/bible/books", async (req, res) => {
+    try {
+      const response = await fetch(`${BIBLE_API_BASE}/books`);
+      
+      if (!response.ok) {
+        console.warn("Bible API unavailable, using fallback list");
+        return res.json(BIBLE_BOOKS_FALLBACK);
+      }
+      
+      const data = await response.json();
+      
+      // Check for API error responses
+      if (data.error || data.err) {
+        console.warn("Bible API error response, using fallback list");
+        return res.json(BIBLE_BOOKS_FALLBACK);
+      }
+      
+      // Ensure we return an array
+      const books = Array.isArray(data) ? data : (data.books || []);
+      
+      if (books.length === 0) {
+        console.warn("Bible API returned empty book list, using fallback");
+        return res.json(BIBLE_BOOKS_FALLBACK);
+      }
+      
+      res.json(books);
+    } catch (error: any) {
+      console.warn("Error fetching Bible books, using fallback list:", error.message);
+      res.json(BIBLE_BOOKS_FALLBACK);
+    }
+  });
+  
+  // Get specific chapter with fallback
+  app.get("/api/bible/:version/:abbrev/:chapter", async (req, res) => {
+    try {
+      const { version, abbrev, chapter } = req.params;
+      const response = await fetch(`${BIBLE_API_BASE}/verses/${version}/${abbrev}/${chapter}`);
+      
+      if (!response.ok) {
+        const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
+        if (fallback) {
+          console.warn(`API error, using fallback: ${version}-${abbrev}-${chapter}`);
+          return res.json(fallback);
+        }
+        return res.status(503).json({ 
+          error: "Capítulo não disponível no momento (sem cache)",
+          status: "api_error" 
+        });
+      }
+      
+      const data = await response.json();
+      
+      if (data.error || data.err) {
+        const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
+        if (fallback) {
+          console.warn(`API error response, using fallback: ${version}-${abbrev}-${chapter}`);
+          return res.json(fallback);
+        }
+        return res.status(503).json({ 
+          error: "Capítulo não disponível no momento (sem cache)",
+          status: "api_error" 
+        });
+      }
+      
+      // Validate chapter structure
+      if (!data.verses || !Array.isArray(data.verses) || data.verses.length === 0) {
+        const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
+        if (fallback) {
+          console.warn(`Empty verses, using fallback: ${version}-${abbrev}-${chapter}`);
+          return res.json(fallback);
+        }
+        return res.status(503).json({ 
+          error: "Capítulo sem versículos disponíveis (sem cache)",
+          status: "empty_response" 
+        });
+      }
+      
+      res.json(data);
+    } catch (error: any) {
+      const { version, abbrev, chapter } = req.params;
+      const fallback = getFallbackChapter(version, abbrev, parseInt(chapter));
+      if (fallback) {
+        console.warn(`Network error, using fallback: ${version}-${abbrev}-${chapter}`);
+        return res.json(fallback);
+      }
+      res.status(500).json({ 
+        error: "Erro ao buscar capítulo (sem cache)",
+        status: "network_error" 
+      });
+    }
+  });
+  
+  // Get specific verse
+  app.get("/api/bible/:version/:abbrev/:chapter/:verse", async (req, res) => {
+    try {
+      const { version, abbrev, chapter, verse } = req.params;
+      const response = await fetch(`${BIBLE_API_BASE}/verses/${version}/${abbrev}/${chapter}/${verse}`);
+      
+      if (!response.ok) {
+        console.error("Bible API verse error:", response.status);
+        return res.status(503).json({ 
+          error: "Versículo não disponível no momento",
+          status: "api_error" 
+        });
+      }
+      
+      const data = await response.json();
+      
+      if (data.error || data.err) {
+        console.error("Bible API verse error response:", data);
+        return res.status(503).json({ 
+          error: "Versículo não disponível no momento",
+          status: "api_error" 
+        });
+      }
+      
+      res.json(data);
+    } catch (error: any) {
+      console.error("Error fetching verse:", error);
+      res.status(500).json({ 
+        error: "Erro ao buscar versículo",
+        status: "network_error" 
+      });
+    }
+  });
+  
+  // Search Bible text
+  app.get("/api/bible/search", async (req, res) => {
+    try {
+      const { version = 'nvi', query } = req.query;
+      if (!query) {
+        return res.status(400).json({ error: "Query é obrigatória" });
+      }
+      
+      const response = await fetch(`${BIBLE_API_BASE}/verses/${version}/search/${encodeURIComponent(query as string)}`);
+      
+      if (!response.ok) {
+        console.error("Bible API search error:", response.status);
+        return res.status(503).json({ 
+          error: "Busca não disponível no momento",
+          status: "api_error" 
+        });
+      }
+      
+      const results = await response.json();
+      
+      if (results.error || results.err) {
+        console.error("Bible API search error response:", results);
+        return res.status(503).json({ 
+          error: "Busca não disponível no momento",
+          status: "api_error" 
+        });
+      }
+      
+      res.json(results);
+    } catch (error: any) {
+      console.error("Error searching Bible:", error);
+      res.status(500).json({ 
+        error: "Erro ao buscar texto",
+        status: "network_error" 
+      });
+    }
+  });
+
+  // Get user's Bible bookmarks
+  app.get("/api/bible/bookmarks", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const bookmarks = await storage.getBookmarks(userId);
+      res.json(bookmarks);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Create bookmark
+  app.post("/api/bible/bookmarks", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      // Merge userId into payload BEFORE validation
+      const payload = { ...req.body, userId };
+      const data = insertBookmarkSchema.parse(payload);
+      const bookmark = await storage.createBookmark(data);
+      res.json(bookmark);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Delete bookmark
+  app.delete("/api/bible/bookmarks/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteBookmark(req.params.id, userId);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user's Bible settings
+  app.get("/api/bible/settings", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const settings = await storage.getBibleSettings(userId);
+      res.json(settings);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Update Bible settings
+  app.put("/api/bible/settings", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      // Merge userId into payload BEFORE validation
+      const payload = { ...req.body, userId };
+      const data = insertBibleSettingsSchema.parse(payload);
+      const settings = await storage.upsertBibleSettings(data);
+      res.json(settings);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   });
 
