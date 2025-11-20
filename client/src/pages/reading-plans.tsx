@@ -4,65 +4,47 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Calendar, 
   BookOpen, 
   Plus, 
   Check,
   Clock,
-  Headphones,
   TrendingUp,
-  Loader2
+  Loader2,
+  Trophy,
+  Target
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { insertReadingPlanSchema, type ReadingPlan } from "@shared/schema";
-
-// Form schema extending the insert schema
-const formSchema = insertReadingPlanSchema.extend({
-  title: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),
-  description: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres").optional(),
-  totalDays: z.number().min(1, "O plano deve ter pelo menos 1 dia").max(365, "O plano não pode ter mais de 365 dias"),
-}).omit({ userId: true });
-
-type FormData = z.infer<typeof formSchema>;
+import { type ReadingPlan, type ReadingPlanTemplate } from "@shared/schema";
 
 export default function ReadingPlans() {
   const { toast } = useToast();
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isTemplatesDialogOpen, setIsTemplatesDialogOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<ReadingPlanTemplate | null>(null);
 
-  const { data: plans = [], isLoading, error } = useQuery<ReadingPlan[]>({
+  const { data: plans = [], isLoading: plansLoading } = useQuery<ReadingPlan[]>({
     queryKey: ["/api/reading-plans"],
     retry: 2,
   });
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      totalDays: 30,
-      schedule: [],
-    },
+  const { data: templates = [], isLoading: templatesLoading } = useQuery<ReadingPlanTemplate[]>({
+    queryKey: ["/api/reading-plan-templates"],
+    retry: 2,
   });
 
-  const createMutation = useMutation({
-    mutationFn: async (data: FormData) => {
-      return await apiRequest("POST", "/api/reading-plans", data);
+  const createFromTemplateMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      return await apiRequest("POST", "/api/reading-plans/from-template", { templateId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/reading-plans"] });
-      setIsCreateDialogOpen(false);
-      form.reset();
+      setIsTemplatesDialogOpen(false);
+      setSelectedTemplate(null);
       toast({
-        title: "Plano criado!",
+        title: "Plano iniciado!",
         description: "Seu plano de leitura foi criado com sucesso.",
       });
     },
@@ -75,15 +57,31 @@ export default function ReadingPlans() {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    createMutation.mutate(data);
-  };
+  const completeDayMutation = useMutation({
+    mutationFn: async ({ planId, day }: { planId: string; day: number }) => {
+      return await apiRequest("PUT", `/api/reading-plans/${planId}/complete-day`, { day });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/reading-plans"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats/gamification"] });
+      toast({
+        title: "Dia completo! 🎉",
+        description: "Você ganhou 10 XP pela sua leitura.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao marcar progresso",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const activePlans = plans.filter(p => !p.isCompleted);
   const completedPlans = plans.filter(p => p.isCompleted);
 
-  // Loading state
-  if (isLoading) {
+  if (plansLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto p-6">
@@ -98,34 +96,9 @@ export default function ReadingPlans() {
     );
   }
 
-  // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
-          <Card className="border-destructive">
-            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
-                <BookOpen className="h-8 w-8 text-destructive" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Erro ao carregar planos</h3>
-              <p className="text-muted-foreground mb-4">
-                Não foi possível carregar seus planos de leitura. Tente novamente.
-              </p>
-              <Button onClick={() => window.location.reload()} data-testid="button-retry">
-                Tentar Novamente
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
@@ -136,111 +109,89 @@ export default function ReadingPlans() {
             </p>
           </div>
           
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-plan">
                 <Plus className="h-5 w-5 mr-2" />
-                Criar Plano
+                Iniciar Plano
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Criar Novo Plano de Leitura</DialogTitle>
+                <DialogTitle>Escolher Plano de Leitura</DialogTitle>
                 <DialogDescription>
-                  Defina um plano personalizado para seu estudo bíblico
+                  Selecione um plano predefinido para começar sua jornada
                 </DialogDescription>
               </DialogHeader>
               
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Título do Plano</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Ex: Leitura do Novo Testamento em 90 dias"
-                            data-testid="input-plan-title"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Descrição</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Descreva o objetivo deste plano..."
-                            data-testid="textarea-plan-description"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="totalDays"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Duração (dias)</FormLabel>
-                        <FormControl>
-                          <div className="flex gap-2">
-                            <Input 
-                              type="number" 
-                              placeholder="30" 
-                              className="w-24"
-                              data-testid="input-plan-days"
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                            <span className="text-muted-foreground self-center">dias</span>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <DialogFooter>
-                    <Button 
-                      type="button"
-                      variant="outline" 
-                      onClick={() => setIsCreateDialogOpen(false)}
-                      data-testid="button-cancel-plan"
+              {templatesLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {templates.map((template) => (
+                    <Card 
+                      key={template.id} 
+                      className={`cursor-pointer transition-all hover-elevate ${
+                        selectedTemplate?.id === template.id ? 'ring-2 ring-primary' : ''
+                      }`}
+                      onClick={() => setSelectedTemplate(template)}
+                      data-testid={`card-template-${template.id}`}
                     >
-                      Cancelar
-                    </Button>
-                    <Button 
-                      type="submit"
-                      disabled={createMutation.isPending}
-                      data-testid="button-save-plan"
-                    >
-                      {createMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                      {createMutation.isPending ? "Criando..." : "Criar Plano"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
+                      <CardHeader>
+                        <CardTitle className="text-lg">{template.name}</CardTitle>
+                        <CardDescription className="text-sm">
+                          {template.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="secondary">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {template.duration} dias
+                          </Badge>
+                          {template.difficulty && (
+                            <Badge variant="outline">
+                              {template.difficulty}
+                            </Badge>
+                          )}
+                          {template.category && (
+                            <Badge variant="outline">
+                              {template.category}
+                            </Badge>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+              
+              <DialogFooter>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsTemplatesDialogOpen(false)}
+                  data-testid="button-cancel"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  disabled={!selectedTemplate || createFromTemplateMutation.isPending}
+                  onClick={() => selectedTemplate && createFromTemplateMutation.mutate(selectedTemplate.id)}
+                  data-testid="button-start-plan"
+                >
+                  {createFromTemplateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  {createFromTemplateMutation.isPending ? "Iniciando..." : "Iniciar Plano"}
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
 
-        {/* Stats Overview */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Planos Ativos</CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -252,7 +203,7 @@ export default function ReadingPlans() {
           </Card>
           
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Planos Concluídos</CardTitle>
               <Check className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -264,7 +215,7 @@ export default function ReadingPlans() {
           </Card>
           
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Dia Atual</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -276,7 +227,6 @@ export default function ReadingPlans() {
           </Card>
         </div>
 
-        {/* Active Plans */}
         <section className="mb-12">
           <h2 className="font-display text-2xl font-bold mb-4">Planos Ativos</h2>
           
@@ -288,100 +238,122 @@ export default function ReadingPlans() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Nenhum plano ativo</h3>
                 <p className="text-muted-foreground mb-4">
-                  Crie seu primeiro plano de leitura para começar
+                  Escolha um plano predefinido para começar sua jornada
                 </p>
-                <Button onClick={() => setIsCreateDialogOpen(true)}>
+                <Button onClick={() => setIsTemplatesDialogOpen(true)} data-testid="button-start-first-plan">
                   <Plus className="h-4 w-4 mr-2" />
-                  Criar Primeiro Plano
+                  Iniciar Primeiro Plano
                 </Button>
               </CardContent>
             </Card>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
-              {activePlans.map((plan) => (
-                <Card key={plan.id} className="hover-elevate" data-testid={`card-plan-${plan.id}`}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="mb-2">{plan.title}</CardTitle>
-                        <CardDescription>{plan.description}</CardDescription>
+              {activePlans.map((plan) => {
+                const progress = (plan.currentDay / plan.totalDays) * 100;
+                const schedule = plan.schedule as Array<{ day: number; readings: any[]; isCompleted: boolean }>;
+                const completedDays = schedule.filter(s => s.isCompleted).length;
+                
+                return (
+                  <Card key={plan.id} data-testid={`card-plan-${plan.id}`}>
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <CardTitle className="mb-2">{plan.name}</CardTitle>
+                          <CardDescription className="text-sm">
+                            {plan.description}
+                          </CardDescription>
+                        </div>
+                        <Badge variant="secondary">
+                          <Target className="h-3 w-3 mr-1" />
+                          Dia {plan.currentDay}/{plan.totalDays}
+                        </Badge>
                       </div>
-                      <Badge variant="secondary">
-                        Dia {plan.currentDay}/{plan.schedule?.length || 0}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-4">
-                    <div>
-                      <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-muted-foreground">Progresso</span>
-                        <span className="font-medium">
-                          {Math.round((plan.currentDay / (plan.schedule?.length || 1)) * 100)}%
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-muted-foreground">Progresso</span>
+                          <span className="font-medium">{Math.round(progress)}%</span>
+                        </div>
+                        <Progress value={progress} className="h-2" />
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {completedDays} de {plan.totalDays} dias completos
                         </span>
+                        <TrendingUp className="h-4 w-4 text-primary" />
                       </div>
-                      <Progress 
-                        value={(plan.currentDay / (plan.schedule?.length || 1)) * 100}
-                        className="h-2"
-                      />
-                    </div>
-                    
-                    {/* Today's Reading Preview */}
-                    <div className="p-3 bg-muted rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">Leitura de Hoje</span>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-sm">
-                          <BookOpen className="h-3 w-3 text-muted-foreground" />
-                          <span>João 3:1-21</span>
+
+                      {schedule[plan.currentDay - 1] && !schedule[plan.currentDay - 1].isCompleted && (
+                        <div className="pt-2 border-t">
+                          <p className="text-sm text-muted-foreground mb-2">Leitura de hoje:</p>
+                          <div className="space-y-1">
+                            {schedule[plan.currentDay - 1].readings.map((reading: any, idx: number) => (
+                              <p key={idx} className="text-sm font-medium">
+                                {reading.book} {reading.chapter}
+                                {reading.verses ? `:${reading.verses}` : ''}
+                              </p>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Headphones className="h-3 w-3" />
-                          <span>Podcast: "Novo Nascimento"</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter className="gap-2">
-                    <Button className="flex-1" data-testid="button-continue-plan">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Continuar
-                    </Button>
-                    <Button variant="outline" size="icon" data-testid="button-plan-settings">
-                      <TrendingUp className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+                      )}
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        className="w-full"
+                        onClick={() => completeDayMutation.mutate({ planId: plan.id, day: plan.currentDay })}
+                        disabled={
+                          completeDayMutation.isPending || 
+                          (schedule[plan.currentDay - 1]?.isCompleted ?? false)
+                        }
+                        data-testid={`button-complete-day-${plan.id}`}
+                      >
+                        {completeDayMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                        {schedule[plan.currentDay - 1]?.isCompleted ? (
+                          <>
+                            <Check className="h-4 w-4 mr-2" />
+                            Dia Completo
+                          </>
+                        ) : (
+                          "Marcar Dia Como Completo"
+                        )}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </section>
 
-        {/* Completed Plans */}
         {completedPlans.length > 0 && (
           <section>
             <h2 className="font-display text-2xl font-bold mb-4">Planos Concluídos</h2>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               {completedPlans.map((plan) => (
-                <Card key={plan.id} className="hover-elevate" data-testid={`card-completed-${plan.id}`}>
+                <Card key={plan.id} className="bg-muted/30" data-testid={`card-completed-plan-${plan.id}`}>
                   <CardHeader>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10">
-                        <Check className="h-4 w-4 text-green-600" />
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <CardTitle className="mb-2">{plan.name}</CardTitle>
+                        <CardDescription className="text-sm">
+                          {plan.description}
+                        </CardDescription>
                       </div>
-                      <Badge variant="secondary" className="bg-green-500/10 text-green-700">
+                      <Badge variant="default" className="bg-primary">
+                        <Trophy className="h-3 w-3 mr-1" />
                         Concluído
                       </Badge>
                     </div>
-                    <CardTitle className="text-lg">{plan.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      {plan.schedule?.length} dias completados
-                    </p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        Completado em {new Date(plan.completedAt!).toLocaleDateString('pt-BR')}
+                      </span>
+                      <Check className="h-5 w-5 text-primary" />
+                    </div>
                   </CardContent>
                 </Card>
               ))}
