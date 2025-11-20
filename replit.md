@@ -4,6 +4,14 @@
 
 Bíblia+ is a premium, personalized, and intelligent Bible study application designed to transform traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The core value proposition is to enhance Bible study through AI, personalized learning paths, multimedia integration, and community engagement, aiming for broad market appeal.
 
+## Recent Changes
+
+**November 20, 2025**:
+*   **Verse Sharing System**: Implemented complete verse sharing functionality with text copy and image download using `html-to-image` library. Users can share verses via formatted text or beautiful visual cards.
+*   **Prayer Journal Enhancement**: Added real audio recording using MediaRecorder API with base64 storage, time counter, mark-as-answered functionality, and delete capability. Full prayer lifecycle management implemented.
+*   **Community Likes System**: Connected like/unlike mutations to community post cards, enabling social engagement within the platform.
+*   **Architecture Cleanup**: Removed duplicate highlight routes, consolidated to `/api/bible/highlights` with proper color validation (6 colors: yellow, green, blue, purple, pink, orange).
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -48,9 +56,10 @@ Preferred communication style: Simple, everyday language.
 *   **Customizable Themes**: 5 presets and custom RGB options for a personalized user interface.
 *   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
 *   **Teacher Mode**: Tools for creating and managing educational lessons.
-*   **Community Platform**: Features for sharing insights, posts, likes, and comments.
+*   **Community Platform**: Full-featured community system with verse-based posts, likes system (POST/DELETE mutations), trending topics sidebar, and social engagement metrics. Users can share biblical insights with verse references.
 *   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling. Gamification includes XP, progressive levels, daily streaks (UTC midnight logic), and 18 automatic achievements across various categories. A dedicated `/progress` dashboard visualizes user advancement.
-*   **Prayer Journal**: Includes audio recording capabilities.
+*   **Prayer Journal**: Complete prayer management with MediaRecorder API for real audio recording (base64 storage), recording time counter, mark-as-answered functionality, delete capability, and audio playback. Categories include Thanksgiving, Supplication, Intercession, and Confession.
+*   **Verse Sharing**: Integrated sharing system allowing users to copy formatted verse text or download verse cards as images using `html-to-image` library. Shareable cards include verse text, reference, and app branding.
 *   **Bible Reader Redesign**: Mobile-first, minimalist layout inspired by YouVersion, with clear visual hierarchy, superscript verse numbering, and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA) and offline fallback for key passages.
 *   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking directly within the Bible reader via an integrated popover. A `/favorites` page organizes bookmarks, highlights, and notes with filtering and display options.
 *   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs (Home, Bible, Plans, Progress, Profile) visible only on mobile, replacing the desktop sidebar.
@@ -78,6 +87,7 @@ Preferred communication style: Simple, everyday language.
 *   date-fns
 *   Wouter
 *   Lucide React
+*   html-to-image (for verse card generation)
 
 **Development Tools**:
 *   Vite
@@ -86,8 +96,9 @@ Preferred communication style: Simple, everyday language.
 *   PostCSS with Autoprefixer
 
 **Media Integration**:
+*   MediaRecorder API (for prayer audio recording)
+*   Native HTML5 Audio (for prayer playback)
 *   Podcast RSS feed parsers - *Planned*
-*   Audio player library - *Planned*
 
 **Deployment Platform**:
 *   Replit

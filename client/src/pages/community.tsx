@@ -44,7 +44,7 @@ export default function Community() {
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  const { data: posts = [], isLoading, error } = useQuery<(CommunityPost & { user: any })[]>({
+  const { data: posts = [], isLoading, error } = useQuery<(CommunityPost & { user: any; isLikedByCurrentUser?: boolean })[]>({
     queryKey: ["/api/community/posts"],
     retry: 2,
   });
@@ -80,18 +80,13 @@ export default function Community() {
     },
   });
 
-  const likeMutation = useMutation({
-    mutationFn: async (postId: string) => {
-      return await apiRequest("POST", `/api/community/posts/${postId}/like`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
-    },
-  });
-
-  const unlikeMutation = useMutation({
-    mutationFn: async (postId: string) => {
-      return await apiRequest("DELETE", `/api/community/posts/${postId}/like`);
+  const toggleLikeMutation = useMutation({
+    mutationFn: async ({ postId, isLiked }: { postId: string; isLiked: boolean }) => {
+      if (isLiked) {
+        return await apiRequest("DELETE", `/api/community/posts/${postId}/like`);
+      } else {
+        return await apiRequest("POST", `/api/community/posts/${postId}/like`);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
@@ -379,10 +374,16 @@ export default function Community() {
                         variant="ghost" 
                         size="sm"
                         className="flex-1"
-                        onClick={() => likeMutation.mutate(post.id)}
+                        onClick={() => toggleLikeMutation.mutate({ 
+                          postId: post.id, 
+                          isLiked: post.isLikedByCurrentUser || false 
+                        })}
+                        disabled={toggleLikeMutation.isPending}
                         data-testid={`button-like-post-${post.id}`}
                       >
-                        <Heart className="h-4 w-4 mr-2" />
+                        <Heart 
+                          className={`h-4 w-4 mr-2 ${post.isLikedByCurrentUser ? 'fill-red-500 text-red-500' : ''}`} 
+                        />
                         {post.likeCount || 0}
                       </Button>
                       <Button 

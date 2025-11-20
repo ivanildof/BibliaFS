@@ -320,9 +320,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Community Posts Routes
-  app.get("/api/community/posts", async (req, res) => {
+  app.get("/api/community/posts", async (req: any, res) => {
     try {
-      const posts = await storage.getCommunityPosts(50);
+      const userId = req.user?.claims?.sub;
+      const posts = await storage.getCommunityPosts(50, userId);
       res.json(posts);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

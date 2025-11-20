@@ -123,7 +123,7 @@ export interface IStorage {
   createLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
   
   // Community
-  getCommunityPosts(limit?: number): Promise<(CommunityPost & { user: User })[]>;
+  getCommunityPosts(limit?: number, userId?: string): Promise<(CommunityPost & { user: User; isLikedByCurrentUser?: boolean })[]>;
   createCommunityPost(post: InsertCommunityPost): Promise<CommunityPost>;
   likePost(postId: string, userId: string): Promise<void>;
   unlikePost(postId: string, userId: string): Promise<void>;
@@ -551,7 +551,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Community
-  async getCommunityPosts(limit: number = 50): Promise<(CommunityPost & { user: User })[]> {
+  async getCommunityPosts(limit: number = 50, userId?: string): Promise<(CommunityPost & { user: User; isLikedByCurrentUser?: boolean })[]> {
     const posts = await db
       .select({
         post: communityPosts,
@@ -562,9 +562,25 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(communityPosts.createdAt))
       .limit(limit);
     
+    if (!userId) {
+      return posts.map(p => ({
+        ...p.post,
+        user: p.user,
+        isLikedByCurrentUser: false,
+      }));
+    }
+
+    const likes = await db
+      .select({ postId: postLikes.postId })
+      .from(postLikes)
+      .where(eq(postLikes.userId, userId));
+
+    const likedPostIds = new Set(likes.map(l => l.postId));
+    
     return posts.map(p => ({
       ...p.post,
       user: p.user,
+      isLikedByCurrentUser: likedPostIds.has(p.post.id),
     }));
   }
 

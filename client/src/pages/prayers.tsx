@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -124,10 +124,41 @@ export default function Prayers() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingIntervalRef = useRef<number | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const MAX_RECORDING_SECONDS = 300; // 5 minutes max
+  const MAX_AUDIO_SIZE_MB = 5;
+
+  const cleanupRecording = () => {
+    if (recordingIntervalRef.current) {
+      clearInterval(recordingIntervalRef.current);
+      recordingIntervalRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      cleanupRecording();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isCreateDialogOpen) {
+      if (isRecording) {
+        handleStopRecording();
+      }
+      cleanupRecording();
+    }
+  }, [isCreateDialogOpen]);
 
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
@@ -138,8 +169,20 @@ export default function Prayers() {
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        setAudioBlob(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
+        const sizeMB = audioBlob.size / (1024 * 1024);
+        
+        if (sizeMB > MAX_AUDIO_SIZE_MB) {
+          toast({
+            title: "Áudio muito grande",
+            description: `O arquivo excede ${MAX_AUDIO_SIZE_MB}MB. Grave um áudio mais curto.`,
+            variant: "destructive",
+          });
+          setAudioBlob(null);
+        } else {
+          setAudioBlob(audioBlob);
+        }
+        
+        cleanupRecording();
       };
 
       mediaRecorder.start();
@@ -147,7 +190,17 @@ export default function Prayers() {
       setRecordingTime(0);
       
       recordingIntervalRef.current = window.setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime(prev => {
+          const newTime = prev + 1;
+          if (newTime >= MAX_RECORDING_SECONDS) {
+            handleStopRecording();
+            toast({
+              title: "Gravação finalizada",
+              description: "Tempo máximo de 5 minutos atingido",
+            });
+          }
+          return newTime;
+        });
       }, 1000);
     } catch (error) {
       toast({
@@ -162,9 +215,6 @@ export default function Prayers() {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-      }
     }
   };
 
@@ -443,19 +493,20 @@ export default function Prayers() {
                       )}
                       
                       {prayer.audioUrl && (
-                        <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                          <Button size="icon" variant="outline" className="h-10 w-10 shrink-0">
-                            <Play className="h-4 w-4" />
-                          </Button>
-                          <div className="flex-1">
-                            <div className="h-1 bg-background rounded-full overflow-hidden">
-                              <div className="h-full bg-primary w-1/3" />
-                            </div>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Mic className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              Gravação de {Math.floor((prayer.audioDuration || 0) / 60)}:
+                              {String((prayer.audioDuration || 0) % 60).padStart(2, '0')}
+                            </span>
                           </div>
-                          <span className="text-xs text-muted-foreground">
-                            {Math.floor((prayer.audioDuration || 0) / 60)}:
-                            {String((prayer.audioDuration || 0) % 60).padStart(2, '0')}
-                          </span>
+                          <audio 
+                            controls 
+                            className="w-full" 
+                            src={prayer.audioUrl}
+                            data-testid={`audio-prayer-${prayer.id}`}
+                          />
                         </div>
                       )}
                     </CardContent>
