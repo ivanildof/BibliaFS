@@ -54,25 +54,76 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Reading Plans
+// Reading Plan Templates (predefined plans)
+export const readingPlanTemplates = pgTable("reading_plan_templates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  duration: integer("duration").notNull(), // days
+  category: varchar("category").default("bible"), // bible, devotional, topical
+  
+  // Plan structure as JSON array of daily readings
+  schedule: jsonb("schedule").$type<Array<{
+    day: number;
+    readings: { book: string; chapter: number; verses?: string }[];
+  }>>().notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User Reading Plans (user's active plans based on templates)
 export const readingPlans = pgTable("reading_plans", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  templateId: varchar("template_id").references(() => readingPlanTemplates.id),
+  
   title: text("title").notNull(),
   description: text("description"),
   
   // Plan structure as JSON array of daily readings
   schedule: jsonb("schedule").$type<Array<{
     day: number;
-    bibleReading: { book: string; chapter: number; verses?: string }[];
-    podcastEpisode?: { title: string; url: string; duration: number };
+    readings: { book: string; chapter: number; verses?: string }[];
+    isCompleted: boolean;
   }>>().notNull(),
   
   currentDay: integer("current_day").default(1),
+  totalDays: integer("total_days").notNull(),
   isCompleted: boolean("is_completed").default(false),
   
+  startedAt: timestamp("started_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Achievements (conquistas)
+export const achievements = pgTable("achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  icon: varchar("icon").default("trophy"), // lucide icon name
+  category: varchar("category").default("reading"), // reading, streak, social, special
+  requirement: jsonb("requirement").$type<{
+    type: string; // chapters_read, streak_days, plan_completed, etc
+    value: number;
+  }>().notNull(),
+  xpReward: integer("xp_reward").default(0),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User Achievements
+export const userAchievements = pgTable("user_achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  achievementId: varchar("achievement_id").notNull().references(() => achievements.id, { onDelete: "cascade" }),
+  
+  progress: integer("progress").default(0),
+  isUnlocked: boolean("is_unlocked").default(false),
+  unlockedAt: timestamp("unlocked_at"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Prayers
@@ -311,12 +362,36 @@ export const usersRelations = relations(users, ({ many }) => ({
   communityPosts: many(communityPosts),
   postLikes: many(postLikes),
   postComments: many(postComments),
+  userAchievements: many(userAchievements),
+}));
+
+export const readingPlanTemplatesRelations = relations(readingPlanTemplates, ({ many }) => ({
+  userPlans: many(readingPlans),
 }));
 
 export const readingPlansRelations = relations(readingPlans, ({ one }) => ({
   user: one(users, {
     fields: [readingPlans.userId],
     references: [users.id],
+  }),
+  template: one(readingPlanTemplates, {
+    fields: [readingPlans.templateId],
+    references: [readingPlanTemplates.id],
+  }),
+}));
+
+export const achievementsRelations = relations(achievements, ({ many }) => ({
+  userAchievements: many(userAchievements),
+}));
+
+export const userAchievementsRelations = relations(userAchievements, ({ one }) => ({
+  user: one(users, {
+    fields: [userAchievements.userId],
+    references: [users.id],
+  }),
+  achievement: one(achievements, {
+    fields: [userAchievements.achievementId],
+    references: [achievements.id],
   }),
 }));
 
@@ -425,14 +500,21 @@ export const upsertUserSchema = createInsertSchema(users);
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type User = typeof users.$inferSelect;
 
-export const insertReadingPlanSchema = createInsertSchema(readingPlans).omit({ id: true, createdAt: true, updatedAt: true }).extend({
-  // Make schedule optional in the form, we'll generate it based on totalDays
-  schedule: z.array(z.any()).optional(),
-  // Add totalDays field for simple input
-  totalDays: z.number().optional(),
-});
+export const insertReadingPlanTemplateSchema = createInsertSchema(readingPlanTemplates).omit({ id: true, createdAt: true });
+export type InsertReadingPlanTemplate = z.infer<typeof insertReadingPlanTemplateSchema>;
+export type ReadingPlanTemplate = typeof readingPlanTemplates.$inferSelect;
+
+export const insertReadingPlanSchema = createInsertSchema(readingPlans).omit({ id: true, createdAt: true, updatedAt: true, startedAt: true, completedAt: true });
 export type InsertReadingPlan = z.infer<typeof insertReadingPlanSchema>;
 export type ReadingPlan = typeof readingPlans.$inferSelect;
+
+export const insertAchievementSchema = createInsertSchema(achievements).omit({ id: true, createdAt: true });
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+export type Achievement = typeof achievements.$inferSelect;
+
+export const insertUserAchievementSchema = createInsertSchema(userAchievements).omit({ id: true, createdAt: true, unlockedAt: true });
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+export type UserAchievement = typeof userAchievements.$inferSelect;
 
 export const insertPrayerSchema = createInsertSchema(prayers).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertPrayer = z.infer<typeof insertPrayerSchema>;
