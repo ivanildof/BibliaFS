@@ -21,10 +21,20 @@ export async function runMigrations() {
       ADD COLUMN IF NOT EXISTS tags TEXT[]
     `);
 
-    // Add missing column to reading_plans table
+    // Add missing columns to reading_plans table
     await db.execute(sql`
       ALTER TABLE reading_plans 
       ADD COLUMN IF NOT EXISTS total_days INTEGER
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE reading_plans 
+      ADD COLUMN IF NOT EXISTS started_at TIMESTAMP DEFAULT NOW()
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE reading_plans 
+      ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP
     `);
 
     // Update existing plans with total_days from schedule length
