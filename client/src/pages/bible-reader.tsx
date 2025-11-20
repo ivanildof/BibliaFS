@@ -429,18 +429,17 @@ export default function BibleReader() {
             </div>
 
             {/* Verses - Clean Reading Mode */}
-            <div className="prose prose-lg dark:prose-invert max-w-none font-serif leading-relaxed text-foreground">
-              <p className="text-base md:text-lg leading-loose">
-                {chapterData.verses.map((verse, idx) => (
-                  <span key={verse.number}>
-                    <sup className="text-xs font-bold text-muted-foreground mr-1" data-testid={`verse-number-${verse.number}`}>
-                      {toSuperscript(verse.number)}
-                    </sup>
-                    <span className="inline" data-testid={`verse-text-${verse.number}`}>{verse.text}</span>
-                    {idx < chapterData.verses.length - 1 && " "}
-                  </span>
-                ))}
-              </p>
+            <div className="space-y-3 max-w-none">
+              {chapterData.verses.map((verse) => (
+                <div key={verse.number} className="flex items-start gap-2">
+                  <sup className="text-xs font-bold text-muted-foreground min-w-[1.5rem] text-right flex-shrink-0" data-testid={`verse-number-${verse.number}`}>
+                    {toSuperscript(verse.number)}
+                  </sup>
+                  <p className="flex-1 font-serif text-base md:text-lg leading-relaxed text-foreground" data-testid={`verse-text-${verse.number}`}>
+                    {verse.text}
+                  </p>
+                </div>
+              ))}
             </div>
 
             {/* Mark as Read Button */}
