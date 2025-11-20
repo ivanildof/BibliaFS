@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,13 +57,15 @@ export default function Prayers() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: FormData) => {
+    mutationFn: async (data: any) => {
       return await apiRequest("POST", "/api/prayers", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/prayers"] });
       setIsCreateDialogOpen(false);
       form.reset();
+      setAudioBlob(null);
+      setRecordingTime(0);
       toast({
         title: "Oração registrada!",
         description: "Sua oração foi salva com sucesso.",
@@ -78,21 +80,92 @@ export default function Prayers() {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    createMutation.mutate(data);
+  const markAnsweredMutation = useMutation({
+    mutationFn: async ({ id, isAnswered }: { id: string; isAnswered: boolean }) => {
+      return await apiRequest("PATCH", `/api/prayers/${id}`, { 
+        isAnswered, 
+        answeredAt: isAnswered ? new Date().toISOString() : null 
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/prayers"] });
+      toast({ title: "Atualizado!", description: "Status da oração atualizado" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest("DELETE", `/api/prayers/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/prayers"] });
+      toast({ title: "Removido!", description: "Oração excluída" });
+    },
+  });
+
+  const onSubmit = async (data: FormData) => {
+    let audioUrl: string | undefined;
+    if (audioBlob) {
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(audioBlob);
+      });
+      audioUrl = base64;
+    }
+    createMutation.mutate({ ...data, audioUrl, audioDuration: recordingTime });
   };
 
   const activePrayers = prayers.filter(p => !p.isAnswered);
   const answeredPrayers = prayers.filter(p => p.isAnswered);
 
-  const handleStartRecording = () => {
-    setIsRecording(true);
-    // In real implementation, would start MediaRecorder
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingIntervalRef = useRef<number | null>(null);
+
+  const handleStartRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        setAudioBlob(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      recordingIntervalRef.current = window.setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Permissão de microfone negada",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleStopRecording = () => {
-    setIsRecording(false);
-    // In real implementation, would stop and save recording
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+    }
   };
 
   // Loading state
@@ -387,10 +460,23 @@ export default function Prayers() {
                       )}
                     </CardContent>
                     
-                    <CardFooter>
-                      <Button variant="outline" size="sm" data-testid="button-mark-answered">
+                    <CardFooter className="gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => markAnsweredMutation.mutate({ id: prayer.id, isAnswered: true })}
+                        data-testid={`button-mark-answered-${prayer.id}`}
+                      >
                         <Check className="h-4 w-4 mr-2" />
                         Marcar como Respondida
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => deleteMutation.mutate(prayer.id)}
+                        data-testid={`button-delete-prayer-${prayer.id}`}
+                      >
+                        Excluir
                       </Button>
                     </CardFooter>
                   </Card>
