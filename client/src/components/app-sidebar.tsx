@@ -37,17 +37,17 @@ export function AppSidebar() {
     { title: t.nav.bible, url: "/bible-reader", icon: BookOpen },
     { title: t.nav.plans, url: "/plans", icon: Book },
     { title: t.nav.progress, url: "/progress", icon: Trophy },
-    { title: "Prayers", url: "/prayers", icon: MessageSquare },
+    { title: t.nav.prayers, url: "/prayers", icon: MessageSquare },
   ];
 
   const studyItems = [
-    { title: "AI Study", url: "/ai-study", icon: Brain },
+    { title: t.nav.aiStudy, url: "/ai-study", icon: Brain },
     { title: t.nav.discover, url: "/community", icon: Users },
-    { title: "Podcasts", url: "/podcasts", icon: Headphones },
+    { title: t.nav.podcasts, url: "/podcasts", icon: Headphones },
   ];
 
   const teacherItems = [
-    { title: "Teacher Mode", url: "/teacher", icon: GraduationCap },
+    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap },
   ];
 
   return (
@@ -59,14 +59,14 @@ export function AppSidebar() {
           </div>
           <div>
             <h2 className="font-display text-lg font-bold text-foreground">{t.common.appName}</h2>
-            <p className="text-xs text-muted-foreground">Premium Study</p>
+            <p className="text-xs text-muted-foreground">{t.sections.premiumStudy}</p>
           </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
+          <SidebarGroupLabel>{t.sections.mainMenu}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -84,7 +84,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Study</SidebarGroupLabel>
+          <SidebarGroupLabel>{t.sections.study}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {studyItems.map((item) => (
@@ -103,7 +103,7 @@ export function AppSidebar() {
 
         {user?.isTeacher && (
           <SidebarGroup>
-            <SidebarGroupLabel>Teaching</SidebarGroupLabel>
+            <SidebarGroupLabel>{t.sections.teaching}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {teacherItems.map((item) => (
@@ -128,7 +128,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild isActive={location === "/settings"} data-testid="link-sidebar-settings">
                   <Link href="/settings">
                     <Settings className="h-4 w-4" />
-                    <span>Settings</span>
+                    <span>{t.nav.settings}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

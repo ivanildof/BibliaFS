@@ -19,6 +19,17 @@ export interface Translations {
     discover: string;
     you: string;
     progress: string;
+    prayers: string;
+    aiStudy: string;
+    podcasts: string;
+    teacherMode: string;
+    settings: string;
+  };
+  sections: {
+    mainMenu: string;
+    study: string;
+    teaching: string;
+    premiumStudy: string;
   };
   bible: {
     readChapter: string;
@@ -84,6 +95,17 @@ export const translations: Record<Language, Translations> = {
       discover: 'Descubra',
       you: 'Você',
       progress: 'Progresso',
+      prayers: 'Orações',
+      aiStudy: 'Estudo com IA',
+      podcasts: 'Podcasts',
+      teacherMode: 'Modo Professor',
+      settings: 'Configurações',
+    },
+    sections: {
+      mainMenu: 'Menu Principal',
+      study: 'Estudo',
+      teaching: 'Ensino',
+      premiumStudy: 'Estudo Premium',
     },
     bible: {
       readChapter: 'Ler Capítulo',
@@ -147,6 +169,17 @@ export const translations: Record<Language, Translations> = {
       discover: 'Discover',
       you: 'You',
       progress: 'Progress',
+      prayers: 'Prayers',
+      aiStudy: 'AI Study',
+      podcasts: 'Podcasts',
+      teacherMode: 'Teacher Mode',
+      settings: 'Settings',
+    },
+    sections: {
+      mainMenu: 'Main Menu',
+      study: 'Study',
+      teaching: 'Teaching',
+      premiumStudy: 'Premium Study',
     },
     bible: {
       readChapter: 'Read Chapter',
@@ -210,6 +243,17 @@ export const translations: Record<Language, Translations> = {
       discover: 'Ontdekken',
       you: 'Jij',
       progress: 'Voortgang',
+      prayers: 'Gebeden',
+      aiStudy: 'AI Studie',
+      podcasts: 'Podcasts',
+      teacherMode: 'Leermodus',
+      settings: 'Instellingen',
+    },
+    sections: {
+      mainMenu: 'Hoofdmenu',
+      study: 'Studie',
+      teaching: 'Onderwijs',
+      premiumStudy: 'Premium Studie',
     },
     bible: {
       readChapter: 'Hoofdstuk Lezen',
@@ -273,6 +317,17 @@ export const translations: Record<Language, Translations> = {
       discover: 'Descubrir',
       you: 'Tú',
       progress: 'Progreso',
+      prayers: 'Oraciones',
+      aiStudy: 'Estudio con IA',
+      podcasts: 'Podcasts',
+      teacherMode: 'Modo Profesor',
+      settings: 'Configuración',
+    },
+    sections: {
+      mainMenu: 'Menú Principal',
+      study: 'Estudio',
+      teaching: 'Enseñanza',
+      premiumStudy: 'Estudio Premium',
     },
     bible: {
       readChapter: 'Leer Capítulo',
