@@ -8,6 +8,7 @@ import {
   Settings,
   Home,
   BookOpen,
+  Trophy,
 } from "lucide-react";
 import {
   Sidebar,
@@ -29,6 +30,7 @@ const menuItems = [
   { title: "Início", url: "/", icon: Home },
   { title: "Ler Bíblia", url: "/bible-reader", icon: BookOpen },
   { title: "Planos de Leitura", url: "/plans", icon: Book },
+  { title: "Meu Progresso", url: "/progress", icon: Trophy },
   { title: "Minhas Orações", url: "/prayers", icon: MessageSquare },
 ];
 

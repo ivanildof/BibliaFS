@@ -695,13 +695,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const user = await storage.getUser(userId);
       if (user) {
-        const newXP = (user.experiencePoints || 0) + 10;
         const today = new Date();
-        const lastReadDate = user.lastReadDate ? new Date(user.lastReadDate) : null;
-        const isConsecutiveDay = lastReadDate && 
-          (today.getTime() - lastReadDate.getTime()) < 48 * 60 * 60 * 1000;
+        today.setUTCHours(0, 0, 0, 0);
         
-        const newStreak = isConsecutiveDay ? (user.readingStreak || 0) + 1 : 1;
+        const lastReadDate = user.lastReadDate ? new Date(user.lastReadDate) : null;
+        if (lastReadDate) {
+          lastReadDate.setUTCHours(0, 0, 0, 0);
+        }
+
+        if (lastReadDate && today.getTime() === lastReadDate.getTime()) {
+          return res.json(plan);
+        }
+
+        const baseXP = 10;
+        const newXP = (user.experiencePoints || 0) + baseXP;
+
+        const oneDayMs = 24 * 60 * 60 * 1000;
+        const daysSinceLastRead = lastReadDate 
+          ? Math.floor((today.getTime() - lastReadDate.getTime()) / oneDayMs)
+          : null;
+        
+        const isConsecutiveDay = daysSinceLastRead === 1;
+        const isSameDay = daysSinceLastRead === 0;
+        
+        const newStreak = isConsecutiveDay ? (user.readingStreak || 0) + 1 : 
+                          isSameDay ? (user.readingStreak || 0) : 1;
 
         await storage.updateUserStats(userId, {
           experiencePoints: newXP,
@@ -711,8 +729,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         const allAchievements = await storage.getAchievements();
         for (const achievement of allAchievements) {
-          if (achievement.category === "streak" && newStreak >= 7) {
-            await storage.unlockAchievement(userId, achievement.id);
+          const userAchs = await storage.getUserAchievements(userId);
+          const isUnlocked = userAchs.some(ua => ua.achievementId === achievement.id && ua.isUnlocked);
+          
+          if (!isUnlocked && achievement.category === "streak") {
+            if ((achievement.requirement === "Streak de 7 dias" && newStreak >= 7) ||
+                (achievement.requirement === "Streak de 30 dias" && newStreak >= 30) ||
+                (achievement.requirement === "Streak de 100 dias" && newStreak >= 100)) {
+              await storage.unlockAchievement(userId, achievement.id);
+            }
           }
         }
       }
@@ -772,6 +797,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
         readingStreak: user.readingStreak || 0,
         achievementsUnlocked: unlockedCount,
         lastReadDate: user.lastReadDate,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Mark chapter as read and award XP
+  app.post("/api/bible/mark-read", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { book, chapter } = req.body;
+
+      if (!book || !chapter) {
+        return res.status(400).json({ error: "Livro e capítulo são obrigatórios" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      
+      const lastReadDate = user.lastReadDate ? new Date(user.lastReadDate) : null;
+      if (lastReadDate) {
+        lastReadDate.setUTCHours(0, 0, 0, 0);
+      }
+
+      if (lastReadDate && today.getTime() === lastReadDate.getTime()) {
+        return res.json({
+          xpGained: 0,
+          newXP: user.experiencePoints || 0,
+          newStreak: user.readingStreak || 0,
+          unlockedAchievements: [],
+          message: "Você já marcou uma leitura hoje!",
+        });
+      }
+
+      const baseXP = 10;
+      const newXP = (user.experiencePoints || 0) + baseXP;
+
+      const oneDayMs = 24 * 60 * 60 * 1000;
+      const daysSinceLastRead = lastReadDate 
+        ? Math.floor((today.getTime() - lastReadDate.getTime()) / oneDayMs)
+        : null;
+      
+      const isConsecutiveDay = daysSinceLastRead === 1;
+      const isSameDay = daysSinceLastRead === 0;
+      
+      const newStreak = isConsecutiveDay ? (user.readingStreak || 0) + 1 : 
+                        isSameDay ? (user.readingStreak || 0) : 1;
+
+      await storage.updateUserStats(userId, {
+        experiencePoints: newXP,
+        readingStreak: newStreak,
+        lastReadDate: today,
+      });
+
+      const allAchievements = await storage.getAchievements();
+      const unlockedAchievements = [];
+
+      for (const achievement of allAchievements) {
+        const isUnlocked = await storage.getUserAchievements(userId)
+          .then(uas => uas.some(ua => ua.achievementId === achievement.id && ua.isUnlocked));
+
+        if (!isUnlocked) {
+          if (achievement.category === 'leitura' && achievement.requirement === 'Ler 1 capítulo') {
+            await storage.unlockAchievement(userId, achievement.id);
+            unlockedAchievements.push(achievement);
+          } else if (achievement.category === 'streak') {
+            if (achievement.requirement === 'Streak de 7 dias' && newStreak >= 7) {
+              await storage.unlockAchievement(userId, achievement.id);
+              unlockedAchievements.push(achievement);
+            } else if (achievement.requirement === 'Streak de 30 dias' && newStreak >= 30) {
+              await storage.unlockAchievement(userId, achievement.id);
+              unlockedAchievements.push(achievement);
+            } else if (achievement.requirement === 'Streak de 100 dias' && newStreak >= 100) {
+              await storage.unlockAchievement(userId, achievement.id);
+              unlockedAchievements.push(achievement);
+            }
+          }
+        }
+      }
+
+      res.json({
+        xpGained: baseXP,
+        newXP,
+        newStreak,
+        unlockedAchievements,
       });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

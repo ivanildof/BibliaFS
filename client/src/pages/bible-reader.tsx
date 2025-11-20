@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,7 +17,9 @@ import {
   Star,
   BookOpen,
   Settings,
-  Menu
+  Menu,
+  CheckCircle,
+  Trophy
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -110,6 +112,26 @@ export default function BibleReader() {
       toast({
         title: "Favorito adicionado!",
         description: "Versículo salvo nos seus favoritos.",
+      });
+    },
+  });
+
+  // Mark as read mutation
+  const markReadMutation = useMutation({
+    mutationFn: async (data: { book: string; chapter: number }) => {
+      return await apiRequest("POST", "/api/bible/mark-read", data);
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/stats/gamification"] });
+      
+      let description = `Você ganhou ${data.xpGained} XP!`;
+      if (data.unlockedAchievements && data.unlockedAchievements.length > 0) {
+        description += ` 🏆 Conquistas desbloqueadas: ${data.unlockedAchievements.map((a: any) => a.name).join(", ")}`;
+      }
+      
+      toast({
+        title: "Capítulo completo! 🎉",
+        description,
       });
     },
   });
@@ -415,6 +437,27 @@ export default function BibleReader() {
                     ))}
                   </div>
                 </CardContent>
+                <CardFooter className="flex justify-between items-center border-t pt-4">
+                  <p className="text-sm text-muted-foreground">
+                    {chapterData?.verses.length} versículos
+                  </p>
+                  <Button
+                    onClick={() => markReadMutation.mutate({ 
+                      book: chapterData?.book.name || "", 
+                      chapter: chapterData?.chapter.number || 0 
+                    })}
+                    disabled={markReadMutation.isPending}
+                    data-testid="button-mark-read"
+                  >
+                    {markReadMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    {markReadMutation.isPending ? "Marcando..." : (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Marcar como Lido
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
               </Card>
             </div>
           </div>
