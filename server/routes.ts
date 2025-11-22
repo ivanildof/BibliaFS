@@ -518,6 +518,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Bible Audio Route - OpenAI Text-to-Speech (AUTHENTICATED)
+  app.get("/api/bible/audio/:version/:book/:chapter", isAuthenticated, async (req: any, res) => {
+    try {
+      const { version, book, chapter } = req.params;
+      const userId = req.user.claims.sub;
+      
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(503).json({ 
+          error: "Serviço de áudio não configurado",
+          message: "Configure OPENAI_API_KEY para habilitar áudio narrado."
+        });
+      }
+
+      const chapterData = await fetch(
+        `https://www.abibliadigital.com.br/api/verses/${version}/${book}/${chapter}`
+      ).then(r => r.json());
+
+      if (!chapterData?.verses || chapterData.verses.length === 0) {
+        return res.status(404).json({ error: "Capítulo não encontrado" });
+      }
+
+      const fullText = chapterData.verses
+        .map((v: any) => `Versículo ${v.number}. ${v.text}`)
+        .join(' ');
+
+      const textLength = fullText.length;
+      if (textLength > 4000 * 4) {
+        return res.status(400).json({ 
+          error: "Capítulo muito longo para narração",
+          message: "Este capítulo excede o limite de áudio. Tente capítulos menores."
+        });
+      }
+
+      console.log(`[Audio] Generating for ${book} ${chapter} (${textLength} chars) - User: ${userId}`);
+
+      const ttsResponse = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'tts-1',
+          voice: 'alloy',
+          input: fullText,
+          speed: 1.0,
+        }),
+      });
+
+      if (!ttsResponse.ok) {
+        throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
+      }
+
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}.mp3"`);
+      
+      const audioBuffer = await ttsResponse.arrayBuffer();
+      res.send(Buffer.from(audioBuffer));
+    } catch (error: any) {
+      console.error("Audio generation error:", error);
+      res.status(500).json({ error: "Erro ao gerar áudio" });
+    }
+  });
+
   // Bible API Routes (ABíbliaDigital) with robust error handling
   const BIBLE_API_BASE = "https://www.abibliadigital.com.br/api";
   

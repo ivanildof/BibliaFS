@@ -17,8 +17,6 @@ import {
   communityPosts,
   postLikes,
   postComments,
-  audioSources,
-  audioProgress,
   type User,
   type UpsertUser,
   type InsertReadingPlanTemplate,
@@ -51,10 +49,6 @@ import {
   type CommunityPost,
   type InsertPostComment,
   type PostComment,
-  type InsertAudioSource,
-  type AudioSource,
-  type InsertAudioProgress,
-  type AudioProgress,
   offlineContent,
   type InsertOfflineContent,
   type OfflineContent,
@@ -147,13 +141,6 @@ export interface IStorage {
   likePost(postId: string, userId: string): Promise<void>;
   unlikePost(postId: string, userId: string): Promise<void>;
   addComment(comment: InsertPostComment): Promise<PostComment>;
-  
-  // Audio
-  getAudioSources(): Promise<AudioSource[]>;
-  getAudioSource(filesetId: string): Promise<AudioSource | undefined>;
-  createAudioSource(source: InsertAudioSource): Promise<AudioSource>;
-  getAudioProgress(userId: string, book: string, chapter: number, version: string): Promise<AudioProgress | undefined>;
-  upsertAudioProgress(progress: InsertAudioProgress): Promise<AudioProgress>;
   
   // Offline Content
   getOfflineContent(userId: string): Promise<OfflineContent[]>;
@@ -789,58 +776,6 @@ export class DatabaseStorage implements IStorage {
       .where(eq(communityPosts.id, comment.postId));
     
     return created;
-  }
-
-  // Audio operations
-  async getAudioSources(): Promise<AudioSource[]> {
-    return await db.select().from(audioSources).where(eq(audioSources.isActive, true));
-  }
-
-  async getAudioSource(filesetId: string): Promise<AudioSource | undefined> {
-    const [source] = await db.select().from(audioSources).where(eq(audioSources.filesetId, filesetId));
-    return source;
-  }
-
-  async createAudioSource(source: InsertAudioSource): Promise<AudioSource> {
-    const [created] = await db.insert(audioSources).values(source).returning();
-    return created;
-  }
-
-  async getAudioProgress(userId: string, book: string, chapter: number, version: string): Promise<AudioProgress | undefined> {
-    const [progress] = await db.select().from(audioProgress).where(
-      and(
-        eq(audioProgress.userId, userId),
-        eq(audioProgress.book, book),
-        eq(audioProgress.chapter, chapter),
-        eq(audioProgress.version, version)
-      )
-    );
-    return progress;
-  }
-
-  async upsertAudioProgress(progress: InsertAudioProgress): Promise<AudioProgress> {
-    const existing = await this.getAudioProgress(
-      progress.userId,
-      progress.book,
-      progress.chapter,
-      progress.version
-    );
-
-    if (existing) {
-      const [updated] = await db
-        .update(audioProgress)
-        .set({
-          ...progress,
-          lastPlayedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(audioProgress.id, existing.id))
-        .returning();
-      return updated;
-    } else {
-      const [created] = await db.insert(audioProgress).values(progress).returning();
-      return created;
-    }
   }
 
   // Offline Content

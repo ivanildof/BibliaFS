@@ -1,6 +1,6 @@
 /**
  * Robust API client with retry logic, timeouts, and structured error handling
- * for external API calls (ABíbliaDigital, Bible Brain, Stripe, etc.)
+ * for external API calls (ABíbliaDigital, Stripe, etc.)
  */
 
 interface FetchOptions {

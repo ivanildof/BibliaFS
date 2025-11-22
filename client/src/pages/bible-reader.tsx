@@ -25,7 +25,11 @@ import {
   Download,
   Copy,
   CloudOff,
-  Cloud
+  Cloud,
+  Volume2,
+  VolumeX,
+  Pause,
+  Play
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -87,6 +91,69 @@ export default function BibleReader() {
   const [noteText, setNoteText] = useState("");
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [verseToShare, setVerseToShare] = useState<{ number: number; text: string } | null>(null);
+  
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+
+  const playAudio = () => {
+    if (!selectedBook) return;
+    
+    const url = `/api/bible/audio/${version}/${selectedBook}/${selectedChapter}`;
+    
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.src = '';
+    }
+    
+    const audio = new Audio(url);
+    audio.play().then(() => {
+      setIsPlayingAudio(true);
+      setAudioUrl(url);
+      setAudioElement(audio);
+      
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+      };
+      
+      toast({
+        title: t.bible.audioStarted || "Áudio iniciado",
+        description: t.bible.listenWhileBrowsing || "Você pode continuar navegando enquanto ouve",
+      });
+    }).catch(error => {
+      console.error("Audio playback error:", error);
+      toast({
+        title: "Erro ao reproduzir áudio",
+        description: "Verifique se o OPENAI_API_KEY está configurado",
+        variant: "destructive",
+      });
+    });
+  };
+
+  const stopAudio = () => {
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.src = '';
+      setAudioElement(null);
+      setIsPlayingAudio(false);
+      setAudioUrl(null);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.src = '';
+      }
+    };
+  }, [audioElement]);
+
+  useEffect(() => {
+    if (audioElement && (selectedBook || selectedChapter)) {
+      stopAudio();
+    }
+  }, [selectedBook, selectedChapter]);
 
   // Fetch all Bible books
   const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
@@ -445,7 +512,19 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-4xl mx-auto">
           <div className="flex items-center gap-1">
-            {/* Bible audio feature removed */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={isPlayingAudio ? stopAudio : playAudio}
+              disabled={!selectedBook}
+              data-testid="button-toggle-audio"
+            >
+              {isPlayingAudio ? (
+                <VolumeX className="h-5 w-5 text-primary" />
+              ) : (
+                <Volume2 className="h-5 w-5" />
+              )}
+            </Button>
           </div>
           
           <div className="flex items-center gap-1">
