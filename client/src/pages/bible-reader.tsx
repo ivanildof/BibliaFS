@@ -512,22 +512,6 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-4xl mx-auto">
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={isPlayingAudio ? stopAudio : playAudio}
-              disabled={!selectedBook}
-              data-testid="button-toggle-audio"
-            >
-              {isPlayingAudio ? (
-                <VolumeX className="h-5 w-5 text-primary" />
-              ) : (
-                <Volume2 className="h-5 w-5" />
-              )}
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-1">
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" data-testid="button-search-open">
@@ -973,6 +957,22 @@ export default function BibleReader() {
               data-testid="button-previous-chapter"
             >
               <ChevronLeft className="h-5 w-5" />
+            </Button>
+
+            {/* Audio Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={isPlayingAudio ? stopAudio : playAudio}
+              disabled={!selectedBook}
+              data-testid="button-toggle-audio"
+            >
+              {isPlayingAudio ? (
+                <VolumeX className="h-5 w-5 text-primary" />
+              ) : (
+                <Volume2 className="h-5 w-5" />
+              )}
             </Button>
 
             {/* Offline Download Button */}
