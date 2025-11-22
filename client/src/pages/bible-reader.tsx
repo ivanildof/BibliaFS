@@ -841,7 +841,7 @@ export default function BibleReader() {
                         className={`flex items-baseline gap-2 cursor-pointer rounded-md px-2 py-1 transition-all hover:bg-accent/50 ${highlightBg}`}
                         data-testid={`verse-container-${verse.number}`}
                       >
-                        <span className={`text-sm font-bold ${getVerseNumberColor(verse.number)} min-w-[1.5rem] text-right flex-shrink-0`} data-testid={`verse-number-${verse.number}`}>
+                        <span className={`text-xs font-bold ${getVerseNumberColor(verse.number)} min-w-[1.5rem] text-right flex-shrink-0`} data-testid={`verse-number-${verse.number}`}>
                           {verse.number}
                         </span>
                         <p className="flex-1 font-serif text-base md:text-lg leading-relaxed text-foreground" data-testid={`verse-text-${verse.number}`}>
