@@ -162,9 +162,9 @@ export default function BibleReader() {
     retryDelay: 1000,
   });
 
-  // Fetch current chapter with offline fallback
+  // Fetch current chapter with offline fallback and multilingual support
   const { data: chapterData, isLoading: loadingChapter, error: chapterError } = useQuery<Chapter>({
-    queryKey: selectedBook ? [`/api/bible/${version}/${selectedBook}/${selectedChapter}`] : [""],
+    queryKey: selectedBook ? [`/api/bible/multilang/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`] : [""],
     enabled: !!selectedBook,
     retry: isOnline ? 2 : 0, // Don't retry if offline
     retryDelay: 1000,

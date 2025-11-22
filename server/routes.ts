@@ -590,8 +590,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible API Routes (ABíbliaDigital) with robust error handling
+  // Bible API Routes with Multilingual Support
   const BIBLE_API_BASE = "https://www.abibliadigital.com.br/api";
+  
+  // Import multilingual Bible APIs
+  const { fetchBibleChapter } = await import("./multilingual-bible-apis");
   
   // Import fallback Bible books list and chapters
   const { BIBLE_BOOKS_FALLBACK } = await import("./bible-books-fallback");
@@ -639,7 +642,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(books);
   });
   
-  // Get specific chapter (with retry + fallback)
+  // Get specific chapter with multilingual support
+  app.get("/api/bible/multilang/:language/:version/:abbrev/:chapter", async (req, res) => {
+    try {
+      const { language, version, abbrev, chapter } = req.params;
+      
+      console.log(`[Multilingual Bible] Fetching ${language} - ${version} - ${abbrev} ${chapter}`);
+      
+      const chapterData = await fetchBibleChapter(
+        language,
+        version,
+        abbrev,
+        parseInt(chapter)
+      );
+      
+      res.json(chapterData);
+    } catch (error: any) {
+      console.error(`[Multilingual Bible] Error:`, error);
+      
+      // Fallback to Portuguese if other languages fail
+      if (req.params.language !== 'pt') {
+        const fallback = getFallbackChapter(req.params.version, req.params.abbrev, parseInt(req.params.chapter));
+        if (fallback) {
+          console.warn(`Using Portuguese fallback for ${req.params.language}`);
+          return res.json(fallback);
+        }
+      }
+      
+      res.status(503).json({ 
+        error: "Capítulo não disponível no momento",
+        message: error.message 
+      });
+    }
+  });
+  
+  // Get specific chapter (Portuguese only - legacy route)
   app.get("/api/bible/:version/:abbrev/:chapter", async (req, res) => {
     const { version, abbrev, chapter } = req.params;
     
