@@ -684,50 +684,111 @@ export default function BibleReader() {
                   {VERSIONS.find(v => v.value === version)?.label || "NVI"}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="h-[60vh]">
+              <SheetContent side="bottom" className="h-[80vh]">
                 <SheetHeader>
-                  <SheetTitle>Versão & Capítulos</SheetTitle>
+                  <SheetTitle>Navegar</SheetTitle>
                 </SheetHeader>
-                <div className="mt-4 space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium mb-2">Versão da Bíblia</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      {VERSIONS.map(v => (
-                        <Button
-                          key={v.value}
-                          variant={version === v.value ? "default" : "outline"}
-                          onClick={() => {
-                            setVersion(v.value);
-                          }}
-                        >
-                          {v.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
+                <Tabs defaultValue="chapters" className="mt-4">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="chapters">Capítulos</TabsTrigger>
+                    <TabsTrigger value="books">Livros</TabsTrigger>
+                    <TabsTrigger value="version">Versão</TabsTrigger>
+                  </TabsList>
                   
-                  {currentBook && (
+                  <TabsContent value="chapters" className="mt-4">
+                    {currentBook && (
+                      <div>
+                        <h3 className="text-sm font-medium mb-2">Capítulos de {currentBook.name}</h3>
+                        <ScrollArea className="h-[60vh]">
+                          <div className="grid grid-cols-6 gap-2">
+                            {Array.from({ length: currentBook.chapters }, (_, i) => i + 1).map(chap => (
+                              <SheetClose asChild key={chap}>
+                                <Button
+                                  size="sm"
+                                  variant={selectedChapter === chap ? "default" : "outline"}
+                                  onClick={() => setSelectedChapter(chap)}
+                                  data-testid={`button-chapter-${chap}`}
+                                >
+                                  {chap}
+                                </Button>
+                              </SheetClose>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </div>
+                    )}
+                  </TabsContent>
+                  
+                  <TabsContent value="books" className="mt-4">
+                    <Tabs defaultValue="nt" className="mt-2">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="ot">Antigo ({oldTestament.length})</TabsTrigger>
+                        <TabsTrigger value="nt">Novo ({newTestament.length})</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="ot" className="mt-4">
+                        <ScrollArea className="h-[50vh]">
+                          <div className="grid grid-cols-2 gap-2">
+                            {oldTestament.map(book => (
+                              <SheetClose asChild key={book.abbrev.pt}>
+                                <Button
+                                  variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
+                                  className="justify-start"
+                                  onClick={() => {
+                                    setSelectedBook(book.abbrev.pt);
+                                    setSelectedChapter(1);
+                                  }}
+                                  data-testid={`button-book-nav-${book.abbrev.pt}`}
+                                >
+                                  {t.bibleBooks[book.abbrev.pt] || book.name}
+                                </Button>
+                              </SheetClose>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </TabsContent>
+                      <TabsContent value="nt" className="mt-4">
+                        <ScrollArea className="h-[50vh]">
+                          <div className="grid grid-cols-2 gap-2">
+                            {newTestament.map(book => (
+                              <SheetClose asChild key={book.abbrev.pt}>
+                                <Button
+                                  variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
+                                  className="justify-start"
+                                  onClick={() => {
+                                    setSelectedBook(book.abbrev.pt);
+                                    setSelectedChapter(1);
+                                  }}
+                                  data-testid={`button-book-nav-${book.abbrev.pt}`}
+                                >
+                                  {t.bibleBooks[book.abbrev.pt] || book.name}
+                                </Button>
+                              </SheetClose>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </TabsContent>
+                    </Tabs>
+                  </TabsContent>
+                  
+                  <TabsContent value="version" className="mt-4">
                     <div>
-                      <h3 className="text-sm font-medium mb-2">Capítulos de {currentBook.name}</h3>
-                      <ScrollArea className="h-[30vh]">
-                        <div className="grid grid-cols-6 gap-2">
-                          {Array.from({ length: currentBook.chapters }, (_, i) => i + 1).map(chap => (
-                            <SheetClose asChild key={chap}>
-                              <Button
-                                size="sm"
-                                variant={selectedChapter === chap ? "default" : "outline"}
-                                onClick={() => setSelectedChapter(chap)}
-                                data-testid={`button-chapter-${chap}`}
-                              >
-                                {chap}
-                              </Button>
-                            </SheetClose>
-                          ))}
-                        </div>
-                      </ScrollArea>
+                      <h3 className="text-sm font-medium mb-2">Versão da Bíblia</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {VERSIONS.map(v => (
+                          <Button
+                            key={v.value}
+                            variant={version === v.value ? "default" : "outline"}
+                            onClick={() => {
+                              setVersion(v.value);
+                            }}
+                          >
+                            {v.label}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
-                  )}
-                </div>
+                  </TabsContent>
+                </Tabs>
               </SheetContent>
             </Sheet>
           </div>
