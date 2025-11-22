@@ -1,100 +1,64 @@
 # Bíblia+ v2.0
 
 ## Overview
-
-Bíblia+ is a premium, personalized, and intelligent Bible study application designed to transform traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The core value proposition is to enhance Bible study through AI, personalized learning paths, multimedia integration, and community engagement, aiming for broad market appeal.
-
-## Recent Changes
-
-**November 22, 2025**:
-*   **OpenAI Text-to-Speech Bible Audio**: Implemented Bible audio narration using OpenAI TTS API (paid service). Authenticated route `/api/bible/audio/:version/:book/:chapter` generates MP3 audio on-demand using `tts-1` model with `alloy` voice. Includes input validation (4K token limit ~16K chars), userId logging for audit trail, and automatic audio cleanup on navigation. Frontend features simple Volume2/VolumeX toggle button in BibleReader header with proper memory management. No caching - fresh generation per request ensures latest content. Replaces removed free Bible Brain API integration.
-*   **Database Production Schema Created**: Complete SQL schema file (`server/production-schema.sql`) generated with all 23 tables ready for manual execution in production PostgreSQL database. Includes users, sessions, reading_plans, prayers, highlights, bookmarks, notes, podcasts, lessons, community_posts, achievements, daily_verses, offline_content, donations, and all necessary indexes and triggers.
-*   **Free API Removal - Bible Audio**: Completely removed Bible Brain API integration (free API) from entire codebase per user requirement. Deleted all audio playback features including AudioContext, AudioPlayer component, audio routes (`/api/bible/audio/*`), audio_sources and audio_progress database tables, and all frontend audio controls from BibleReader. Bible+ now exclusively uses paid/user-provided APIs only.
-*   **Type Safety Improvements**: Fixed 21 TypeScript LSP errors across server/routes.ts including Stripe API version update to 2025-11-17.clover, achievement requirement structure corrections (now properly typed as {type: string, value: number}), scripture references validation fixes, and proper type casting for partial schema updates.
-*   **OpenAI Integration (AI Study)**: Implemented complete GPT-4o integration for AI-powered theological assistant. System uses specialized theological system prompt, handles Q&A about Bible texts, doctrines, historical context, and interpretations. Configured with temperature 0.7 and 1000 max tokens. Requires user's personal `OPENAI_API_KEY` environment variable.
-
-**November 20, 2025**:
-*   **Página de Planos e Preços (Pricing)**: Criada página completa de planos e preços (`/pricing`) com design premium responsivo, 3 planos (Gratuito, Premium R$19,90/mês, Vitalício R$299), seção de garantia de 30 dias, 6 FAQs sobre planos, paleta de cores roxo #5711D9, e CTAs estratégicos. Integrada ao router para acesso autenticado e não-autenticado.
-*   **Responsividade Mobile Aprimorada**: Tabela de alunos em Teacher Mode agora com dual-view: tabela desktop e cards empilháveis em mobile com badges coloridos, grid de 2 colunas para dados, e border-left visual indicator. Botão "Exportar Relatório" adaptado para full-width em mobile.
-*   **Auditoria de Validação e Segurança**: Sistema de validação robusto implementado com schemas Zod fortalecidos (min/max, enums), ownership validation em todas rotas críticas, re-validação backend com safeParse(), proteção contra ownership escalation, transações atômicas para gamificação, e tratamento robusto de APIs externas com retry logic (3x), timeout (8s), e fallback automático.
-*   **Versículo do Dia (Daily Verse)**: Implemented complete daily verse system with automatic rotation based on day of year (1-365), beautiful gradient card design with sharing capabilities (copy text, download image), multilingual support (PT, EN, NL, ES), and 30+ inspirational verses seeded. Featured prominently on home page for daily spiritual inspiration.
-*   **Offline Mode**: Complete offline reading system with IndexedDB local storage, per-user backend sync via PostgreSQL, automatic fallback when offline, download/delete UI in BibleReader (cloud icon), dedicated `/offline` management page with storage stats, and intelligent toast throttling. Users can download chapters for offline access and the app automatically loads cached content when internet is unavailable.
-*   **Verse Sharing System**: Implemented complete verse sharing functionality with text copy and image download using `html-to-image` library. Users can share verses via formatted text or beautiful visual cards.
-*   **Prayer Journal Enhancement**: Added real audio recording using MediaRecorder API with base64 storage, time counter, mark-as-answered functionality, and delete capability. Full prayer lifecycle management implemented.
-*   **Community Likes System**: Connected like/unlike mutations to community post cards, enabling social engagement within the platform.
-*   **Architecture Cleanup**: Removed duplicate highlight routes, consolidated to `/api/bible/highlights` with proper color validation (6 colors: yellow, green, blue, purple, pink, orange).
-*   **Donation System Foundation (INCOMPLETE)**: Created foundational structure for donations via Stripe including database schema, backend routes, UI page at `/donate`, and sidebar button. **REQUIRES COMPLETION**: Full Stripe integration needs (1) Configure STRIPE_SECRET_KEY and VITE_STRIPE_PUBLIC_KEY, (2) Implement Stripe Elements/Checkout on frontend with client-side confirmation, (3) Add webhook handler at `/api/stripe/webhook` to update donation status, (4) Implement recurring subscriptions flow, (5) Add comprehensive validation and error handling.
+Bíblia+ is a premium, personalized, and intelligent Bible study application that enhances traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The project aims to provide broad market appeal by focusing on AI-enhanced personalization, multimedia integration, and community engagement to transform Bible study.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
 ### Frontend Architecture
-
-**Framework**: React with TypeScript using Vite.
-
-**UI Component System**: Leverages shadcn/ui built on Radix UI primitives, styled with Tailwind CSS. It features a multi-font system, CSS variables for theming with light/dark mode and 5 predefined color schemes, and a mobile-first responsive design.
-
-**State Management**: TanStack Query for server state, React Context for client-side theme and internationalization, and React Hook Form with Zod for form handling.
-
-**Internationalization (i18n)**: Custom Context API supports Portuguese (native), English, Dutch, and Spanish, with translations centralized in `client/src/lib/i18n.ts` and language preference persisted in localStorage.
-
-**Routing**: Wouter for lightweight client-side routing.
-
-**Key Design Decisions**: Focus on accessibility (Radix UI), customizability (shadcn/ui), clear separation of UI and page components, and path aliases for clean imports.
+*   **Framework**: React with TypeScript using Vite.
+*   **UI Component System**: shadcn/ui built on Radix UI primitives, styled with Tailwind CSS. Features a multi-font system, CSS variables for theming with light/dark mode and 5 predefined color schemes, and mobile-first responsive design.
+*   **State Management**: TanStack Query for server state, React Context for client-side theme and internationalization, and React Hook Form with Zod for form handling.
+*   **Internationalization (i18n)**: Custom Context API supports Portuguese, English, Dutch, and Spanish, with language preference persisted in localStorage.
+*   **Routing**: Wouter for lightweight client-side routing.
+*   **Key Design Decisions**: Focus on accessibility, customizability, clear separation of UI and page components, and path aliases.
 
 ### Backend Architecture
-
-**Framework**: Express.js with TypeScript running on Node.js.
-
-**API Design**: RESTful endpoints organized by feature domain (e.g., `/api/auth/*`, `/api/reading-plans/*`).
-
-**Authentication Strategy**: OpenID Connect (OIDC) via Replit Auth, utilizing Passport.js for session management stored in PostgreSQL with httpOnly cookies.
-
-**Database Access Layer**: Drizzle ORM for type-safe queries, following a schema-first approach with Zod validation. A centralized storage interface (`server/storage.ts`) abstracts database operations.
-
-**Key Design Decisions**: Middleware-based logging, clear separation of concerns (routes → storage → database), and support for webhook verification.
+*   **Framework**: Express.js with TypeScript running on Node.js.
+*   **API Design**: RESTful endpoints organized by feature domain.
+*   **Authentication Strategy**: OpenID Connect (OIDC) via Replit Auth, utilizing Passport.js for session management stored in PostgreSQL with httpOnly cookies.
+*   **Database Access Layer**: Drizzle ORM for type-safe queries, following a schema-first approach with Zod validation. A centralized storage interface (`server/storage.ts`) abstracts database operations.
+*   **Key Design Decisions**: Middleware-based logging, clear separation of concerns (routes → storage → database), and support for webhook verification.
 
 ### Data Storage
-
-**Database**: PostgreSQL via Neon serverless.
-
-**Schema Design**: Defined in `shared/schema.ts`, including core tables like `users` and `sessions`, and feature-specific tables for `reading_plans`, `prayers`, `notes`, `highlights`, `podcasts`, `lessons`, and `community_posts`. Data modeling uses JSONB for flexible data, composite indexes for optimization, and timestamps for all user-generated content.
+*   **Database**: PostgreSQL via Neon serverless.
+*   **Schema Design**: Defined in `shared/schema.ts`, including core tables like `users` and `sessions`, and feature-specific tables for `reading_plans`, `prayers`, `notes`, `highlights`, `podcasts`, `lessons`, and `community_posts`. Uses JSONB for flexible data, composite indexes for optimization, and timestamps.
 
 ### System Design Choices & Feature Specifications
-
-*   **AI-powered Theological Assistant**: Complete GPT-4o integration via OpenAI API for advanced theological queries. Specialized system prompt for biblical studies with balanced responses across Christian traditions. Handles questions about Bible texts, doctrines, historical context, and interpretations. Requires user's `OPENAI_API_KEY` environment variable.
-*   **Customizable Themes**: 5 presets and custom RGB options for a personalized user interface.
+*   **AI-powered Theological Assistant**: GPT-4o integration via OpenAI API for theological queries, providing balanced responses across Christian traditions. Requires user's `OPENAI_API_KEY`. Also generates Bible audio narration using OpenAI TTS API.
+*   **Customizable Themes**: 5 presets and custom RGB options.
 *   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
 *   **Teacher Mode**: Tools for creating and managing educational lessons.
-*   **Community Platform**: Full-featured community system with verse-based posts, likes system (POST/DELETE mutations), trending topics sidebar, and social engagement metrics. Users can share biblical insights with verse references.
-*   **Versículo do Dia**: Automated daily verse rotation system (1-365 day cycle) with themed inspirational verses, gradient card UI design, sharing capabilities (text copy & image download), and multilingual support. Featured on home page for daily spiritual encouragement.
-*   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling. Gamification includes XP, progressive levels, daily streaks (UTC midnight logic), and 18 automatic achievements across various categories. A dedicated `/progress` dashboard visualizes user advancement.
-*   **Prayer Journal**: Complete prayer management with MediaRecorder API for real audio recording (base64 storage), recording time counter, mark-as-answered functionality, delete capability, and audio playback. Categories include Thanksgiving, Supplication, Intercession, and Confession.
-*   **Verse Sharing**: Integrated sharing system allowing users to copy formatted verse text or download verse cards as images using `html-to-image` library. Shareable cards include verse text, reference, and app branding.
-*   **Bible Reader Redesign**: Mobile-first, minimalist layout inspired by YouVersion, with clear visual hierarchy, superscript verse numbering, and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA), offline fallback for key passages, and OpenAI-powered audio narration (TTS) with simple play/stop controls.
-*   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking directly within the Bible reader via an integrated popover. A `/favorites` page organizes bookmarks, highlights, and notes with filtering and display options.
-*   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs (Home, Bible, Plans, Progress, Profile) visible only on mobile, replacing the desktop sidebar.
-*   **Offline Mode**: Complete offline reading experience with IndexedDB browser storage (no user scoping needed client-side), PostgreSQL backend tracking per authenticated user, API routes at `/api/offline/content` for sync, automatic online/offline detection with `navigator.onLine`, intelligent fallback loading cached chapters when API fails, download/delete controls in BibleReader navigation, and dedicated `/offline` page showing storage stats (chapters saved, space used, books downloaded) with clear-all functionality.
-*   **Security & Resilience**: Robust validation (userId, external API, Zod schema), comprehensive error handling with toast notifications, retry mechanisms, and fallback UI.
+*   **Community Platform**: Full-featured community system with verse-based posts, likes, trending topics, and social engagement metrics.
+*   **Versículo do Dia (Daily Verse)**: Automated daily verse rotation with themed inspirational verses, gradient card UI, sharing capabilities (text copy & image download), and multilingual support.
+*   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling, XP, progressive levels, daily streaks, and 18 automatic achievements.
+*   **Prayer Journal**: Complete prayer management with audio recording (MediaRecorder API), time counter, mark-as-answered, delete capability, and audio playback.
+*   **Verse Sharing**: Integrated sharing system allowing users to copy formatted verse text or download verse cards as images using `html-to-image`.
+*   **Bible Reader Redesign**: Mobile-first, minimalist layout with superscript verse numbering and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA), offline fallback for key passages, and OpenAI-powered audio narration (TTS).
+*   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking. A `/favorites` page organizes bookmarks, highlights, and notes.
+*   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs for mobile devices.
+*   **Offline Mode**: Complete offline reading experience with IndexedDB browser storage, PostgreSQL backend tracking, API routes for sync, automatic online/offline detection, intelligent fallback loading, download/delete controls, and a dedicated `/offline` page.
+*   **Security & Resilience**: Robust validation (userId, external API, Zod schema), comprehensive error handling, retry mechanisms, and fallback UI.
+*   **Production Database Setup**: User must manually execute `server/production-schema.sql` in their production PostgreSQL database.
 
 ## External Dependencies
 
-**Authentication & Identity**:
+### Authentication & Identity
 *   Replit OIDC
 *   OpenID Client library
 
-**Database**:
+### Database
 *   Neon PostgreSQL
 *   Drizzle ORM
 *   Drizzle Kit
 
-**AI Integration**:
-*   OpenAI API (GPT-4o) - Configured with theological system prompt, requires user's OPENAI_API_KEY
+### AI Integration
+*   OpenAI API (GPT-4o, TTS) - Requires user's `OPENAI_API_KEY`
 
-**Frontend Libraries**:
+### Frontend Libraries
 *   Radix UI
 *   TanStack Query
 *   React Hook Form
@@ -102,22 +66,17 @@ Preferred communication style: Simple, everyday language.
 *   date-fns
 *   Wouter
 *   Lucide React
-*   html-to-image (for verse card generation)
+*   html-to-image
 
-**Development Tools**:
+### Development Tools
 *   Vite
 *   TypeScript
 *   Tailwind CSS
 *   PostCSS with Autoprefixer
 
-**Media Integration**:
-*   MediaRecorder API (for prayer audio recording)
-*   Native HTML5 Audio (for prayer playback)
-*   Podcast RSS feed parsers - *Planned*
+### Media Integration
+*   MediaRecorder API
+*   Native HTML5 Audio
 
-**Important Notes**:
-*   **No Free APIs Policy**: Bible+ does NOT use any free third-party APIs. All features requiring external services (AI study, payment processing) must be configured with user's own API keys (OPENAI_API_KEY, STRIPE_SECRET_KEY).
-*   **Production Database Setup**: User must manually execute `server/production-schema.sql` in their production PostgreSQL database to create all necessary tables. Development database uses Drizzle automatic migrations.
-
-**Deployment Platform**:
+### Deployment Platform
 *   Replit
