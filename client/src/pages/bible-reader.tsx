@@ -454,10 +454,6 @@ export default function BibleReader() {
               onClick={() => {
                 if (selectedBook) {
                   playChapter(selectedBook, selectedChapter, version);
-                  toast({
-                    title: t.bible.audioStarted,
-                    description: t.bible.listenWhileBrowsing,
-                  });
                 }
               }}
               disabled={!selectedBook}
