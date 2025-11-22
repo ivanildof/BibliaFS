@@ -52,6 +52,9 @@ import {
   offlineContent,
   type InsertOfflineContent,
   type OfflineContent,
+  verseCommentaries,
+  type InsertVerseCommentary,
+  type VerseCommentary,
   dailyVerses,
   type InsertDailyVerse,
   type DailyVerse,
@@ -149,6 +152,10 @@ export interface IStorage {
   saveOfflineContent(content: InsertOfflineContent): Promise<OfflineContent>;
   deleteOfflineContent(id: string, userId: string): Promise<void>;
   deleteUserOfflineContent(userId: string): Promise<void>;
+  
+  // Verse Commentaries
+  getVerseCommentary(book: string, chapter: number, verse: number, version: string, commentaryType: string): Promise<VerseCommentary | undefined>;
+  createVerseCommentary(commentary: InsertVerseCommentary): Promise<VerseCommentary>;
   
   // Daily Verse
   getDailyVerse(dayOfYear: number): Promise<DailyVerse | undefined>;
@@ -839,6 +846,25 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserOfflineContent(userId: string): Promise<void> {
     await db.delete(offlineContent).where(eq(offlineContent.userId, userId));
+  }
+
+  // Verse Commentaries
+  async getVerseCommentary(book: string, chapter: number, verse: number, version: string, commentaryType: string): Promise<VerseCommentary | undefined> {
+    const [commentary] = await db.select().from(verseCommentaries).where(
+      and(
+        eq(verseCommentaries.book, book),
+        eq(verseCommentaries.chapter, chapter),
+        eq(verseCommentaries.verse, verse),
+        eq(verseCommentaries.version, version),
+        eq(verseCommentaries.commentaryType, commentaryType)
+      )
+    );
+    return commentary;
+  }
+
+  async createVerseCommentary(commentary: InsertVerseCommentary): Promise<VerseCommentary> {
+    const [created] = await db.insert(verseCommentaries).values(commentary).returning();
+    return created;
   }
 
   // Daily Verse
