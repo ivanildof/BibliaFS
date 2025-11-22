@@ -32,7 +32,7 @@ import { runMigrations } from "./migrations";
 let stripe: Stripe | null = null;
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-11-20.acacia",
+    apiVersion: "2025-11-17.clover",
   });
 } else {
   console.warn("⚠️  STRIPE_SECRET_KEY not found - donation features will be disabled");
@@ -155,10 +155,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // CRITICAL SECURITY: Strip userId from payload to prevent ownership escalation
-      const { userId: _, ...safeData } = result.data;
+      const { userId: _, ...safeData } = result.data as any;
       
       // updateReadingPlan valida ownership internamente
-      const plan = await storage.updateReadingPlan(planId, userId, safeData);
+      const plan = await storage.updateReadingPlan(planId, userId, safeData as any);
       
       if (!plan) {
         return res.status(404).json({ error: "Plano não encontrado ou acesso negado" });
@@ -240,10 +240,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // CRITICAL SECURITY: Strip userId from payload to prevent ownership escalation
-      const { userId: _, ...safeData } = result.data;
+      const { userId: _, ...safeData } = result.data as any;
       
       // updatePrayer valida ownership internamente
-      const prayer = await storage.updatePrayer(prayerId, userId, safeData);
+      const prayer = await storage.updatePrayer(prayerId, userId, safeData as any);
       
       if (!prayer) {
         return res.status(404).json({ error: "Oração não encontrada ou acesso negado" });
@@ -420,7 +420,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/teacher/lessons/:id", isAuthenticated, async (req, res) => {
+  app.patch("/api/teacher/lessons/:id", isAuthenticated, async (req: any, res) => {
     try {
       const teacherId = req.user.claims.sub;
       
@@ -435,7 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // updateLesson valida ownership
-      const lesson = await storage.updateLesson(req.params.id, teacherId, result.data);
+      const lesson = await storage.updateLesson(req.params.id, teacherId, result.data as any);
       
       if (!lesson) {
         return res.status(404).json({ error: "Aula não encontrada ou acesso negado" });
@@ -447,7 +447,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/teacher/lessons/:id", isAuthenticated, async (req, res) => {
+  app.delete("/api/teacher/lessons/:id", isAuthenticated, async (req: any, res) => {
     try {
       const teacherId = req.user.claims.sub;
       
@@ -542,19 +542,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     // Extract books array from response (handles multiple API formats)
     let books: any[] = [];
+    const data = result.data as any;
     
-    if (Array.isArray(result.data)) {
+    if (Array.isArray(data)) {
       // API returned array directly: [{...}, {...}] (or fallback)
-      books = result.data;
-    } else if (result.data?.books && Array.isArray(result.data.books)) {
+      books = data;
+    } else if (data?.books && Array.isArray(data.books)) {
       // API returned {books: [{...}]} format
-      books = result.data.books;
-    } else if (result.data?.data?.books && Array.isArray(result.data.data.books)) {
+      books = data.books;
+    } else if (data?.data?.books && Array.isArray(data.data.books)) {
       // API returned nested {data: {books: [{...}]}} format
-      books = result.data.data.books;
-    } else if (result.data?.data && Array.isArray(result.data.data)) {
+      books = data.data.books;
+    } else if (data?.data && Array.isArray(data.data)) {
       // API returned {data: [{...}]} format
-      books = result.data.data;
+      books = data.data;
     }
     
     // Validate we have books
@@ -1012,18 +1013,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const isUnlocked = await storage.getUserAchievements(userId)
           .then(uas => uas.some(ua => ua.achievementId === achievement.id && ua.isUnlocked));
 
-        if (!isUnlocked) {
-          if (achievement.category === 'leitura' && achievement.requirement === 'Ler 1 capítulo') {
+        if (!isUnlocked && achievement.requirement) {
+          const req = achievement.requirement as { type: string; value: number };
+          
+          if (achievement.category === 'reading' && req.type === 'chapters_read' && req.value === 1) {
             await storage.unlockAchievement(userId, achievement.id);
             unlockedAchievements.push(achievement);
-          } else if (achievement.category === 'streak') {
-            if (achievement.requirement === 'Streak de 7 dias' && newStreak >= 7) {
-              await storage.unlockAchievement(userId, achievement.id);
-              unlockedAchievements.push(achievement);
-            } else if (achievement.requirement === 'Streak de 30 dias' && newStreak >= 30) {
-              await storage.unlockAchievement(userId, achievement.id);
-              unlockedAchievements.push(achievement);
-            } else if (achievement.requirement === 'Streak de 100 dias' && newStreak >= 100) {
+          } else if (achievement.category === 'streak' && req.type === 'streak_days') {
+            if (newStreak >= req.value) {
               await storage.unlockAchievement(userId, achievement.id);
               unlockedAchievements.push(achievement);
             }

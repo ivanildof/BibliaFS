@@ -683,7 +683,7 @@ export const updateLessonSchema = z.object({
   scriptureReferences: z.array(z.object({
     book: z.string(),
     chapter: z.number().int().min(1),
-    verses: z.string().optional(),
+    verses: z.string(),
   })).optional().nullable(),
   content: z.string().optional().nullable(),
   videoUrl: z.string().url().optional().nullable(),
