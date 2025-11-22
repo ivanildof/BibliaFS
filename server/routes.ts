@@ -702,6 +702,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Helper function to generate commentary using OpenAI
+  async function generateCommentary(
+    book: string,
+    chapter: number,
+    verse: number,
+    verseText: string,
+    commentaryType: string
+  ): Promise<string> {
+    const systemPrompts: Record<string, string> = {
+      exegese: "Você é um teólogo especializado em exegese bíblica. Analise o versículo fornecido considerando o texto original (hebraico/grego), gramática, e contexto literário. Seja preciso e acadêmico.",
+      historico: "Você é um historiador bíblico especializado em contexto cultural e histórico. Explique o contexto histórico, cultural, geográfico e social do versículo. Seja informativo e educacional.",
+      aplicacao: "Você é um pastor e conselheiro espiritual. Explique como este versículo pode ser aplicado na vida prática dos cristãos hoje. Seja prático, encorajador e relevante.",
+      referencias: "Você é um estudioso bíblico especializado em referências cruzadas. Identifique e explique outros versículos bíblicos relacionados ao tema, contexto ou passagens paralelas. Liste pelo menos 3-5 referências relevantes.",
+      teologico: "Você é um teólogo sistemático. Analise as implicações teológicas do versículo, considerando diferentes tradições cristãs (católica, protestante, ortodoxa). Seja equilibrado e respeitoso com as diversas interpretações."
+    };
+
+    const systemPrompt = systemPrompts[commentaryType] || systemPrompts.exegese;
+
+    const userPrompt = `Analise o seguinte versículo bíblico:\n\n**${book} ${chapter}:${verse}**\n"${verseText}"\n\nForneça um comentário ${commentaryType} detalhado (2-3 parágrafos).`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 800,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+  }
+
+  // Bible Commentary Route
+  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", async (req: any, res) => {
+    try {
+      const { version, book, chapter, verse } = req.params;
+      const { type } = req.query; // exegese, historico, aplicacao, referencias, teologico
+      
+      const commentaryType = type || 'exegese';
+      
+      // Validate commentary type
+      const validTypes = ['exegese', 'historico', 'aplicacao', 'referencias', 'teologico'];
+      if (!validTypes.includes(commentaryType)) {
+        return res.status(400).json({ error: "Tipo de comentário inválido" });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(503).json({ 
+          error: "Serviço de comentários não configurado",
+          message: "Configure OPENAI_API_KEY para habilitar comentários teológicos."
+        });
+      }
+
+      // Check cache first
+      const cached = await storage.getVerseCommentary(
+        book,
+        parseInt(chapter),
+        parseInt(verse),
+        version,
+        commentaryType
+      );
+
+      if (cached) {
+        console.log(`[Commentary] Cache hit: ${book} ${chapter}:${verse} (${commentaryType})`);
+        return res.json(cached);
+      }
+
+      // Fetch verse text
+      const language = 'pt'; // Default to Portuguese for now
+      const chapterData = await fetchBibleChapter(language, version, book, parseInt(chapter));
+
+      if (!chapterData?.verses || chapterData.verses.length === 0) {
+        return res.status(404).json({ error: "Capítulo não encontrado" });
+      }
+
+      const verseData = chapterData.verses.find((v: any) => v.number === parseInt(verse));
+      
+      if (!verseData) {
+        return res.status(404).json({ error: "Versículo não encontrado" });
+      }
+
+      console.log(`[Commentary] Generating ${commentaryType}: ${book} ${chapter}:${verse}`);
+
+      // Generate commentary
+      const content = await generateCommentary(
+        book,
+        parseInt(chapter),
+        parseInt(verse),
+        verseData.text,
+        commentaryType
+      );
+
+      // Cache the result
+      const commentary = await storage.createVerseCommentary({
+        book,
+        chapter: parseInt(chapter),
+        verse: parseInt(verse),
+        version,
+        commentaryType,
+        content,
+        source: 'ai',
+      });
+
+      res.json(commentary);
+    } catch (error: any) {
+      console.error("Commentary generation error:", error);
+      res.status(500).json({ error: "Erro ao gerar comentário" });
+    }
+  });
+
   // Bible API Routes with Multilingual Support
   const BIBLE_API_BASE = "https://www.abibliadigital.com.br/api";
   
