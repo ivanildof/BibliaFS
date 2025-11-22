@@ -69,12 +69,6 @@ const VERSIONS = [
   { value: "ra", label: "RA" },
 ];
 
-const SUPERSCRIPTS = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"];
-
-function toSuperscript(num: number): string {
-  return num.toString().split('').map(d => SUPERSCRIPTS[parseInt(d)]).join('');
-}
-
 export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -506,17 +500,26 @@ export default function BibleReader() {
   };
 
   const highlightColors = [
-    { name: "yellow", bg: "bg-yellow-200/50 dark:bg-yellow-900/30", label: t.bible.yellow },
-    { name: "green", bg: "bg-green-200/50 dark:bg-green-900/30", label: t.bible.green },
-    { name: "blue", bg: "bg-blue-200/50 dark:bg-blue-900/30", label: t.bible.blue },
-    { name: "purple", bg: "bg-purple-200/50 dark:bg-purple-900/30", label: t.bible.purple },
-    { name: "pink", bg: "bg-pink-200/50 dark:bg-pink-900/30", label: t.bible.pink },
-    { name: "orange", bg: "bg-orange-200/50 dark:bg-orange-900/30", label: t.bible.orange },
+    { name: "yellow", bg: "bg-yellow-200/50 dark:bg-yellow-900/30", numberColor: "text-yellow-700 dark:text-yellow-400", label: t.bible.yellow },
+    { name: "green", bg: "bg-green-200/50 dark:bg-green-900/30", numberColor: "text-green-700 dark:text-green-400", label: t.bible.green },
+    { name: "blue", bg: "bg-blue-200/50 dark:bg-blue-900/30", numberColor: "text-blue-700 dark:text-blue-400", label: t.bible.blue },
+    { name: "purple", bg: "bg-purple-200/50 dark:bg-purple-900/30", numberColor: "text-purple-700 dark:text-purple-400", label: t.bible.purple },
+    { name: "pink", bg: "bg-pink-200/50 dark:bg-pink-900/30", numberColor: "text-pink-700 dark:text-pink-400", label: t.bible.pink },
+    { name: "orange", bg: "bg-orange-200/50 dark:bg-orange-900/30", numberColor: "text-orange-700 dark:text-orange-400", label: t.bible.orange },
   ];
 
   const getHighlightBg = (color: string) => {
     const colorObj = highlightColors.find(c => c.name === color);
     return colorObj ? colorObj.bg : "";
+  };
+
+  const getVerseNumberColor = (verseNumber: number) => {
+    const verseHighlight = getVerseHighlight(verseNumber);
+    if (verseHighlight) {
+      const colorObj = highlightColors.find(c => c.name === verseHighlight.color);
+      return colorObj ? colorObj.numberColor : "text-muted-foreground";
+    }
+    return "text-muted-foreground";
   };
 
   const goToNextChapter = () => {
@@ -835,12 +838,12 @@ export default function BibleReader() {
                   >
                     <PopoverTrigger asChild>
                       <div 
-                        className={`flex items-start gap-2 cursor-pointer rounded-md px-2 py-1 transition-all hover:bg-accent/50 ${highlightBg}`}
+                        className={`flex items-baseline gap-2 cursor-pointer rounded-md px-2 py-1 transition-all hover:bg-accent/50 ${highlightBg}`}
                         data-testid={`verse-container-${verse.number}`}
                       >
-                        <sup className="text-xs font-bold text-muted-foreground min-w-[1.5rem] text-right flex-shrink-0" data-testid={`verse-number-${verse.number}`}>
-                          {toSuperscript(verse.number)}
-                        </sup>
+                        <span className={`text-sm font-bold ${getVerseNumberColor(verse.number)} min-w-[1.5rem] text-right flex-shrink-0`} data-testid={`verse-number-${verse.number}`}>
+                          {verse.number}
+                        </span>
                         <p className="flex-1 font-serif text-base md:text-lg leading-relaxed text-foreground" data-testid={`verse-text-${verse.number}`}>
                           {verse.text}
                         </p>
