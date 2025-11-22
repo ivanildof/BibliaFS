@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 const predefinedThemes = [
   { 
@@ -49,11 +51,37 @@ const predefinedThemes = [
   },
 ];
 
+// Helper to convert hex to HSL
+function hexToHSL(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return "0 0% 50%";
+  
+  let r = parseInt(result[1], 16) / 255;
+  let g = parseInt(result[2], 16) / 255;
+  let b = parseInt(result[3], 16) / 255;
+  
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  
+  return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
 export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedTheme, setSelectedTheme] = useState(user?.selectedTheme || "classico");
-  const [customColor, setCustomColor] = useState("#5711D9");
+  const [customColor, setCustomColor] = useState(user?.customTheme?.primaryColor || "#5711D9");
   const [fontSize, setFontSize] = useState(16);
   const [notifications, setNotifications] = useState({
     readingReminders: true,
@@ -62,11 +90,78 @@ export default function Settings() {
     teacherMode: true,
   });
 
+  // Apply theme colors to CSS variables
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    if (selectedTheme === "custom") {
+      const hsl = hexToHSL(customColor);
+      root.style.setProperty("--primary", hsl);
+    } else {
+      const theme = predefinedThemes.find(t => t.id === selectedTheme);
+      if (theme) {
+        const primaryHSL = hexToHSL(theme.primary);
+        root.style.setProperty("--primary", primaryHSL);
+      }
+    }
+  }, [selectedTheme, customColor]);
+
+  // Mutation to save theme
+  const saveThemeMutation = useMutation({
+    mutationFn: async (data: { selectedTheme: string; customTheme?: any }) => {
+      const response = await fetch("/api/settings/theme", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Falha ao salvar tema");
+      }
+      
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      toast({
+        title: "Tema salvo",
+        description: "Suas preferências foram atualizadas.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao salvar tema",
+        description: error.message || "Tente novamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSaveTheme = () => {
-    toast({
-      title: "Tema salvo",
-      description: "Suas preferências foram atualizadas.",
-    });
+    if (!selectedTheme) {
+      toast({
+        title: "Erro",
+        description: "Selecione um tema primeiro.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const themeData: any = {
+      selectedTheme: selectedTheme || "classico",
+    };
+    
+    if (selectedTheme === "custom") {
+      themeData.customTheme = {
+        name: "Personalizado",
+        primaryColor: customColor,
+        accentColor: "#FFFFFF",
+        backgroundColor: "#FFFFFF",
+      };
+    }
+    
+    saveThemeMutation.mutate(themeData);
   };
 
   const handleLogout = () => {
@@ -181,9 +276,13 @@ export default function Settings() {
                 </RadioGroup>
               </CardContent>
               <CardFooter>
-                <Button onClick={handleSaveTheme} data-testid="button-save-theme">
+                <Button 
+                  onClick={handleSaveTheme} 
+                  disabled={saveThemeMutation.isPending}
+                  data-testid="button-save-theme"
+                >
                   <Check className="h-4 w-4 mr-2" />
-                  Salvar Tema
+                  {saveThemeMutation.isPending ? "Salvando..." : "Salvar Tema"}
                 </Button>
               </CardFooter>
             </Card>

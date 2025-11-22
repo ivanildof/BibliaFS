@@ -76,6 +76,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user theme settings
+  app.patch('/api/settings/theme', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { selectedTheme, customTheme } = req.body;
+      
+      // Validation
+      if (!selectedTheme || typeof selectedTheme !== 'string') {
+        return res.status(400).json({ message: "selectedTheme é obrigatório" });
+      }
+      
+      const validThemes = ['classico', 'noite_sagrada', 'luz_do_dia', 'terra_santa', 'custom'];
+      if (!validThemes.includes(selectedTheme)) {
+        return res.status(400).json({ message: "Tema inválido" });
+      }
+      
+      // If custom theme, REQUIRE customTheme object with valid structure
+      if (selectedTheme === 'custom') {
+        if (!customTheme || typeof customTheme !== 'object') {
+          return res.status(400).json({ message: "customTheme é obrigatório para tema personalizado" });
+        }
+        if (!customTheme.primaryColor || typeof customTheme.primaryColor !== 'string') {
+          return res.status(400).json({ message: "customTheme.primaryColor é obrigatório" });
+        }
+        if (!customTheme.accentColor || typeof customTheme.accentColor !== 'string') {
+          return res.status(400).json({ message: "customTheme.accentColor é obrigatório" });
+        }
+        if (!customTheme.backgroundColor || typeof customTheme.backgroundColor !== 'string') {
+          return res.status(400).json({ message: "customTheme.backgroundColor é obrigatório" });
+        }
+      }
+      
+      const updatedUser = await storage.updateUserTheme(userId, {
+        selectedTheme,
+        customTheme: selectedTheme === 'custom' ? customTheme : null,
+      });
+      
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error("Erro ao salvar tema:", error);
+      res.status(500).json({ message: "Falha ao salvar tema" });
+    }
+  });
+
   // Dashboard Stats
   app.get("/api/stats/dashboard", isAuthenticated, async (req: any, res) => {
     try {
