@@ -1,5 +1,5 @@
-// Multilingual Bible APIs - Switch based on language
-// Supports: Portuguese, English, Dutch, Spanish
+// Multilingual Bible APIs - Português via GitHub thiagobodruk/bible (JSON estático - SEM RATE LIMITS)
+// Suporta: Português (NVI, ACF) via cache local
 
 export interface BibleVerse {
   number: number;
@@ -18,6 +18,9 @@ export interface BibleBook {
   chapters: number;
   testament: string;
 }
+
+// Cache local da Bíblia em português
+let portugueseBibleCache: Record<string, any> = {};
 
 // Book name mappings for each language
 const BOOK_MAPPINGS: Record<string, Record<string, string>> = {
@@ -59,16 +62,48 @@ const BOOK_MAPPINGS: Record<string, Record<string, string>> = {
   },
 };
 
-// Fetch Portuguese Bible (ABíbliaDigital)
+// Fetch Portuguese Bible (GitHub thiagobodruk/bible - JSON estático, SEM RATE LIMITS!)
 export async function fetchPortugueseBible(version: string, book: string, chapter: number): Promise<BibleChapter> {
-  const url = `https://www.abibliadigital.com.br/api/verses/${version}/${book}/${chapter}`;
-  const response = await fetch(url);
+  const versionMap: Record<string, string> = {
+    'nvi': 'pt_nvi',
+    'acf': 'pt_acf',
+    'arc': 'pt_acf',
+    'ra': 'pt_nvi',
+  };
   
-  if (!response.ok) {
-    throw new Error(`Portuguese Bible API error: ${response.status}`);
+  const githubVersion = versionMap[version] || 'pt_nvi';
+  
+  if (!portugueseBibleCache[githubVersion]) {
+    const url = `https://raw.githubusercontent.com/thiagobodruk/bible/master/json/${githubVersion}.json`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Portuguese Bible API error: ${response.status}`);
+    }
+    
+    portugueseBibleCache[githubVersion] = await response.json();
   }
   
-  return await response.json();
+  const bibleData = portugueseBibleCache[githubVersion];
+  const bookData = bibleData.find((b: any) => b.abbrev.toLowerCase() === book.toLowerCase());
+  
+  if (!bookData || !bookData.chapters[chapter - 1]) {
+    throw new Error(`Chapter not found: ${book} ${chapter}`);
+  }
+  
+  const verses = bookData.chapters[chapter - 1];
+  
+  return {
+    book: { 
+      name: bookData.name || book, 
+      abbrev: book 
+    },
+    chapter: { number: chapter },
+    verses: verses.map((text: string, index: number) => ({
+      number: index + 1,
+      text: text.trim(),
+    })),
+  };
 }
 
 // Fetch English Bible (wldeh/bible-api via CDN)
