@@ -657,20 +657,25 @@ export default function BibleReader() {
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
                 <SheetHeader>
-                  <SheetTitle>Buscar Versículos</SheetTitle>
+                  <SheetTitle>Buscar na Bíblia</SheetTitle>
                 </SheetHeader>
                 <div className="mt-4 space-y-4">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Digite sua busca..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                      data-testid="input-search"
-                    />
-                    <Button onClick={handleSearch} disabled={searchMutation.isPending}>
-                      {searchMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                    </Button>
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Ex: amor, Davi, fé, salvação..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                        data-testid="input-search"
+                      />
+                      <Button onClick={handleSearch} disabled={searchMutation.isPending}>
+                        {searchMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Busque qualquer palavra, nome, expressão ou tema na Bíblia
+                    </p>
                   </div>
                   {searchMutation.data && (
                     <ScrollArea className="h-[60vh]">
