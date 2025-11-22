@@ -56,13 +56,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-            <Book className="h-6 w-6 text-primary-foreground" />
+      <SidebarHeader className="p-6 border-b">
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
+            <Book className="h-7 w-7 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="font-display text-lg font-bold text-foreground">{t.common.appName}</h2>
+            <h2 className="font-display text-xl font-bold text-foreground">{t.common.appName}</h2>
             <p className="text-xs text-muted-foreground">{t.sections.premiumStudy}</p>
           </div>
         </div>
@@ -141,18 +141,18 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-6 border-t">
         {user && (
           <Link href="/profile">
-            <div className="flex items-center gap-3 rounded-lg p-2 hover-elevate active-elevate-2 cursor-pointer" data-testid="link-profile">
-              <Avatar className="h-9 w-9">
+            <div className="flex items-center gap-3 rounded-2xl p-3 hover-elevate active-elevate-2 cursor-pointer shadow-md" data-testid="link-profile">
+              <Avatar className="h-11 w-11 ring-2 ring-accent/50">
                 <AvatarImage src={user.profileImageUrl || undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground font-semibold">
                   {user.firstName?.[0] || user.email?.[0] || "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate" data-testid="text-username">
+                <p className="text-sm font-semibold truncate" data-testid="text-username">
                   {user.firstName} {user.lastName}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">{user.email}</p>
