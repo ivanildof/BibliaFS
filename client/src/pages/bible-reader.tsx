@@ -93,11 +93,14 @@ export default function BibleReader() {
   const [verseToShare, setVerseToShare] = useState<{ number: number; text: string } | null>(null);
   
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
-  const playAudio = () => {
-    if (!selectedBook) return;
+  const playAudio = async () => {
+    if (!selectedBook || isLoadingAudio) return;
+    
+    setIsLoadingAudio(true);
     
     const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`;
     
@@ -106,25 +109,44 @@ export default function BibleReader() {
       audioElement.src = '';
     }
     
+    toast({
+      title: "Gerando áudio...",
+      description: "Isso pode levar 20-40 segundos. Aguarde!",
+    });
+    
     const audio = new Audio(url);
-    audio.play().then(() => {
-      setIsPlayingAudio(true);
-      setAudioUrl(url);
-      setAudioElement(audio);
-      
-      audio.onended = () => {
-        setIsPlayingAudio(false);
-      };
-      
-      toast({
-        title: t.bible.audioStarted || "Áudio iniciado",
-        description: t.bible.listenWhileBrowsing || "Você pode continuar navegando enquanto ouve",
+    
+    audio.addEventListener('loadeddata', () => {
+      setIsLoadingAudio(false);
+      audio.play().then(() => {
+        setIsPlayingAudio(true);
+        setAudioUrl(url);
+        setAudioElement(audio);
+        
+        audio.onended = () => {
+          setIsPlayingAudio(false);
+        };
+        
+        toast({
+          title: "Áudio iniciado",
+          description: "Você pode continuar navegando enquanto ouve",
+        });
+      }).catch(error => {
+        setIsLoadingAudio(false);
+        console.error("Audio playback error:", error);
+        toast({
+          title: "Erro ao reproduzir áudio",
+          description: "Tente novamente",
+          variant: "destructive",
+        });
       });
-    }).catch(error => {
-      console.error("Audio playback error:", error);
+    });
+    
+    audio.addEventListener('error', () => {
+      setIsLoadingAudio(false);
       toast({
-        title: "Erro ao reproduzir áudio",
-        description: "Verifique se está autenticado e o OPENAI_API_KEY está configurado",
+        title: "Erro ao carregar áudio",
+        description: "Verifique sua conexão e tente novamente",
         variant: "destructive",
       });
     });
@@ -965,10 +987,12 @@ export default function BibleReader() {
               size="icon"
               className="rounded-full"
               onClick={isPlayingAudio ? stopAudio : playAudio}
-              disabled={!selectedBook}
+              disabled={!selectedBook || isLoadingAudio}
               data-testid="button-toggle-audio"
             >
-              {isPlayingAudio ? (
+              {isLoadingAudio ? (
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              ) : isPlayingAudio ? (
                 <VolumeX className="h-5 w-5 text-primary" />
               ) : (
                 <Volume2 className="h-5 w-5" />
