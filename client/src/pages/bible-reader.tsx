@@ -86,6 +86,7 @@ export default function BibleReader() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBooksOpen, setIsBooksOpen] = useState(false);
+  const [matchedBooks, setMatchedBooks] = useState<BibleBook[]>([]);
   const [isChaptersOpen, setIsChaptersOpen] = useState(false);
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
@@ -495,6 +496,17 @@ export default function BibleReader() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
+      // Smart detection: find books that match the query
+      const query = searchQuery.trim().toLowerCase();
+      const booksArray = Array.isArray(books) ? books : [];
+      const filtered = booksArray.filter(book => {
+        const bookName = (t.bibleBooks[book.abbrev.pt] || book.name).toLowerCase();
+        const abbrev = book.abbrev.pt.toLowerCase();
+        return bookName.includes(query) || abbrev.includes(query);
+      });
+      setMatchedBooks(filtered);
+      
+      // Also search verses
       searchMutation.mutate(searchQuery);
       setIsSearchOpen(true);
     }
@@ -677,28 +689,89 @@ export default function BibleReader() {
                       Busque qualquer palavra, nome, expressão ou tema na Bíblia
                     </p>
                   </div>
-                  {searchMutation.data && (
-                    <ScrollArea className="h-[60vh]">
-                      <div className="space-y-3">
-                        {(searchMutation.data as any).verses?.map((result: any, index: number) => (
-                          <SheetClose asChild key={index}>
-                            <button
-                              className="w-full text-left p-4 rounded-lg border hover-elevate active-elevate-2 transition-colors"
-                              onClick={() => {
-                                setSelectedBook(result.book.abbrev.pt);
-                                setSelectedChapter(result.chapter);
-                              }}
-                            >
-                              <div className="font-semibold text-sm mb-1">
-                                {t.bibleBooks[result.book.abbrev.pt] || result.book.name} {result.chapter}:{result.number}
-                              </div>
-                              <p className="text-sm text-muted-foreground font-serif">{result.text}</p>
-                            </button>
-                          </SheetClose>
-                        )) || <p className="text-center text-muted-foreground">Nenhum resultado.</p>}
-                      </div>
-                    </ScrollArea>
-                  )}
+                  
+                  <ScrollArea className="h-[60vh]">
+                    <div className="space-y-4">
+                      {/* Book suggestions first */}
+                      {matchedBooks.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                            <Book className="h-4 w-4" />
+                            Ir para livro
+                          </h3>
+                          <div className="space-y-2">
+                            {matchedBooks.map((book) => (
+                              <SheetClose asChild key={book.abbrev.pt}>
+                                <button
+                                  className="w-full text-left p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 hover-elevate active-elevate-2 transition-colors shadow-md"
+                                  onClick={() => {
+                                    setSelectedBook(book.abbrev.pt);
+                                    setSelectedChapter(1);
+                                    setSearchQuery("");
+                                    setMatchedBooks([]);
+                                  }}
+                                  data-testid={`button-book-suggestion-${book.abbrev.pt}`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20">
+                                      <Book className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <div>
+                                      <div className="font-semibold text-sm">
+                                        {t.bibleBooks[book.abbrev.pt] || book.name}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        {book.chapters} {book.chapters === 1 ? 'capítulo' : 'capítulos'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+                              </SheetClose>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Verse results */}
+                      {searchMutation.data && (
+                        <div>
+                          {matchedBooks.length > 0 && (
+                            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                              <Search className="h-4 w-4" />
+                              Versículos encontrados
+                            </h3>
+                          )}
+                          <div className="space-y-2">
+                            {(searchMutation.data as any).verses?.map((result: any, index: number) => (
+                              <SheetClose asChild key={index}>
+                                <button
+                                  className="w-full text-left p-4 rounded-xl border hover-elevate active-elevate-2 transition-colors"
+                                  onClick={() => {
+                                    setSelectedBook(result.book.abbrev.pt);
+                                    setSelectedChapter(result.chapter);
+                                    setSearchQuery("");
+                                    setMatchedBooks([]);
+                                  }}
+                                >
+                                  <div className="font-semibold text-sm mb-1">
+                                    {t.bibleBooks[result.book.abbrev.pt] || result.book.name} {result.chapter}:{result.number}
+                                  </div>
+                                  <p className="text-sm text-muted-foreground font-serif">{result.text}</p>
+                                </button>
+                              </SheetClose>
+                            )) || <p className="text-center text-muted-foreground py-4">Nenhum versículo encontrado.</p>}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {!searchMutation.data && matchedBooks.length === 0 && searchMutation.isIdle && (
+                        <div className="text-center text-muted-foreground py-8">
+                          <Search className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                          <p>Digite para buscar livros ou versículos</p>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
                 </div>
               </SheetContent>
             </Sheet>
