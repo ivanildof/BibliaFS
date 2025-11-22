@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -95,7 +95,26 @@ export default function BibleReader() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  const [playingVerseNumber, setPlayingVerseNumber] = useState<number | null>(null);
+  
+  // Use ref for synchronous access to audio element (prevents race conditions)
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+
+  // Unified audio controller - stops any playing audio (chapter or verse)
+  const stopAllAudio = () => {
+    const audio = audioElementRef.current;
+    if (audio) {
+      audio.pause();
+      audio.src = '';
+      audio.onended = null;
+      audio.onerror = null;
+      audio.onloadeddata = null;
+      audioElementRef.current = null;
+    }
+    setIsPlayingAudio(false);
+    setAudioUrl(null);
+    setPlayingVerseNumber(null);
+  };
 
   const toggleAudio = async () => {
     if (!selectedBook || isLoadingAudio) return;
@@ -103,14 +122,15 @@ export default function BibleReader() {
     const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`;
     
     // Se já tem áudio carregado do mesmo capítulo, apenas pause/resume
-    if (audioElement && audioUrl === url) {
+    const currentAudio = audioElementRef.current;
+    if (currentAudio && audioUrl === url) {
       if (isPlayingAudio) {
-        audioElement.pause();
+        currentAudio.pause();
         setIsPlayingAudio(false);
       } else {
-        audioElement.play().then(() => {
+        currentAudio.play().then(() => {
           setIsPlayingAudio(true);
-        }).catch(error => {
+        }).catch((error: any) => {
           console.error("Audio resume error:", error);
           toast({
             title: "Erro ao continuar áudio",
@@ -122,38 +142,33 @@ export default function BibleReader() {
       return;
     }
     
-    // Criar novo áudio (novo capítulo ou primeira vez)
-    if (audioElement) {
-      audioElement.pause();
-      audioElement.src = '';
-    }
+    // Parar qualquer áudio anterior (síncrono via ref)
+    stopAllAudio();
     
     setIsLoadingAudio(true);
     
     toast({
-      title: "Gerando áudio...",
+      title: "Gerando áudio do capítulo...",
       description: "Isso pode levar 20-40 segundos. Aguarde!",
     });
     
     const audio = new Audio(url);
+    audioElementRef.current = audio;
     
-    audio.addEventListener('loadeddata', () => {
+    audio.onloadeddata = () => {
       setIsLoadingAudio(false);
       audio.play().then(() => {
         setIsPlayingAudio(true);
         setAudioUrl(url);
-        setAudioElement(audio);
-        
-        audio.onended = () => {
-          setIsPlayingAudio(false);
-        };
+        setPlayingVerseNumber(null);
         
         toast({
-          title: "Áudio iniciado",
+          title: "Áudio do capítulo iniciado",
           description: "Você pode continuar navegando enquanto ouve",
         });
       }).catch(error => {
         setIsLoadingAudio(false);
+        stopAllAudio();
         console.error("Audio playback error:", error);
         toast({
           title: "Erro ao reproduzir áudio",
@@ -161,42 +176,40 @@ export default function BibleReader() {
           variant: "destructive",
         });
       });
-    });
+    };
     
-    audio.addEventListener('error', () => {
+    audio.onended = () => {
+      setIsPlayingAudio(false);
+      setPlayingVerseNumber(null);
+    };
+    
+    audio.onerror = () => {
       setIsLoadingAudio(false);
+      stopAllAudio();
       toast({
         title: "Erro ao carregar áudio",
         description: "Verifique sua conexão e tente novamente",
         variant: "destructive",
       });
-    });
-  };
-
-  const stopAudio = () => {
-    if (audioElement) {
-      audioElement.pause();
-      audioElement.src = '';
-      setAudioElement(null);
-      setIsPlayingAudio(false);
-      setAudioUrl(null);
-    }
+    };
   };
 
   useEffect(() => {
     return () => {
-      if (audioElement) {
-        audioElement.pause();
-        audioElement.src = '';
-      }
+      stopAllAudio();
     };
-  }, [audioElement]);
+  }, []);
 
   useEffect(() => {
-    if (audioElement && (selectedBook || selectedChapter)) {
-      stopAudio();
-    }
+    stopAllAudio();
   }, [selectedBook, selectedChapter]);
+
+  // Cleanup audio when popover closes
+  useEffect(() => {
+    if (!highlightPopoverOpen && playingVerseNumber) {
+      stopAllAudio();
+    }
+  }, [highlightPopoverOpen, playingVerseNumber]);
 
   // Fetch all Bible books
   const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
@@ -850,8 +863,66 @@ export default function BibleReader() {
                         </TabsContent>
                       </Tabs>
                       
-                      {/* Share Button */}
-                      <div className="mt-3 pt-3 border-t">
+                      {/* Audio & Share Buttons */}
+                      <div className="mt-3 pt-3 border-t space-y-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={async () => {
+                            // Stop any playing audio (chapter or other verse) - síncrono via ref
+                            stopAllAudio();
+                            
+                            const url = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verse.number}`;
+                            
+                            toast({
+                              title: "Gerando áudio do versículo...",
+                              description: "Aguarde alguns segundos",
+                            });
+                            
+                            const audio = new Audio(url);
+                            audioElementRef.current = audio;
+                            setPlayingVerseNumber(verse.number);
+                            
+                            audio.onloadeddata = () => {
+                              audio.play().then(() => {
+                                setIsPlayingAudio(true);
+                                setAudioUrl(url);
+                                toast({
+                                  title: "Áudio do versículo iniciado",
+                                });
+                              }).catch(error => {
+                                console.error("Audio error:", error);
+                                stopAllAudio();
+                                toast({
+                                  title: "Erro ao reproduzir áudio",
+                                  variant: "destructive",
+                                });
+                              });
+                            };
+                            
+                            audio.onended = () => {
+                              setIsPlayingAudio(false);
+                              setPlayingVerseNumber(null);
+                            };
+                            
+                            audio.onerror = () => {
+                              stopAllAudio();
+                              toast({
+                                title: "Erro ao carregar áudio",
+                                variant: "destructive",
+                              });
+                            };
+                          }}
+                          data-testid={`button-audio-verse-${verse.number}`}
+                        >
+                          {playingVerseNumber === verse.number ? (
+                            <><VolumeX className="h-4 w-4 mr-2" />Tocando...</>
+                          ) : (
+                            <><Volume2 className="h-4 w-4 mr-2" />Ouvir versículo</>
+                          )}
+                        </Button>
+                        
                         <Button
                           variant="outline"
                           size="sm"

@@ -526,7 +526,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible Audio Route - OpenAI Text-to-Speech with Multilingual Support (AUTHENTICATED)
+  // Bible Audio Route - Single Verse (FAST - only a few seconds!)
+  app.get("/api/bible/audio/verse/:language/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
+    try {
+      const { language, version, book, chapter, verse } = req.params;
+      const userId = req.user.claims.sub;
+      
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(503).json({ 
+          error: "Serviço de áudio não configurado",
+          message: "Configure OPENAI_API_KEY para habilitar áudio narrado."
+        });
+      }
+
+      // Fetch chapter to get the specific verse
+      const chapterData = await fetchBibleChapter(
+        language,
+        version,
+        book,
+        parseInt(chapter)
+      );
+
+      if (!chapterData?.verses || chapterData.verses.length === 0) {
+        return res.status(404).json({ error: "Capítulo não encontrado" });
+      }
+
+      const verseData = chapterData.verses.find((v: any) => v.number === parseInt(verse));
+      
+      if (!verseData) {
+        return res.status(404).json({ error: "Versículo não encontrado" });
+      }
+
+      const verseText = verseData.text;
+
+      console.log(`[Audio] Generating verse audio: ${book} ${chapter}:${verse} (${verseText.length} chars) - User: ${userId}`);
+
+      const ttsResponse = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'tts-1',
+          voice: 'alloy',
+          input: verseText,
+          speed: 1.0,
+        }),
+      });
+
+      if (!ttsResponse.ok) {
+        throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
+      }
+
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${verse}-${language}.mp3"`);
+      
+      const audioBuffer = await ttsResponse.arrayBuffer();
+      res.send(Buffer.from(audioBuffer));
+    } catch (error: any) {
+      console.error("Verse audio generation error:", error);
+      res.status(500).json({ error: "Erro ao gerar áudio do versículo" });
+    }
+  });
+
+  // Bible Audio Route - Full Chapter (SLOW - 20-40 seconds)
   app.get("/api/bible/audio/:language/:version/:book/:chapter", isAuthenticated, async (req: any, res) => {
     try {
       const { language, version, book, chapter } = req.params;
