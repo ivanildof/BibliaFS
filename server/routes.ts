@@ -49,16 +49,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const userEmail = req.user.claims.email || 'dev@example.com';
       let user = await storage.getUser(userId);
       
       if (!user) {
+        const isAdmin = userEmail === 'fabrisite1@gmail.com';
+        
         user = await storage.upsertUser({
           id: userId,
-          email: req.user.claims.email || 'dev@example.com',
+          email: userEmail,
           firstName: req.user.claims.first_name || 'Dev',
           lastName: req.user.claims.last_name || 'User',
           profileImageUrl: req.user.claims.profile_image_url,
+          role: isAdmin ? 'admin' : 'user',
         });
+        
+        if (isAdmin) {
+          console.log(`✅ Admin user created: ${userEmail}`);
+        }
       }
       
       res.json(user);

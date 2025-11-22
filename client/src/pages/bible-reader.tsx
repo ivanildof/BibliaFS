@@ -564,7 +564,7 @@ export default function BibleReader() {
                               }}
                             >
                               <div className="font-semibold text-sm mb-1">
-                                {result.book.name} {result.chapter}:{result.number}
+                                {t.bibleBooks[result.book.abbrev.pt] || result.book.name} {result.chapter}:{result.number}
                               </div>
                               <p className="text-sm text-muted-foreground font-serif">{result.text}</p>
                             </button>
@@ -606,7 +606,7 @@ export default function BibleReader() {
                               }}
                               data-testid={`button-book-${book.abbrev.pt}`}
                             >
-                              {book.name}
+                              {t.bibleBooks[book.abbrev.pt] || book.name}
                             </Button>
                           </SheetClose>
                         ))}
@@ -627,7 +627,7 @@ export default function BibleReader() {
                               }}
                               data-testid={`button-book-${book.abbrev.pt}`}
                             >
-                              {book.name}
+                              {t.bibleBooks[book.abbrev.pt] || book.name}
                             </Button>
                           </SheetClose>
                         ))}
@@ -704,7 +704,7 @@ export default function BibleReader() {
           <>
             {/* Book Name - Large Centered */}
             <h1 className="text-center text-3xl md:text-4xl font-serif font-semibold text-foreground mb-2" data-testid="text-book-name">
-              {chapterData.book.name}
+              {t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
             </h1>
             
             {/* Chapter Number - Gigantic Centered */}
@@ -1004,7 +1004,7 @@ export default function BibleReader() {
               className="text-sm font-medium min-w-[100px] text-center hover-elevate px-3 py-2 rounded-full transition-colors"
               data-testid="text-chapter-navigation"
             >
-              {chapterData ? `${chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
+              {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
             </button>
             
             <Button

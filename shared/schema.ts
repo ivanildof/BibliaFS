@@ -32,6 +32,9 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   
+  // Role-based access control
+  role: varchar("role").default("user"), // user, admin
+  
   // Custom theme settings
   customTheme: jsonb("custom_theme").$type<{
     name: string;
