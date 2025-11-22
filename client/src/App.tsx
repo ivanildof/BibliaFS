@@ -179,8 +179,8 @@ function AppContent() {
           <AppSidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shrink-0">
-              <SidebarTrigger data-testid="button-sidebar-toggle" className="md:flex hidden" />
-              <div className="flex items-center gap-2 md:ml-0 ml-auto">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+              <div className="flex items-center gap-2">
                 <LanguageSelector />
                 <ThemeToggle />
               </div>
