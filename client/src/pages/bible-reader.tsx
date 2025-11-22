@@ -97,17 +97,38 @@ export default function BibleReader() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
-  const playAudio = async () => {
+  const toggleAudio = async () => {
     if (!selectedBook || isLoadingAudio) return;
-    
-    setIsLoadingAudio(true);
     
     const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`;
     
+    // Se já tem áudio carregado do mesmo capítulo, apenas pause/resume
+    if (audioElement && audioUrl === url) {
+      if (isPlayingAudio) {
+        audioElement.pause();
+        setIsPlayingAudio(false);
+      } else {
+        audioElement.play().then(() => {
+          setIsPlayingAudio(true);
+        }).catch(error => {
+          console.error("Audio resume error:", error);
+          toast({
+            title: "Erro ao continuar áudio",
+            description: "Tente carregar novamente",
+            variant: "destructive",
+          });
+        });
+      }
+      return;
+    }
+    
+    // Criar novo áudio (novo capítulo ou primeira vez)
     if (audioElement) {
       audioElement.pause();
       audioElement.src = '';
     }
+    
+    setIsLoadingAudio(true);
     
     toast({
       title: "Gerando áudio...",
@@ -986,7 +1007,7 @@ export default function BibleReader() {
               variant="ghost"
               size="icon"
               className="rounded-full"
-              onClick={isPlayingAudio ? stopAudio : playAudio}
+              onClick={toggleAudio}
               disabled={!selectedBook || isLoadingAudio}
               data-testid="button-toggle-audio"
             >
