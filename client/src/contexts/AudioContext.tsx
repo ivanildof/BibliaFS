@@ -42,8 +42,21 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     try {
       // Fetch audio URL from backend
       const response = await fetch(`/api/bible/audio/${version}/${book}/${chapter}`);
+      
       if (!response.ok) {
-        throw new Error("Áudio não disponível");
+        const errorData = await response.json();
+        
+        // Check if service is not configured (503)
+        if (response.status === 503) {
+          toast({
+            variant: "destructive",
+            title: "Áudio Bíblico Não Configurado",
+            description: errorData.message || "O recurso de áudio requer configuração adicional.",
+          });
+          return;
+        }
+        
+        throw new Error(errorData.message || "Áudio não disponível");
       }
 
       const data = await response.json();

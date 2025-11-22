@@ -71,8 +71,14 @@ export function AudioPlayer({
       try {
         await audioRef.current.play();
         setIsPlaying(true);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error playing audio:", error);
+        console.error("Audio URL:", audioUrl);
+        console.error("Error details:", {
+          name: error.name,
+          message: error.message,
+          code: error.code
+        });
       }
     }
   };
@@ -142,8 +148,16 @@ export function AudioPlayer({
           setIsPlaying(false);
           onEnded?.();
         }}
-        onError={(e) => {
-          console.error("Audio error:", e);
+        onError={(e: any) => {
+          console.error("Audio error event:", e);
+          console.error("Audio URL:", audioUrl);
+          if (audioRef.current) {
+            console.error("Audio element error:", {
+              error: audioRef.current.error,
+              networkState: audioRef.current.networkState,
+              readyState: audioRef.current.readyState
+            });
+          }
           setIsPlaying(false);
         }}
       />

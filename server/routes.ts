@@ -524,9 +524,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Helper: Get Bible Brain API audio URL (with fallback)
   async function getBibleAudioUrl(version: string, book: string, chapter: number): Promise<string | null> {
-    // For MVP: Return a sample audio URL from Faith Comes By Hearing
-    // In production, this would query Bible Brain API with proper authentication
-    // TODO: Add Bible Brain API key when available
+    // Check if Bible Brain API key is configured
+    if (!process.env.BIBLE_BRAIN_API_KEY) {
+      return null;
+    }
     
     // Map version to Bible Brain fileset IDs
     const filesetMap: Record<string, string> = {
@@ -537,9 +538,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     const filesetId = filesetMap[version.toLowerCase()] || filesetMap['nvi'];
     
-    // For now, return sample URL format
-    // Real implementation would fetch from: ${BIBLE_BRAIN_API_BASE}/bibles/filesets/${filesetId}/${book}/${chapter}
-    return `https://cdn.bible.com/audio/sample/${filesetId}/${book}/${chapter}.mp3`;
+    try {
+      // Fetch audio files from Bible Brain API
+      const response = await fetch(
+        `${BIBLE_BRAIN_API_BASE}/bibles/filesets/${filesetId}/${book}/${chapter}?key=${process.env.BIBLE_BRAIN_API_KEY}&v=4`
+      );
+      
+      if (!response.ok) {
+        console.error(`Bible Brain API error: ${response.status}`);
+        return null;
+      }
+      
+      const data = await response.json();
+      
+      // Return the first audio file URL
+      if (data.data && data.data.length > 0) {
+        return data.data[0].path;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Error fetching Bible audio:", error);
+      return null;
+    }
   }
 
   // Get available audio sources
@@ -556,10 +577,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/bible/audio/:version/:book/:chapter", async (req, res) => {
     try {
       const { version, book, chapter } = req.params;
+      
+      // Check if Bible Brain API key is configured
+      if (!process.env.BIBLE_BRAIN_API_KEY) {
+        return res.status(503).json({ 
+          error: "Recurso de áudio bíblico não configurado",
+          message: "Para habilitar o áudio narrado da Bíblia, é necessário configurar uma chave de API do Bible Brain (gratuita). Visite https://www.faithcomesbyhearing.com/bible-brain para criar uma conta e obter sua chave."
+        });
+      }
+      
       const audioUrl = await getBibleAudioUrl(version, book, parseInt(chapter));
       
       if (!audioUrl) {
-        return res.status(404).json({ error: "Audio não disponível para esta versão/livro" });
+        return res.status(404).json({ 
+          error: "Áudio não disponível",
+          message: "Este capítulo não possui áudio disponível para esta versão da Bíblia."
+        });
       }
       
       res.json({ audioUrl, version, book, chapter: parseInt(chapter) });

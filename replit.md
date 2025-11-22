@@ -6,6 +6,11 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application des
 
 ## Recent Changes
 
+**November 22, 2025**:
+*   **OpenAI Integration (AI Study)**: Implemented complete GPT-4o integration for AI-powered theological assistant. System uses specialized theological system prompt, handles Q&A about Bible texts, doctrines, historical context, and interpretations. Configured with temperature 0.7 and 1000 max tokens. Requires user's personal `OPENAI_API_KEY` environment variable.
+*   **Bible Audio System Enhancement**: Fixed audio playback functionality with proper Bible Brain API integration structure. System now checks for `BIBLE_BRAIN_API_KEY` and returns clear error messages when not configured. Improved error handling in AudioContext with detailed logging (error name, message, code) and user-friendly toast notifications explaining configuration requirements.
+*   **Error Handling Improvements**: Enhanced audio player error reporting with detailed console logs including URL, network state, ready state, and specific error details. Frontend now handles 503 errors gracefully with informative messages directing users to obtain free Bible Brain API key.
+
 **November 20, 2025**:
 *   **Página de Planos e Preços (Pricing)**: Criada página completa de planos e preços (`/pricing`) com design premium responsivo, 3 planos (Gratuito, Premium R$19,90/mês, Vitalício R$299), seção de garantia de 30 dias, 6 FAQs sobre planos, paleta de cores roxo #5711D9, e CTAs estratégicos. Integrada ao router para acesso autenticado e não-autenticado.
 *   **Responsividade Mobile Aprimorada**: Tabela de alunos em Teacher Mode agora com dual-view: tabela desktop e cards empilháveis em mobile com badges coloridos, grid de 2 colunas para dados, e border-left visual indicator. Botão "Exportar Relatório" adaptado para full-width em mobile.
@@ -58,7 +63,7 @@ Preferred communication style: Simple, everyday language.
 
 ### System Design Choices & Feature Specifications
 
-*   **AI-powered Theological Assistant**: Planned integration for advanced theological queries and content generation.
+*   **AI-powered Theological Assistant**: Complete GPT-4o integration via OpenAI API for advanced theological queries. Specialized system prompt for biblical studies with balanced responses across Christian traditions. Handles questions about Bible texts, doctrines, historical context, and interpretations. Requires user's `OPENAI_API_KEY` environment variable.
 *   **Customizable Themes**: 5 presets and custom RGB options for a personalized user interface.
 *   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
 *   **Teacher Mode**: Tools for creating and managing educational lessons.
@@ -85,7 +90,8 @@ Preferred communication style: Simple, everyday language.
 *   Drizzle Kit
 
 **AI Integration**:
-*   OpenAI API (GPT-4) - *Planned*
+*   OpenAI API (GPT-4o) - Configured with theological system prompt
+*   Bible Brain API - Free API for Bible audio content (requires API key)
 
 **Frontend Libraries**:
 *   Radix UI
