@@ -374,6 +374,31 @@ export const offlineContent = pgTable("offline_content", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Verse Commentaries (theological commentary cache)
+export const verseCommentaries = pgTable("verse_commentaries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  // Bible reference
+  book: varchar("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse").notNull(),
+  version: varchar("version").notNull(),
+  
+  // Commentary type
+  commentaryType: varchar("commentary_type").notNull(), // exegese, historico, aplicacao, referencias, teologico
+  
+  // Generated content
+  content: text("content").notNull(),
+  
+  // Source tracking
+  source: varchar("source").default("ai"), // ai, teacher, community
+  teacherId: varchar("teacher_id").references(() => users.id, { onDelete: "cascade" }),
+  
+  // Metadata
+  generatedAt: timestamp("generated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   readingPlans: many(readingPlans),
@@ -674,6 +699,22 @@ export type PostComment = typeof postComments.$inferSelect;
 export const insertOfflineContentSchema = createInsertSchema(offlineContent).omit({ id: true, createdAt: true, downloadedAt: true, lastAccessedAt: true });
 export type InsertOfflineContent = z.infer<typeof insertOfflineContentSchema>;
 export type OfflineContent = typeof offlineContent.$inferSelect;
+
+export const insertVerseCommentarySchema = createInsertSchema(verseCommentaries)
+  .omit({ id: true, createdAt: true, generatedAt: true })
+  .extend({
+    book: z.string().min(2, "Livro inválido").max(50, "Nome do livro muito longo"),
+    chapter: z.number().int().min(1, "Capítulo deve ser pelo menos 1"),
+    verse: z.number().int().min(1, "Versículo deve ser pelo menos 1"),
+    version: z.string().min(2, "Versão inválida").max(10, "Versão muito longa"),
+    commentaryType: z.enum(["exegese", "historico", "aplicacao", "referencias", "teologico"], {
+      errorMap: () => ({ message: "Tipo de comentário inválido" })
+    }),
+    content: z.string().min(10, "Comentário muito curto").max(10000, "Comentário muito longo"),
+    source: z.enum(["ai", "teacher", "community"]).default("ai"),
+  });
+export type InsertVerseCommentary = z.infer<typeof insertVerseCommentarySchema>;
+export type VerseCommentary = typeof verseCommentaries.$inferSelect;
 
 // Daily Verses (Versículo do Dia)
 export const dailyVerses = pgTable("daily_verses", {
