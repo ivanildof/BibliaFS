@@ -1,151 +1,138 @@
-# Bíblia+ v2.0 Design Guidelines
+# Bíblia+ v2.0 Premium Design Guidelines
 
 ## Design Approach
 
-**Hybrid Reference Strategy**: Draw inspiration from YouVersion's Bible-reading clarity + Calm's premium spiritual aesthetic + Notion's organizational power + Spotify's media integration. Create a design that feels sacred yet modern, powerful yet peaceful.
+**Premium Spiritual Experience**: Blend Calm's serene elegance + Apple Music's refined interface + YouVersion's reading clarity. Create a luxurious sanctuary for Bible study that feels both sacred and sophisticated, peaceful yet powerful.
 
-## Typography System
+## Color & Visual Treatment
 
-**Font Families** (via Google Fonts CDN):
-- **Display/Headings**: Playfair Display (serif) - for elegance and spiritual gravitas
-- **Body/Interface**: Inter (sans-serif) - for readability and modern clarity
-- **Bible Text**: Crimson Text (serif) - optimized for long-form reading
+**Core Palette**:
+- Deep Purple: #5711D9 (primary actions, gradients)
+- Gold: #FFD700 (accents, premium highlights)
+- Pure White: #FFFFFF (text, cards)
+- Rich gradients: Purple-to-gold (from-purple-700 to-amber-500), subtle 15-30° angles
+
+**Visual Signature**:
+- Glassmorphism: backdrop-blur-md to backdrop-blur-xl on overlays and floating elements
+- Shadows: Deep, soft shadows (shadow-2xl) for card elevation, multiple layered shadows for depth
+- Gradients: Subtle background gradients (opacity 10-20%) across sections, bold gradients for CTAs
+- Borders: Generous rounding (rounded-2xl standard, rounded-3xl for hero cards)
+
+## Typography
+
+**Fonts** (Google Fonts CDN):
+- Playfair Display (serif): Hero headlines, section headers - conveys elegance
+- Inter (sans-serif): UI elements, body text - modern clarity
+- Crimson Text (serif): Bible verses - optimized for reading
 
 **Hierarchy**:
-- Hero Headlines: text-5xl to text-7xl, font-bold (Playfair Display)
-- Section Headers: text-3xl to text-4xl, font-semibold (Playfair Display)
-- Subsection Headers: text-xl to text-2xl, font-medium (Inter)
-- Body Text: text-base to text-lg (Inter)
-- Bible Verses: text-lg, leading-relaxed (Crimson Text)
-- Captions/Meta: text-sm (Inter)
+- Hero: text-6xl/text-7xl, font-bold (Playfair)
+- Sections: text-4xl, font-semibold (Playfair)
+- Subsections: text-2xl, font-medium (Inter)
+- Body: text-lg (Inter)
+- Bible: text-lg, leading-relaxed (Crimson)
 
-## Layout System
+## Layout & Spacing
 
-**Spacing Primitives**: Use Tailwind units of 2, 4, 6, 8, 12, 16, 20, 24
-- Tight spacing: p-2, gap-2
-- Standard spacing: p-4, p-6, gap-4
-- Generous spacing: p-8, p-12, gap-8
-- Section padding: py-16 to py-24
-- Container max-width: max-w-7xl for most content, max-w-4xl for Bible reading
+**Spacing Primitives**: 4, 6, 8, 12, 16, 20, 24
+- Generous padding: p-8, p-12 standard
+- Section spacing: py-20, py-24, py-32
+- Card padding: p-8 minimum
+- Grid gaps: gap-8, gap-12
 
-**Grid System**:
-- Dashboard: 3-column grid on desktop (lg:grid-cols-3), 2-column on tablet, single on mobile
-- Feature showcases: 2-3 columns (md:grid-cols-2 lg:grid-cols-3)
-- Bible reading: Single column with max-w-4xl for optimal readability
-- Sidebar layouts: 64-unit fixed sidebar + flex-1 main content
+**Containers**: max-w-7xl general, max-w-4xl Bible reading, full-bleed for hero
 
-## Component Library
+## Component Specifications
 
 ### Navigation
-- **Top App Bar**: Fixed header with logo, search, theme switcher, profile avatar
-- **Sidebar Navigation** (Dashboard): Icon + label format, collapsible on mobile, organized by sections (Estudo, Comunidade, Ensino, Configurações)
-- **Bottom Tab Bar** (Mobile): 5 primary tabs with icons
+**Top Bar**: Glassmorphism header (backdrop-blur-xl, bg-white/80), fixed, logo left, search center, profile right with gold ring indicator
+**Sidebar**: 64-unit width, deep purple gradient background, white icons/text, collapsed on mobile
 
-### Cards & Containers
-- **Premium Card**: Rounded corners (rounded-2xl), subtle shadows (shadow-lg), padding p-6
-- **Bible Verse Card**: Minimal border (border-l-4), no shadow, light background
-- **Podcast Episode Card**: Horizontal layout with thumbnail, title, duration, progress bar
-- **Prayer Card**: Soft rounded (rounded-xl), includes audio player when applicable
-- **Lesson Card** (Teacher Mode): Header with title, body with objectives, footer with action buttons
+### Cards & Elevation
+**Premium Cards**: rounded-2xl, shadow-2xl, white background with subtle purple gradient overlay (5% opacity)
+**Bible Verse Cards**: rounded-xl, border-l-4 gold accent, shadow-lg, light background
+**Podcast Cards**: Horizontal layout, album art with rounded-xl, glassmorphism player bar
+**Elevated Panels**: Multiple shadow layers for floating effect, backdrop-blur for transparency
 
-### Forms & Inputs
-- **Text Input**: Rounded (rounded-lg), consistent padding (px-4 py-3), focus states with ring
-- **Color Picker**: Visual swatch grid for preset themes + custom RGB selector
-- **Bible Search**: Prominent search bar with autocomplete dropdown
-- **Audio Recorder**: Circular record button with waveform visualization
+### Interactive Elements
+**Primary Buttons**: Rounded-full, px-10 py-4, purple-to-gold gradient background, white text, shadow-xl
+**Secondary Buttons**: Outlined, rounded-full, border-2 purple, transparent background
+**Icon Buttons**: Square w-12 h-12, rounded-xl, hover with purple gradient
+**FAB**: Bottom-right fixed, rounded-full, gold background, shadow-2xl, w-16 h-16
+
+### Inputs & Forms
+**Text Fields**: rounded-xl, px-6 py-4, border with purple focus ring-2, shadow-inner
+**Search Bar**: Prominent with glassmorphism background, rounded-full, px-8 py-4
+**Color Picker**: Visual swatches in grid, selected with gold ring-4
 
 ### Data Display
-- **Progress Indicators**: Circular progress for reading plans, linear bars for lesson completion
-- **Statistics Dashboard**: Large numbers with icons, 3-4 column grid
-- **Gamification Badges**: Icon-based with level titles, arranged in achievement grid
-- **Podcast Player**: Full-width sticky player bar at bottom with album art, controls, progress
+**Progress Rings**: Circular with gold/purple gradient stroke, shadow glow effect
+**Stats**: Large numbers with gradient text effect, icon backgrounds with subtle glow
+**Achievement Badges**: Hexagonal shapes, gold borders, shadow-2xl, grouped in decorative grid
 
-### Overlays
-- **AI Study Assistant**: Side panel (drawer) or modal with chat interface
-- **Theme Customizer**: Modal with live preview of color changes
-- **Lesson Creator**: Full-screen modal with multi-step form
-- **Verse Highlight Menu**: Contextual popup with color options and note button
+## Page Layouts
 
-### Buttons
-- **Primary CTA**: Large (px-8 py-4), rounded (rounded-full), bold text
-- **Secondary**: Outlined style with transparent background
-- **Icon Buttons**: Square (w-10 h-10), rounded-lg
-- **Floating Action Button**: Fixed bottom-right, circular, shadow-xl (for quick prayer/note)
+### Landing Page (Hero-First)
+**Hero Section**: Full-viewport with large background image (warm-lit Bible scene), purple-to-transparent gradient overlay, centered dual CTAs with backdrop-blur-lg backgrounds, no hover states on hero buttons
+**Features**: 3-column grid, each card with icon in gold circle, shadow-2xl elevation
+**Theme Preview**: 4 theme cards showing color variations, interactive hover lift
+**Testimonials**: 2-column carousel, user photos with gold borders, glassmorphism cards
+**Premium Table**: Feature comparison, alternating row backgrounds with subtle gradient
+**Podcast Showcase**: Full-width player preview with glassmorphism controls
+**CTA Section**: Centered, purple gradient background, white text, gold accent stats
+**Footer**: 4-column layout, newsletter input with rounded-full styling, social icons in gold
 
-## Page-Specific Layouts
+### Dashboard
+**Overview Cards**: 3-column row, each with gradient background, shadow-2xl, stats with large numbers
+**Reading Widget**: Large card with current chapter, progress ring, shadow-2xl
+**Quick Actions**: 4-icon grid with glassmorphism backgrounds, gold hover states
+**Activity Feed**: Timeline with gradient connector lines, card entries
+**Gamification**: Prominent badge display with glow effect, progress to next level
 
-### Landing Page (Marketing)
-- **Hero Section**: Full-viewport (h-screen) with gradient overlay, centered headline + subtitle + dual CTAs ("Começar Grátis" + "Ver Recursos"), background image of opened Bible with soft lighting
-- **Features Grid**: 3-column showcase of AI Study, Teacher Mode, Podcasts with icons
-- **Theme Showcase**: Interactive preview showing 4 theme variations side-by-side
-- **Social Proof**: Testimonial cards in 2-column layout with user photos
-- **Premium Comparison Table**: Feature comparison vs YouVersion, 2-column layout
-- **Podcast Integration Preview**: Embedded mini-player with sample episodes
-- **CTA Section**: Centered with community stats (users, verses read, prayers shared)
-- **Footer**: Multi-column with links, newsletter signup, social icons
-
-### Dashboard (Authenticated)
-- **Overview Section**: 3-card row showing reading streak, prayer count, community activity
-- **Today's Reading**: Large card with current plan chapter + progress indicator
-- **Quick Actions**: 4-icon button grid (New Prayer, Ask AI, Start Podcast, Join Discussion)
-- **Recent Activity Feed**: Timeline-style list with icons for different activity types
-- **Gamification Widget**: Current level badge with progress to next level
-
-### Bible Reading Interface
-- **Clean Reading View**: Centered column (max-w-4xl), generous line-height, verse numbers in margin
-- **Floating Toolbar**: Sticky top bar with chapter navigation, font size controls, highlight tool
-- **Quick Reference Panel**: Collapsible sidebar with cross-references and study notes
-- **Highlight Colors**: Palette appears on text selection with 6 preset colors
+### Bible Reading
+**Reading View**: Centered max-w-4xl, verse numbers in gold, generous line-height
+**Floating Controls**: Top sticky bar with glassmorphism, rounded-full segments
+**Highlight Palette**: Appears on selection, 6 colors in rounded-xl container, shadow-xl
+**Side Panel**: Collapsible notes/references with backdrop-blur
 
 ### Teacher Mode
-- **Lesson Dashboard**: Card grid of created lessons with status indicators
-- **Lesson Builder**: Multi-step form (Details → Scripture → Questions → Schedule)
-- **Student Progress**: Table view with filterable columns and export button
-- **Class Schedule**: Calendar view with upcoming lessons highlighted
+**Lesson Grid**: Cards with shadow-2xl, status badges in gold
+**Builder**: Multi-step wizard with progress indicator, generous spacing between sections
+**Progress Table**: Elevated container, alternating row gradients, export button with gold icon
 
-### Podcast Section
-- **Browse View**: Featured podcast carousel + category grid
-- **Player Interface**: Large album art, title, playback controls, sleep timer, bookmark button
-- **My Library**: List view with download status indicators, swipe actions for delete
+### Podcast Player
+**Browse**: Featured carousel with shadow-2xl cards, category grid with gradient overlays
+**Player**: Large rounded-2xl album art, glassmorphism controls bar, progress with gold indicator
+**Library**: List with download status, swipe actions reveal gradient backgrounds
 
-### Community Feed
-- **Post Cards**: User avatar + name, shared verse (highlighted), personal note, like/comment actions
-- **AI Suggestions**: "Connect with others studying..." cards between posts
-- **Create Post**: Floating action button opens verse selector + note input
-
-## Animations
-Use sparingly for purpose, not decoration:
-- **Page Transitions**: Simple fade (duration-200)
-- **Card Hover**: Subtle lift with shadow increase
-- **Bible Verse Highlight**: Smooth background color transition
-- **AI Response**: Typing indicator dots animation
-- **Progress Bars**: Animated width change with easing
+### Community
+**Post Cards**: User avatar with gold ring, verse highlight, glassmorphism background, shadow-lg
+**Floating Composer**: Bottom-right FAB opens full composer with backdrop-blur modal
 
 ## Images
 
-### Hero Image
-Large, high-quality photograph for landing page hero:
-- **Subject**: Open Bible with soft, warm natural light streaming across pages, shallow depth of field
-- **Treatment**: Subtle gradient overlay (dark bottom to transparent top) for text readability
-- **Placement**: Full-width, full-viewport height background
-- **Buttons on Image**: Dual CTAs with frosted glass background (backdrop-blur-md)
+**Hero Image**: Professional photograph of opened Bible with warm, natural light (golden hour quality), soft depth of field, creates sacred atmosphere. Full-width, full-viewport, with purple gradient overlay (dark bottom fading up). Dual CTA buttons overlay with backdrop-blur-lg backgrounds.
 
-### Feature Section Images
-- AI Study illustration: Abstract representation of light bulb + book
-- Teacher Mode: Person with tablet teaching small group
-- Podcast: Headphones with sound wave visualization
-- Community: Diverse group in discussion circle
+**Feature Sections**: AI study (light rays + open book), Teacher mode (elegant teaching scene), Podcasts (premium headphones with glow), Community (warm discussion group)
 
-### Podcast Thumbnails
-Square album art for each podcast series, loaded from RSS feeds
+**Podcast Art**: Square album covers with rounded-xl treatment, shadow-lg
 
-### User Avatars
-Circular, consistent sizing across all components (w-10 h-10 for standard, w-16 h-16 for profiles)
+**User Avatars**: Circular, consistent sizing (w-12 h-12 standard, w-20 h-20 profiles), gold ring-2 for active users
 
-## Accessibility Standards
-- Maintain WCAG AA contrast ratios (automatically validated against user-selected themes)
-- Focus indicators on all interactive elements (ring-2 with theme-appropriate color)
-- Screen reader labels for all icon-only buttons
-- Keyboard navigation support throughout
-- Text resizing without breaking layout
-- Alt text for all decorative and informative images
+## Animations
+
+Minimal, purposeful motion:
+- Card hover: Lift with increased shadow (duration-300)
+- Button press: Scale-95 with gradient shift
+- Page transitions: Fade (duration-200)
+- Progress fills: Smooth width animation with easing
+- Glassmorphism: No animation on blur effects
+
+## Accessibility
+
+- WCAG AA contrast maintained across purple/gold palette
+- Focus rings in gold (ring-2) on all interactive elements
+- Keyboard navigation with visible focus states
+- Screen reader labels for icon buttons
+- Text resizing support without layout breaks
+- Alt text for all images including hero
