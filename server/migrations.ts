@@ -44,39 +44,6 @@ export async function runMigrations() {
       WHERE total_days IS NULL
     `);
 
-    // Create audio tables if they don't exist
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS audio_sources (
-        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
-        fileset_id VARCHAR NOT NULL UNIQUE,
-        version VARCHAR NOT NULL,
-        language VARCHAR NOT NULL,
-        display_name TEXT NOT NULL,
-        audio_type VARCHAR DEFAULT 'drama',
-        metadata JSONB,
-        is_active BOOLEAN DEFAULT true,
-        created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
-
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS audio_progress (
-        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
-        user_id VARCHAR NOT NULL,
-        book VARCHAR NOT NULL,
-        chapter INTEGER NOT NULL,
-        version VARCHAR NOT NULL,
-        "current_time" INTEGER DEFAULT 0,
-        duration INTEGER DEFAULT 0,
-        is_completed BOOLEAN DEFAULT false,
-        playback_speed VARCHAR DEFAULT '1.0',
-        last_played_at TIMESTAMP DEFAULT NOW(),
-        created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
-
     // Create offline_content table for offline mode
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS offline_content (

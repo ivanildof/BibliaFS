@@ -12,7 +12,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Volume2,
   Search,
   MoreVertical,
   ChevronLeft,
@@ -32,7 +31,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAudio } from "@/contexts/AudioContext";
 import { useOffline } from "@/contexts/OfflineContext";
 import type { Bookmark, Highlight, Note } from "@shared/schema";
 import {
@@ -76,7 +74,6 @@ function toSuperscript(num: number): string {
 export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { playChapter } = useAudio();
   const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter } = useOffline();
   const [version, setVersion] = useState("nvi");
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
@@ -448,19 +445,7 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-4xl mx-auto">
           <div className="flex items-center gap-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => {
-                if (selectedBook) {
-                  playChapter(selectedBook, selectedChapter, version);
-                }
-              }}
-              disabled={!selectedBook}
-              data-testid="button-audio"
-            >
-              <Volume2 className="h-5 w-5" />
-            </Button>
+            {/* Bible audio feature removed */}
           </div>
           
           <div className="flex items-center gap-1">
@@ -909,25 +894,6 @@ export default function BibleReader() {
               data-testid="button-previous-chapter"
             >
               <ChevronLeft className="h-5 w-5" />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              onClick={() => {
-                if (selectedBook) {
-                  playChapter(selectedBook, selectedChapter, version);
-                  toast({
-                    title: t.bible.audioStarted,
-                    description: t.bible.listenWhileBrowsing,
-                  });
-                }
-              }}
-              disabled={!selectedBook}
-              data-testid="button-play-audio"
-            >
-              <Volume2 className="h-5 w-5" />
             </Button>
 
             {/* Offline Download Button */}

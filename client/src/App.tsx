@@ -7,7 +7,6 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { AudioProvider } from "@/contexts/AudioContext";
 import { OfflineProvider } from "@/contexts/OfflineContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -145,12 +144,10 @@ function App() {
       <ThemeProvider>
         <LanguageProvider>
           <OfflineProvider>
-            <AudioProvider>
-              <TooltipProvider>
-                <AppContent />
-                <Toaster />
-              </TooltipProvider>
-            </AudioProvider>
+            <TooltipProvider>
+              <AppContent />
+              <Toaster />
+            </TooltipProvider>
           </OfflineProvider>
         </LanguageProvider>
       </ThemeProvider>

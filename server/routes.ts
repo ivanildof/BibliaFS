@@ -19,7 +19,6 @@ import {
   insertLessonSchema,
   updateLessonSchema,
   insertCommunityPostSchema,
-  insertAudioProgressSchema,
   insertOfflineContentSchema,
   insertDailyVerseSchema,
   insertDonationSchema,
@@ -514,131 +513,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       await storage.unlikePost(req.params.id, userId);
       res.json({ success: true });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Bible Audio Routes (Bible Brain API)
-  const BIBLE_BRAIN_API_BASE = "https://4.dbt.io/api";
-  
-  // Helper: Get Bible Brain API audio URL (with fallback)
-  async function getBibleAudioUrl(version: string, book: string, chapter: number): Promise<string | null> {
-    // Check if Bible Brain API key is configured
-    if (!process.env.BIBLE_BRAIN_API_KEY) {
-      return null;
-    }
-    
-    // Map version to Bible Brain fileset IDs
-    const filesetMap: Record<string, string> = {
-      'nvi': 'PORNTPN2DA',  // Portuguese NVI Dramatized
-      'acf': 'PORACFN2DA',  // Portuguese ACF
-      'arc': 'PORARCAN2DA', // Portuguese ARC
-    };
-    
-    const filesetId = filesetMap[version.toLowerCase()] || filesetMap['nvi'];
-    
-    try {
-      // Fetch audio files from Bible Brain API
-      const response = await fetch(
-        `${BIBLE_BRAIN_API_BASE}/bibles/filesets/${filesetId}/${book}/${chapter}?key=${process.env.BIBLE_BRAIN_API_KEY}&v=4`
-      );
-      
-      if (!response.ok) {
-        console.error(`Bible Brain API error: ${response.status}`);
-        return null;
-      }
-      
-      const data = await response.json();
-      
-      // Return the first audio file URL
-      if (data.data && data.data.length > 0) {
-        return data.data[0].path;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error("Error fetching Bible audio:", error);
-      return null;
-    }
-  }
-
-  // Get available audio sources
-  app.get("/api/bible/audio/sources", async (req, res) => {
-    try {
-      const sources = await storage.getAudioSources();
-      res.json(sources);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Get audio URL for a specific chapter
-  app.get("/api/bible/audio/:version/:book/:chapter", async (req, res) => {
-    try {
-      const { version, book, chapter } = req.params;
-      
-      // Check if Bible Brain API key is configured
-      if (!process.env.BIBLE_BRAIN_API_KEY) {
-        return res.status(503).json({ 
-          error: "Recurso de áudio bíblico não configurado",
-          message: "Para habilitar o áudio narrado da Bíblia, é necessário configurar uma chave de API do Bible Brain (gratuita). Visite https://www.faithcomesbyhearing.com/bible-brain para criar uma conta e obter sua chave."
-        });
-      }
-      
-      const audioUrl = await getBibleAudioUrl(version, book, parseInt(chapter));
-      
-      if (!audioUrl) {
-        return res.status(404).json({ 
-          error: "Áudio não disponível",
-          message: "Este capítulo não possui áudio disponível para esta versão da Bíblia."
-        });
-      }
-      
-      res.json({ audioUrl, version, book, chapter: parseInt(chapter) });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Get user's audio progress for a chapter
-  app.get("/api/bible/audio/progress/:book/:chapter/:version", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const { book, chapter, version } = req.params;
-      
-      const progress = await storage.getAudioProgress(
-        userId,
-        book,
-        parseInt(chapter),
-        version
-      );
-      
-      res.json(progress || null);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Save/update audio progress
-  app.post("/api/bible/audio/progress", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      
-      const result = insertAudioProgressSchema.safeParse({
-        ...req.body,
-        userId,
-      });
-      
-      if (!result.success) {
-        return res.status(400).json({ 
-          error: "Dados inválidos", 
-          details: result.error.errors 
-        });
-      }
-      
-      const progress = await storage.upsertAudioProgress(result.data);
-      res.json(progress);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
