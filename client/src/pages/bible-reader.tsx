@@ -9,6 +9,13 @@ import {
   SheetTrigger,
   SheetClose 
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -92,6 +99,10 @@ export default function BibleReader() {
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playingVerseNumber, setPlayingVerseNumber] = useState<number | null>(null);
+  const [audioModeDialogOpen, setAudioModeDialogOpen] = useState(false);
+  const [audioMode, setAudioMode] = useState<'chapter' | 'book'>('chapter');
+  const [bookPlaylist, setBookPlaylist] = useState<number[]>([]);
+  const [currentPlaylistIndex, setCurrentPlaylistIndex] = useState(0);
   
   // Use ref for synchronous access to audio element (prevents race conditions)
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
@@ -112,39 +123,15 @@ export default function BibleReader() {
     setPlayingVerseNumber(null);
   };
 
-  const toggleAudio = async () => {
-    if (!selectedBook || isLoadingAudio) return;
+  const playChapterAudio = async (chapter: number) => {
+    if (!selectedBook) return;
     
-    const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`;
-    
-    // Se já tem áudio carregado do mesmo capítulo, apenas pause/resume
-    const currentAudio = audioElementRef.current;
-    if (currentAudio && audioUrl === url) {
-      if (isPlayingAudio) {
-        currentAudio.pause();
-        setIsPlayingAudio(false);
-      } else {
-        currentAudio.play().then(() => {
-          setIsPlayingAudio(true);
-        }).catch((error: any) => {
-          console.error("Audio resume error:", error);
-          toast({
-            title: "Erro ao continuar áudio",
-            description: "Tente carregar novamente",
-            variant: "destructive",
-          });
-        });
-      }
-      return;
-    }
-    
-    // Parar qualquer áudio anterior (síncrono via ref)
-    stopAllAudio();
+    const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${chapter}`;
     
     setIsLoadingAudio(true);
     
     toast({
-      title: "Gerando áudio do capítulo...",
+      title: audioMode === 'book' ? `Gerando áudio - Capítulo ${chapter}...` : "Gerando áudio do capítulo...",
       description: "Isso pode levar 20-40 segundos. Aguarde!",
     });
     
@@ -159,8 +146,8 @@ export default function BibleReader() {
         setPlayingVerseNumber(null);
         
         toast({
-          title: "Áudio do capítulo iniciado",
-          description: "Você pode continuar navegando enquanto ouve",
+          title: audioMode === 'book' ? `Tocando Capítulo ${chapter}` : "Áudio do capítulo iniciado",
+          description: audioMode === 'book' ? `${bookPlaylist.length - currentPlaylistIndex} capítulos restantes` : "Você pode continuar navegando enquanto ouve",
         });
       }).catch(error => {
         setIsLoadingAudio(false);
@@ -175,8 +162,18 @@ export default function BibleReader() {
     };
     
     audio.onended = () => {
-      setIsPlayingAudio(false);
-      setPlayingVerseNumber(null);
+      if (audioMode === 'book' && currentPlaylistIndex < bookPlaylist.length - 1) {
+        // Tocar próximo capítulo
+        const nextIndex = currentPlaylistIndex + 1;
+        setCurrentPlaylistIndex(nextIndex);
+        playChapterAudio(bookPlaylist[nextIndex]);
+      } else {
+        setIsPlayingAudio(false);
+        setPlayingVerseNumber(null);
+        setBookPlaylist([]);
+        setCurrentPlaylistIndex(0);
+        setAudioMode('chapter');
+      }
     };
     
     audio.onerror = () => {
@@ -188,6 +185,85 @@ export default function BibleReader() {
         variant: "destructive",
       });
     };
+  };
+
+  const startBookAudio = async () => {
+    if (!selectedBook) return;
+    
+    try {
+      // Buscar informações do livro
+      const response = await fetch(`/api/bible/book-info/${selectedBook}`, {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) throw new Error("Erro ao buscar informações do livro");
+      
+      const bookInfo = await response.json();
+      
+      // Criar playlist de todos os capítulos
+      const playlist = Array.from({ length: bookInfo.chapters }, (_, i) => i + 1);
+      setBookPlaylist(playlist);
+      setCurrentPlaylistIndex(0);
+      setAudioMode('book');
+      
+      toast({
+        title: `Livro ${bookInfo.name} completo`,
+        description: `${bookInfo.chapters} capítulos serão tocados em sequência`,
+      });
+      
+      // Iniciar reprodução do primeiro capítulo
+      playChapterAudio(1);
+    } catch (error) {
+      console.error("Book audio error:", error);
+      toast({
+        title: "Erro ao iniciar áudio do livro",
+        description: "Tente novamente",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const toggleAudio = async () => {
+    if (!selectedBook || isLoadingAudio) return;
+    
+    // Se já está tocando, pausar/retomar
+    const currentAudio = audioElementRef.current;
+    if (currentAudio && isPlayingAudio) {
+      currentAudio.pause();
+      setIsPlayingAudio(false);
+      return;
+    }
+    
+    if (currentAudio && audioUrl && !isPlayingAudio) {
+      currentAudio.play().then(() => {
+        setIsPlayingAudio(true);
+      }).catch((error: any) => {
+        console.error("Audio resume error:", error);
+        toast({
+          title: "Erro ao continuar áudio",
+          description: "Tente carregar novamente",
+          variant: "destructive",
+        });
+      });
+      return;
+    }
+    
+    // Abrir dialog para escolher modo
+    setAudioModeDialogOpen(true);
+  };
+
+  const handleStartAudio = (mode: 'chapter' | 'book') => {
+    setAudioModeDialogOpen(false);
+    stopAllAudio();
+    
+    if (mode === 'chapter') {
+      setAudioMode('chapter');
+      setBookPlaylist([]);
+      setCurrentPlaylistIndex(0);
+      playChapterAudio(selectedChapter);
+    } else {
+      startBookAudio();
+    }
   };
 
   useEffect(() => {
@@ -1265,6 +1341,50 @@ export default function BibleReader() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Audio Mode Selection Dialog */}
+      <Dialog open={audioModeDialogOpen} onOpenChange={setAudioModeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Escolha o modo de áudio</DialogTitle>
+            <DialogDescription>
+              Você pode ouvir apenas o capítulo atual ou o livro completo
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-3 py-4">
+            <Button
+              onClick={() => handleStartAudio('chapter')}
+              variant="outline"
+              className="h-auto flex-col items-start p-4 gap-2"
+              data-testid="button-audio-chapter"
+            >
+              <div className="flex items-center gap-2">
+                <Book className="h-5 w-5" />
+                <span className="font-semibold">Capítulo Atual</span>
+              </div>
+              <p className="text-sm text-muted-foreground text-left">
+                Ouvir apenas {selectedBook} {selectedChapter}
+              </p>
+            </Button>
+            
+            <Button
+              onClick={() => handleStartAudio('book')}
+              variant="outline"
+              className="h-auto flex-col items-start p-4 gap-2"
+              data-testid="button-audio-book"
+            >
+              <div className="flex items-center gap-2">
+                <Book className="h-5 w-5" />
+                <span className="font-semibold">Livro Completo</span>
+              </div>
+              <p className="text-sm text-muted-foreground text-left">
+                Ouvir todo o livro de {currentBook?.name || selectedBook} em sequência
+              </p>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

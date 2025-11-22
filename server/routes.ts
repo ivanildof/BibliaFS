@@ -634,6 +634,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get book metadata (for book audio playlist)
+  app.get("/api/bible/book-info/:book", isAuthenticated, async (req: any, res) => {
+    try {
+      const { book } = req.params;
+      const { BIBLE_BOOKS_FALLBACK } = await import('./bible-books-fallback');
+      
+      const bookInfo = BIBLE_BOOKS_FALLBACK.find(
+        (b: any) => b.abbrev.pt.toLowerCase() === book.toLowerCase() || 
+                     b.name.toLowerCase() === book.toLowerCase()
+      );
+      
+      if (!bookInfo) {
+        return res.status(404).json({ error: "Livro não encontrado" });
+      }
+      
+      res.json({
+        name: bookInfo.name,
+        abbrev: bookInfo.abbrev.pt,
+        chapters: bookInfo.chapters,
+        testament: bookInfo.testament
+      });
+    } catch (error: any) {
+      console.error("Book info error:", error);
+      res.status(500).json({ error: "Erro ao buscar informações do livro" });
+    }
+  });
+
   // Bible Audio Route - Full Chapter (SLOW - 20-40 seconds)
   app.get("/api/bible/audio/:language/:version/:book/:chapter", isAuthenticated, async (req: any, res) => {
     try {
