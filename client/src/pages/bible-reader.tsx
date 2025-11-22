@@ -99,7 +99,7 @@ export default function BibleReader() {
   const playAudio = () => {
     if (!selectedBook) return;
     
-    const url = `/api/bible/audio/${version}/${selectedBook}/${selectedChapter}`;
+    const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`;
     
     if (audioElement) {
       audioElement.pause();
@@ -124,7 +124,7 @@ export default function BibleReader() {
       console.error("Audio playback error:", error);
       toast({
         title: "Erro ao reproduzir áudio",
-        description: "Verifique se o OPENAI_API_KEY está configurado",
+        description: "Verifique se está autenticado e o OPENAI_API_KEY está configurado",
         variant: "destructive",
       });
     });

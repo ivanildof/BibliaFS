@@ -526,10 +526,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible Audio Route - OpenAI Text-to-Speech (AUTHENTICATED)
-  app.get("/api/bible/audio/:version/:book/:chapter", isAuthenticated, async (req: any, res) => {
+  // Bible Audio Route - OpenAI Text-to-Speech with Multilingual Support (AUTHENTICATED)
+  app.get("/api/bible/audio/:language/:version/:book/:chapter", isAuthenticated, async (req: any, res) => {
     try {
-      const { version, book, chapter } = req.params;
+      const { language, version, book, chapter } = req.params;
       const userId = req.user.claims.sub;
       
       if (!process.env.OPENAI_API_KEY) {
@@ -539,16 +539,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const chapterData = await fetch(
-        `https://www.abibliadigital.com.br/api/verses/${version}/${book}/${chapter}`
-      ).then(r => r.json());
+      // Fetch chapter in correct language
+      const chapterData = await fetchBibleChapter(
+        language,
+        version,
+        book,
+        parseInt(chapter)
+      );
 
       if (!chapterData?.verses || chapterData.verses.length === 0) {
         return res.status(404).json({ error: "Capítulo não encontrado" });
       }
 
       const fullText = chapterData.verses
-        .map((v: any) => `Versículo ${v.number}. ${v.text}`)
+        .map((v: any) => `${v.number}. ${v.text}`)
         .join(' ');
 
       const textLength = fullText.length;
@@ -559,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      console.log(`[Audio] Generating for ${book} ${chapter} (${textLength} chars) - User: ${userId}`);
+      console.log(`[Audio] Generating ${language} audio for ${book} ${chapter} (${textLength} chars) - User: ${userId}`);
 
       const ttsResponse = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -580,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}.mp3"`);
+      res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${language}.mp3"`);
       
       const audioBuffer = await ttsResponse.arrayBuffer();
       res.send(Buffer.from(audioBuffer));
