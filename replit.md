@@ -10,6 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 **November 22, 2025** (Session 3):
 *   **Full Book Audio Playback**: Implemented comprehensive book audio feature allowing users to listen to entire biblical books in sequential chapter playback. New `/api/bible/book-info/:book` route returns book metadata (chapter count, testament). BibleReader now features audio mode selection Dialog with two options: "Capítulo Atual" (current chapter only) or "Livro Completo" (entire book). Book mode creates automatic playlist of all chapters, plays them sequentially with progress tracking, and displays toast notifications showing remaining chapters. Supports pause/resume and automatic cleanup on completion.
+*   **Enhanced Search UX**: Changed search title from "Buscar Versículos" to "Buscar na Bíblia" with improved placeholder showing examples (amor, Davi, fé, salvação). Added descriptive text clarifying that users can search for any word, name, expression, or theme in the Bible, not just verse numbers.
 
 **November 22, 2025** (Session 2):
 *   **Critical Authentication Fix - Commentaries**: Fixed major security bug where commentary route was not protected with authentication middleware. Now requires login (`isAuthenticated`) and properly associates commentaries with `userId`. Each user's commentaries are completely isolated in database.
