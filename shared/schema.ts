@@ -7,7 +7,8 @@ import {
   integer, 
   boolean, 
   jsonb,
-  index 
+  index,
+  unique
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -377,6 +378,7 @@ export const offlineContent = pgTable("offline_content", {
 // Verse Commentaries (theological commentary cache)
 export const verseCommentaries = pgTable("verse_commentaries", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   
   // Bible reference
   book: varchar("book").notNull(),
@@ -397,7 +399,10 @@ export const verseCommentaries = pgTable("verse_commentaries", {
   // Metadata
   generatedAt: timestamp("generated_at").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table) => ({
+  // Ensure one commentary per user+verse+type combination
+  uniqueCommentary: unique().on(table.userId, table.version, table.book, table.chapter, table.verse, table.commentaryType),
+}));
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
