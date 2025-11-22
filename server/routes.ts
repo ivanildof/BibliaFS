@@ -702,25 +702,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Helper function to generate commentary using OpenAI
+  // Helper function to generate commentary using OpenAI with full context
   async function generateCommentary(
     book: string,
     chapter: number,
     verse: number,
     verseText: string,
-    commentaryType: string
+    commentaryType: string,
+    chapterData: any
   ): Promise<string> {
     const systemPrompts: Record<string, string> = {
-      exegese: "Você é um teólogo especializado em exegese bíblica. Analise o versículo fornecido considerando o texto original (hebraico/grego), gramática, e contexto literário. Seja preciso e acadêmico.",
-      historico: "Você é um historiador bíblico especializado em contexto cultural e histórico. Explique o contexto histórico, cultural, geográfico e social do versículo. Seja informativo e educacional.",
-      aplicacao: "Você é um pastor e conselheiro espiritual. Explique como este versículo pode ser aplicado na vida prática dos cristãos hoje. Seja prático, encorajador e relevante.",
-      referencias: "Você é um estudioso bíblico especializado em referências cruzadas. Identifique e explique outros versículos bíblicos relacionados ao tema, contexto ou passagens paralelas. Liste pelo menos 3-5 referências relevantes.",
-      teologico: "Você é um teólogo sistemático. Analise as implicações teológicas do versículo, considerando diferentes tradições cristãs (católica, protestante, ortodoxa). Seja equilibrado e respeitoso com as diversas interpretações."
+      exegese: "Você é um teólogo especializado em exegese bíblica. Analise o versículo fornecido considerando o texto original (hebraico/grego), gramática, contexto literário, e o capítulo completo. Seja preciso, acadêmico e contextual.",
+      historico: "Você é um historiador bíblico especializado em contexto cultural e histórico. Explique o contexto histórico, cultural, geográfico e social do versículo dentro do capítulo. Seja informativo e educacional.",
+      aplicacao: "Você é um pastor e conselheiro espiritual. Explique como este versículo específico, no contexto do capítulo, pode ser aplicado na vida prática dos cristãos hoje. Seja prático, encorajador e relevante.",
+      referencias: "Você é um estudioso bíblico especializado em referências cruzadas. Identifique e explique outros versículos bíblicos relacionados ao tema deste versículo específico. Liste pelo menos 3-5 referências relevantes com citações exatas.",
+      teologico: "Você é um teólogo sistemático. Analise as implicações teológicas deste versículo específico, considerando diferentes tradições cristãs (católica, protestante, ortodoxa). Seja equilibrado e respeitoso com as diversas interpretações."
     };
 
     const systemPrompt = systemPrompts[commentaryType] || systemPrompts.exegese;
 
-    const userPrompt = `Analise o seguinte versículo bíblico:\n\n**${book} ${chapter}:${verse}**\n"${verseText}"\n\nForneça um comentário ${commentaryType} detalhado (2-3 parágrafos).`;
+    // Build context with surrounding verses for better analysis
+    const surroundingVerses = chapterData.verses
+      .filter((v: any) => Math.abs(v.number - verse) <= 2)
+      .map((v: any) => `${v.number}. ${v.text}`)
+      .join('\n');
+
+    const userPrompt = `Analise o seguinte versículo bíblico no contexto do capítulo:\n\n**${book} ${chapter}:${verse}**\n"${verseText}"\n\n**Contexto (versículos próximos):**\n${surroundingVerses}\n\nForneça um comentário ${commentaryType} detalhado e específico sobre o versículo ${verse} (2-3 parágrafos). IMPORTANTE: Seja específico sobre este versículo em particular, não genérico.`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -735,7 +742,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 800,
+        max_tokens: 1000,
       }),
     });
 
@@ -747,9 +754,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return data.choices[0].message.content;
   }
 
-  // Bible Commentary Route
-  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", async (req: any, res) => {
+  // Bible Commentary Route (User-isolated)
+  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const { version, book, chapter, verse } = req.params;
       const { type } = req.query; // exegese, historico, aplicacao, referencias, teologico
       
@@ -768,8 +776,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Check cache first
+      // Check cache first (user-isolated)
       const cached = await storage.getVerseCommentary(
+        userId,
         book,
         parseInt(chapter),
         parseInt(verse),
@@ -778,7 +787,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       if (cached) {
-        console.log(`[Commentary] Cache hit: ${book} ${chapter}:${verse} (${commentaryType})`);
+        console.log(`[Commentary] Cache hit for user ${userId}: ${book} ${chapter}:${verse} (${commentaryType})`);
         return res.json(cached);
       }
 
@@ -796,19 +805,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Versículo não encontrado" });
       }
 
-      console.log(`[Commentary] Generating ${commentaryType}: ${book} ${chapter}:${verse}`);
+      console.log(`[Commentary] Generating ${commentaryType} for user ${userId}: ${book} ${chapter}:${verse}`);
 
-      // Generate commentary
+      // Generate commentary with full chapter context
       const content = await generateCommentary(
         book,
         parseInt(chapter),
         parseInt(verse),
         verseData.text,
-        commentaryType
+        commentaryType,
+        chapterData
       );
 
-      // Cache the result
+      // Cache the result (user-isolated)
       const commentary = await storage.createVerseCommentary({
+        userId,
         book,
         chapter: parseInt(chapter),
         verse: parseInt(verse),

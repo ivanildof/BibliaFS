@@ -848,10 +848,11 @@ export class DatabaseStorage implements IStorage {
     await db.delete(offlineContent).where(eq(offlineContent.userId, userId));
   }
 
-  // Verse Commentaries
-  async getVerseCommentary(book: string, chapter: number, verse: number, version: string, commentaryType: string): Promise<VerseCommentary | undefined> {
+  // Verse Commentaries (User-isolated)
+  async getVerseCommentary(userId: string, book: string, chapter: number, verse: number, version: string, commentaryType: string): Promise<VerseCommentary | undefined> {
     const [commentary] = await db.select().from(verseCommentaries).where(
       and(
+        eq(verseCommentaries.userId, userId),
         eq(verseCommentaries.book, book),
         eq(verseCommentaries.chapter, chapter),
         eq(verseCommentaries.verse, verse),
