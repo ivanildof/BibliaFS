@@ -4,6 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import Stripe from "stripe";
+import OpenAI from "openai";
 import {
   insertReadingPlanSchema,
   insertReadingPlanTemplateSchema,
@@ -1324,14 +1325,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // OpenAI integration would go here
-      // For now, return a placeholder response
-      const answer = "Esta funcionalidade requer a configuração da chave de API OpenAI. " +
-        "Por favor, adicione sua chave em OPENAI_API_KEY para usar o assistente teológico.";
+      // Initialize OpenAI client
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      // Call OpenAI API with theological context
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "Você é um assistente teológico especializado em estudos bíblicos. Responda perguntas sobre a Bíblia, doutrinas cristãs, contexto histórico e interpretações teológicas de forma clara, respeitosa e fundamentada. Use referências bíblicas quando apropriado. Forneça respostas equilibradas considerando diferentes tradições cristãs quando relevante."
+          },
+          {
+            role: "user",
+            content: question
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      });
+
+      const answer = completion.choices[0]?.message?.content || "Desculpe, não consegui gerar uma resposta.";
 
       res.json({ answer });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      console.error("Erro ao chamar OpenAI:", error);
+      res.status(500).json({ error: "Erro ao processar sua pergunta. Por favor, tente novamente." });
     }
   });
 
