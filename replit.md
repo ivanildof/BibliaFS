@@ -7,9 +7,10 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application des
 ## Recent Changes
 
 **November 22, 2025**:
+*   **Database Production Schema Created**: Complete SQL schema file (`server/production-schema.sql`) generated with all 23 tables ready for manual execution in production PostgreSQL database. Includes users, sessions, reading_plans, prayers, highlights, bookmarks, notes, podcasts, lessons, community_posts, achievements, daily_verses, offline_content, donations, and all necessary indexes and triggers.
+*   **Free API Removal - Bible Audio**: Completely removed Bible Brain API integration (free API) from entire codebase per user requirement. Deleted all audio playback features including AudioContext, AudioPlayer component, audio routes (`/api/bible/audio/*`), audio_sources and audio_progress database tables, and all frontend audio controls from BibleReader. Bible+ now exclusively uses paid/user-provided APIs only.
+*   **Type Safety Improvements**: Fixed 21 TypeScript LSP errors across server/routes.ts including Stripe API version update to 2025-11-17.clover, achievement requirement structure corrections (now properly typed as {type: string, value: number}), scripture references validation fixes, and proper type casting for partial schema updates.
 *   **OpenAI Integration (AI Study)**: Implemented complete GPT-4o integration for AI-powered theological assistant. System uses specialized theological system prompt, handles Q&A about Bible texts, doctrines, historical context, and interpretations. Configured with temperature 0.7 and 1000 max tokens. Requires user's personal `OPENAI_API_KEY` environment variable.
-*   **Bible Audio System Enhancement**: Fixed audio playback functionality with proper Bible Brain API integration structure. System now checks for `BIBLE_BRAIN_API_KEY` and returns clear error messages when not configured. Improved error handling in AudioContext with detailed logging (error name, message, code) and user-friendly toast notifications explaining configuration requirements.
-*   **Error Handling Improvements**: Enhanced audio player error reporting with detailed console logs including URL, network state, ready state, and specific error details. Frontend now handles 503 errors gracefully with informative messages directing users to obtain free Bible Brain API key.
 
 **November 20, 2025**:
 *   **Página de Planos e Preços (Pricing)**: Criada página completa de planos e preços (`/pricing`) com design premium responsivo, 3 planos (Gratuito, Premium R$19,90/mês, Vitalício R$299), seção de garantia de 30 dias, 6 FAQs sobre planos, paleta de cores roxo #5711D9, e CTAs estratégicos. Integrada ao router para acesso autenticado e não-autenticado.
@@ -90,8 +91,7 @@ Preferred communication style: Simple, everyday language.
 *   Drizzle Kit
 
 **AI Integration**:
-*   OpenAI API (GPT-4o) - Configured with theological system prompt
-*   Bible Brain API - Free API for Bible audio content (requires API key)
+*   OpenAI API (GPT-4o) - Configured with theological system prompt, requires user's OPENAI_API_KEY
 
 **Frontend Libraries**:
 *   Radix UI
@@ -113,6 +113,10 @@ Preferred communication style: Simple, everyday language.
 *   MediaRecorder API (for prayer audio recording)
 *   Native HTML5 Audio (for prayer playback)
 *   Podcast RSS feed parsers - *Planned*
+
+**Important Notes**:
+*   **No Free APIs Policy**: Bible+ does NOT use any free third-party APIs. All features requiring external services (AI study, payment processing) must be configured with user's own API keys (OPENAI_API_KEY, STRIPE_SECRET_KEY).
+*   **Production Database Setup**: User must manually execute `server/production-schema.sql` in their production PostgreSQL database to create all necessary tables. Development database uses Drizzle automatic migrations.
 
 **Deployment Platform**:
 *   Replit
