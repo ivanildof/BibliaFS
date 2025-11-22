@@ -6,6 +6,17 @@ Bíblia+ is a premium, personalized, and intelligent Bible study application tha
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**November 22, 2025** (Session 3):
+*   **Full Book Audio Playback**: Implemented comprehensive book audio feature allowing users to listen to entire biblical books in sequential chapter playback. New `/api/bible/book-info/:book` route returns book metadata (chapter count, testament). BibleReader now features audio mode selection Dialog with two options: "Capítulo Atual" (current chapter only) or "Livro Completo" (entire book). Book mode creates automatic playlist of all chapters, plays them sequentially with progress tracking, and displays toast notifications showing remaining chapters. Supports pause/resume and automatic cleanup on completion.
+
+**November 22, 2025** (Session 2):
+*   **Critical Authentication Fix - Commentaries**: Fixed major security bug where commentary route was not protected with authentication middleware. Now requires login (`isAuthenticated`) and properly associates commentaries with `userId`. Each user's commentaries are completely isolated in database.
+*   **User Isolation Enhancement**: Updated `storage.getVerseCommentary()` to filter by `userId`, ensuring complete data isolation between users. Commentary cache now user-scoped with logging showing userId for audit trail.
+*   **AI Context Enhancement**: Improved OpenAI commentary generation with full chapter context - system now includes ±2 surrounding verses in prompts for deeper theological analysis. Prevents generic responses by providing specific verse context. Increased max_tokens to 1000 for more comprehensive commentaries.
+*   **Automatic Theme Loading**: Implemented automatic theme persistence - user's saved theme preferences (selectedTheme, customTheme) from backend now automatically apply on login via useEffect in App.tsx. Includes hexToHSL converter for consistent CSS variable application.
+
 ## System Architecture
 
 ### Frontend Architecture
