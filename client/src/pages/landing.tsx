@@ -14,38 +14,6 @@ import {
 import heroImage from "@assets/generated_images/Open_Bible_with_warm_sunlight_407fbff0.png";
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const features = [
-  {
-    icon: Brain,
-    title: "IA Teológica",
-    description: "Assistente inteligente responde perguntas bíblicas, compara doutrinas e oferece contexto histórico profundo.",
-  },
-  {
-    icon: Book,
-    title: "Planos Personalizados",
-    description: "Crie planos de leitura integrados com podcasts e acompanhe seu progresso diário.",
-  },
-  {
-    icon: Headphones,
-    title: "Podcasts Integrados",
-    description: "Ouça, baixe e inclua episódios de podcast nos seus planos de estudo bíblico.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Modo Professor",
-    description: "Crie aulas, avalie alunos e gerencie turmas com ferramentas profissionais.",
-  },
-  {
-    icon: Users,
-    title: "Comunidade Ativa",
-    description: "Compartilhe insights, conecte-se com outros estudantes e cresça juntos.",
-  },
-  {
-    icon: Sparkles,
-    title: "Temas Personalizáveis",
-    description: "5 temas premium ou crie o seu próprio com seletor de cores RGB personalizado.",
-  },
-];
 
 const themes = [
   { name: "Clássico", primary: "#5711D9", secondary: "#FFD700" },
@@ -68,6 +36,39 @@ const comparisonFeatures = [
 export default function Landing() {
   const { t } = useLanguage();
   
+  const features = [
+    {
+      icon: Brain,
+      title: t.landing.features.aiTitle,
+      description: t.landing.features.aiDesc,
+    },
+    {
+      icon: Book,
+      title: t.landing.features.plansTitle,
+      description: t.landing.features.plansDesc,
+    },
+    {
+      icon: Headphones,
+      title: t.landing.features.podcastsTitle,
+      description: t.landing.features.podcastsDesc,
+    },
+    {
+      icon: GraduationCap,
+      title: t.landing.features.teacherTitle,
+      description: t.landing.features.teacherDesc,
+    },
+    {
+      icon: Users,
+      title: t.landing.features.communityTitle,
+      description: t.landing.features.communityDesc,
+    },
+    {
+      icon: Sparkles,
+      title: t.landing.features.themesTitle,
+      description: t.landing.features.themesDesc,
+    },
+  ];
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -83,7 +84,7 @@ export default function Landing() {
         
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <Badge className="mb-6 bg-primary/20 text-white border-white/30 backdrop-blur-md px-4 py-2" data-testid="badge-version">
-            v2.0 - Nova Geração
+            {t.landing.newGeneration}
           </Badge>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6" data-testid="text-hero-title">

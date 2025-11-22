@@ -11,6 +11,7 @@ export interface Translations {
     edit: string;
     search: string;
     close: string;
+    tryAgainLater: string;
   };
   nav: {
     home: string;
@@ -41,6 +42,48 @@ export interface Translations {
     markAsRead: string;
     offlineMode: string;
     searchVerses: string;
+    contentNotAvailableOffline: string;
+    addNote: string;
+    shareVerse: string;
+    copyText: string;
+    downloadImage: string;
+    chooseColor: string;
+    saveNote: string;
+    cancel: string;
+    yellow: string;
+    green: string;
+    blue: string;
+    purple: string;
+    pink: string;
+    orange: string;
+    chooseHighlightColor: string;
+    removeHighlight: string;
+    writeNoteHere: string;
+    update: string;
+    save: string;
+    delete: string;
+    selectBookToStart: string;
+    offlineModeTitle: string;
+    loadingSavedContent: string;
+    copied: string;
+    verseCopied: string;
+    error: string;
+    failedToCopy: string;
+    downloadStarted: string;
+    verseImageDownloaded: string;
+    failedToGenerate: string;
+    audioStarted: string;
+    listenWhileBrowsing: string;
+    errorLoadingBooks: string;
+    errorLoadingChapter: string;
+    chapterComplete: string;
+    noteRemoved: string;
+    noteRemovedSuccess: string;
+    bookmarkAdded: string;
+    bookmarkRemoved: string;
+    highlightAdded: string;
+    highlightRemoved: string;
+    highlightRemovedSuccess: string;
   };
   bibleBooks: Record<string, string>;
   plans: {
@@ -69,6 +112,9 @@ export interface Translations {
     markDayComplete: string;
     completed: string;
     completedOn: string;
+    dayComplete: string;
+    youEarnedXP: string;
+    errorMarkingProgress: string;
   };
   progress: {
     title: string;
@@ -156,6 +202,21 @@ export interface Translations {
     footer_plans: string;
     footer_contact: string;
     footer_support: string;
+    newGeneration: string;
+    features: {
+      aiTitle: string;
+      aiDesc: string;
+      plansTitle: string;
+      plansDesc: string;
+      podcastsTitle: string;
+      podcastsDesc: string;
+      teacherTitle: string;
+      teacherDesc: string;
+      communityTitle: string;
+      communityDesc: string;
+      themesTitle: string;
+      themesDesc: string;
+    };
   };
   pricing: {
     page_title: string;
@@ -246,6 +307,7 @@ export const translations: Record<Language, Translations> = {
       edit: 'Editar',
       search: 'Buscar',
       close: 'Fechar',
+      tryAgainLater: 'Tente novamente mais tarde.',
     },
     nav: {
       home: 'Início',
@@ -276,6 +338,48 @@ export const translations: Record<Language, Translations> = {
       markAsRead: 'Marcar como Lido',
       offlineMode: 'Modo Offline',
       searchVerses: 'Buscar versículos',
+      contentNotAvailableOffline: 'Conteúdo não disponível offline',
+      addNote: 'Adicionar Nota',
+      shareVerse: 'Compartilhar Versículo',
+      copyText: 'Copiar Texto',
+      downloadImage: 'Baixar Imagem',
+      chooseColor: 'Escolher Cor',
+      saveNote: 'Salvar Nota',
+      cancel: 'Cancelar',
+      yellow: 'Amarelo',
+      green: 'Verde',
+      blue: 'Azul',
+      purple: 'Roxo',
+      pink: 'Rosa',
+      orange: 'Laranja',
+      chooseHighlightColor: 'Escolha a cor do destaque',
+      removeHighlight: 'Remover Destaque',
+      writeNoteHere: 'Escreva sua nota aqui...',
+      update: 'Atualizar',
+      save: 'Salvar',
+      delete: 'Excluir',
+      selectBookToStart: 'Selecione um livro para começar',
+      offlineModeTitle: 'Modo Offline',
+      loadingSavedContent: 'Carregando conteúdo salvo',
+      copied: 'Copiado!',
+      verseCopied: 'Versículo copiado para a área de transferência',
+      error: 'Erro',
+      failedToCopy: 'Falha ao copiar texto',
+      downloadStarted: 'Download iniciado!',
+      verseImageDownloaded: 'Imagem do versículo baixada com sucesso',
+      failedToGenerate: 'Falha ao gerar imagem',
+      audioStarted: 'Áudio iniciado',
+      listenWhileBrowsing: 'Ouça enquanto navega!',
+      errorLoadingBooks: 'Erro ao carregar livros',
+      errorLoadingChapter: 'Erro ao carregar capítulo',
+      chapterComplete: 'Capítulo completo! 🎉',
+      noteRemoved: 'Nota removida!',
+      noteRemovedSuccess: 'Nota removida com sucesso.',
+      bookmarkAdded: 'Favorito adicionado!',
+      bookmarkRemoved: 'Favorito removido!',
+      highlightAdded: 'Highlight adicionado!',
+      highlightRemoved: 'Highlight removido!',
+      highlightRemovedSuccess: 'Highlight removido com sucesso.',
     },
     bibleBooks: {
       'gn': 'Gênesis', 'ex': 'Êxodo', 'lv': 'Levítico', 'nm': 'Números', 'dt': 'Deuteronômio',
@@ -321,6 +425,9 @@ export const translations: Record<Language, Translations> = {
       markDayComplete: 'Marcar Dia Como Completo',
       completed: 'Concluído',
       completedOn: 'Completado em',
+      dayComplete: 'Dia completo! 🎉',
+      youEarnedXP: 'Você ganhou {xp} XP pela sua leitura.',
+      errorMarkingProgress: 'Erro ao marcar progresso',
     },
     progress: {
       title: 'Seu Progresso',
@@ -408,6 +515,21 @@ export const translations: Record<Language, Translations> = {
       footer_plans: 'Planos',
       footer_contact: 'Contato',
       footer_support: 'Suporte',
+      newGeneration: 'v2.0 - Nova Geração',
+      features: {
+        aiTitle: 'IA Teológica',
+        aiDesc: 'Assistente inteligente responde perguntas bíblicas, compara doutrinas e oferece contexto histórico profundo.',
+        plansTitle: 'Planos Personalizados',
+        plansDesc: 'Crie planos de leitura integrados com podcasts e acompanhe seu progresso diário.',
+        podcastsTitle: 'Podcasts Integrados',
+        podcastsDesc: 'Ouça, baixe e inclua episódios de podcast nos seus planos de estudo bíblico.',
+        teacherTitle: 'Modo Professor',
+        teacherDesc: 'Crie aulas, avalie alunos e gerencie turmas com ferramentas profissionais.',
+        communityTitle: 'Comunidade Ativa',
+        communityDesc: 'Compartilhe insights, conecte-se com outros estudantes e cresça juntos.',
+        themesTitle: 'Temas Personalizáveis',
+        themesDesc: '5 temas premium ou crie o seu próprio com seletor de cores RGB personalizado.',
+      },
     },
     pricing: {
       page_title: 'Planos e Preços',
@@ -496,6 +618,7 @@ export const translations: Record<Language, Translations> = {
       edit: 'Edit',
       search: 'Search',
       close: 'Close',
+      tryAgainLater: 'Try again later.',
     },
     nav: {
       home: 'Home',
@@ -526,6 +649,48 @@ export const translations: Record<Language, Translations> = {
       markAsRead: 'Mark as Read',
       offlineMode: 'Offline Mode',
       searchVerses: 'Search verses',
+      contentNotAvailableOffline: 'Content not available offline',
+      addNote: 'Add Note',
+      shareVerse: 'Share Verse',
+      copyText: 'Copy Text',
+      downloadImage: 'Download Image',
+      chooseColor: 'Choose Color',
+      saveNote: 'Save Note',
+      cancel: 'Cancel',
+      yellow: 'Yellow',
+      green: 'Green',
+      blue: 'Blue',
+      purple: 'Purple',
+      pink: 'Pink',
+      orange: 'Orange',
+      chooseHighlightColor: 'Choose highlight color',
+      removeHighlight: 'Remove Highlight',
+      writeNoteHere: 'Write your note here...',
+      update: 'Update',
+      save: 'Save',
+      delete: 'Delete',
+      selectBookToStart: 'Select a book to start',
+      offlineModeTitle: 'Offline Mode',
+      loadingSavedContent: 'Loading saved content',
+      copied: 'Copied!',
+      verseCopied: 'Verse copied to clipboard',
+      error: 'Error',
+      failedToCopy: 'Failed to copy text',
+      downloadStarted: 'Download started!',
+      verseImageDownloaded: 'Verse image downloaded successfully',
+      failedToGenerate: 'Failed to generate image',
+      audioStarted: 'Audio started',
+      listenWhileBrowsing: 'Listen while browsing!',
+      errorLoadingBooks: 'Error loading books',
+      errorLoadingChapter: 'Error loading chapter',
+      chapterComplete: 'Chapter complete! 🎉',
+      noteRemoved: 'Note removed!',
+      noteRemovedSuccess: 'Note successfully removed.',
+      bookmarkAdded: 'Bookmark added!',
+      bookmarkRemoved: 'Bookmark removed!',
+      highlightAdded: 'Highlight added!',
+      highlightRemoved: 'Highlight removed!',
+      highlightRemovedSuccess: 'Highlight successfully removed.',
     },
     bibleBooks: {
       'gn': 'Genesis', 'ex': 'Exodus', 'lv': 'Leviticus', 'nm': 'Numbers', 'dt': 'Deuteronomy',
@@ -571,6 +736,9 @@ export const translations: Record<Language, Translations> = {
       markDayComplete: 'Mark Day as Complete',
       completed: 'Completed',
       completedOn: 'Completed on',
+      dayComplete: 'Day complete! 🎉',
+      youEarnedXP: 'You earned {xp} XP for your reading.',
+      errorMarkingProgress: 'Error marking progress',
     },
     progress: {
       title: 'Your Progress',
@@ -658,6 +826,21 @@ export const translations: Record<Language, Translations> = {
       footer_plans: 'Plans',
       footer_contact: 'Contact',
       footer_support: 'Support',
+      newGeneration: 'v2.0 - New Generation',
+      features: {
+        aiTitle: 'Theological AI',
+        aiDesc: 'Intelligent assistant answers biblical questions, compares doctrines, and offers deep historical context.',
+        plansTitle: 'Custom Plans',
+        plansDesc: 'Create reading plans integrated with podcasts and track your daily progress.',
+        podcastsTitle: 'Integrated Podcasts',
+        podcastsDesc: 'Listen, download, and include podcast episodes in your Bible study plans.',
+        teacherTitle: 'Teacher Mode',
+        teacherDesc: 'Create lessons, assess students, and manage classes with professional tools.',
+        communityTitle: 'Active Community',
+        communityDesc: 'Share insights, connect with other students, and grow together.',
+        themesTitle: 'Customizable Themes',
+        themesDesc: '5 premium themes or create your own with custom RGB color picker.',
+      },
     },
     pricing: {
       page_title: 'Plans & Pricing',
@@ -746,6 +929,7 @@ export const translations: Record<Language, Translations> = {
       edit: 'Bewerken',
       search: 'Zoeken',
       close: 'Sluiten',
+      tryAgainLater: 'Probeer het later opnieuw.',
     },
     nav: {
       home: 'Thuis',
@@ -776,6 +960,48 @@ export const translations: Record<Language, Translations> = {
       markAsRead: 'Markeren als Gelezen',
       offlineMode: 'Offline Modus',
       searchVerses: 'Verzen zoeken',
+      contentNotAvailableOffline: 'Inhoud niet offline beschikbaar',
+      addNote: 'Notitie Toevoegen',
+      shareVerse: 'Vers Delen',
+      copyText: 'Tekst Kopiëren',
+      downloadImage: 'Afbeelding Downloaden',
+      chooseColor: 'Kleur Kiezen',
+      saveNote: 'Notitie Opslaan',
+      cancel: 'Annuleren',
+      yellow: 'Geel',
+      green: 'Groen',
+      blue: 'Blauw',
+      purple: 'Paars',
+      pink: 'Roze',
+      orange: 'Oranje',
+      chooseHighlightColor: 'Kies markeerkleur',
+      removeHighlight: 'Markering Verwijderen',
+      writeNoteHere: 'Schrijf hier je notitie...',
+      update: 'Bijwerken',
+      save: 'Opslaan',
+      delete: 'Verwijderen',
+      selectBookToStart: 'Selecteer een boek om te beginnen',
+      offlineModeTitle: 'Offline Modus',
+      loadingSavedContent: 'Opgeslagen inhoud laden',
+      copied: 'Gekopieerd!',
+      verseCopied: 'Vers gekopieerd naar klembord',
+      error: 'Fout',
+      failedToCopy: 'Tekst kopiëren mislukt',
+      downloadStarted: 'Download gestart!',
+      verseImageDownloaded: 'Versafbeelding succesvol gedownload',
+      failedToGenerate: 'Afbeelding genereren mislukt',
+      audioStarted: 'Audio gestart',
+      listenWhileBrowsing: 'Luister terwijl je bladert!',
+      errorLoadingBooks: 'Fout bij laden van boeken',
+      errorLoadingChapter: 'Fout bij laden van hoofdstuk',
+      chapterComplete: 'Hoofdstuk voltooid! 🎉',
+      noteRemoved: 'Notitie verwijderd!',
+      noteRemovedSuccess: 'Notitie succesvol verwijderd.',
+      bookmarkAdded: 'Favoriet toegevoegd!',
+      bookmarkRemoved: 'Favoriet verwijderd!',
+      highlightAdded: 'Markering toegevoegd!',
+      highlightRemoved: 'Markering verwijderd!',
+      highlightRemovedSuccess: 'Markering succesvol verwijderd.',
     },
     bibleBooks: {
       'gn': 'Genesis', 'ex': 'Exodus', 'lv': 'Leviticus', 'nm': 'Numeri', 'dt': 'Deuteronomium',
@@ -821,6 +1047,9 @@ export const translations: Record<Language, Translations> = {
       markDayComplete: 'Dag Markeren als Voltooid',
       completed: 'Voltooid',
       completedOn: 'Voltooid op',
+      dayComplete: 'Dag voltooid! 🎉',
+      youEarnedXP: 'Je hebt {xp} XP verdiend met lezen.',
+      errorMarkingProgress: 'Fout bij markeren voortgang',
     },
     progress: {
       title: 'Jouw Voortgang',
@@ -908,6 +1137,21 @@ export const translations: Record<Language, Translations> = {
       footer_plans: 'Plannen',
       footer_contact: 'Contact',
       footer_support: 'Ondersteuning',
+      newGeneration: 'v2.0 - Nieuwe Generatie',
+      features: {
+        aiTitle: 'Theologische AI',
+        aiDesc: 'Intelligente assistent beantwoordt Bijbelse vragen, vergelijkt doctrines en biedt diepe historische context.',
+        plansTitle: 'Aangepaste Plannen',
+        plansDesc: 'Creëer leesplannen geïntegreerd met podcasts en volg je dagelijkse voortgang.',
+        podcastsTitle: 'Geïntegreerde Podcasts',
+        podcastsDesc: 'Luister, download en neem podcast-afleveringen op in je Bijbelstudie plannen.',
+        teacherTitle: 'Leermodus',
+        teacherDesc: 'Creëer lessen, beoordeel studenten en beheer klassen met professionele tools.',
+        communityTitle: 'Actieve Gemeenschap',
+        communityDesc: 'Deel inzichten, maak verbinding met andere studenten en groei samen.',
+        themesTitle: 'Aanpasbare Thema\'s',
+        themesDesc: '5 premium thema\'s of creëer je eigen met aangepaste RGB-kleurenkiezer.',
+      },
     },
     pricing: {
       page_title: 'Plannen & Prijzen',
@@ -996,6 +1240,7 @@ export const translations: Record<Language, Translations> = {
       edit: 'Editar',
       search: 'Buscar',
       close: 'Cerrar',
+      tryAgainLater: 'Inténtalo de nuevo más tarde.',
     },
     nav: {
       home: 'Inicio',
@@ -1026,6 +1271,48 @@ export const translations: Record<Language, Translations> = {
       markAsRead: 'Marcar como Leído',
       offlineMode: 'Modo Sin Conexión',
       searchVerses: 'Buscar versículos',
+      contentNotAvailableOffline: 'Contenido no disponible sin conexión',
+      addNote: 'Añadir Nota',
+      shareVerse: 'Compartir Versículo',
+      copyText: 'Copiar Texto',
+      downloadImage: 'Descargar Imagen',
+      chooseColor: 'Elegir Color',
+      saveNote: 'Guardar Nota',
+      cancel: 'Cancelar',
+      yellow: 'Amarillo',
+      green: 'Verde',
+      blue: 'Azul',
+      purple: 'Morado',
+      pink: 'Rosa',
+      orange: 'Naranja',
+      chooseHighlightColor: 'Elegir color del resaltado',
+      removeHighlight: 'Eliminar Resaltado',
+      writeNoteHere: 'Escribe tu nota aquí...',
+      update: 'Actualizar',
+      save: 'Guardar',
+      delete: 'Eliminar',
+      selectBookToStart: 'Selecciona un libro para comenzar',
+      offlineModeTitle: 'Modo Sin Conexión',
+      loadingSavedContent: 'Cargando contenido guardado',
+      copied: '¡Copiado!',
+      verseCopied: 'Versículo copiado al portapapeles',
+      error: 'Error',
+      failedToCopy: 'Error al copiar texto',
+      downloadStarted: '¡Descarga iniciada!',
+      verseImageDownloaded: 'Imagen del versículo descargada con éxito',
+      failedToGenerate: 'Error al generar imagen',
+      audioStarted: 'Audio iniciado',
+      listenWhileBrowsing: '¡Escucha mientras navegas!',
+      errorLoadingBooks: 'Error al cargar libros',
+      errorLoadingChapter: 'Error al cargar capítulo',
+      chapterComplete: '¡Capítulo completo! 🎉',
+      noteRemoved: '¡Nota eliminada!',
+      noteRemovedSuccess: 'Nota eliminada con éxito.',
+      bookmarkAdded: '¡Favorito añadido!',
+      bookmarkRemoved: '¡Favorito eliminado!',
+      highlightAdded: '¡Resaltado añadido!',
+      highlightRemoved: '¡Resaltado eliminado!',
+      highlightRemovedSuccess: 'Resaltado eliminado con éxito.',
     },
     bibleBooks: {
       'gn': 'Génesis', 'ex': 'Éxodo', 'lv': 'Levítico', 'nm': 'Números', 'dt': 'Deuteronomio',
@@ -1071,6 +1358,9 @@ export const translations: Record<Language, Translations> = {
       markDayComplete: 'Marcar Día como Completo',
       completed: 'Completado',
       completedOn: 'Completado el',
+      dayComplete: '¡Día completo! 🎉',
+      youEarnedXP: 'Ganaste {xp} XP por tu lectura.',
+      errorMarkingProgress: 'Error al marcar progreso',
     },
     progress: {
       title: 'Tu Progreso',
@@ -1158,6 +1448,21 @@ export const translations: Record<Language, Translations> = {
       footer_plans: 'Planes',
       footer_contact: 'Contacto',
       footer_support: 'Soporte',
+      newGeneration: 'v2.0 - Nueva Generación',
+      features: {
+        aiTitle: 'IA Teológica',
+        aiDesc: 'Asistente inteligente responde preguntas bíblicas, compara doctrinas y ofrece contexto histórico profundo.',
+        plansTitle: 'Planes Personalizados',
+        plansDesc: 'Crea planes de lectura integrados con podcasts y sigue tu progreso diario.',
+        podcastsTitle: 'Podcasts Integrados',
+        podcastsDesc: 'Escucha, descarga e incluye episodios de podcast en tus planes de estudio bíblico.',
+        teacherTitle: 'Modo Profesor',
+        teacherDesc: 'Crea lecciones, evalúa estudiantes y gestiona clases con herramientas profesionales.',
+        communityTitle: 'Comunidad Activa',
+        communityDesc: 'Comparte ideas, conéctate con otros estudiantes y crece juntos.',
+        themesTitle: 'Temas Personalizables',
+        themesDesc: '5 temas premium o crea el tuyo propio con selector de colores RGB personalizado.',
+      },
     },
     pricing: {
       page_title: 'Planes y Precios',

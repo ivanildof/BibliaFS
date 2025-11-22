@@ -114,7 +114,7 @@ export default function BibleReader() {
         if (offlineData) {
           return offlineData;
         }
-        throw new Error("Conteúdo não disponível offline");
+        throw new Error(t.bible.contentNotAvailableOffline);
       }
       
       try {
@@ -134,8 +134,8 @@ export default function BibleReader() {
             const lastToast = parseInt(sessionStorage.getItem(lastToastKey) || '0');
             if (now - lastToast > 5000) {
               toast({
-                title: "Modo Offline",
-                description: "Carregando conteúdo salvo",
+                title: t.bible.offlineModeTitle,
+                description: t.bible.loadingSavedContent,
               });
               sessionStorage.setItem(lastToastKey, now.toString());
             }
@@ -177,8 +177,8 @@ export default function BibleReader() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/bible/bookmarks"] });
       toast({
-        title: "Favorito adicionado!",
-        description: "Versículo salvo nos seus favoritos.",
+        title: t.bible.bookmarkAdded,
+        description: t.bible.verseCopied.replace('área de transferência', 'favoritos').replace('clipboard', 'bookmarks').replace('klembord', 'favorieten').replace('portapapeles', 'favoritos'),
       });
     },
   });
@@ -193,8 +193,8 @@ export default function BibleReader() {
       setHighlightPopoverOpen(false);
       setSelectedVerse(null);
       toast({
-        title: "Highlight adicionado!",
-        description: "Versículo destacado com sucesso.",
+        title: t.bible.highlightAdded,
+        description: t.bible.verseImageDownloaded.replace('Imagem do versículo baixada', 'Versículo destacado').replace('image downloaded', 'highlighted').replace('afbeelding gedownload', 'gemarkeerd').replace('imagen descargada', 'resaltado'),
       });
     },
   });
@@ -209,8 +209,8 @@ export default function BibleReader() {
       setHighlightPopoverOpen(false);
       setSelectedVerse(null);
       toast({
-        title: "Highlight removido!",
-        description: "Highlight removido com sucesso.",
+        title: t.bible.highlightRemoved,
+        description: t.bible.highlightRemovedSuccess,
       });
     },
   });
@@ -224,8 +224,8 @@ export default function BibleReader() {
       queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
       setNoteText("");
       toast({
-        title: "Nota adicionada!",
-        description: "Nota salva com sucesso.",
+        title: t.bible.noteRemoved.replace('removida', 'adicionada').replace('removed', 'added').replace('verwijderd', 'toegevoegd').replace('eliminada', 'añadida'),
+        description: t.bible.noteRemovedSuccess.replace('removida', 'salva').replace('removed', 'saved').replace('verwijderd', 'opgeslagen').replace('eliminada', 'guardada'),
       });
     },
   });
@@ -239,8 +239,8 @@ export default function BibleReader() {
       queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
       setNoteText("");
       toast({
-        title: "Nota removida!",
-        description: "Nota removida com sucesso.",
+        title: t.bible.noteRemoved,
+        description: t.bible.noteRemovedSuccess,
       });
     },
   });
@@ -253,13 +253,13 @@ export default function BibleReader() {
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/stats/gamification"] });
       
-      let description = `Você ganhou ${data.xpGained} XP!`;
+      let description = t.plans.youEarnedXP.replace('{xp}', data.xpGained.toString()).replace('pela sua leitura.', '!').replace('for your reading.', '!').replace('met lezen.', '!').replace('por tu lectura.', '!');
       if (data.unlockedAchievements && data.unlockedAchievements.length > 0) {
         description += ` 🏆 ${data.unlockedAchievements.map((a: any) => a.name).join(", ")}`;
       }
       
       toast({
-        title: "Capítulo completo! 🎉",
+        title: t.bible.chapterComplete,
         description,
       });
     },
@@ -284,22 +284,22 @@ export default function BibleReader() {
   useEffect(() => {
     if (booksError) {
       toast({
-        title: "Erro ao carregar livros",
-        description: "Tente novamente mais tarde.",
+        title: t.bible.errorLoadingBooks,
+        description: t.common.tryAgainLater,
         variant: "destructive",
       });
     }
-  }, [booksError, toast]);
+  }, [booksError, toast, t]);
 
   useEffect(() => {
     if (chapterError) {
       toast({
-        title: "Erro ao carregar capítulo",
-        description: "Tente novamente mais tarde.",
+        title: t.bible.errorLoadingChapter,
+        description: t.common.tryAgainLater,
         variant: "destructive",
       });
     }
-  }, [chapterError, toast]);
+  }, [chapterError, toast, t]);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -386,12 +386,12 @@ export default function BibleReader() {
   };
 
   const highlightColors = [
-    { name: "yellow", bg: "bg-yellow-200/50 dark:bg-yellow-900/30", label: "Amarelo" },
-    { name: "green", bg: "bg-green-200/50 dark:bg-green-900/30", label: "Verde" },
-    { name: "blue", bg: "bg-blue-200/50 dark:bg-blue-900/30", label: "Azul" },
-    { name: "purple", bg: "bg-purple-200/50 dark:bg-purple-900/30", label: "Roxo" },
-    { name: "pink", bg: "bg-pink-200/50 dark:bg-pink-900/30", label: "Rosa" },
-    { name: "orange", bg: "bg-orange-200/50 dark:bg-orange-900/30", label: "Laranja" },
+    { name: "yellow", bg: "bg-yellow-200/50 dark:bg-yellow-900/30", label: t.bible.yellow },
+    { name: "green", bg: "bg-green-200/50 dark:bg-green-900/30", label: t.bible.green },
+    { name: "blue", bg: "bg-blue-200/50 dark:bg-blue-900/30", label: t.bible.blue },
+    { name: "purple", bg: "bg-purple-200/50 dark:bg-purple-900/30", label: t.bible.purple },
+    { name: "pink", bg: "bg-pink-200/50 dark:bg-pink-900/30", label: t.bible.pink },
+    { name: "orange", bg: "bg-orange-200/50 dark:bg-orange-900/30", label: t.bible.orange },
   ];
 
   const getHighlightBg = (color: string) => {
@@ -455,8 +455,8 @@ export default function BibleReader() {
                 if (selectedBook) {
                   playChapter(selectedBook, selectedChapter, version);
                   toast({
-                    title: "Áudio iniciado",
-                    description: "Ouça enquanto navega!",
+                    title: t.bible.audioStarted,
+                    description: t.bible.listenWhileBrowsing,
                   });
                 }
               }}
@@ -693,7 +693,7 @@ export default function BibleReader() {
                         </TabsList>
                         
                         <TabsContent value="highlight" className="space-y-3">
-                          <h4 className="font-medium text-sm">Escolha a cor do destaque</h4>
+                          <h4 className="font-medium text-sm">{t.bible.chooseHighlightColor}</h4>
                           <div className="grid grid-cols-3 gap-2">
                             {highlightColors.map(color => (
                               <Button
@@ -716,15 +716,15 @@ export default function BibleReader() {
                               onClick={() => handleRemoveHighlight(verse.number)}
                               data-testid="button-remove-highlight"
                             >
-                              Remover Destaque
+                              {t.bible.removeHighlight}
                             </Button>
                           )}
                         </TabsContent>
                         
                         <TabsContent value="note" className="space-y-3">
-                          <h4 className="font-medium text-sm">Adicionar Nota</h4>
+                          <h4 className="font-medium text-sm">{t.bible.addNote}</h4>
                           <Textarea
-                            placeholder="Escreva sua nota aqui..."
+                            placeholder={t.bible.writeNoteHere}
                             value={noteText}
                             onChange={(e) => setNoteText(e.target.value)}
                             className="min-h-[100px]"
@@ -741,7 +741,7 @@ export default function BibleReader() {
                               {noteMutation.isPending ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
                               ) : (
-                                getVerseNote(verse.number) ? "Atualizar" : "Salvar"
+                                getVerseNote(verse.number) ? t.bible.update : t.bible.save
                               )}
                             </Button>
                             {getVerseNote(verse.number) && (
@@ -755,7 +755,7 @@ export default function BibleReader() {
                                 {deleteNoteMutation.isPending ? (
                                   <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
-                                  "Excluir"
+                                  t.bible.delete
                                 )}
                               </Button>
                             )}
@@ -777,7 +777,7 @@ export default function BibleReader() {
                           data-testid={`button-share-verse-${verse.number}`}
                         >
                           <Share2 className="h-4 w-4 mr-2" />
-                          Compartilhar Versículo
+                          {t.bible.shareVerse}
                         </Button>
                       </div>
                     </PopoverContent>
@@ -802,13 +802,13 @@ export default function BibleReader() {
                 ) : (
                   <CheckCircle className="h-4 w-4 mr-2" />
                 )}
-                Marcar como Lido
+                {t.bible.markAsRead}
               </Button>
             </div>
           </>
         ) : (
           <div className="text-center py-20 text-muted-foreground">
-            Selecione um livro para começar
+            {t.bible.selectBookToStart}
           </div>
         )}
       </main>
@@ -817,7 +817,7 @@ export default function BibleReader() {
       <Sheet open={shareSheetOpen} onOpenChange={setShareSheetOpen}>
         <SheetContent side="bottom" className="h-[90vh]">
           <SheetHeader>
-            <SheetTitle>Compartilhar Versículo</SheetTitle>
+            <SheetTitle>{t.bible.shareVerse}</SheetTitle>
           </SheetHeader>
           
           {verseToShare && chapterData && (
@@ -843,13 +843,13 @@ export default function BibleReader() {
                       const text = `"${verseToShare.text}"\n\n${chapterData.book.name} ${chapterData.chapter.number}:${verseToShare.number}`;
                       await navigator.clipboard.writeText(text);
                       toast({
-                        title: "Copiado!",
-                        description: "Versículo copiado para a área de transferência",
+                        title: t.bible.copied,
+                        description: t.bible.verseCopied,
                       });
                     } catch (error) {
                       toast({
-                        title: "Erro",
-                        description: "Falha ao copiar texto",
+                        title: t.bible.error,
+                        description: t.bible.failedToCopy,
                         variant: "destructive",
                       });
                     }
@@ -857,7 +857,7 @@ export default function BibleReader() {
                   data-testid="button-copy-text"
                 >
                   <Copy className="h-4 w-4 mr-2" />
-                  Copiar Texto
+                  {t.bible.copyText}
                 </Button>
                 
                 <Button
@@ -878,13 +878,13 @@ export default function BibleReader() {
                       link.click();
                       
                       toast({
-                        title: "Download iniciado!",
-                        description: "Imagem do versículo baixada com sucesso",
+                        title: t.bible.downloadStarted,
+                        description: t.bible.verseImageDownloaded,
                       });
                     } catch (error) {
                       toast({
-                        title: "Erro",
-                        description: "Falha ao gerar imagem",
+                        title: t.bible.error,
+                        description: t.bible.failedToGenerate,
                         variant: "destructive",
                       });
                     }
@@ -892,7 +892,7 @@ export default function BibleReader() {
                   data-testid="button-download-image"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Baixar como Imagem
+                  {t.bible.downloadImage}
                 </Button>
               </div>
             </div>
@@ -923,8 +923,8 @@ export default function BibleReader() {
                 if (selectedBook) {
                   playChapter(selectedBook, selectedChapter, version);
                   toast({
-                    title: "Áudio iniciado",
-                    description: "Ouça enquanto navega!",
+                    title: t.bible.audioStarted,
+                    description: t.bible.listenWhileBrowsing,
                   });
                 }
               }}

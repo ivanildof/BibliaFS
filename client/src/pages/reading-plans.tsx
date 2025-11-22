@@ -68,13 +68,13 @@ export default function ReadingPlans() {
       queryClient.invalidateQueries({ queryKey: ["/api/reading-plans"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats/gamification"] });
       toast({
-        title: "Dia completo! 🎉",
-        description: "Você ganhou 10 XP pela sua leitura.",
+        title: t.plans.dayComplete,
+        description: t.plans.youEarnedXP.replace('{xp}', '10'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Erro ao marcar progresso",
+        title: t.plans.errorMarkingProgress,
         description: error.message,
         variant: "destructive",
       });
