@@ -85,6 +85,8 @@ export default function BibleReader() {
   const [noteText, setNoteText] = useState("");
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [verseToShare, setVerseToShare] = useState<{ number: number; text: string } | null>(null);
+  const [commentarySheetOpen, setCommentarySheetOpen] = useState(false);
+  const [verseForCommentary, setVerseForCommentary] = useState<{ number: number; text: string } | null>(null);
   
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
@@ -1001,6 +1003,21 @@ export default function BibleReader() {
                           <Share2 className="h-4 w-4 mr-2" />
                           {t.bible.shareVerse}
                         </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setVerseForCommentary(verse);
+                            setCommentarySheetOpen(true);
+                            setHighlightPopoverOpen(false);
+                          }}
+                          data-testid={`button-commentary-${verse.number}`}
+                        >
+                          <Book className="h-4 w-4 mr-2" />
+                          Ver Comentário
+                        </Button>
                       </div>
                     </PopoverContent>
                   </Popover>
@@ -1200,6 +1217,117 @@ export default function BibleReader() {
           </div>
         </div>
       </div>
+
+      {/* Commentary Sheet */}
+      <Sheet open={commentarySheetOpen} onOpenChange={setCommentarySheetOpen}>
+        <SheetContent side="bottom" className="h-[90vh]">
+          <SheetHeader>
+            <SheetTitle>
+              Comentário Teológico - {selectedBook} {selectedChapter}:{verseForCommentary?.number}
+            </SheetTitle>
+          </SheetHeader>
+          
+          {verseForCommentary && (
+            <div className="mt-4">
+              {/* Verse Text */}
+              <div className="bg-muted p-4 rounded-lg mb-4">
+                <p className="text-sm font-semibold text-muted-foreground mb-1">
+                  {selectedBook} {selectedChapter}:{verseForCommentary.number}
+                </p>
+                <p className="font-serif text-base leading-relaxed">
+                  "{verseForCommentary.text}"
+                </p>
+              </div>
+
+              {/* Commentary Tabs */}
+              <Tabs defaultValue="exegese" className="w-full">
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="exegese">Exegese</TabsTrigger>
+                  <TabsTrigger value="historico">Histórico</TabsTrigger>
+                  <TabsTrigger value="aplicacao">Aplicação</TabsTrigger>
+                  <TabsTrigger value="referencias">Referências</TabsTrigger>
+                  <TabsTrigger value="teologico">Teológico</TabsTrigger>
+                </TabsList>
+
+                {['exegese', 'historico', 'aplicacao', 'referencias', 'teologico'].map((type) => (
+                  <TabsContent key={type} value={type} className="mt-4">
+                    <CommentaryContent
+                      version={version}
+                      book={selectedBook!}
+                      chapter={selectedChapter}
+                      verse={verseForCommentary.number}
+                      commentaryType={type}
+                    />
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
+  );
+}
+
+// Commentary Content Component
+function CommentaryContent({
+  version,
+  book,
+  chapter,
+  verse,
+  commentaryType,
+}: {
+  version: string;
+  book: string;
+  chapter: number;
+  verse: number;
+  commentaryType: string;
+}) {
+  const { toast } = useToast();
+
+  const { data: commentary, isLoading, error } = useQuery({
+    queryKey: ['/api/bible/commentary', version, book, chapter, verse, commentaryType],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/bible/commentary/${version}/${book}/${chapter}/${verse}?type=${commentaryType}`,
+        { credentials: 'include' }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Falha ao carregar comentário');
+      }
+      
+      return await response.json();
+    },
+    retry: 1,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-3 text-sm text-muted-foreground">Gerando comentário...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+        <p className="text-sm text-destructive">
+          Erro ao carregar comentário. Verifique se o OpenAI está configurado.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <ScrollArea className="h-[60vh]">
+      <div className="prose prose-sm max-w-none p-4">
+        <p className="whitespace-pre-wrap leading-relaxed">
+          {commentary?.content}
+        </p>
+      </div>
+    </ScrollArea>
   );
 }
