@@ -270,7 +270,16 @@ export default function Landing() {
           </div>
           
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            © 2024 Bíblia+. Todos os direitos reservados.
+            © 2025 Gestão Escolar. Todos os direitos reservados. Desenvolvido por |{" "}
+            <a 
+              href="https://fabrisite.com.br/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+              data-testid="link-fabrisite"
+            >
+              FabriSite
+            </a>
           </div>
         </div>
       </footer>
