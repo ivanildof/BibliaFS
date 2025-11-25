@@ -8,11 +8,17 @@ import {
   boolean, 
   jsonb,
   index,
-  unique
+  unique,
+  decimal,
+  date
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// ============================================
+// 1. USERS AND PROFILES
+// ============================================
 
 // Session storage table (required for Replit Auth)
 export const sessions = pgTable(
@@ -25,15 +31,41 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
+// Churches/Organizations table
+export const churches = pgTable("churches", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 255 }).notNull(),
+  denomination: varchar("denomination", { length: 100 }),
+  country: varchar("country", { length: 100 }),
+  city: varchar("city", { length: 100 }),
+  ssoConfig: jsonb("sso_config"),
+  adminId: varchar("admin_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Users table (required for Replit Auth)
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email").unique(),
+  email: varchar("email", { length: 255 }).unique(),
+  username: varchar("username", { length: 255 }),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
+  fullName: varchar("full_name", { length: 255 }),
+  displayName: varchar("display_name", { length: 255 }),
   profileImageUrl: varchar("profile_image_url"),
+  avatarUrl: text("avatar_url"),
+  profileImage: text("profile_image"),
   
-  // Role-based access control
+  // Profile type for role-based access
+  profileType: varchar("profile_type", { length: 50 }).default("basic_user"),
+  // Profiles: super_admin, church_admin, group_leader, advanced_study, premium_user, basic_user
+  
+  // Church association
+  churchId: varchar("church_id").references(() => churches.id),
+  theologicalBackground: text("theological_background"),
+  
+  // Role-based access control (legacy)
   role: varchar("role").default("user"), // user, admin
   
   // Custom theme settings
@@ -43,10 +75,10 @@ export const users = pgTable("users", {
     accentColor: string;
     backgroundColor: string;
   }>(),
-  selectedTheme: varchar("selected_theme").default("classico"), // classico, noite_sagrada, luz_do_dia, terra_santa, custom
+  selectedTheme: varchar("selected_theme", { length: 50 }).default("classico"),
   
   // Gamification
-  level: varchar("level").default("iniciante"), // iniciante, crescendo, discipulo, professor
+  level: varchar("level").default("iniciante"),
   experiencePoints: integer("experience_points").default(0),
   readingStreak: integer("reading_streak").default(0),
   lastReadDate: timestamp("last_read_date"),
@@ -54,45 +86,138 @@ export const users = pgTable("users", {
   // Teacher mode flag
   isTeacher: boolean("is_teacher").default(false),
   
+  // Subscription
+  subscriptionExpiresAt: timestamp("subscription_expires_at"),
+  preferences: jsonb("preferences").default({}),
+  
+  // Timestamps
+  lastLogin: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Community groups table
+export const groups = pgTable("groups", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  churchId: varchar("church_id").references(() => churches.id),
+  leaderId: varchar("leader_id").references(() => users.id),
+  isPublic: boolean("is_public").default(true),
+  maxMembers: integer("max_members").default(50),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Group members
+export const groupMembers = pgTable("group_members", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  groupId: varchar("group_id").notNull().references(() => groups.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  role: varchar("role", { length: 20 }).default("member"), // member, moderator, leader
+  joinedAt: timestamp("joined_at").defaultNow(),
+}, (table) => ({
+  uniqueGroupUser: unique().on(table.groupId, table.userId),
+}));
+
+// ============================================
+// 2. BIBLE CONTENT
+// ============================================
+
+// Bible translations
+export const bibleTranslations = pgTable("bible_translations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 100 }).notNull(),
+  language: varchar("language", { length: 50 }).default("portuguese"),
+  abbreviation: varchar("abbreviation", { length: 10 }).notNull(),
+  copyrightInfo: text("copyright_info"),
+  isAvailable: boolean("is_available").default(true),
+  accessLevel: varchar("access_level", { length: 20 }).default("free"), // free, premium, advanced
+});
+
+// Bible books
+export const bibleBooks = pgTable("bible_books", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 100 }).notNull(),
+  abbreviation: varchar("abbreviation", { length: 10 }).notNull(),
+  testament: varchar("testament", { length: 10 }).notNull(), // old, new
+  orderIndex: integer("order_index").notNull(),
+  chapterCount: integer("chapter_count").notNull(),
+});
+
+// Bible chapters
+export const bibleChapters = pgTable("bible_chapters", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  bookId: varchar("book_id").notNull().references(() => bibleBooks.id),
+  chapterNumber: integer("chapter_number").notNull(),
+  verseCount: integer("verse_count").notNull(),
+}, (table) => ({
+  uniqueBookChapter: unique().on(table.bookId, table.chapterNumber),
+}));
+
+// Bible verses
+export const bibleVerses = pgTable("bible_verses", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  translationId: varchar("translation_id").notNull().references(() => bibleTranslations.id),
+  bookId: varchar("book_id").notNull().references(() => bibleBooks.id),
+  chapterNumber: integer("chapter_number").notNull(),
+  verseNumber: integer("verse_number").notNull(),
+  verseText: text("verse_text").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueVerse: unique().on(table.translationId, table.bookId, table.chapterNumber, table.verseNumber),
+}));
+
+// Cross references between verses
+export const crossReferences = pgTable("cross_references", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceVerseId: varchar("source_verse_id").notNull().references(() => bibleVerses.id),
+  targetVerseId: varchar("target_verse_id").notNull().references(() => bibleVerses.id),
+  referenceType: varchar("reference_type", { length: 50 }), // parallel, explanation, prophecy
+  strengthScore: decimal("strength_score", { precision: 3, scale: 2 }).default("1.0"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================
+// 3. PERSONAL STUDY
+// ============================================
 
 // Reading Plan Templates (predefined plans)
 export const readingPlanTemplates = pgTable("reading_plan_templates", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   description: text("description"),
-  duration: integer("duration").notNull(), // days
-  category: varchar("category").default("bible"), // bible, devotional, topical
-  
-  // Plan structure as JSON array of daily readings
+  duration: integer("duration").notNull(),
+  category: varchar("category").default("bible"),
   schedule: jsonb("schedule").$type<Array<{
     day: number;
     readings: { book: string; chapter: number; verses?: string }[];
   }>>().notNull(),
-  
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// User Reading Plans (user's active plans based on templates)
+// User Reading Plans
 export const readingPlans = pgTable("reading_plans", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   templateId: varchar("template_id").references(() => readingPlanTemplates.id),
   
   title: text("title").notNull(),
+  name: varchar("name", { length: 255 }),
   description: text("description"),
+  planType: varchar("plan_type", { length: 50 }), // chronological, thematic, book_by_book
   
-  // Plan structure as JSON array of daily readings
   schedule: jsonb("schedule").$type<Array<{
     day: number;
     readings: { book: string; chapter: number; verses?: string }[];
     isCompleted: boolean;
   }>>().notNull(),
   
-  currentDay: integer("current_day").default(1),
+  durationDays: integer("duration_days"),
   totalDays: integer("total_days").notNull(),
+  currentDay: integer("current_day").default(1),
+  isPublic: boolean("is_public").default(false),
+  isActive: boolean("is_active").default(true),
   isCompleted: boolean("is_completed").default(false),
   
   startedAt: timestamp("started_at").defaultNow(),
@@ -101,106 +226,132 @@ export const readingPlans = pgTable("reading_plans", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Achievements (conquistas)
-export const achievements = pgTable("achievements", {
+// Reading plan items
+export const readingPlanItems = pgTable("reading_plan_items", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  description: text("description"),
-  icon: varchar("icon").default("trophy"), // lucide icon name
-  category: varchar("category").default("reading"), // reading, streak, social, special
-  requirement: jsonb("requirement").$type<{
-    type: string; // chapters_read, streak_days, plan_completed, etc
-    value: number;
-  }>().notNull(),
-  xpReward: integer("xp_reward").default(0),
-  
-  createdAt: timestamp("created_at").defaultNow(),
+  planId: varchar("plan_id").notNull().references(() => readingPlans.id),
+  bookId: varchar("book_id").references(() => bibleBooks.id),
+  book: varchar("book", { length: 50 }),
+  chapterNumber: integer("chapter_number").notNull(),
+  dayNumber: integer("day_number").notNull(),
+  isCompleted: boolean("is_completed").default(false),
+  completedAt: timestamp("completed_at"),
+  userNotes: text("user_notes"),
 });
 
-// User Achievements
-export const userAchievements = pgTable("user_achievements", {
+// Reading history
+export const readingHistory = pgTable("reading_history", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  achievementId: varchar("achievement_id").notNull().references(() => achievements.id, { onDelete: "cascade" }),
-  
-  progress: integer("progress").default(0),
-  isUnlocked: boolean("is_unlocked").default(false),
-  unlockedAt: timestamp("unlocked_at"),
-  
-  createdAt: timestamp("created_at").defaultNow(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  book: varchar("book", { length: 50 }).notNull(),
+  chapterNumber: integer("chapter_number").notNull(),
+  translationId: varchar("translation_id").references(() => bibleTranslations.id),
+  readDurationSeconds: integer("read_duration_seconds"),
+  readAt: timestamp("read_at").defaultNow(),
 });
 
-// Prayers
-export const prayers = pgTable("prayers", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  content: text("content"),
-  
-  // Audio recording (if user recorded prayer)
-  audioUrl: text("audio_url"),
-  audioDuration: integer("audio_duration"), // in seconds
-  
-  // Location tagging (optional)
-  location: jsonb("location").$type<{ latitude: number; longitude: number; name?: string }>(),
-  
-  isAnswered: boolean("is_answered").default(false),
-  answeredAt: timestamp("answered_at"),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Bible Notes
-export const notes = pgTable("notes", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  
-  // Verse reference
-  book: text("book").notNull(),
-  chapter: integer("chapter").notNull(),
-  verse: integer("verse"),
-  
-  content: text("content").notNull(),
-  tags: text("tags").array(),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Bible Highlights
+// Verse highlights
 export const highlights = pgTable("highlights", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   
-  // Verse reference
   book: text("book").notNull(),
   chapter: integer("chapter").notNull(),
   verse: integer("verse").notNull(),
   verseText: text("verse_text").notNull(),
+  version: varchar("version").default("nvi"),
+  verseId: varchar("verse_id").references(() => bibleVerses.id),
   
-  color: varchar("color").notNull(), // yellow, green, blue, purple, pink, orange
+  color: varchar("color").notNull(),
+  highlightText: text("highlight_text"),
   
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Bible Bookmarks (Favoritos)
+// Bookmarks
 export const bookmarks = pgTable("bookmarks", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   
-  // Verse reference
   book: text("book").notNull(),
   chapter: integer("chapter").notNull(),
   verse: integer("verse").notNull(),
   verseText: text("verse_text").notNull(),
-  version: varchar("version").default("nvi"), // nvi, acf, arc, ra
+  version: varchar("version").default("nvi"),
+  title: varchar("title"),
   
-  // Optional note
   note: text("note"),
   tags: text("tags").array(),
   
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Personal notes
+export const notes = pgTable("notes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  book: text("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse"),
+  version: varchar("version").default("nvi"),
+  verseId: varchar("verse_id").references(() => bibleVerses.id),
+  
+  noteTitle: varchar("note_title", { length: 255 }),
+  content: text("content").notNull(),
+  noteType: varchar("note_type", { length: 50 }).default("personal"), // personal, study, sermon
+  tags: text("tags").array(),
+  isPublic: boolean("is_public").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// AI-generated verse commentaries
+export const verseCommentaries = pgTable("verse_commentaries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  book: varchar("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse").notNull(),
+  version: varchar("version").notNull(),
+  
+  commentaryType: varchar("commentary_type").notNull(),
+  content: text("content").notNull(),
+  commentary: text("commentary"),
+  
+  source: varchar("source").default("ai"),
+  teacherId: varchar("teacher_id").references(() => users.id, { onDelete: "cascade" }),
+  
+  generatedAt: timestamp("generated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueCommentary: unique().on(table.userId, table.version, table.book, table.chapter, table.verse, table.commentaryType),
+}));
+
+// Prayers journal
+export const prayers = pgTable("prayers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  title: text("title").notNull(),
+  content: text("content"),
+  prayerType: varchar("prayer_type", { length: 50 }).default("request"), // request, thanksgiving, confession
+  category: varchar("category", { length: 100 }),
+  emotionalState: varchar("emotional_state", { length: 50 }), // happy, sad, anxious, peaceful
+  
+  audioUrl: text("audio_url"),
+  audioDuration: integer("audio_duration"),
+  location: jsonb("location").$type<{ latitude: number; longitude: number; name?: string }>(),
+  
+  isAnswered: boolean("is_answered").default(false),
+  answeredAt: timestamp("answered_at"),
+  answerNotes: text("answer_notes"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Bible Reading Settings
@@ -208,16 +359,12 @@ export const bibleSettings = pgTable("bible_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
   
-  // Preferred Bible version
-  preferredVersion: varchar("preferred_version").default("nvi"), // nvi, acf, arc, ra
-  
-  // Reading preferences
+  preferredVersion: varchar("preferred_version").default("nvi"),
   fontSize: integer("font_size").default(16),
   lineHeight: integer("line_height").default(28),
   verseNumbers: boolean("verse_numbers").default(true),
-  redLetters: boolean("red_letters").default(false), // Jesus' words in red
+  redLetters: boolean("red_letters").default(false),
   
-  // Last reading position
   lastBook: text("last_book"),
   lastChapter: integer("last_chapter"),
   lastVerse: integer("last_verse"),
@@ -226,107 +373,32 @@ export const bibleSettings = pgTable("bible_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Podcasts
-export const podcasts = pgTable("podcasts", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  title: text("title").notNull(),
-  description: text("description"),
-  imageUrl: text("image_url"),
-  rssUrl: text("rss_url").notNull().unique(),
-  author: text("author"),
-  
-  // Cached episodes
-  episodes: jsonb("episodes").$type<Array<{
-    id: string;
-    title: string;
-    description: string;
-    audioUrl: string;
-    duration: number;
-    publishedAt: string;
-  }>>(),
-  
-  subscriberCount: integer("subscriber_count").default(0),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// User Podcast Subscriptions
-export const podcastSubscriptions = pgTable("podcast_subscriptions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  podcastId: varchar("podcast_id").notNull().references(() => podcasts.id, { onDelete: "cascade" }),
-  
-  // Playback state
-  currentEpisodeId: text("current_episode_id"),
-  currentPosition: integer("current_position").default(0), // in seconds
-  
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Teacher Lessons
-export const lessons = pgTable("lessons", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  teacherId: varchar("teacher_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  
-  title: text("title").notNull(),
-  description: text("description"),
-  
-  // Scripture base (optional for MVP - can be added later)
-  scriptureReferences: jsonb("scripture_references").$type<Array<{
-    book: string;
-    chapter: number;
-    verses: string;
-  }>>(),
-  
-  // Lesson objectives
-  objectives: text("objectives").array(),
-  
-  // Questions for quiz
-  questions: jsonb("questions").$type<Array<{
-    id: string;
-    question: string;
-    options: string[];
-    correctAnswer: number;
-  }>>(),
-  
-  // Scheduled time
-  scheduledFor: timestamp("scheduled_for"),
-  
-  isPublished: boolean("is_published").default(false),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Student Lesson Progress
-export const lessonProgress = pgTable("lesson_progress", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  lessonId: varchar("lesson_id").notNull().references(() => lessons.id, { onDelete: "cascade" }),
-  studentId: varchar("student_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  
-  isCompleted: boolean("is_completed").default(false),
-  score: integer("score"), // quiz score percentage
-  answers: jsonb("answers").$type<Record<string, number>>(), // questionId -> selected answer index
-  
-  completedAt: timestamp("completed_at"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+// ============================================
+// 4. COMMUNITY
+// ============================================
 
 // Community Posts
 export const communityPosts = pgTable("community_posts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  groupId: varchar("group_id").references(() => groups.id),
+  verseId: varchar("verse_id").references(() => bibleVerses.id),
   
-  // Shared verse
-  verseReference: text("verse_reference").notNull(), // e.g., "João 3:16"
+  verseReference: text("verse_reference").notNull(),
   verseText: text("verse_text").notNull(),
+  scriptureReference: jsonb("scripture_reference"),
   
-  // User's personal note/reflection
+  title: varchar("title", { length: 255 }),
   note: text("note").notNull(),
+  content: text("content"),
+  postType: varchar("post_type", { length: 50 }).default("reflection"), // reflection, question, testimony
+  tags: text("tags").array(),
   
+  isPublic: boolean("is_public").default(true),
   likeCount: integer("like_count").default(0),
+  likesCount: integer("likes_count").default(0),
   commentCount: integer("comment_count").default(0),
+  commentsCount: integer("comments_count").default(0),
   
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -337,75 +409,292 @@ export const postLikes = pgTable("post_likes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   postId: varchar("post_id").notNull().references(() => communityPosts.id, { onDelete: "cascade" }),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table) => ({
+  uniquePostUser: unique().on(table.postId, table.userId),
+}));
 
 // Community Post Comments
 export const postComments = pgTable("post_comments", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   postId: varchar("post_id").notNull().references(() => communityPosts.id, { onDelete: "cascade" }),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  parentCommentId: varchar("parent_comment_id").references((): any => postComments.id),
   
   content: text("content").notNull(),
+  likeCount: integer("like_count").default(0),
   
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Offline Content (track downloaded chapters for offline access)
-export const offlineContent = pgTable("offline_content", {
+// Post Reactions (advanced)
+export const postReactions = pgTable("post_reactions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  
-  // Bible reference
-  book: varchar("book").notNull(), // book abbreviation
-  chapter: integer("chapter").notNull(),
-  version: varchar("version").notNull(),
-  
-  // Content metadata
-  size: integer("size").default(0), // bytes
-  verseCount: integer("verse_count").default(0),
-  
-  // Timestamps
-  downloadedAt: timestamp("downloaded_at").defaultNow(),
-  lastAccessedAt: timestamp("last_accessed_at").defaultNow(),
-  expiresAt: timestamp("expires_at"), // optional expiration for cache management
-  
+  postId: varchar("post_id").references(() => communityPosts.id),
+  commentId: varchar("comment_id").references(() => postComments.id),
+  userId: varchar("user_id").notNull(),
+  reactionType: varchar("reaction_type", { length: 20 }).notNull(), // like, love, thankful, insightful
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Verse Commentaries (theological commentary cache)
-export const verseCommentaries = pgTable("verse_commentaries", {
+// ============================================
+// 5. GAMIFICATION
+// ============================================
+
+// User progress (XP, levels, streaks)
+export const userProgress = pgTable("user_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique(),
+  totalXp: integer("total_xp").default(0),
+  level: integer("level").default(1),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastActivityDate: date("last_activity_date"),
+  lastReadingDate: date("last_reading_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Achievement definitions
+export const achievementDefinitions = pgTable("achievement_definitions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  iconUrl: text("icon_url"),
+  achievementType: varchar("achievement_type", { length: 50 }).notNull(), // reading, community, consistency
+  requirementValue: integer("requirement_value").notNull(),
+  requirementMetric: varchar("requirement_metric", { length: 50 }).notNull(), // days_streak, chapters_read
+  tier: varchar("tier", { length: 20 }).default("bronze"), // bronze, silver, gold, platinum
+});
+
+// Achievements (legacy + new)
+export const achievements = pgTable("achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name"),
+  description: text("description"),
+  icon: varchar("icon").default("trophy"),
+  category: varchar("category").default("reading"),
+  requirement: jsonb("requirement").$type<{
+    type: string;
+    value: number;
+  }>(),
+  xpReward: integer("xp_reward").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User Achievements
+export const userAchievements = pgTable("user_achievements", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  achievementId: varchar("achievement_id").references(() => achievements.id, { onDelete: "cascade" }),
+  achievementType: varchar("achievement_type"),
+  achievementValue: integer("achievement_value").default(1),
   
-  // Bible reference
+  progress: integer("progress").default(0),
+  progressValue: integer("progress_value").default(0),
+  isUnlocked: boolean("is_unlocked").default(false),
+  unlockedAt: timestamp("unlocked_at"),
+  earnedAt: timestamp("earned_at").defaultNow(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// ============================================
+// 6. CONTENT & MEDIA
+// ============================================
+
+// Podcasts
+export const podcasts = pgTable("podcasts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description"),
+  author: varchar("author", { length: 255 }),
+  category: varchar("category", { length: 100 }),
+  language: varchar("language", { length: 10 }).default("pt"),
+  imageUrl: text("image_url"),
+  rssUrl: text("rss_url"),
+  rssFeed: varchar("rss_feed").unique(),
+  totalEpisodes: integer("total_episodes").default(0),
+  isActive: boolean("is_active").default(true),
+  accessLevel: varchar("access_level", { length: 20 }).default("free"),
+  
+  episodes: jsonb("episodes").$type<Array<{
+    id: string;
+    title: string;
+    description: string;
+    audioUrl: string;
+    duration: number;
+    publishedAt: string;
+  }>>(),
+  subscriberCount: integer("subscriber_count").default(0),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Podcast subscriptions
+export const podcastSubscriptions = pgTable("podcast_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  podcastId: varchar("podcast_id").notNull().references(() => podcasts.id, { onDelete: "cascade" }),
+  
+  currentEpisodeId: text("current_episode_id"),
+  currentPosition: integer("current_position").default(0),
+  
+  subscribedAt: timestamp("subscribed_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueUserPodcast: unique().on(table.userId, table.podcastId),
+}));
+
+// Teacher Lessons
+export const lessons = pgTable("lessons", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  teacherId: varchar("teacher_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  title: text("title").notNull(),
+  description: text("description"),
+  content: text("content"),
+  tags: text("tags").array(),
+  
+  scriptureReferences: jsonb("scripture_references").$type<Array<{
+    book: string;
+    chapter: number;
+    verses: string;
+  }>>(),
+  resources: jsonb("resources"),
+  
+  objectives: text("objectives").array(),
+  questions: jsonb("questions").$type<Array<{
+    id: string;
+    question: string;
+    options: string[];
+    correctAnswer: number;
+  }>>(),
+  
+  scheduledFor: timestamp("scheduled_for"),
+  isPublished: boolean("is_published").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Student Lesson Progress / Enrollments
+export const lessonProgress = pgTable("lesson_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  lessonId: varchar("lesson_id").notNull().references(() => lessons.id, { onDelete: "cascade" }),
+  studentId: varchar("student_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  progress: integer("progress").default(0),
+  isCompleted: boolean("is_completed").default(false),
+  score: integer("score"),
+  answers: jsonb("answers").$type<Record<string, number>>(),
+  
+  enrolledAt: timestamp("enrolled_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Additional content (devotionals, study guides)
+export const additionalContent = pgTable("additional_content", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  contentType: varchar("content_type", { length: 50 }).notNull(), // podcast, devotional, study_guide
+  audioUrl: text("audio_url"),
+  durationSeconds: integer("duration_seconds"),
+  author: varchar("author", { length: 255 }),
+  accessLevel: varchar("access_level", { length: 20 }).default("premium"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Content-Bible verse references
+export const contentVerseReferences = pgTable("content_verse_references", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  contentId: varchar("content_id").notNull().references(() => additionalContent.id),
+  verseId: varchar("verse_id").notNull().references(() => bibleVerses.id),
+  relevanceScore: decimal("relevance_score", { precision: 3, scale: 2 }).default("1.0"),
+}, (table) => ({
+  uniqueContentVerse: unique().on(table.contentId, table.verseId),
+}));
+
+// ============================================
+// 7. DAILY & OFFLINE
+// ============================================
+
+// Daily verses
+export const dailyVerses = pgTable("daily_verses", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dayOfYear: integer("day_of_year").notNull().unique(),
   book: varchar("book").notNull(),
   chapter: integer("chapter").notNull(),
   verse: integer("verse").notNull(),
   version: varchar("version").notNull(),
+  theme: varchar("theme", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Offline content cache
+export const offlineContent = pgTable("offline_content", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   
-  // Commentary type
-  commentaryType: varchar("commentary_type").notNull(), // exegese, historico, aplicacao, referencias, teologico
+  book: varchar("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  version: varchar("version").notNull(),
+  content: jsonb("content").notNull(),
   
-  // Generated content
-  content: text("content").notNull(),
+  size: integer("size").default(0),
+  verseCount: integer("verse_count").default(0),
   
-  // Source tracking
-  source: varchar("source").default("ai"), // ai, teacher, community
-  teacherId: varchar("teacher_id").references(() => users.id, { onDelete: "cascade" }),
+  downloadedAt: timestamp("downloaded_at").defaultNow(),
+  lastAccessedAt: timestamp("last_accessed_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
   
-  // Metadata
-  generatedAt: timestamp("generated_at").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
-  // Ensure one commentary per user+verse+type combination
-  uniqueCommentary: unique().on(table.userId, table.version, table.book, table.chapter, table.verse, table.commentaryType),
+  uniqueUserBookChapterVersion: unique().on(table.userId, table.book, table.chapter, table.version),
 }));
 
-// Relations
-export const usersRelations = relations(users, ({ many }) => ({
+// ============================================
+// 8. PAYMENTS
+// ============================================
+
+// Donations
+export const donations = pgTable("donations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  amount: integer("amount").notNull(),
+  currency: varchar("currency", { length: 10 }).default("BRL"),
+  type: varchar("type", { length: 50 }).notNull(), // one_time, recurring
+  stripePaymentId: varchar("stripe_payment_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  status: varchar("status", { length: 20 }).default("pending"), // pending, completed, failed, cancelled
+  createdAt: timestamp("created_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+});
+
+// ============================================
+// RELATIONS
+// ============================================
+
+export const churchesRelations = relations(churches, ({ one, many }) => ({
+  admin: one(users, {
+    fields: [churches.adminId],
+    references: [users.id],
+  }),
+  groups: many(groups),
+  members: many(users),
+}));
+
+export const usersRelations = relations(users, ({ one, many }) => ({
+  church: one(churches, {
+    fields: [users.churchId],
+    references: [churches.id],
+  }),
   readingPlans: many(readingPlans),
   prayers: many(prayers),
   notes: many(notes),
@@ -418,13 +707,65 @@ export const usersRelations = relations(users, ({ many }) => ({
   postLikes: many(postLikes),
   postComments: many(postComments),
   userAchievements: many(userAchievements),
+  groupMemberships: many(groupMembers),
+}));
+
+export const groupsRelations = relations(groups, ({ one, many }) => ({
+  church: one(churches, {
+    fields: [groups.churchId],
+    references: [churches.id],
+  }),
+  leader: one(users, {
+    fields: [groups.leaderId],
+    references: [users.id],
+  }),
+  members: many(groupMembers),
+  posts: many(communityPosts),
+}));
+
+export const groupMembersRelations = relations(groupMembers, ({ one }) => ({
+  group: one(groups, {
+    fields: [groupMembers.groupId],
+    references: [groups.id],
+  }),
+  user: one(users, {
+    fields: [groupMembers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const bibleTranslationsRelations = relations(bibleTranslations, ({ many }) => ({
+  verses: many(bibleVerses),
+}));
+
+export const bibleBooksRelations = relations(bibleBooks, ({ many }) => ({
+  chapters: many(bibleChapters),
+  verses: many(bibleVerses),
+}));
+
+export const bibleChaptersRelations = relations(bibleChapters, ({ one }) => ({
+  book: one(bibleBooks, {
+    fields: [bibleChapters.bookId],
+    references: [bibleBooks.id],
+  }),
+}));
+
+export const bibleVersesRelations = relations(bibleVerses, ({ one }) => ({
+  translation: one(bibleTranslations, {
+    fields: [bibleVerses.translationId],
+    references: [bibleTranslations.id],
+  }),
+  book: one(bibleBooks, {
+    fields: [bibleVerses.bookId],
+    references: [bibleBooks.id],
+  }),
 }));
 
 export const readingPlanTemplatesRelations = relations(readingPlanTemplates, ({ many }) => ({
   userPlans: many(readingPlans),
 }));
 
-export const readingPlansRelations = relations(readingPlans, ({ one }) => ({
+export const readingPlansRelations = relations(readingPlans, ({ one, many }) => ({
   user: one(users, {
     fields: [readingPlans.userId],
     references: [users.id],
@@ -432,6 +773,18 @@ export const readingPlansRelations = relations(readingPlans, ({ one }) => ({
   template: one(readingPlanTemplates, {
     fields: [readingPlans.templateId],
     references: [readingPlanTemplates.id],
+  }),
+  items: many(readingPlanItems),
+}));
+
+export const readingPlanItemsRelations = relations(readingPlanItems, ({ one }) => ({
+  plan: one(readingPlans, {
+    fields: [readingPlanItems.planId],
+    references: [readingPlans.id],
+  }),
+  book: one(bibleBooks, {
+    fields: [readingPlanItems.bookId],
+    references: [bibleBooks.id],
   }),
 }));
 
@@ -524,6 +877,10 @@ export const communityPostsRelations = relations(communityPosts, ({ one, many })
     fields: [communityPosts.userId],
     references: [users.id],
   }),
+  group: one(groups, {
+    fields: [communityPosts.groupId],
+    references: [groups.id],
+  }),
   likes: many(postLikes),
   comments: many(postComments),
 }));
@@ -557,10 +914,21 @@ export const offlineContentRelations = relations(offlineContent, ({ one }) => ({
   }),
 }));
 
-// Zod Schemas for validation
+// ============================================
+// ZOD SCHEMAS
+// ============================================
+
 export const upsertUserSchema = createInsertSchema(users);
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+export const insertChurchSchema = createInsertSchema(churches).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertChurch = z.infer<typeof insertChurchSchema>;
+export type Church = typeof churches.$inferSelect;
+
+export const insertGroupSchema = createInsertSchema(groups).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertGroup = z.infer<typeof insertGroupSchema>;
+export type Group = typeof groups.$inferSelect;
 
 export const insertReadingPlanTemplateSchema = createInsertSchema(readingPlanTemplates).omit({ id: true, createdAt: true });
 export type InsertReadingPlanTemplate = z.infer<typeof insertReadingPlanTemplateSchema>;
@@ -589,8 +957,8 @@ export const insertPrayerSchema = createInsertSchema(prayers)
   .extend({
     title: z.string().min(3, "Título deve ter pelo menos 3 caracteres").max(200, "Título muito longo"),
     content: z.string().min(10, "Oração deve ter pelo menos 10 caracteres").max(10000, "Oração muito longa").optional().nullable(),
-    audioUrl: z.string().max(5000000, "Áudio muito grande").optional().nullable(), // 5MB base64 limit
-    audioDuration: z.number().min(1).max(600).optional().nullable(), // max 10 minutes
+    audioUrl: z.string().max(5000000, "Áudio muito grande").optional().nullable(),
+    audioDuration: z.number().min(1).max(600).optional().nullable(),
   });
 export type InsertPrayer = z.infer<typeof insertPrayerSchema>;
 export type Prayer = typeof prayers.$inferSelect;
@@ -600,7 +968,7 @@ export const insertNoteSchema = createInsertSchema(notes)
   .extend({
     book: z.string().min(2, "Nome do livro inválido").max(50),
     chapter: z.number().int().min(1, "Capítulo deve ser maior que 0").max(150, "Capítulo inválido"),
-    verse: z.number().int().min(1).max(176).optional().nullable(), // longest chapter: Psalm 119 has 176 verses
+    verse: z.number().int().min(1).max(176).optional().nullable(),
     content: z.string().min(1, "Nota não pode estar vazia").max(5000, "Nota muito longa"),
   });
 export type InsertNote = z.infer<typeof insertNoteSchema>;
@@ -645,162 +1013,68 @@ export const insertPodcastSubscriptionSchema = createInsertSchema(podcastSubscri
 export type InsertPodcastSubscription = z.infer<typeof insertPodcastSubscriptionSchema>;
 export type PodcastSubscription = typeof podcastSubscriptions.$inferSelect;
 
-export const insertLessonSchema = createInsertSchema(lessons).omit({ id: true, createdAt: true, updatedAt: true }).extend({
-  title: z.string().min(5, "Título deve ter pelo menos 5 caracteres").max(200, "Título muito longo"),
-  description: z.string().max(2000, "Descrição muito longa").optional().nullable(),
-  content: z.string().min(10, "Conteúdo deve ter pelo menos 10 caracteres").optional().nullable(),
-  scriptureBase: z.string().optional(),
-});
+export const insertLessonSchema = createInsertSchema(lessons).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertLesson = z.infer<typeof insertLessonSchema>;
 export type Lesson = typeof lessons.$inferSelect;
-
-// Explicit partial schema for PATCH operations on lessons
-// Preserves nested validation while allowing partial updates
-export const updateLessonSchema = z.object({
-  title: z.string().min(3).max(200).optional(),
-  description: z.string().max(2000).optional().nullable(),
-  scriptureReferences: z.array(z.object({
-    book: z.string(),
-    chapter: z.number().int().min(1),
-    verses: z.string(),
-  })).optional().nullable(),
-  content: z.string().optional().nullable(),
-  videoUrl: z.string().url().optional().nullable(),
-  audioUrl: z.string().url().optional().nullable(),
-  quiz: z.object({
-    questions: z.array(z.object({
-      question: z.string(),
-      options: z.array(z.string()),
-      correctAnswer: z.number().int().min(0),
-    })),
-  }).optional().nullable(),
-  tags: z.array(z.string()).optional().nullable(),
-  isPublished: z.boolean().optional(),
-});
-export type UpdateLesson = z.infer<typeof updateLessonSchema>;
 
 export const insertLessonProgressSchema = createInsertSchema(lessonProgress).omit({ id: true, createdAt: true });
 export type InsertLessonProgress = z.infer<typeof insertLessonProgressSchema>;
 export type LessonProgress = typeof lessonProgress.$inferSelect;
 
 export const insertCommunityPostSchema = createInsertSchema(communityPosts)
-  .omit({ id: true, createdAt: true, updatedAt: true })
+  .omit({ id: true, createdAt: true, updatedAt: true, likeCount: true, commentCount: true })
   .extend({
-    verseReference: z.string().min(5, "Referência inválida").max(100, "Referência muito longa"),
-    verseText: z.string().min(10, "Texto do versículo muito curto").max(1000, "Texto muito longo"),
-    note: z.string().min(10, "Reflexão deve ter pelo menos 10 caracteres").max(2000, "Reflexão muito longa"),
+    verseReference: z.string().min(3, "Referência do versículo inválida").max(100),
+    verseText: z.string().min(5, "Texto do versículo inválido").max(2000),
+    note: z.string().min(10, "Reflexão deve ter pelo menos 10 caracteres").max(5000, "Reflexão muito longa"),
   });
 export type InsertCommunityPost = z.infer<typeof insertCommunityPostSchema>;
 export type CommunityPost = typeof communityPosts.$inferSelect;
 
+export const insertPostLikeSchema = createInsertSchema(postLikes).omit({ id: true, createdAt: true });
+export type InsertPostLike = z.infer<typeof insertPostLikeSchema>;
+export type PostLike = typeof postLikes.$inferSelect;
+
 export const insertPostCommentSchema = createInsertSchema(postComments)
   .omit({ id: true, createdAt: true, updatedAt: true })
   .extend({
-    content: z.string().min(1, "Comentário não pode estar vazio").max(1000, "Comentário muito longo"),
+    content: z.string().min(1, "Comentário não pode estar vazio").max(2000, "Comentário muito longo"),
   });
 export type InsertPostComment = z.infer<typeof insertPostCommentSchema>;
 export type PostComment = typeof postComments.$inferSelect;
 
-export const insertOfflineContentSchema = createInsertSchema(offlineContent).omit({ id: true, createdAt: true, downloadedAt: true, lastAccessedAt: true });
+export const insertOfflineContentSchema = createInsertSchema(offlineContent).omit({ id: true, createdAt: true });
 export type InsertOfflineContent = z.infer<typeof insertOfflineContentSchema>;
 export type OfflineContent = typeof offlineContent.$inferSelect;
 
-export const insertVerseCommentarySchema = createInsertSchema(verseCommentaries)
-  .omit({ id: true, createdAt: true, generatedAt: true })
-  .extend({
-    book: z.string().min(2, "Livro inválido").max(50, "Nome do livro muito longo"),
-    chapter: z.number().int().min(1, "Capítulo deve ser pelo menos 1"),
-    verse: z.number().int().min(1, "Versículo deve ser pelo menos 1"),
-    version: z.string().min(2, "Versão inválida").max(10, "Versão muito longa"),
-    commentaryType: z.enum(["exegese", "historico", "aplicacao", "referencias", "teologico"], {
-      errorMap: () => ({ message: "Tipo de comentário inválido" })
-    }),
-    content: z.string().min(10, "Comentário muito curto").max(10000, "Comentário muito longo"),
-    source: z.enum(["ai", "teacher", "community"]).default("ai"),
-  });
+export const insertVerseCommentarySchema = createInsertSchema(verseCommentaries).omit({ id: true, createdAt: true, generatedAt: true });
 export type InsertVerseCommentary = z.infer<typeof insertVerseCommentarySchema>;
 export type VerseCommentary = typeof verseCommentaries.$inferSelect;
 
-// Daily Verses (Versículo do Dia)
-export const dailyVerses = pgTable("daily_verses", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  dayOfYear: integer("day_of_year").notNull().unique(), // 1-365
-  
-  // Verse reference
-  book: varchar("book").notNull(),
-  chapter: integer("chapter").notNull(),
-  verseNumber: integer("verse_number").notNull(),
-  version: varchar("version").default("nvi"),
-  
-  // Verse content
-  text: text("text").notNull(),
-  reference: varchar("reference").notNull(), // "João 3:16"
-  
-  // Optional theme/category
-  theme: varchar("theme"), // love, faith, hope, courage, etc.
-  
-  createdAt: timestamp("created_at").defaultNow(),
-});
+export const insertDonationSchema = createInsertSchema(donations).omit({ id: true, createdAt: true });
+export type InsertDonation = z.infer<typeof insertDonationSchema>;
+export type Donation = typeof donations.$inferSelect;
+
+export const insertUserProgressSchema = createInsertSchema(userProgress).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+export type UserProgress = typeof userProgress.$inferSelect;
 
 export const insertDailyVerseSchema = createInsertSchema(dailyVerses).omit({ id: true, createdAt: true });
 export type InsertDailyVerse = z.infer<typeof insertDailyVerseSchema>;
 export type DailyVerse = typeof dailyVerses.$inferSelect;
 
+// Bible content types
+export type BibleTranslation = typeof bibleTranslations.$inferSelect;
+export type BibleBook = typeof bibleBooks.$inferSelect;
+export type BibleChapter = typeof bibleChapters.$inferSelect;
+export type BibleVerse = typeof bibleVerses.$inferSelect;
+export type CrossReference = typeof crossReferences.$inferSelect;
 
-// Donations (Doações) - Stripe integration based on javascript_stripe blueprint
-export const donations = pgTable("donations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  
-  amount: integer("amount").notNull(), // in cents
-  currency: varchar("currency").default("brl").notNull(), // brl, usd, eur
-  
-  type: varchar("type").notNull(), // one_time, recurring
-  frequency: varchar("frequency"), // daily, weekly, monthly (for recurring)
-  
-  destination: varchar("destination").default("app_operations").notNull(), // app_operations, bible_translation
-  
-  // Stripe integration (from javascript_stripe blueprint)
-  stripePaymentIntentId: varchar("stripe_payment_intent_id"),
-  stripeCustomerId: varchar("stripe_customer_id"),
-  stripeSubscriptionId: varchar("stripe_subscription_id"), // for recurring
-  
-  status: varchar("status").default("pending").notNull(), // pending, succeeded, failed, canceled
-  
-  // Anonymous donation option
-  isAnonymous: boolean("is_anonymous").default(false),
-  
-  // User message (optional)
-  message: text("message"),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const donationsRelations = relations(donations, ({ one }) => ({
-  user: one(users, {
-    fields: [donations.userId],
-    references: [users.id],
-  }),
-}));
-
-export const insertDonationSchema = createInsertSchema(donations)
-  .omit({ id: true, createdAt: true, updatedAt: true })
-  .extend({
-    amount: z.number().int().min(100, "Valor mínimo: R$ 1,00").max(1000000, "Valor máximo: R$ 10.000,00"), // in cents
-    currency: z.enum(["brl", "usd", "eur"]),
-    type: z.enum(["one_time", "recurring"], {
-      errorMap: () => ({ message: "Tipo deve ser: one_time ou recurring" })
-    }),
-    frequency: z.enum(["daily", "weekly", "monthly"]).optional().nullable(),
-    destination: z.enum(["app_operations", "bible_translation"]),
-    status: z.enum(["pending", "succeeded", "failed", "canceled"]),
-    message: z.string().max(500).optional().nullable(),
-  })
-  .refine(
-    (data) => data.type === "recurring" ? !!data.frequency : true,
-    { message: "Doações recorrentes devem ter uma frequência definida", path: ["frequency"] }
-  );
-export type InsertDonation = z.infer<typeof insertDonationSchema>;
-export type Donation = typeof donations.$inferSelect;
-
+// Group types
+export type GroupMember = typeof groupMembers.$inferSelect;
+export type PostReaction = typeof postReactions.$inferSelect;
+export type AchievementDefinition = typeof achievementDefinitions.$inferSelect;
+export type AdditionalContent = typeof additionalContent.$inferSelect;
+export type ContentVerseReference = typeof contentVerseReferences.$inferSelect;
+export type ReadingPlanItem = typeof readingPlanItems.$inferSelect;
+export type ReadingHistoryEntry = typeof readingHistory.$inferSelect;
