@@ -1440,10 +1440,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           dayOfYear,
           book: 'João',
           chapter: 3,
-          verseNumber: 16,
+          verse: 16,
           version: 'nvi',
-          text: 'Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.',
-          reference: 'João 3:16',
           theme: 'amor',
           createdAt: new Date(),
         };

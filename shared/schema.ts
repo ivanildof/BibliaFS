@@ -1017,6 +1017,9 @@ export const insertLessonSchema = createInsertSchema(lessons).omit({ id: true, c
 export type InsertLesson = z.infer<typeof insertLessonSchema>;
 export type Lesson = typeof lessons.$inferSelect;
 
+export const updateLessonSchema = createInsertSchema(lessons).omit({ id: true, teacherId: true, createdAt: true, updatedAt: true }).partial();
+export type UpdateLesson = z.infer<typeof updateLessonSchema>;
+
 export const insertLessonProgressSchema = createInsertSchema(lessonProgress).omit({ id: true, createdAt: true });
 export type InsertLessonProgress = z.infer<typeof insertLessonProgressSchema>;
 export type LessonProgress = typeof lessonProgress.$inferSelect;
