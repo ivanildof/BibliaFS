@@ -8,6 +8,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**November 25, 2025**:
+*   **Database Schema Expansion**: Updated `shared/schema.ts` to match production database model with 30+ tables. Added churches, groups, group_members, bible_translations, bible_books, bible_chapters, bible_verses, cross_references, reading_plan_items, reading_history, user_progress, achievement_definitions, post_reactions, additional_content, content_verse_references, daily_verses, and donations tables.
+*   **User Profile Enhancement**: Expanded users table with new fields: username, full_name, display_name, avatar_url, profile_image, profile_type, church_id, theological_background, subscription_expires_at, preferences, last_login.
+*   **Development Database Sync**: Synchronized development database with new schema using direct SQL migrations to add all new tables and columns.
+
 **November 22, 2025** (Session 3):
 *   **Full Book Audio Playback**: Implemented comprehensive book audio feature allowing users to listen to entire biblical books in sequential chapter playback. New `/api/bible/book-info/:book` route returns book metadata (chapter count, testament). BibleReader now features audio mode selection Dialog with two options: "Capítulo Atual" (current chapter only) or "Livro Completo" (entire book). Book mode creates automatic playlist of all chapters, plays them sequentially with progress tracking, and displays toast notifications showing remaining chapters. Supports pause/resume and automatic cleanup on completion.
 *   **Enhanced Search UX**: Changed search title from "Buscar Versículos" to "Buscar na Bíblia" with improved placeholder showing examples (amor, Davi, fé, salvação). Added descriptive text clarifying that users can search for any word, name, expression, or theme in the Bible, not just verse numbers.
