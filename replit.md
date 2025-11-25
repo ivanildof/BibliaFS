@@ -58,7 +58,7 @@ Preferred communication style: Simple, everyday language.
 *   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs for mobile devices.
 *   **Offline Mode**: Complete offline reading experience with IndexedDB browser storage, PostgreSQL backend tracking, API routes for sync, automatic online/offline detection, intelligent fallback loading, download/delete controls, and a dedicated `/offline` page.
 *   **Security & Resilience**: Robust validation (userId, external API, Zod schema), comprehensive error handling, retry mechanisms, and fallback UI.
-*   **Production Database Setup**: User must manually execute `server/production-schema.sql` in their production PostgreSQL database.
+*   **Production Database Setup**: User must manually execute `server/production-schema.sql` in their production PostgreSQL database. Updated to advanced model with churches, groups, bible content tables, cross-references, comments, reactions, and 18 achievement definitions.
 
 ## External Dependencies
 
