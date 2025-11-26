@@ -160,6 +160,20 @@ export function AppSidebar() {
             </div>
           </Link>
         )}
+        <div className="mt-4 text-center text-xs text-muted-foreground">
+          © 2025 Bíblia+. Todos os direitos reservados.
+          <br />
+          Desenvolvido por |{" "}
+          <a 
+            href="https://fabrisite.com.br/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+            data-testid="link-fabrisite-sidebar"
+          >
+            FabriSite
+          </a>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
