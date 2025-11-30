@@ -153,8 +153,8 @@ export interface IStorage {
   deleteOfflineContent(id: string, userId: string): Promise<void>;
   deleteUserOfflineContent(userId: string): Promise<void>;
   
-  // Verse Commentaries
-  getVerseCommentary(book: string, chapter: number, verse: number, version: string, commentaryType: string): Promise<VerseCommentary | undefined>;
+  // Verse Commentaries (with userId for user-isolation and global cache support)
+  getVerseCommentary(userId: string, book: string, chapter: number, verse: number, version: string, commentaryType: string): Promise<VerseCommentary | undefined>;
   createVerseCommentary(commentary: InsertVerseCommentary): Promise<VerseCommentary>;
   
   // Daily Verse

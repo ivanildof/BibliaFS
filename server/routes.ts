@@ -781,7 +781,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return data.choices[0].message.content;
   }
 
-  // Bible Commentary Route (User-isolated)
+  // Bible Commentary Route (with Global Cache for cost reduction)
   app.get("/api/bible/commentary/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -803,8 +803,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Check cache first (user-isolated)
-      const cached = await storage.getVerseCommentary(
+      // Check user-specific cache first
+      const userCached = await storage.getVerseCommentary(
         userId,
         book,
         parseInt(chapter),
@@ -813,9 +813,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         commentaryType
       );
 
-      if (cached) {
-        console.log(`[Commentary] Cache hit for user ${userId}: ${book} ${chapter}:${verse} (${commentaryType})`);
-        return res.json(cached);
+      if (userCached) {
+        console.log(`[Commentary] User cache hit for ${userId}: ${book} ${chapter}:${verse} (${commentaryType})`);
+        return res.json(userCached);
+      }
+
+      // Check global cache (shared across all users) to reduce API costs
+      const globalCached = await storage.getVerseCommentary(
+        'global',
+        book,
+        parseInt(chapter),
+        parseInt(verse),
+        version,
+        commentaryType
+      );
+
+      if (globalCached) {
+        console.log(`[Commentary] Global cache hit: ${book} ${chapter}:${verse} (${commentaryType}) - saving API cost`);
+        // Copy global commentary to user's cache for faster future access
+        const userCommentary = await storage.createVerseCommentary({
+          userId,
+          book,
+          chapter: parseInt(chapter),
+          verse: parseInt(verse),
+          version,
+          commentaryType,
+          content: globalCached.content,
+          source: 'cache',
+        });
+        return res.json(userCommentary);
       }
 
       // Fetch verse text
@@ -832,7 +858,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Versículo não encontrado" });
       }
 
-      console.log(`[Commentary] Generating ${commentaryType} for user ${userId}: ${book} ${chapter}:${verse}`);
+      console.log(`[Commentary] Generating ${commentaryType}: ${book} ${chapter}:${verse} (new API call)`);
 
       // Generate commentary with full chapter context
       const content = await generateCommentary(
@@ -844,7 +870,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         chapterData
       );
 
-      // Cache the result (user-isolated)
+      // Save to BOTH global cache and user cache
+      // Global cache for future users (reduces API costs significantly)
+      await storage.createVerseCommentary({
+        userId: 'global',
+        book,
+        chapter: parseInt(chapter),
+        verse: parseInt(verse),
+        version,
+        commentaryType,
+        content,
+        source: 'ai',
+      });
+
+      // User cache for quick personal access
       const commentary = await storage.createVerseCommentary({
         userId,
         book,
