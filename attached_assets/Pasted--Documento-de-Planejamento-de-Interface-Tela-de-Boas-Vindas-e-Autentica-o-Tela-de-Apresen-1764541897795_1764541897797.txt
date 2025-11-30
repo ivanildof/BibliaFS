@@ -1,0 +1,311 @@
+# Documento de Planejamento de Interface
+
+## Tela de Boas-Vindas e Autenticação
+
+### Tela de Apresentação
+
+* **Componente de Carrossel**: Apresenta 3-4 telas com benefícios do app (IA, Gamificação, Comunidade)
+
+* **Botão "Começar"**: Navega para tela de login/cadastro
+
+* **Indicador de progresso**: Mostra página atual do carrossel
+
+### Tela de Login
+
+* **Campo de email**: Input text com validação de formato
+
+* **Campo de senha**: Input password com toggle de visibilidade
+
+* **Botão "Entrar"**: Submete credenciais para autenticação
+
+* **Link "Esqueci minha senha"**: Navega para recuperação
+
+* **Botão de rede social**: Integração com Replit Auth
+
+* **Link para cadastro**: "Não tem conta? Cadastre-se"
+
+### Tela de Cadastro
+
+* **Campo de nome completo**: Input text obrigatório
+
+* **Campo de email**: Com validação em tempo real
+
+* **Campo de senha**: Com indicador de força da senha
+
+* **Checkbox de termos**: Aceitação obrigatória
+
+* **Botão "Criar Conta"**: Valida e submete dados
+
+## Tela Principal (Tab Navigation)
+
+### Componente de Navegação Inferior
+
+* **Tab "Leitura"**: Ícone de livro, badge de notificações
+
+* **Tab "Comunidade"**: Ícone de pessoas, contador de interações
+
+* **Tab "Diário"**: Ícone de caderno, indicador de streak
+
+* **Tab "Perfil"**: Ícone de usuário, avatar do perfil
+
+## Épico: Leitura e Estudo da Bíblia
+
+### Tela de Leitura da Bíblia
+
+* **Seletor de tradução**: Dropdown com 4 opções (NVI, ACF, ARC, RA)
+
+* **Navegador de livros**: Modal com lista organizada por testamentos
+
+* **Indicador de capítulo**: Header com número atual e seletor
+
+* **Área de texto bíblico**: ScrollView com versículos numerados
+
+* **Botão de áudio IA**: Play/pause por capítulo com progresso
+
+* **Botão flutuante de IA**: Aciona assistente teológico no versículo atual
+
+* **Controles de navegação**: Previous/next chapter buttons
+
+### Modal de Seleção de Livro
+
+* **Filtro por testamento**: Abas "Antigo" e "Novo" Testamento
+
+* **Lista alfabética**: ScrollView com todos os livros
+
+* **Índice rápido**: Barra lateral A-Z para navegação rápida
+
+### Tela de Busca Inteligente
+
+* **Campo de busca**: Input com placeholder "Buscar por palavra, frase ou tema..."
+
+* **Filtros avançados**: Dropdowns para livro, testamento, tradução
+
+* **Lista de resultados**: Grouped por livro/capítulo com preview do versículo
+
+* **Contador de resultados**: "X versículos encontrados"
+
+* **Histórico de buscas**: Lista das últimas 5 buscas
+
+### Modal do Assistente Teológico com IA
+
+* **Header contextual**: Mostra versículo de referência
+
+* **Área de conversa**: Chat bubbles com histórico da sessão
+
+* **Campo de pergunta**: Input text com placeholder "Pergunte sobre este versículo..."
+
+* **Botão de enviar**: Submete pergunta para GPT-4o
+
+* **Indicador de carregamento**: Spinner durante processamento
+
+* **Botões de ação**: Copiar resposta, Nova conversa
+
+## Épico: Engajamento e Crescimento
+
+### Tela de Perfil do Usuário
+
+* **Header do perfil**: Avatar, nome, nível atual e progresso
+
+* **Estatísticas**: XP total, streak atual, conquistas desbloqueadas
+
+* **Seção "Meu Progresso"**: Gráfico de atividade semanal
+
+* **Seção "Conquistas"**: Grid com badges e progresso
+
+* **Seção "Configurações"**: Links para preferências
+
+### Modal de Destaques e Notas
+
+* **Paleta de cores**: 6 opções hexadecimais para destacar
+
+* **Editor de notas**: Campo de texto rico com toolbar (negrito, itálico, lista)
+
+* **Preview do versículo**: Contexto do texto destacado
+
+* **Botões de ação**: Salvar, Cancelar, Deletar
+
+### Tela de Favoritos
+
+* **Filtros**: Por data, livro, tipo (versículo, nota)
+
+* **Lista de itens**: Card para cada favorito com metadata
+
+* **Empty state**: Ilustração quando não há favoritos
+
+* **Ações em lote**: Seleção múltipla para deletar/exportar
+
+## Épico: Planos de Leitura
+
+### Tela de Planos de Leitura
+
+* **Categorias**: Abas horizontais com temas (Fé, Salvação, Casamento, etc.)
+
+* **Cards de plano**: Imagem, título, duração, progresso atual
+
+* **Filtro por duração**: 7, 30, 90, 365 dias
+
+* **Botão "Explorar todos"**: Navega para catálogo completo
+
+### Tela de Detalhes do Plano
+
+* **Header**: Imagem, título, descrição, estatísticas
+
+* **Botão "Iniciar Plano"**: Abre modal de agendamento
+
+* **Lista de leituras**: Cronograma diário com checkboxes
+
+* **Progresso visual**: Barra de progresso ou círculo
+
+* **Configurações**: Toggle para notificações push
+
+### Modal de Agendamento
+
+* **Seletor de data**: Date picker para início do plano
+
+* **Seletor de horário**: Time picker para lembretes
+
+* **Confirmação**: Resumo das configurações
+
+* **Botão "Confirmar"**: Inicia plano com notificações
+
+## Épico: Diário de Orações
+
+### Tela do Diário de Orações
+
+* **Header**: Contador de orações, filtro por status
+
+* **Botão "Nova Oração"**: Floating action button
+
+* **Lista de orações**: Cards com data, status, preview
+
+* **Empty state**: Incentivo para primeira oração
+
+### Modal de Nova Oração
+
+* **Campo de título**: Input text obrigatório
+
+* **Campo de texto**: Textarea para detalhes da oração
+
+* **Botão de gravação**: Inicia/para gravação de áudio (max 5min)
+
+* **Cronômetro**: Display do tempo de gravação
+
+* **Seletor de status**: Dropdown (Em andamento, Não respondida, Respondida)
+
+* **Botões de ação**: Salvar, Cancelar
+
+## Épico: Comunidade
+
+### Tela do Feed da Comunidade
+
+* **Header**: Abas "Para você" e "Tópicos em Alta"
+
+* **Card de criar post**: Input compacto que expande para modal
+
+* **Feed de posts**: Cards com avatar, nome, versículo, conteúdo, interações
+
+* **Sistema de interação**: Botões curtir/comentar com contadores
+
+* **Infinite scroll**: Carregamento sob demanda
+
+### Modal de Criar Post
+
+* **Seletor de versículo**: Busca e seleção do versículo de referência
+
+* **Campo de conteúdo**: Textarea com contador (max 500 caracteres)
+
+* **Preview do versículo**: Contexto do texto referenciado
+
+* **Configurações de privacidade**: Público/Seguidores
+
+* **Botões de ação**: Publicar, Salvar rascunho
+
+## Épico: Modo Professor
+
+### Tela do Modo Professor
+
+* **Header**: Abas "Minhas Aulas", "Rascunhos", "Biblioteca"
+
+* **Botão "Criar Aula"**: Floating action button
+
+* **Lista de aulas**: Cards com título, data, estatísticas de engajamento
+
+* **Filtros**: Por tema, data, status (publicada/rascunho)
+
+### Editor de Aula (Modo Professor)
+
+* **Toolbar superior**: Salvar, Preview, Publicar, Exportar PDF
+
+* **Área de conteúdo**: Editor drag-and-drop
+
+* **Sidebar de componentes**: Versículos, Notas, Imagens, Links
+
+* **Seção de metadados**: Título, descrição, tags, configurações de compartilhamento
+
+* **Preview em tempo real**: Visualização mobile da aula
+
+## Componentes Reutilizáveis
+
+### Sistema de Design
+
+* **Botões**: Primary, Secondary, Ghost, Danger variants
+
+* **Inputs**: Text, Password, Search, Textarea
+
+* **Cards**: Default, Elevated, Interactive
+
+* **Modais**: Small, Medium, Large, Fullscreen
+
+* **Loaders**: Spinner, Skeleton screens
+
+* **Empty States**: Ilustrações com mensagens contextuais
+
+* **Badges**: Status, Contador, Destaque
+
+### Componentes Específicos
+
+* **Versículo Component**: Texto, número, ações (destacar, favoritar, compartilhar)
+
+* **Progress Indicator**: Barras, círculos, streaks
+
+* **Achievement Badge**: Ícone, título, descrição, progresso
+
+* **Audio Player**: Play/pause, progress bar, speed control
+
+* **Search Filters**: Chips selecionáveis, dropdowns avançados
+
+## Requisitos de Interação
+
+### Gestos Suportados
+
+* **Swipe horizontal**: Navegação entre capítulos
+
+* **Swipe vertical**: Scroll de conteúdo
+
+* **Tap longo**: Menu contextual para versículos
+
+* **Pull to refresh**: Recarregar feed e listas
+
+* **Double tap**: Favoritar rápido
+
+### Estados de Interface
+
+* **Loading**: Durante carregamento de dados
+
+* **Empty**: Quando não há conteúdo
+
+* **Error**: Falhas de conexão ou servidor
+
+* **Success**: Confirmações de ações
+
+* **Disabled**: Componentes não disponíveis
+
+### Animações e Transições
+
+* **Page transitions**: Slide left/right
+
+* **Micro-interactions**: Likes, favoritos, checkmarks
+
+* **Loading animations**: Esqueletos, spinners
+
+* **State changes**: Smooth transitions entre estados
