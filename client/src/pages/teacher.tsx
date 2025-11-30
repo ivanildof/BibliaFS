@@ -19,7 +19,8 @@ import {
   BookOpen,
   CheckCircle2,
   Loader2,
-  Clock
+  Clock,
+  Printer
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -27,15 +28,154 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { insertLessonSchema, type Lesson } from "@shared/schema";
+import { type Lesson } from "@shared/schema";
 import { useLanguage } from '@/contexts/LanguageContext';
 
-// Form schema
-const formSchema = insertLessonSchema.extend({
+const exportLessonToPDF = (lesson: Lesson) => {
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) return;
+
+  const objectives = lesson.objectives || [];
+  const quizQuestions = lesson.questions || [];
+  const scriptureRef = lesson.scriptureReferences?.[0];
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8">
+      <title>${lesson.title} - Bíblia+</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+          font-family: 'Georgia', serif; 
+          line-height: 1.6; 
+          padding: 40px; 
+          max-width: 800px; 
+          margin: 0 auto;
+          color: #1a1a1a;
+        }
+        .header { 
+          text-align: center; 
+          border-bottom: 2px solid #5711D9; 
+          padding-bottom: 20px; 
+          margin-bottom: 30px; 
+        }
+        .logo { 
+          font-size: 24px; 
+          font-weight: bold; 
+          color: #5711D9; 
+          margin-bottom: 10px; 
+        }
+        h1 { 
+          font-size: 28px; 
+          color: #1a1a1a; 
+          margin-bottom: 10px; 
+        }
+        .scripture-base { 
+          font-size: 18px; 
+          color: #5711D9; 
+          font-style: italic; 
+        }
+        .section { 
+          margin-bottom: 25px; 
+        }
+        .section-title { 
+          font-size: 16px; 
+          font-weight: bold; 
+          color: #5711D9; 
+          border-bottom: 1px solid #e0e0e0; 
+          padding-bottom: 5px; 
+          margin-bottom: 10px; 
+        }
+        .description { 
+          font-size: 14px; 
+          color: #444; 
+        }
+        ul { 
+          padding-left: 20px; 
+        }
+        li { 
+          margin-bottom: 8px; 
+        }
+        .quiz-question { 
+          background: #f5f5f5; 
+          padding: 15px; 
+          border-radius: 8px; 
+          margin-bottom: 10px; 
+        }
+        .quiz-number { 
+          font-weight: bold; 
+          color: #5711D9; 
+        }
+        .footer { 
+          margin-top: 40px; 
+          text-align: center; 
+          font-size: 12px; 
+          color: #888; 
+          border-top: 1px solid #e0e0e0; 
+          padding-top: 20px; 
+        }
+        @media print {
+          body { padding: 20px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo">Bíblia+</div>
+        <h1>${lesson.title}</h1>
+        ${scriptureRef ? `<div class="scripture-base">${scriptureRef.book} ${scriptureRef.chapter}${scriptureRef.verses ? ':' + scriptureRef.verses : ''}</div>` : ''}
+      </div>
+
+      <div class="section">
+        <div class="section-title">Descrição</div>
+        <p class="description">${lesson.description || 'Sem descrição'}</p>
+      </div>
+
+      ${objectives.length > 0 ? `
+        <div class="section">
+          <div class="section-title">Objetivos da Aula</div>
+          <ul>
+            ${objectives.map(obj => `<li>${obj}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+
+      ${quizQuestions.length > 0 ? `
+        <div class="section">
+          <div class="section-title">Perguntas para Reflexão</div>
+          ${quizQuestions.map((q: any, i: number) => `
+            <div class="quiz-question">
+              <span class="quiz-number">${i + 1}.</span> ${q.question || q}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <div class="footer">
+        <p>Material gerado pelo Bíblia+ | www.bibliaplus.app</p>
+        <p>© 2025 Bíblia+. Desenvolvido por FabriSite</p>
+      </div>
+
+      <script>
+        window.onload = function() { window.print(); }
+      </script>
+    </body>
+    </html>
+  `;
+
+  printWindow.document.write(html);
+  printWindow.document.close();
+};
+
+// Form schema - simplified for lesson creation
+const formSchema = z.object({
   title: z.string().min(5, "O título deve ter pelo menos 5 caracteres"),
   description: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres"),
   scriptureBase: z.string().min(1, "Digite o texto-base"),
-}).omit({ userId: true });
+});
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -55,8 +195,6 @@ export default function Teacher() {
       title: "",
       description: "",
       scriptureBase: "",
-      objectives: [],
-      quizQuestions: [],
     },
   });
 
@@ -371,7 +509,12 @@ export default function Teacher() {
                               <BarChart className="h-4 w-4 mr-2" />
                               Ver {t.teacherMode.progress}
                             </Button>
-                            <Button variant="outline" size="sm" data-testid="button-export-pdf">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => exportLessonToPDF(lesson)}
+                              data-testid="button-export-pdf"
+                            >
                               <Download className="h-4 w-4 mr-2" />
                               PDF
                             </Button>

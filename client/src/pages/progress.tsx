@@ -9,11 +9,13 @@ import {
   Loader2,
   Award,
   Target,
-  Zap
+  Zap,
+  Crown
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Achievement, UserAchievement } from "@shared/schema";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getLevelInfo, getXpProgressInLevel, GAMIFICATION_LEVELS } from '@/lib/gamification-levels';
 
 interface GamificationStats {
   level: number;
@@ -62,9 +64,10 @@ export default function Progress() {
     );
   }
 
-  const xpForNextLevel = ((stats?.level || 1) * 100);
-  const xpProgress = ((stats?.experiencePoints || 0) % 100);
-  const xpProgressPercent = (xpProgress / 100) * 100;
+  const currentLevel = stats?.level || 1;
+  const totalXp = stats?.experiencePoints || 0;
+  const levelInfo = getLevelInfo(currentLevel);
+  const xpProgressInfo = getXpProgressInLevel(totalXp, currentLevel);
 
   const unlockedAchievements = userAchievements.filter(ua => ua.isUnlocked);
   const totalAchievements = achievements.length;
@@ -105,19 +108,25 @@ export default function Progress() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-gradient-to-br from-primary/10 to-accent/10">
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{t.progress.level}</CardTitle>
-              <Zap className="h-4 w-4 text-primary" />
+              <Crown className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-primary" data-testid="text-level">
-                {stats?.level || 1}
+                {currentLevel}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {xpProgress} / {xpForNextLevel} {t.progress.xp}
+              <p className="text-sm font-medium text-accent mt-1" data-testid="text-level-title">
+                {levelInfo.title}
               </p>
-              <ProgressBar value={xpProgressPercent} className="h-2 mt-2" />
+              <p className="text-xs text-muted-foreground mt-2">
+                {xpProgressInfo.current} / {xpProgressInfo.needed} XP
+              </p>
+              <ProgressBar value={xpProgressInfo.percent} className="h-2 mt-2" />
+              <p className="text-xs text-muted-foreground mt-1">
+                Total: {totalXp} XP
+              </p>
             </CardContent>
           </Card>
 
@@ -181,12 +190,17 @@ export default function Progress() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">{t.progress.progressToNextLevel}</span>
-                <span className="font-medium">{Math.round(xpProgressPercent)}%</span>
+                <span className="font-medium">{Math.round(xpProgressInfo.percent)}%</span>
               </div>
-              <ProgressBar value={xpProgressPercent} className="h-3" />
+              <ProgressBar value={xpProgressInfo.percent} className="h-3" />
               <p className="text-xs text-muted-foreground">
-                {t.progress.xpNeededForLevel.replace('{xp}', (xpForNextLevel - xpProgress).toString()).replace('{level}', ((stats?.level || 1) + 1).toString())}
+                {t.progress.xpNeededForLevel.replace('{xp}', (xpProgressInfo.needed - xpProgressInfo.current).toString()).replace('{level}', (currentLevel + 1).toString())}
               </p>
+              {currentLevel < 50 && (
+                <p className="text-xs text-accent">
+                  Pr\u00f3ximo: {getLevelInfo(currentLevel + 1).title}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -238,7 +252,7 @@ export default function Progress() {
                       <CardContent className="pb-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground text-xs">
-                            {achievement.requirement}
+                            {achievement.requirement ? `${achievement.requirement.type}: ${achievement.requirement.value}` : ''}
                           </span>
                           <Badge variant="outline" className="text-xs">
                             <Star className="h-3 w-3 mr-1" />
@@ -246,11 +260,11 @@ export default function Progress() {
                           </Badge>
                         </div>
                         
-                        {!unlocked && userAchievement && userAchievement.progress > 0 && (
+                        {!unlocked && userAchievement && (userAchievement.progress ?? 0) > 0 && (
                           <div className="mt-3">
-                            <ProgressBar value={userAchievement.progress} className="h-1.5" />
+                            <ProgressBar value={userAchievement.progress ?? 0} className="h-1.5" />
                             <p className="text-xs text-muted-foreground mt-1">
-                              {userAchievement.progress}% {t.progress.complete}
+                              {userAchievement.progress ?? 0}% {t.progress.complete}
                             </p>
                           </div>
                         )}
