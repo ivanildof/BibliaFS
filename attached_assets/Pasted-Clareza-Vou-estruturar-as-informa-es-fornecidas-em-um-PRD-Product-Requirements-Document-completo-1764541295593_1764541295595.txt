@@ -1,0 +1,186 @@
+Clareza! Vou estruturar as informações fornecidas em um PRD (Product Requirements Document) completo e profissional em português, corrigindo os erros e preenchendo todas as seções de forma lógica e detalhada.
+
+---
+
+### **PRD - Bíblia+ - Aplicativo de Estudo Bíblico Premium**
+
+**Data:** 24 de Maio de 2024
+**Autor:** [Seu Nome/Equipe]
+**Status:** Em Definição
+
+---
+
+### 1. Resumo Executivo
+
+O **Bíblia+** é um aplicativo móvel premium de estudo bíblico que combina um leitor de Bíblia robusto com tecnologia de IA generativa para oferecer uma experiência de estudo profunda, personalizada e engajante. O produto visa atender desde o leitor casual até estudantes sérios da Bíblia e professores, centralizando todas as ferramentas de estudo (leitura, áudio, comentários, anotações, comunidade e ensino) em uma única plataforma. O diferencial principal está na integração nativa do **Assistente Teológico com IA (GPT-4o)** e em um sistema de **gamificação** para incentivar a constância no engajamento com as escrituras.
+
+---
+
+### 2. Visão do Produto
+
+**Para** cristãos de diversas tradições que buscam se aprofundar no estudo bíblico,
+**O Bíblia+** é um aplicativo de estudo bíblico tudo-em-um,
+**Que** oferece leitura, áudio, comentários inteligentes por IA, ferramentas de anotação, comunidade e recursos para professores.
+**Diferente de** aplicativos tradicionais que oferecem funcionalidades isoladas ou comentários estáticos,
+**Nosso produto** integra IA de ponta para fornecer insights contextuais e personalizados, promove o engajamento contínuo através da gamificação e cria um ecossistema de aprendizado e compartilhamento.
+
+---
+
+### 3. Análise de Mercado e Oportunidade
+
+*   **Mercado-Alvo:** O mercado global de apps religiosos e de espiritualidade é significativo, com um público-alvo primário de mais de 2 bilhões de cristãos. O subset de "estudo bíblico digital" é altamente competitivo, mas com demanda constante por inovação.
+*   **Concorrentes Principais:**
+    *   **YouVersion:** Líder do mercado, ampla base de usuários, vasta biblioteca de versões e planos. Ponto fraco: comentários e ferramentas de estudo profundas são, em sua maioria, estáticas ou requerem compras adicionais.
+    *   *Logos/Faithlife:* Focado no mercado profissional/acadêmico, com ferramentas de pesquisa extremamente poderosas. Ponto fraco: Interface complexa, alto custo e foco menor no usuário leigo.
+    *   **Blue Letter Bible:** Conhecido por suas ferramentas de referência e léxico. Ponto fraco: Interface antiquada e experiência menos fluída para leitura e devocional diária.
+*   **Oportunidade:** Existe uma clara oportunidade para um aplicativo que una a usabilidade e o alcance do YouVersion com a profundidade de estudo do Logos, utilizando a IA como um diferencial centralizador e facilitador. A gamificação e o modo "Professor" são segmentos pouco explorados pelos concorrentes principais.
+
+---
+
+### 4. Personas
+
+1.  **Maria, 45 anos - Estudante Dedicada**
+    *   **Bio:** Professora, mãe. Busca entender a Bíblia com mais profundidade para seu crescimento pessoal e para ensinar na escola dominical.
+    *   **Necessidades:** Comentários confiáveis e acessíveis, ferramentas para fazer anotações e conectar versículos, planos de leitura temáticos.
+    *   **Como usa o Bíblia+:** Usa o Assistente de IA para tirar dúvidas rápidas sobre contextos históricos, cria notas ligadas a versículos específicos e segue planos de leitura de 30 dias.
+
+2.  **João, 28 anos - Jovem Profissional**
+    *   **Bio:** Trabalha com tecnologia, tem uma rotina corrida. Valoriza eficiência e design. Quer manter uma prática devocional consistente.
+    *   **Necessidades:** Experiência rápida e agradável, áudio para ouvir no trânsito, motivação para não perder o hábito, conteúdo compartilhável.
+    *   **Como usa o Bíblia+:** Ouve a narração por IA durante o trajeto para o trabalho, usa o sistema de gamificação (XP e streaks) para se manter motivado e compartilha o versículo do dia em suas redes sociais.
+
+3.  **Pastor Carlos, 55 anos - Líder Religioso**
+    *   **Bio:** Pastor de uma igreja local, precisa preparar sermões e aulas de forma eficiente.
+    *   **Necessidades:** Comparar diferentes traduções rapidamente, acessar material de apoio de qualidade, criar e compartilhar conteúdo com sua congregação.
+    *   **Como usa o Bíblia+:** Usa o Modo Professor para criar séries de aulas baseadas em livros da Bíblia, utiliza a busca inteligente para encontrar passagens sobre temas específicos para seus sermões e compartilha estudos diretamente com os grupos da igreja.
+
+---
+
+### 5. Histórias de Usuário (User Stories)
+
+**Épico: Leitura e Estudo da Bíblia**
+*   **Como Maria,** eu quero poder comparar rapidamente 4 traduções de um mesmo versículo, para entender nuances do texto original.
+*   **Como João,** eu quero buscar por palavras-chave como "esperança" e ver todos os versículos relevantes, para encontrar encorajamento rápido.
+*   **Como Pastor Carlos,** eu quero que o Assistente de IA me explique o contexto histórico de um versículo, incluindo os versículos anteriores e posteriores, para enriquecer minha pregação.
+
+**Épico: Engajamento e Crescimento**
+*   **Como João,** eu quero receber XP por cada capítulo lido e manter uma sequência (streak) diária, para me sentir recompensado e manter o hábito.
+*   **Como Maria,** eu quero poder marcar minhas orações como "respondidas" e revisá-las posteriormente, para fortalecer minha fé.
+
+**Épico: Comunidade e Ensino**
+*   **Como Pastor Carlos,** eu quero criar uma aula com versículos, minhas próprias notas e material de apoio, e compartilhar com minha classe, para facilitar o discipulado.
+*   **Como Maria,** eu quero ver o que outras pessoas estão postando sobre um versículo que eu destaquei, para ganhar novas perspectivas.
+
+---
+
+### 6. Funcionalidades Detalhadas (Especificações)
+
+**F1. Leitor de Bíblia**
+*   **4 Traduções:** NVI, ACF, ARC, RA (licenças garantidas).
+*   **Navegação:** Seletor de Livro > Capítulo > Versículo com interface de rolagem suave.
+*   **Busca Inteligente:** Busca full-text por palavra, frase, tema (ex: "versículos sobre fé"). Deve considerar sinônimos e derivações.
+*   **Áudio IA (OpenAI TTS):** Narração com vozes realistas. Botão de play por capítulo e modo "reproduzir livro inteiro".
+*   **Requisito de Performance:** Carregamento de qualquer capítulo em < 1 segundo.
+
+**F2. Assistente Teológico com IA (GPT-4o)**
+*   **Prompting Especializado:** O sistema deve usar um *prompt de sistema* que instrua o modelo a:
+    *   Manter neutralidade denominacional, apresentando visões equilibradas de diferentes tradições cristãs quando aplicável.
+    *   Sempre considerar o contexto (versículos anteriores e posteriores) em suas respostas.
+    *   Evitar especulações e focar em interpretações amplamente aceitas.
+    *   Citar versículos relevantes.
+*   **Interface:** Botão flutuante ao lado de cada versículo/capítulo. Histórico de conversas salvo por sessão.
+
+**F3. Destaques, Notas e Favoritos**
+*   **Destaques:** 6 cores hexadecimais customizáveis. Toque longo no versículo para destacar.
+*   **Notas:** Campo de texto rico (negrito, itálico, listas) acoplado a cada versículo.
+*   **Favoritos:** Página dedicada com lista de versículos favoritados, com filtros por data e livro.
+
+**F4. Planos de Leitura**
+*   **Categorias:** Planos pré-definidos por duração (7, 30, 90, 365 dias) e tema (fé, salvação, casamento, etc.).
+*   **Agendamento:** O usuário define a data de início e o app calcula o progresso automaticamente.
+*   **Acompanhamento:** Barra de progresso visual e notificações push (configuráveis).
+
+**F5. Gamificação**
+*   **Sistema de XP:**
+    *   Ler 1 versículo: +10 XP
+    *   Ler 1 capítulo: +50 XP
+    *   Completar um plano diário: +100 XP
+    *   Manter streak de 7 dias: Bônus de +500 XP
+*   **Níveis:** 50 níveis (ex: "Iniciante" até "Mestre Teólogo") com badges visuais.
+*   **Conquistas:** 18 conquistas automáticas (ex: "Leitor do Gênesis" - ler todo o Gênesis, "Orações do Coração" - registrar 50 orações).
+
+**F6. Diário de Orações**
+*   **Gravação de Áudio:** Utiliza a API de mídia do dispositivo. Limite de 5 minutos por gravação.
+*   **Cronômetro:** Opcional, para medir o tempo de oração silenciosa.
+*   **Status:** Marcar oração como "Em andamento", "Não respondida" ou "Respondida".
+
+**F7. Comunidade**
+*   **Posts:** Criar um post vinculado a um versículo específico. Texto limitado a 500 caracteres.
+*   **Interação:** Curtir e comentar em posts públicos.
+*   **Feed:** Algorítmo que mostra "Tópicos em Alta" baseado em engajamento recente.
+
+**F8. Modo Professor**
+*   **Criar Aula:** Interface "drag-and-drop" para adicionar versículos, notas pessoais, imagens e links a uma aula.
+*   **Gerenciar:** Salvar como rascunho, publicar (visível para seguidores/grupos) ou exportar como PDF.
+
+**F9-F13:** [As demais funcionalidades listadas (Podcasts, Versículo do Dia, Temas, Offline, Multilíngue) seguem a mesma estrutura de detalhamento, com requisitos específicos de UI, regras de negócio e performance].
+
+---
+
+### 7. Requisitos Técnicos
+
+*   **Frontend:** React 18 + TypeScript + Tailwind CSS. Build mobile com Capacitor para iOS/Android.
+*   **Backend:** API RESTful em Express.js/Node.js. Estrutura em microserviços para escalabilidade.
+*   **Banco de Dados:** PostgreSQL. Esquema com +30 tabelas, incluindo `users`, `bible_versions`, `verses`, `user_highlights`, `user_notes`, `prayers`, `community_posts`, `ai_chat_sessions`.
+*   **IA:** Integração com API da OpenAI (GPT-4o e TTS). Implementação de cache de respostas para reduzir custos e latência.
+*   **Autenticação:** Replit Auth (OIDC) para prova de conceito. Considerar migração para Auth0 ou Cognito em escala.
+*   **Armazenamento Offline:** Utilização do IndexedDB para armazenar versões bíblicas, anotações e highlights localmente. Sincronização em segundo plano quando online.
+
+---
+
+### 8. Diretrizes de UI/UX
+
+*   **Design System:** Baseado no Tailwind CSS. Deve ser criado um guia de estilo com tokens de cores, tipografia (font serif para textos bíblicos, sans-serif para UI) e componentes.
+*   **Princípios:**
+    *   **Clareza:** A leitura do texto bíblico é a prioridade máxima. Fonte tamanho mínimo de 16px para legibilidade.
+    *   **Acessibilidade:** Contraste de cores AA compliant, suporte a leitores de tela, opções de tamanho de fonte.
+    *   **Intuitividade:** Navegação por abas inferior (Leitura, Comunidade, Diário, Perfil). Gestos comuns (toque longo para destacar, swipe para mudar capítulo).
+*   **Protótipo:** Deve ser desenvolvido um protótipo de alta fidelidade no Figma cobrindo os fluxos principais (leitura, uso do assistente de IA, gamificação) antes do desenvolvimento.
+
+---
+
+### 9. Métricas de Sucesso
+
+*   **Engajamento:**
+    *   DAU/MAU (Ratio de Engajamento Diário/Mensal): Meta > 30%.
+    *   Tempo Médio de Sessão: Meta > 7 minutos.
+    *   Retenção de Usuários no Dia 7: Meta > 40%.
+*   **Adoção de Funcionalidades:**
+    *   % de usuários ativos que usam o Assistente de IA por semana: Meta > 25%.
+    *   % de usuários que criam um destaque ou nota no primeiro mês: Meta > 60%.
+    *   Número médio de conquistas desbloqueadas por usuário ativo.
+*   **Satisfação:**
+    *   App Store / Play Store Rating: Meta > 4.7 estrelas.
+    *   NPS (Net Promoter Score): Pesquisa trimestral.
+
+---
+
+### 10. Cronograma e Fases de Lançamento (Roadmap)
+
+**Fase 1: MVP (3-4 meses)**
+*   **Foco:** Leitor de Bíblia (4 versões, busca), Destaques/Notas, Planos de Leitura básicos, Versículo do Dia, Temas, Modo Offline.
+*   **Entregável:** Versão beta fechada para teste.
+
+**Fase 2: IA e Engajamento (2-3 meses)**
+*   **Foco:** Integração do Assistente Teológico com IA, Sistema de Gamificação (XP, Níveis, Conquistas), Diário de Orações básico.
+*   **Entregável:** Lançamento público na App Store e Play Store.
+
+**Fase 3: Comunidade e Conteúdo (2-3 meses)**
+*   **Foco:** Funcionalidades de Comunidade (posts, curtidas), Player de Podcasts integrado.
+*   **Entregável:** Atualização principal (v2.0).
+
+**Fase 4: Avançado (3-4 meses)**
+*   **Foco:** Modo Professor, Melhorias avançadas no Diário (áudio), Sincronização de anotações em nuvem.
+*   **Entregável:** Consolidação do produto como uma plataforma completa de estudo.
+
+---
