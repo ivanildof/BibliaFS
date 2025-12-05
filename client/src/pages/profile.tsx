@@ -164,7 +164,7 @@ export default function Profile() {
                 <Link href="/about">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
                     <Info className="h-4 w-4 mr-3" />
-                    Sobre o Bíblia+
+                    Sobre o BíbliaFS
                   </Button>
                 </Link>
                 <Link href="/terms">
@@ -308,7 +308,7 @@ export default function Profile() {
                       <Link href="/about">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
                           <Info className="h-4 w-4 mr-3" />
-                          Sobre o Bíblia+
+                          Sobre o BíbliaFS
                         </Button>
                       </Link>
                       <Link href="/terms">
@@ -386,7 +386,7 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-start gap-2">
                   <Heart className="h-5 w-5 text-pink-600 fill-current mt-1 shrink-0" />
-                  <span>Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
+                  <span>Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
                 <CardDescription className="mt-3">
                   Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos.

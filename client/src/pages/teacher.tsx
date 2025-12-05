@@ -44,7 +44,7 @@ const exportLessonToPDF = (lesson: Lesson) => {
     <html lang="pt-BR">
     <head>
       <meta charset="UTF-8">
-      <title>${lesson.title} - Bíblia+</title>
+      <title>${lesson.title} - BíbliaFS</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -124,7 +124,7 @@ const exportLessonToPDF = (lesson: Lesson) => {
     </head>
     <body>
       <div class="header">
-        <div class="logo">Bíblia+</div>
+        <div class="logo">BíbliaFS</div>
         <h1>${lesson.title}</h1>
         ${scriptureRef ? `<div class="scripture-base">${scriptureRef.book} ${scriptureRef.chapter}${scriptureRef.verses ? ':' + scriptureRef.verses : ''}</div>` : ''}
       </div>
@@ -155,8 +155,8 @@ const exportLessonToPDF = (lesson: Lesson) => {
       ` : ''}
 
       <div class="footer">
-        <p>Material gerado pelo Bíblia+ | www.bibliaplus.app</p>
-        <p>© 2025 Bíblia+. Desenvolvido por FabriSite</p>
+        <p>Material gerado pelo BíbliaFS | www.bibliafs.app</p>
+        <p>© 2025 BíbliaFS. Desenvolvido por FabriSite</p>
       </div>
 
       <script>

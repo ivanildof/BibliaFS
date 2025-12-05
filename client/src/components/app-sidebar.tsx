@@ -161,7 +161,7 @@ export function AppSidebar() {
           </Link>
         )}
         <div className="mt-4 text-center text-xs text-muted-foreground">
-          © 2025 Bíblia+. Todos os direitos reservados.
+          © 2025 BíbliaFS. Todos os direitos reservados.
           <br />
           Desenvolvido por |{" "}
           <a 

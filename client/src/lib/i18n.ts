@@ -298,7 +298,7 @@ export interface Translations {
 export const translations: Record<Language, Translations> = {
   pt: {
     common: {
-      appName: 'Bíblia+',
+      appName: 'BíbliaFS',
       loading: 'Carregando...',
       error: 'Erro',
       save: 'Salvar',
@@ -477,8 +477,8 @@ export const translations: Record<Language, Translations> = {
       download_failed_description: 'Não foi possível salvar a imagem',
     },
     donate: {
-      title: 'Apoie o Bíblia+',
-      subtitle: 'Sua doação mantém o Bíblia+ 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas. Cada contribuição sustenta o desenvolvimento contínuo do app, permitindo melhorias constantes, novos recursos e maior acessibilidade. Você não está apenas doando — está sendo parte da história de quem busca a Palavra, onde quer que esteja.',
+      title: 'Apoie o BíbliaFS',
+      subtitle: 'Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas. Cada contribuição sustenta o desenvolvimento contínuo do app, permitindo melhorias constantes, novos recursos e maior acessibilidade. Você não está apenas doando — está sendo parte da história de quem busca a Palavra, onde quer que esteja.',
       one_time: 'Doação Única',
       recurring: 'Doação Recorrente',
       monthly: 'Mensal',
@@ -506,7 +506,7 @@ export const translations: Record<Language, Translations> = {
       premium_subtitle: 'Tudo que você precisa para um estudo bíblico profundo e transformador',
       customize_experience: 'Personalize Sua Experiência',
       customize_subtitle: '4 temas prontos ou crie o seu próprio com cores personalizadas',
-      why_bible_plus: 'Por Que Bíblia+?',
+      why_bible_plus: 'Por Que BíbliaFS?',
       why_subtitle: 'Muito mais do que um simples aplicativo bíblico',
       cta_title: 'Comece Hoje Sua Jornada',
       cta_subtitle: 'Junte-se a milhares de pessoas transformando seu estudo bíblico',

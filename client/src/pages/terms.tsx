@@ -23,7 +23,7 @@ export default function Terms() {
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              Ao acessar e usar o Bíblia+, você concorda em cumprir e estar vinculado a estes Termos de Uso. 
+              Ao acessar e usar o BíbliaFS, você concorda em cumprir e estar vinculado a estes Termos de Uso. 
               Se você não concordar com alguma parte destes termos, não deverá usar nosso aplicativo.
             </p>
           </CardContent>
@@ -35,7 +35,7 @@ export default function Terms() {
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              O Bíblia+ é um aplicativo gratuito de estudo bíblico. Você concorda em usar o serviço 
+              O BíbliaFS é um aplicativo gratuito de estudo bíblico. Você concorda em usar o serviço 
               apenas para fins legais e de acordo com estes Termos.
             </p>
             <p className="font-medium">Você concorda em NÃO:</p>
@@ -56,7 +56,7 @@ export default function Terms() {
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
               Você mantém todos os direitos sobre o conteúdo que cria no aplicativo (notas, orações, posts). 
-              No entanto, ao compartilhar conteúdo publicamente na comunidade, você concede ao Bíblia+ 
+              No entanto, ao compartilhar conteúdo publicamente na comunidade, você concede ao BíbliaFS 
               uma licença não exclusiva para exibir esse conteúdo.
             </p>
             <p>
@@ -72,7 +72,7 @@ export default function Terms() {
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              O aplicativo Bíblia+ e todo seu conteúdo original são propriedade do Bíblia+ e são 
+              O aplicativo BíbliaFS e todo seu conteúdo original são propriedade do BíbliaFS e são 
               protegidos por leis de direitos autorais internacionais.
             </p>
             <p>
@@ -88,7 +88,7 @@ export default function Terms() {
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              O Bíblia+ é fornecido "como está". Não garantimos que o serviço será ininterrupto 
+              O BíbliaFS é fornecido "como está". Não garantimos que o serviço será ininterrupto 
               ou livre de erros. Não nos responsabilizamos por quaisquer danos resultantes do uso 
               ou incapacidade de usar o serviço.
             </p>

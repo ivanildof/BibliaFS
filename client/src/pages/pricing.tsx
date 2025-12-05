@@ -224,7 +224,7 @@ export default function Pricing() {
               </h2>
               
               <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-                Experimente o Bíblia+ Premium sem riscos. Se não ficar completamente satisfeito nos primeiros 30 dias, devolvemos 100% do seu investimento. Simples assim.
+                Experimente o BíbliaFS Premium sem riscos. Se não ficar completamente satisfeito nos primeiros 30 dias, devolvemos 100% do seu investimento. Simples assim.
               </p>
               
               <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
@@ -294,7 +294,7 @@ export default function Pricing() {
           </h2>
           
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Junte-se a milhares de pessoas que já estão crescendo espiritualmente com o Bíblia+
+            Junte-se a milhares de pessoas que já estão crescendo espiritualmente com o BíbliaFS
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -1,7 +1,7 @@
-# Bíblia+ v2.0
+# BíbliaFS v2.0
 
 ## Overview
-Bíblia+ is a premium, personalized, and intelligent Bible study application that enhances traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The project aims to provide broad market appeal by focusing on AI-enhanced personalization, multimedia integration, and community engagement to transform Bible study.
+BíbliaFS is a premium, personalized, and intelligent Bible study application that enhances traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The project aims to provide broad market appeal by focusing on AI-enhanced personalization, multimedia integration, and community engagement to transform Bible study.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

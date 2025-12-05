@@ -23,7 +23,7 @@ export default function Privacy() {
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              No Bíblia+, levamos sua privacidade a sério. Esta Política de Privacidade explica 
+              No BíbliaFS, levamos sua privacidade a sério. Esta Política de Privacidade explica 
               como coletamos, usamos, armazenamos e protegemos suas informações pessoais.
             </p>
           </CardContent>
@@ -149,7 +149,7 @@ export default function Privacy() {
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              O Bíblia+ pode ser usado por menores de idade, mas recomendamos supervisão parental. 
+              O BíbliaFS pode ser usado por menores de idade, mas recomendamos supervisão parental. 
               Não coletamos intencionalmente informações de crianças menores de 13 anos sem 
               consentimento dos pais.
             </p>

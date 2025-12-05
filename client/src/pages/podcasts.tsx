@@ -48,7 +48,7 @@ export default function Podcasts() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
-            Bíblia+ Rádio
+            BíbliaFS Rádio
           </h1>
           <p className="text-lg text-muted-foreground">
             Podcasts cristãos integrados ao seu estudo

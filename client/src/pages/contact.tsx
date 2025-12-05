@@ -176,7 +176,7 @@ export default function Contact() {
               <strong>Suporte Técnico:</strong> Para problemas técnicos, consulte primeiro nossa página de Ajuda
             </p>
             <p>
-              <strong>Doações:</strong> Visite a página "Doar" para apoiar o desenvolvimento do Bíblia+
+              <strong>Doações:</strong> Visite a página "Doar" para apoiar o desenvolvimento do BíbliaFS
             </p>
             <p>
               <strong>Tempo de Resposta:</strong> Respondemos normalmente em até 48 horas úteis

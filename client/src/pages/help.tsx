@@ -21,7 +21,7 @@ export default function Help() {
           </div>
           <h1 className="text-3xl font-bold">Ajuda e Suporte</h1>
           <p className="text-muted-foreground">
-            Estamos aqui para ajudar você a aproveitar ao máximo o Bíblia+
+            Estamos aqui para ajudar você a aproveitar ao máximo o BíbliaFS
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function Help() {
               <AccordionItem value="item-6">
                 <AccordionTrigger>O aplicativo é realmente 100% gratuito?</AccordionTrigger>
                 <AccordionContent>
-                  Sim! O Bíblia+ é completamente gratuito e sempre será. Todos os recursos estão disponíveis sem custo algum. O aplicativo é mantido por doações voluntárias de usuários que desejam apoiar o desenvolvimento e manter o app gratuito para todos. Você pode doar se quiser, mas não é obrigatório.
+                  Sim! O BíbliaFS é completamente gratuito e sempre será. Todos os recursos estão disponíveis sem custo algum. O aplicativo é mantido por doações voluntárias de usuários que desejam apoiar o desenvolvimento e manter o app gratuito para todos. Você pode doar se quiser, mas não é obrigatório.
                 </AccordionContent>
               </AccordionItem>
 
@@ -103,7 +103,7 @@ export default function Help() {
               <AccordionItem value="item-10">
                 <AccordionTrigger>Como alterar o idioma do aplicativo?</AccordionTrigger>
                 <AccordionContent>
-                  No canto superior direito, você encontrará um seletor de idiomas. O Bíblia+ está disponível em Português (BR), English, Nederlands e Español. Ao mudar o idioma, toda a interface é traduzida automaticamente.
+                  No canto superior direito, você encontrará um seletor de idiomas. O BíbliaFS está disponível em Português (BR), English, Nederlands e Español. Ao mudar o idioma, toda a interface é traduzida automaticamente.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -124,7 +124,7 @@ export default function Help() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Em breve disponibilizaremos tutoriais em vídeo para ajudá-lo a explorar todos os recursos do Bíblia+.
+                Em breve disponibilizaremos tutoriais em vídeo para ajudá-lo a explorar todos os recursos do BíbliaFS.
               </p>
               <Button variant="outline" className="w-full" disabled>
                 <Video className="h-4 w-4 mr-2" />

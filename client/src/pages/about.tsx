@@ -11,7 +11,7 @@ export default function About() {
               <Info className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">Sobre o Bíblia+</h1>
+          <h1 className="text-3xl font-bold">Sobre o BíbliaFS</h1>
           <p className="text-muted-foreground text-lg">
             Transformando o estudo bíblico com tecnologia e amor
           </p>
@@ -26,7 +26,7 @@ export default function About() {
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-muted-foreground">
-              O Bíblia+ nasceu com o propósito de tornar o estudo da Palavra de Deus mais acessível, 
+              O BíbliaFS nasceu com o propósito de tornar o estudo da Palavra de Deus mais acessível, 
               personalizado e envolvente para pessoas ao redor do mundo.
             </p>
             <p className="text-muted-foreground">
@@ -120,7 +120,7 @@ export default function About() {
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-muted-foreground">
-              O Bíblia+ é mantido por doações de usuários como você. Nosso compromisso é manter 
+              O BíbliaFS é mantido por doações de usuários como você. Nosso compromisso é manter 
               o aplicativo 100% gratuito e acessível para todos que desejam se aproximar da Palavra de Deus.
             </p>
             <p className="text-muted-foreground">

@@ -248,7 +248,7 @@ export default function Landing() {
                 <Book className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h3 className="font-display font-bold text-lg">Bíblia+</h3>
+                <h3 className="font-display font-bold text-lg">BíbliaFS</h3>
                 <p className="text-sm text-muted-foreground">{t.landing.footer_description}</p>
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function Landing() {
           </div>
           
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            © 2025 Bíblia+. Todos os direitos reservados. Desenvolvido por |{" "}
+            © 2025 BíbliaFS. Todos os direitos reservados. Desenvolvido por |{" "}
             <a 
               href="https://fabrisite.com.br/" 
               target="_blank" 
