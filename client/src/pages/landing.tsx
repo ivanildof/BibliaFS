@@ -270,7 +270,7 @@ export default function Landing() {
           </div>
           
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            © 2025 BíbliaFS. Todos os direitos reservados. Desenvolvido por |{" "}
+            © 2026 - BíbliaFS. Todos os direitos reservados. Desenvolvido por |{" "}
             <a 
               href="https://fabrisite.com.br/" 
               target="_blank" 
