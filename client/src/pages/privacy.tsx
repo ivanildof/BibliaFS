@@ -8,8 +8,8 @@ export default function Privacy() {
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center gap-4 mb-6">
-          <Link href="/about">
-            <Button variant="ghost" size="icon" data-testid="button-back-about">
+          <Link href="/about" data-testid="link-back-privacy">
+            <Button variant="ghost" size="icon" data-testid="button-back-privacy">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>

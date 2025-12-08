@@ -244,7 +244,7 @@ export default function About() {
               melhorar sua experiência e adicionar novos recursos.
             </p>
             <div className="pt-2">
-              <Link href="/donate">
+              <Link href="/donate" data-testid="link-donate-about">
                 <Button variant="outline" className="gap-2" data-testid="button-donate-about">
                   <Heart className="h-4 w-4" />
                   Apoiar o Projeto
@@ -262,7 +262,7 @@ export default function About() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {legalPages.map((page, index) => (
-              <Link key={index} href={page.href}>
+              <Link key={index} href={page.href} data-testid={`link-${page.href.slice(1)}`}>
                 <Card 
                   className="border-none shadow-md hover-elevate cursor-pointer h-full transition-all duration-300"
                   data-testid={`card-link-${page.href.slice(1)}`}
