@@ -1,14 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, ArrowLeft } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Privacy() {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
+        <div className="flex items-center gap-4 mb-6">
+          <Link href="/about">
+            <Button variant="ghost" size="icon" data-testid="button-back-about">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <div>
+            <p className="text-sm text-muted-foreground">Voltar para Sobre</p>
+          </div>
+        </div>
+
+        <div className="text-center space-y-4">
           <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center shadow-lg">
+              <Shield className="h-10 w-10 text-blue-600" />
             </div>
           </div>
           <h1 className="text-3xl font-bold">Política de Privacidade</h1>
@@ -179,6 +192,21 @@ export default function Privacy() {
             </p>
           </CardContent>
         </Card>
+
+        <footer className="text-center text-sm text-muted-foreground py-6 border-t">
+          <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
+          <p className="mt-1">
+            Desenvolvido por{" "}
+            <a 
+              href="https://fabrisite.com.br/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              FabriSite
+            </a>
+          </p>
+        </footer>
       </div>
     </div>
   );

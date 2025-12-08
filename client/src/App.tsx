@@ -37,6 +37,7 @@ import Help from "@/pages/help";
 import About from "@/pages/about";
 import Terms from "@/pages/terms";
 import Privacy from "@/pages/privacy";
+import Security from "@/pages/security";
 import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
 
@@ -84,6 +85,7 @@ function Router() {
           <Route path="/about" component={About} />
           <Route path="/terms" component={Terms} />
           <Route path="/privacy" component={Privacy} />
+          <Route path="/security" component={Security} />
           <Route path="/contact" component={Contact} />
         </>
       )}
