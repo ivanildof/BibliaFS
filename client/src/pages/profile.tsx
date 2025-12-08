@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProfileImageUpload } from "@/components/ProfileImageUpload";
 import {
   Sheet,
   SheetContent,
@@ -206,12 +207,10 @@ export default function Profile() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-              <Avatar className="h-24 w-24" data-testid="avatar-profile">
-                <AvatarImage src={user.profileImageUrl || undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-3xl">
-                  {user.firstName?.[0] || user.email?.[0] || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <ProfileImageUpload 
+                currentImage={user.profileImageUrl} 
+                userName={`${user.firstName} ${user.lastName}`}
+              />
               
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2 flex-wrap">

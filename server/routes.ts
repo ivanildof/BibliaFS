@@ -120,6 +120,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Upload profile image
+  app.post('/api/profile/upload-image', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { imageData } = req.body;
+
+      if (!imageData || typeof imageData !== 'string') {
+        return res.status(400).json({ message: "imageData é obrigatório" });
+      }
+
+      // Validate base64 image (should start with data:image/)
+      if (!imageData.startsWith('data:image/')) {
+        return res.status(400).json({ message: "Formato de imagem inválido" });
+      }
+
+      const updatedUser = await storage.updateUserImage(userId, imageData);
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error("Erro ao fazer upload de imagem:", error);
+      res.status(500).json({ message: "Falha ao fazer upload de imagem" });
+    }
+  });
+
   // Dashboard Stats
   app.get("/api/stats/dashboard", isAuthenticated, async (req: any, res) => {
     try {
