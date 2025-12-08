@@ -11,6 +11,7 @@ import {
   Trophy,
   Bookmark,
   CloudOff,
+  Info,
 } from "lucide-react";
 import {
   Sidebar,
@@ -133,6 +134,14 @@ export function AppSidebar() {
                   <Link href="/settings">
                     <Settings className="h-4 w-4" />
                     <span>{t.nav.settings}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={location === "/about"} data-testid="link-sidebar-about">
+                  <Link href="/about">
+                    <Info className="h-4 w-4" />
+                    <span>Sobre</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
