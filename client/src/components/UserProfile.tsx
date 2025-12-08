@@ -37,10 +37,10 @@ export function UserProfile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" data-testid="button-user-profile">
-          <Avatar className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-10 w-10" data-testid="button-user-profile">
+          <Avatar className="h-9 w-9">
             {user.profileImageUrl && <AvatarImage src={user.profileImageUrl} alt={displayName} />}
-            <AvatarFallback className="text-xs font-semibold">{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs font-semibold bg-gradient-to-br from-primary to-accent text-primary-foreground">{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
