@@ -157,14 +157,13 @@ export function AppSidebar() {
               <Avatar className="h-11 w-11 ring-2 ring-accent/50">
                 <AvatarImage src={user.profileImageUrl || undefined} />
                 <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground font-semibold">
-                  {user.firstName?.[0] || user.email?.[0] || "U"}
+                  {user.firstName?.[0] || user.displayName?.[0] || "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate" data-testid="text-username">
-                  {user.firstName} {user.lastName}
+                  {user.displayName || `${user.firstName} ${user.lastName}`}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
             </div>
           </Link>
