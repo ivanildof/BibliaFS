@@ -47,13 +47,16 @@ export function UserProfile() {
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex items-center gap-2">
-          <Avatar className="h-9 w-9">
+          <Avatar className="h-8 w-8">
             {user.profileImageUrl && <AvatarImage src={user.profileImageUrl} alt={displayName} />}
             <AvatarFallback className="text-xs font-semibold">{initials}</AvatarFallback>
           </Avatar>
-          <span className="text-sm font-semibold truncate">{displayName}</span>
+          <div className="flex flex-col overflow-hidden">
+            <span className="text-sm font-semibold truncate">{displayName}</span>
+            <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link href="/profile">
