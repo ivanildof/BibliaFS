@@ -10,6 +10,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { OfflineProvider } from "@/contexts/OfflineContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { UserProfile } from "@/components/UserProfile";
 import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -185,6 +186,7 @@ function AppContent() {
               <div className="flex items-center gap-2">
                 <LanguageSelector />
                 <ThemeToggle />
+                <UserProfile />
               </div>
             </header>
             <main className="flex-1 overflow-y-auto pb-16 md:pb-0">

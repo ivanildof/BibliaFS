@@ -8,6 +8,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 8, 2025**:
+*   **Legal Pages Hub**: Restructured "Sobre" (About) page as central hub with navigation cards linking to Privacy Policy, Terms of Use, Security Policy, FAQ, and Contact pages. Added consistent back buttons and footer to all legal pages (Privacy, Terms, Help, Security).
+*   **Security Policy Page**: Created comprehensive Security Policy page documenting TLS encryption, PostgreSQL security, OAuth authentication, session protection, privacy practices, cloud infrastructure, best practices for users, incident response protocols, and vulnerability reporting procedures.
+*   **User Profile Header**: Added UserProfile component to top navigation bar displaying user avatar, name, and dropdown menu with quick access to Profile, Settings, and Logout. Positioned next to language selector and theme toggle for easy access.
+
 **November 25, 2025**:
 *   **Database Schema Expansion**: Updated `shared/schema.ts` to match production database model with 30+ tables. Added churches, groups, group_members, bible_translations, bible_books, bible_chapters, bible_verses, cross_references, reading_plan_items, reading_history, user_progress, achievement_definitions, post_reactions, additional_content, content_verse_references, daily_verses, and donations tables.
 *   **User Profile Enhancement**: Expanded users table with new fields: username, full_name, display_name, avatar_url, profile_image, profile_type, church_id, theological_background, subscription_expires_at, preferences, last_login.
