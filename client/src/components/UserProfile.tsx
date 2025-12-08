@@ -37,14 +37,11 @@ export function UserProfile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2 px-2" data-testid="button-user-profile">
+        <Button variant="ghost" size="icon" data-testid="button-user-profile">
           <Avatar className="h-8 w-8">
             {user.profileImageUrl && <AvatarImage src={user.profileImageUrl} alt={displayName} />}
             <AvatarFallback className="text-xs font-semibold">{initials}</AvatarFallback>
           </Avatar>
-          <span className="hidden sm:inline text-sm font-medium truncate max-w-[150px]">
-            {displayName}
-          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
