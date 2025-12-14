@@ -88,6 +88,7 @@ function Router() {
           <Route path="/teacher" component={Teacher} />
           <Route path="/community" component={Community} />
           <Route path="/configurações" component={Settings} />
+          <Route path="/settings" component={Settings} />
           <Route path="/perfil" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
