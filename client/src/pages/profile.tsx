@@ -130,7 +130,7 @@ export default function Profile() {
           <Button variant="ghost" size="icon" data-testid="button-share-profile-mobile">
             <Share2 className="h-5 w-5" />
           </Button>
-          <Link href="/settings">
+          <Link href="/configurações">
             <Button variant="ghost" size="icon" data-testid="button-settings-mobile">
               <Settings className="h-5 w-5" />
             </Button>
@@ -272,7 +272,7 @@ export default function Profile() {
                   <Share2 className="h-4 w-4 mr-2" />
                   Compartilhar
                 </Button>
-                <Link href="/settings">
+                <Link href="/configurações">
                   <Button variant="outline" data-testid="button-settings">
                     <Settings className="h-4 w-4" />
                   </Button>

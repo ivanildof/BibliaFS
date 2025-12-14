@@ -87,8 +87,8 @@ function Router() {
           <Route path="/podcasts" component={Podcasts} />
           <Route path="/teacher" component={Teacher} />
           <Route path="/community" component={Community} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/profile" component={Profile} />
+          <Route path="/configurações" component={Settings} />
+          <Route path="/perfil" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
           <Route path="/pricing" component={Pricing} />

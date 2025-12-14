@@ -31,6 +31,7 @@ export interface Translations {
     study: string;
     teaching: string;
     premiumStudy: string;
+    about: string;
   };
   bible: {
     readChapter: string;
@@ -327,6 +328,7 @@ export const translations: Record<Language, Translations> = {
       study: 'Estudo',
       teaching: 'Ensino',
       premiumStudy: 'Estudo Premium',
+      about: 'Sobre',
     },
     bible: {
       readChapter: 'Ler Capítulo',
@@ -638,6 +640,7 @@ export const translations: Record<Language, Translations> = {
       study: 'Study',
       teaching: 'Teaching',
       premiumStudy: 'Premium Study',
+      about: 'About',
     },
     bible: {
       readChapter: 'Read Chapter',
@@ -949,6 +952,7 @@ export const translations: Record<Language, Translations> = {
       study: 'Studie',
       teaching: 'Onderwijs',
       premiumStudy: 'Premium Studie',
+      about: 'Over',
     },
     bible: {
       readChapter: 'Hoofdstuk Lezen',
@@ -1260,6 +1264,7 @@ export const translations: Record<Language, Translations> = {
       study: 'Estudio',
       teaching: 'Enseñanza',
       premiumStudy: 'Estudio Premium',
+      about: 'Acerca de',
     },
     bible: {
       readChapter: 'Leer Capítulo',

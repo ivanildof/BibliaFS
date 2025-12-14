@@ -130,8 +130,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={location === "/settings"} data-testid="link-sidebar-settings">
-                  <Link href="/settings">
+                <SidebarMenuButton asChild isActive={location === "/configurações"} data-testid="link-sidebar-settings">
+                  <Link href="/configurações">
                     <Settings className="h-4 w-4" />
                     <span>{t.nav.settings}</span>
                   </Link>
@@ -141,7 +141,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild isActive={location === "/about"} data-testid="link-sidebar-about">
                   <Link href="/about">
                     <Info className="h-4 w-4" />
-                    <span>Sobre</span>
+                    <span>{t.sections.about}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -152,7 +152,7 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-6 border-t">
         {user && (
-          <Link href="/profile">
+          <Link href="/perfil">
             <div className="flex items-center gap-3 rounded-2xl p-3 hover-elevate active-elevate-2 cursor-pointer shadow-md" data-testid="link-profile">
               <Avatar className="h-11 w-11 ring-2 ring-accent/50">
                 <AvatarImage src={user.profileImageUrl || undefined} />

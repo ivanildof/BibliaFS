@@ -56,13 +56,13 @@ export function UserProfile() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/profile">
+        <Link href="/perfil">
           <DropdownMenuItem data-testid="menu-item-profile">
             <User className="h-4 w-4 mr-2" />
             <span>Meu Perfil</span>
           </DropdownMenuItem>
         </Link>
-        <Link href="/settings">
+        <Link href="/configurações">
           <DropdownMenuItem data-testid="menu-item-settings">
             <Settings className="h-4 w-4 mr-2" />
             <span>Configurações</span>
