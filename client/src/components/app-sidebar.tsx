@@ -10,7 +10,6 @@ import {
   BookOpen,
   Trophy,
   Bookmark,
-  CloudOff,
   Info,
 } from "lucide-react";
 import {
@@ -38,7 +37,6 @@ export function AppSidebar() {
     { title: t.nav.home, url: "/", icon: Home },
     { title: t.nav.bible, url: "/bible-reader", icon: BookOpen },
     { title: t.favorites.title, url: "/favorites", icon: Bookmark },
-    { title: t.offline.title, url: "/offline", icon: CloudOff },
     { title: t.nav.plans, url: "/plans", icon: Book },
     { title: t.nav.progress, url: "/progress", icon: Trophy },
     { title: t.nav.prayers, url: "/prayers", icon: MessageSquare },
