@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import { 
   Settings as SettingsIcon, 
   Palette,
@@ -13,12 +14,17 @@ import {
   Shield,
   User,
   LogOut,
-  Check
+  Check,
+  BellRing,
+  Clock,
+  Send,
+  Loader2
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 const predefinedThemes = [
   { 
@@ -77,18 +83,112 @@ function hexToHSL(hex: string) {
   return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
+interface NotificationPreferences {
+  readingReminders: boolean;
+  readingReminderTime: string;
+  prayerReminders: boolean;
+  prayerReminderTime: string;
+  dailyVerseNotification: boolean;
+  dailyVerseTime: string;
+  communityActivity: boolean;
+  teacherModeUpdates: boolean;
+  weekendOnly: boolean;
+  timezone: string;
+}
+
 export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedTheme, setSelectedTheme] = useState(user?.selectedTheme || "classico");
   const [customColor, setCustomColor] = useState(user?.customTheme?.primaryColor || "#5711D9");
   const [fontSize, setFontSize] = useState(16);
-  const [notifications, setNotifications] = useState({
+  
+  const {
+    isSupported: pushSupported,
+    isSubscribed: pushSubscribed,
+    isLoading: pushLoading,
+    permission: pushPermission,
+    subscribe: subscribePush,
+    unsubscribe: unsubscribePush,
+    sendTestNotification,
+  } = usePushNotifications();
+
+  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreferences>({
     readingReminders: true,
+    readingReminderTime: "08:00",
     prayerReminders: true,
+    prayerReminderTime: "07:00",
+    dailyVerseNotification: true,
+    dailyVerseTime: "06:00",
     communityActivity: false,
-    teacherMode: true,
+    teacherModeUpdates: true,
+    weekendOnly: false,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
+
+  const { data: savedPrefs, isLoading: prefsLoading } = useQuery<NotificationPreferences>({
+    queryKey: ["/api/notifications/preferences"],
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (savedPrefs) {
+      setNotificationPrefs(savedPrefs);
+    }
+  }, [savedPrefs]);
+
+  const savePreferencesMutation = useMutation({
+    mutationFn: async (prefs: Partial<NotificationPreferences>) => {
+      const response = await fetch("/api/notifications/preferences", {
+        method: "PATCH",
+        body: JSON.stringify(prefs),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Falha ao salvar preferências");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications/preferences"] });
+      toast({
+        title: "Preferências salvas",
+        description: "Suas configurações de notificação foram atualizadas.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível salvar as preferências.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handlePrefChange = <K extends keyof NotificationPreferences>(
+    key: K,
+    value: NotificationPreferences[K],
+    immediate = true
+  ) => {
+    const newPrefs = { ...notificationPrefs, [key]: value };
+    setNotificationPrefs(newPrefs);
+    if (immediate) {
+      savePreferencesMutation.mutate({ [key]: value });
+    }
+  };
+
+  const handleTimeBlur = (key: keyof NotificationPreferences) => {
+    const value = notificationPrefs[key];
+    if (typeof value === 'string' && /^\d{2}:\d{2}$/.test(value)) {
+      savePreferencesMutation.mutate({ [key]: value });
+    }
+  };
+
+  const [testingSending, setTestingSending] = useState(false);
+  const handleTestNotification = async () => {
+    setTestingSending(true);
+    await sendTestNotification();
+    setTestingSending(false);
+  };
 
   // Apply theme colors to CSS variables
   useEffect(() => {
@@ -321,81 +421,233 @@ export default function Settings() {
           </TabsContent>
 
           <TabsContent value="notifications" className="space-y-6">
+            {/* Push Notification Enable/Disable */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BellRing className="h-5 w-5" />
+                  Notificações Push
+                </CardTitle>
+                <CardDescription>
+                  Receba lembretes diretamente no seu dispositivo
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {!pushSupported ? (
+                  <div className="p-4 bg-muted rounded-lg text-muted-foreground">
+                    Seu navegador não suporta notificações push.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="space-y-0.5">
+                        <Label>Ativar Notificações Push</Label>
+                        <p className="text-sm text-muted-foreground">
+                          {pushSubscribed
+                            ? "Notificações ativadas"
+                            : pushPermission === "denied"
+                            ? "Permissão negada no navegador"
+                            : "Clique para ativar notificações"}
+                        </p>
+                      </div>
+                      <Switch
+                        checked={pushSubscribed}
+                        disabled={pushLoading || pushPermission === "denied"}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            subscribePush();
+                          } else {
+                            unsubscribePush();
+                          }
+                        }}
+                        data-testid="switch-push-notifications"
+                      />
+                    </div>
+                    
+                    {pushSubscribed && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleTestNotification}
+                        disabled={testingSending}
+                        data-testid="button-test-notification"
+                      >
+                        {testingSending ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Send className="h-4 w-4 mr-2" />
+                        )}
+                        Enviar Notificação de Teste
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Notification Preferences */}
             <Card>
               <CardHeader>
                 <CardTitle>Preferências de Notificação</CardTitle>
                 <CardDescription>
-                  Escolha o que você deseja ser notificado
+                  Configure quando e quais lembretes deseja receber
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="reading-reminders">Lembretes de Leitura</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receba lembretes diários para sua leitura bíblica
-                    </p>
+                {prefsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
-                  <Switch
-                    id="reading-reminders"
-                    checked={notifications.readingReminders}
-                    onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, readingReminders: checked })
-                    }
-                    data-testid="switch-reading-reminders"
-                  />
-                </div>
+                ) : (
+                  <>
+                    {/* Reading Reminders */}
+                    <div className="space-y-3 pb-4 border-b">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="reading-reminders">Lembretes de Leitura</Label>
+                          <p className="text-sm text-muted-foreground">
+                            Receba lembretes diários para sua leitura bíblica
+                          </p>
+                        </div>
+                        <Switch
+                          id="reading-reminders"
+                          checked={notificationPrefs.readingReminders}
+                          onCheckedChange={(checked) => handlePrefChange("readingReminders", checked)}
+                          data-testid="switch-reading-reminders"
+                        />
+                      </div>
+                      {notificationPrefs.readingReminders && (
+                        <div className="flex items-center gap-2 pl-4">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Label htmlFor="reading-time" className="text-sm">Horário:</Label>
+                          <Input
+                            id="reading-time"
+                            type="time"
+                            value={notificationPrefs.readingReminderTime}
+                            onChange={(e) => handlePrefChange("readingReminderTime", e.target.value, false)}
+                            onBlur={() => handleTimeBlur("readingReminderTime")}
+                            className="w-32"
+                            data-testid="input-reading-time"
+                          />
+                        </div>
+                      )}
+                    </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="prayer-reminders">Lembretes de Oração</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receba lembretes para suas orações ativas
-                    </p>
-                  </div>
-                  <Switch
-                    id="prayer-reminders"
-                    checked={notifications.prayerReminders}
-                    onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, prayerReminders: checked })
-                    }
-                    data-testid="switch-prayer-reminders"
-                  />
-                </div>
+                    {/* Prayer Reminders */}
+                    <div className="space-y-3 pb-4 border-b">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="prayer-reminders">Lembretes de Oração</Label>
+                          <p className="text-sm text-muted-foreground">
+                            Receba lembretes para suas orações ativas
+                          </p>
+                        </div>
+                        <Switch
+                          id="prayer-reminders"
+                          checked={notificationPrefs.prayerReminders}
+                          onCheckedChange={(checked) => handlePrefChange("prayerReminders", checked)}
+                          data-testid="switch-prayer-reminders"
+                        />
+                      </div>
+                      {notificationPrefs.prayerReminders && (
+                        <div className="flex items-center gap-2 pl-4">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Label htmlFor="prayer-time" className="text-sm">Horário:</Label>
+                          <Input
+                            id="prayer-time"
+                            type="time"
+                            value={notificationPrefs.prayerReminderTime}
+                            onChange={(e) => handlePrefChange("prayerReminderTime", e.target.value, false)}
+                            onBlur={() => handleTimeBlur("prayerReminderTime")}
+                            className="w-32"
+                            data-testid="input-prayer-time"
+                          />
+                        </div>
+                      )}
+                    </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="community-activity">Atividade da Comunidade</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Notificações de curtidas e comentários
-                    </p>
-                  </div>
-                  <Switch
-                    id="community-activity"
-                    checked={notifications.communityActivity}
-                    onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, communityActivity: checked })
-                    }
-                    data-testid="switch-community-activity"
-                  />
-                </div>
+                    {/* Daily Verse */}
+                    <div className="space-y-3 pb-4 border-b">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="daily-verse">Versículo do Dia</Label>
+                          <p className="text-sm text-muted-foreground">
+                            Receba um versículo inspirador todas as manhãs
+                          </p>
+                        </div>
+                        <Switch
+                          id="daily-verse"
+                          checked={notificationPrefs.dailyVerseNotification}
+                          onCheckedChange={(checked) => handlePrefChange("dailyVerseNotification", checked)}
+                          data-testid="switch-daily-verse"
+                        />
+                      </div>
+                      {notificationPrefs.dailyVerseNotification && (
+                        <div className="flex items-center gap-2 pl-4">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Label htmlFor="verse-time" className="text-sm">Horário:</Label>
+                          <Input
+                            id="verse-time"
+                            type="time"
+                            value={notificationPrefs.dailyVerseTime}
+                            onChange={(e) => handlePrefChange("dailyVerseTime", e.target.value, false)}
+                            onBlur={() => handleTimeBlur("dailyVerseTime")}
+                            className="w-32"
+                            data-testid="input-verse-time"
+                          />
+                        </div>
+                      )}
+                    </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="teacher-mode">Modo Professor</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Atualizações sobre aulas e progresso dos alunos
-                    </p>
-                  </div>
-                  <Switch
-                    id="teacher-mode"
-                    checked={notifications.teacherMode}
-                    onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, teacherMode: checked })
-                    }
-                    data-testid="switch-teacher-mode"
-                  />
-                </div>
+                    {/* Community Activity */}
+                    <div className="flex items-center justify-between gap-4 pb-4 border-b">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="community-activity">Atividade da Comunidade</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Notificações de curtidas e comentários
+                        </p>
+                      </div>
+                      <Switch
+                        id="community-activity"
+                        checked={notificationPrefs.communityActivity}
+                        onCheckedChange={(checked) => handlePrefChange("communityActivity", checked)}
+                        data-testid="switch-community-activity"
+                      />
+                    </div>
+
+                    {/* Teacher Mode */}
+                    <div className="flex items-center justify-between gap-4 pb-4 border-b">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="teacher-mode">Modo Professor</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Atualizações sobre aulas e progresso dos alunos
+                        </p>
+                      </div>
+                      <Switch
+                        id="teacher-mode"
+                        checked={notificationPrefs.teacherModeUpdates}
+                        onCheckedChange={(checked) => handlePrefChange("teacherModeUpdates", checked)}
+                        data-testid="switch-teacher-mode"
+                      />
+                    </div>
+
+                    {/* Weekend Only */}
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="weekend-only">Apenas Fins de Semana</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Receber lembretes apenas aos sábados e domingos
+                        </p>
+                      </div>
+                      <Switch
+                        id="weekend-only"
+                        checked={notificationPrefs.weekendOnly}
+                        onCheckedChange={(checked) => handlePrefChange("weekendOnly", checked)}
+                        data-testid="switch-weekend-only"
+                      />
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
