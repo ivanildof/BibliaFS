@@ -139,13 +139,7 @@ export default function Settings() {
 
   const savePreferencesMutation = useMutation({
     mutationFn: async (prefs: Partial<NotificationPreferences>) => {
-      const response = await fetch("/api/notifications/preferences", {
-        method: "PATCH",
-        body: JSON.stringify(prefs),
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Falha ao salvar preferências");
+      const response = await apiRequest("PATCH", "/api/notifications/preferences", prefs);
       return response.json();
     },
     onSuccess: () => {
@@ -209,17 +203,7 @@ export default function Settings() {
   // Mutation to save theme
   const saveThemeMutation = useMutation({
     mutationFn: async (data: { selectedTheme: string; customTheme?: any }) => {
-      const response = await fetch("/api/settings/theme", {
-        method: "PATCH",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      
-      if (!response.ok) {
-        throw new Error("Falha ao salvar tema");
-      }
-      
+      const response = await apiRequest("PATCH", "/api/settings/theme", data);
       return await response.json();
     },
     onSuccess: () => {
