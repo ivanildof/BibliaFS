@@ -230,22 +230,6 @@ export default function Register() {
           </Form>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <div className="relative w-full">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">ou</span>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => window.location.href = "/api/login"}
-            data-testid="button-register-replit"
-          >
-            Cadastrar com Replit
-          </Button>
           <p className="text-sm text-center text-muted-foreground">
             Já tem uma conta?{" "}
             <Link href="/login" className="text-primary hover:underline" data-testid="link-login">

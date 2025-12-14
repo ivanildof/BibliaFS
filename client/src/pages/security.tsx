@@ -32,7 +32,7 @@ export default function Security() {
     {
       icon: Key,
       title: "Autenticação Segura",
-      description: "Login via Replit Auth com OAuth 2.0, eliminando a necessidade de armazenar senhas e garantindo autenticação de nível empresarial."
+      description: "Login com email e senha protegido por criptografia bcrypt, garantindo autenticação segura e proteção de credenciais."
     },
     {
       icon: Shield,

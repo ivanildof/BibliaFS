@@ -100,7 +100,7 @@ export default function Help() {
               <AccordionItem value="item-8" data-testid="accordion-faq-8">
                 <AccordionTrigger data-testid="trigger-faq-8">Posso usar em vários dispositivos?</AccordionTrigger>
                 <AccordionContent>
-                  Sim! Ao fazer login com sua conta Replit, todos os seus dados (planos, notas, destaques, orações, progresso) são sincronizados automaticamente entre todos os seus dispositivos. Você pode começar a ler no celular e continuar no computador sem perder nada.
+                  Sim! Ao fazer login com sua conta, todos os seus dados (planos, notas, destaques, orações, progresso) são sincronizados automaticamente entre todos os seus dispositivos. Você pode começar a ler no celular e continuar no computador sem perder nada.
                 </AccordionContent>
               </AccordionItem>
 

@@ -115,7 +115,7 @@ export default function Privacy() {
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li>Criptografia de dados em trânsito (HTTPS/SSL)</li>
               <li>Armazenamento seguro em servidores protegidos</li>
-              <li>Autenticação via Replit Auth</li>
+              <li>Senhas criptografadas com bcrypt</li>
               <li>Acesso restrito a dados pessoais</li>
               <li>Backups regulares e seguros</li>
             </ul>
