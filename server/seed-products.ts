@@ -10,10 +10,19 @@
  * Update your frontend with the generated price IDs.
  */
 
-import { getUncachableStripeClient } from './stripeClient';
+import Stripe from 'stripe';
 
 async function seedProducts() {
-  const stripe = await getUncachableStripeClient();
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  
+  if (!secretKey) {
+    console.error('❌ STRIPE_SECRET_KEY não configurada');
+    process.exit(1);
+  }
+  
+  const stripe = new Stripe(secretKey, {
+    apiVersion: '2025-08-27.basil',
+  });
 
   console.log('🚀 Creating BíbliaFS subscription products...\n');
 
