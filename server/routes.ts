@@ -150,6 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/register', async (req, res) => {
     try {
       const { email, password, firstName, lastName } = req.body;
+      console.log(`[Register] Attempt for: ${email}`);
       
       if (!email || !password || !firstName || !lastName) {
         return res.status(400).json({ message: "Todos os campos são obrigatórios" });
@@ -158,6 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if email already exists
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
+        console.log(`[Register] Email already exists: ${email}`);
         return res.status(400).json({ message: "Este email já está cadastrado" });
       }
 
@@ -175,13 +177,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastName,
         role: isAdmin ? 'admin' : 'user',
       });
+      console.log(`[Register] User created in DB: ${user.id}`);
 
       if (isAdmin) {
         console.log(`✅ Admin user created via register: ${email}`);
       }
 
-      // Create session
-      (req.session as any).user = {
+      // Create session data
+      const sessionUser = {
         claims: {
           sub: user.id,
           email: user.email,
@@ -190,18 +193,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
       };
+      (req.session as any).user = sessionUser;
+      console.log(`[Register] Session data set for: ${user.id}`);
 
       req.session.save((err) => {
         if (err) {
-          console.error("Session save error:", err);
+          console.error("[Register] Session save error:", err);
           return res.status(500).json({ message: "Erro ao criar sessão" });
         }
+        console.log(`[Register] Session saved successfully for: ${user.id}, sessionID: ${req.sessionID}`);
         // Omit passwordHash from response
         const { passwordHash: _, ...safeUser } = user;
         res.json(safeUser);
       });
     } catch (error: any) {
-      console.error("Erro ao registrar usuário:", error);
+      console.error("[Register] Error:", error);
       res.status(500).json({ message: "Falha ao criar conta" });
     }
   });
@@ -210,6 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { email, password } = req.body;
+      console.log(`[Login] Attempt for: ${email}`);
       
       if (!email || !password) {
         return res.status(400).json({ message: "Email e senha são obrigatórios" });
@@ -218,19 +225,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Find user by email
       const user = await storage.getUserByEmail(email);
       if (!user) {
+        console.log(`[Login] User not found: ${email}`);
         return res.status(401).json({ message: "Email ou senha incorretos" });
       }
 
       // Check if user has password
       if (!user.passwordHash) {
+        console.log(`[Login] No password hash for: ${email}`);
         return res.status(401).json({ message: "Esta conta não tem senha configurada. Por favor, redefina sua senha." });
       }
 
       // Verify password
       const validPassword = await bcrypt.compare(password, user.passwordHash);
       if (!validPassword) {
+        console.log(`[Login] Invalid password for: ${email}`);
         return res.status(401).json({ message: "Email ou senha incorretos" });
       }
+      console.log(`[Login] Password valid for: ${email}`);
 
       // Update last login
       await storage.updateUserLastLogin(user.id);
@@ -254,17 +265,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
       };
 
+      console.log(`[Login] Session data set for: ${finalUser.id}`);
       req.session.save((err) => {
         if (err) {
-          console.error("Session save error:", err);
+          console.error("[Login] Session save error:", err);
           return res.status(500).json({ message: "Erro ao criar sessão" });
         }
+        console.log(`[Login] Session saved successfully for: ${finalUser.id}, sessionID: ${req.sessionID}`);
         // Omit passwordHash from response
         const { passwordHash: _, ...safeUser } = finalUser;
         res.json(safeUser);
       });
     } catch (error: any) {
-      console.error("Erro ao fazer login:", error);
+      console.error("[Login] Error:", error);
       res.status(500).json({ message: "Falha ao fazer login" });
     }
   });
@@ -386,7 +399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const userEmail = req.user.claims.email || 'dev@example.com';
+      const userEmail = req.user.claims.email;
       let user = await storage.getUser(userId);
       
       if (!user) {
@@ -395,8 +408,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user = await storage.upsertUser({
           id: userId,
           email: userEmail,
-          firstName: req.user.claims.first_name || 'Dev',
-          lastName: req.user.claims.last_name || 'User',
+          firstName: req.user.claims.first_name || 'User',
+          lastName: req.user.claims.last_name || '',
           profileImageUrl: req.user.claims.profile_image_url,
           role: isAdmin ? 'admin' : 'user',
         });
@@ -406,7 +419,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      res.json(user);
+      // Omit passwordHash from response for security
+      const { passwordHash: _, ...safeUser } = user;
+      res.json(safeUser);
     } catch (error: any) {
       console.error("Erro ao buscar usuário:", error);
       res.status(500).json({ message: "Falha ao buscar usuário" });

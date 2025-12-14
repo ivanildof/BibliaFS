@@ -29,20 +29,27 @@ export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
   const databaseUrl = getDatabaseUrl();
+  console.log("[Session] Initializing session store with PostgreSQL...");
+  
   const sessionStore = new pgStore({
     conString: databaseUrl,
-    createTableIfMissing: false,
+    createTableIfMissing: true, // Auto-create sessions table if missing
     ttl: sessionTtl,
     tableName: "sessions",
+    errorLog: (err: any) => {
+      console.error("[Session Store Error]", err);
+    },
   });
+  
   return session({
     secret: process.env.SESSION_SECRET || 'bibliafs-session-secret-key-2024',
     store: sessionStore,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // Allow cookies over HTTP in development
+      sameSite: 'lax',
       maxAge: sessionTtl,
     },
   });
@@ -75,20 +82,6 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
-  // Development bypass: Allow testing without auth
-  if (process.env.NODE_ENV !== 'production' && process.env.DEV_BYPASS_AUTH === 'true') {
-    (req as any).user = {
-      claims: {
-        sub: 'dev-user-123',
-        email: 'dev@example.com',
-        first_name: 'Dev',
-        last_name: 'User',
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
-    };
-    return next();
-  }
-
   const user = (req.session as any)?.user;
 
   if (!user || !user.claims || !user.expires_at) {
