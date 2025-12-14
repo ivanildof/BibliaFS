@@ -1919,8 +1919,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${req.headers.origin}/pricing?success=true`,
-        cancel_url: `${req.headers.origin}/pricing?canceled=true`,
+        success_url: `${req.headers.origin}/planos?success=true`,
+        cancel_url: `${req.headers.origin}/planos?canceled=true`,
         metadata: { userId, planType },
       });
 
@@ -1946,7 +1946,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const session = await stripe.billingPortal.sessions.create({
         customer: user.stripeCustomerId,
-        return_url: `${req.headers.origin}/pricing`,
+        return_url: `${req.headers.origin}/planos`,
       });
 
       res.json({ url: session.url });

@@ -113,9 +113,9 @@ const plans = [
       "Acesso antecipado a recursos",
       "Suporte VIP 24h",
     ],
-    cta: "Assinar",
+    cta: "Em Breve",
     popular: false,
-    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PLUS_PRICE_ID || null,
+    priceId: null,
     planType: "premium_plus",
   },
 ];
@@ -176,9 +176,12 @@ export default function Pricing() {
       }
     },
     onError: (error: any) => {
+      const errorMsg = error.message || "Erro ao processar pagamento";
       toast({
         title: "Erro no pagamento",
-        description: error.message || "Tente novamente",
+        description: errorMsg.includes("No such price") 
+          ? "Plano não configurado. Entre em contato conosco."
+          : errorMsg,
         variant: "destructive",
       });
     },
