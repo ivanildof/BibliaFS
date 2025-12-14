@@ -1561,22 +1561,21 @@ export default function BibleReader() {
           </DialogHeader>
           
           <div className="grid gap-3 py-4">
-            {selectedVerse !== null && (
-              <Button
-                onClick={() => handleStartAudio('verse', selectedVerse)}
-                variant="outline"
-                className="h-auto flex-col items-start p-4 gap-2"
-                data-testid="button-audio-verse"
-              >
-                <div className="flex items-center gap-2">
-                  <Volume2 className="h-5 w-5" />
-                  <span className="font-semibold">Versículo Selecionado</span>
-                </div>
-                <p className="text-sm text-muted-foreground text-left">
-                  Ouvir apenas versículo {selectedVerse}
-                </p>
-              </Button>
-            )}
+            <Button
+              onClick={() => handleStartAudio('verse', selectedVerse || undefined)}
+              variant="outline"
+              className="h-auto flex-col items-start p-4 gap-2"
+              data-testid="button-audio-verse"
+              disabled={selectedVerse === null}
+            >
+              <div className="flex items-center gap-2">
+                <Volume2 className="h-5 w-5" />
+                <span className="font-semibold">Versículo Selecionado</span>
+              </div>
+              <p className="text-sm text-muted-foreground text-left">
+                {selectedVerse !== null ? `Ouvir apenas versículo ${selectedVerse}` : 'Selecione um versículo primeiro'}
+              </p>
+            </Button>
             
             <Button
               onClick={() => handleStartAudio('chapter')}
