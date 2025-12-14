@@ -48,6 +48,7 @@ export const churches = pgTable("churches", {
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email", { length: 255 }).unique(),
+  passwordHash: varchar("password_hash", { length: 255 }),
   username: varchar("username", { length: 255 }),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),

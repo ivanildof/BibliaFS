@@ -104,6 +104,12 @@ export async function runMigrations() {
       )
     `);
 
+    // Add password_hash column to users table for email/password auth
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)
+    `);
+
     // Add subscription columns to users table
     await db.execute(sql`
       ALTER TABLE users 

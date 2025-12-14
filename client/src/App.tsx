@@ -40,6 +40,8 @@ import Terms from "@/pages/terms";
 import Privacy from "@/pages/privacy";
 import Security from "@/pages/security";
 import Contact from "@/pages/contact";
+import Login from "@/pages/login";
+import Register from "@/pages/register";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -62,6 +64,8 @@ function Router() {
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
           <Route path="/pricing" component={Pricing} />
         </>
       ) : (

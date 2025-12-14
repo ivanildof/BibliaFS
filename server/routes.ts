@@ -91,6 +91,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware (from blueprint)
   await setupAuth(app);
 
+  // Email/Password Authentication Routes
+  const bcrypt = await import("bcryptjs");
+
+  // Register with email/password
+  app.post('/api/auth/register', async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+      
+      if (!email || !password || !firstName || !lastName) {
+        return res.status(400).json({ message: "Todos os campos são obrigatórios" });
+      }
+
+      // Check if email already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Este email já está cadastrado" });
+      }
+
+      // Hash password
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      // Determine if admin
+      const isAdmin = email === 'fabrisite1@gmail.com';
+
+      // Create user
+      const user = await storage.createUserWithPassword({
+        email,
+        passwordHash,
+        firstName,
+        lastName,
+        role: isAdmin ? 'admin' : 'user',
+      });
+
+      if (isAdmin) {
+        console.log(`✅ Admin user created via register: ${email}`);
+      }
+
+      // Create session
+      (req as any).user = {
+        claims: {
+          sub: user.id,
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+        },
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
+      };
+
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Erro ao criar sessão" });
+        }
+        // Omit passwordHash from response
+        const { passwordHash: _, ...safeUser } = user;
+        res.json(safeUser);
+      });
+    } catch (error: any) {
+      console.error("Erro ao registrar usuário:", error);
+      res.status(500).json({ message: "Falha ao criar conta" });
+    }
+  });
+
+  // Login with email/password
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email e senha são obrigatórios" });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Email ou senha incorretos" });
+      }
+
+      // Check if user has password (might be Replit auth user)
+      if (!user.passwordHash) {
+        return res.status(401).json({ message: "Esta conta usa login via Replit. Use o botão 'Entrar com Replit'." });
+      }
+
+      // Verify password
+      const validPassword = await bcrypt.compare(password, user.passwordHash);
+      if (!validPassword) {
+        return res.status(401).json({ message: "Email ou senha incorretos" });
+      }
+
+      // Update last login
+      await storage.updateUserLastLogin(user.id);
+
+      // Ensure admin role for fabrisite1@gmail.com
+      let finalUser = user;
+      const normalizedEmail = email.toLowerCase().trim();
+      if (normalizedEmail === 'fabrisite1@gmail.com' && user.role !== 'admin') {
+        finalUser = await storage.updateUserRole(user.id, 'admin');
+        console.log(`✅ Admin role applied on login: ${normalizedEmail}`);
+      }
+
+      // Create session
+      (req as any).user = {
+        claims: {
+          sub: finalUser.id,
+          email: finalUser.email,
+          first_name: finalUser.firstName,
+          last_name: finalUser.lastName,
+        },
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
+      };
+
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Erro ao criar sessão" });
+        }
+        // Omit passwordHash from response
+        const { passwordHash: _, ...safeUser } = finalUser;
+        res.json(safeUser);
+      });
+    } catch (error: any) {
+      console.error("Erro ao fazer login:", error);
+      res.status(500).json({ message: "Falha ao fazer login" });
+    }
+  });
+
   // Auth user endpoint
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
