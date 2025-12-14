@@ -2,82 +2,103 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import { 
   Check,
   Sparkles,
   Zap,
   Crown,
   Heart,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  Settings,
+  AlertCircle
 } from "lucide-react";
 import { Link } from "wouter";
+import { useEffect } from "react";
 
-const freePlan = {
-  id: "free",
-  name: "Gratuito",
-  price: "R$ 0",
-  period: "/para sempre",
-  description: "Perfeito para começar sua jornada de estudo bíblico",
-  badge: null,
-  features: [
-    "Acesso completo à Bíblia (4 versões)",
-    "Versículo do Dia",
-    "Destaques em 6 cores",
-    "Notas e anotações",
-    "Modo offline básico",
-    "Diário de orações",
-    "Comunidade",
-    "Gamificação e conquistas",
-  ],
-  cta: "Começar Grátis",
-  highlighted: false,
-};
+interface SubscriptionStatus {
+  plan: string;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  aiRequestsToday: number;
+  aiRequestsResetAt: string | null;
+}
 
-const premiumPlan = {
-  id: "premium",
-  name: "Premium",
-  price: "R$ 19,90",
-  period: "/mês",
-  description: "Desbloqueie todo o potencial do estudo bíblico",
-  badge: { text: "Mais Popular", icon: Sparkles, color: "bg-primary/20 text-primary" },
-  features: [
-    "Tudo do plano Gratuito",
-    "IA Teológica ilimitada",
-    "Podcasts integrados",
-    "Modo Professor completo",
-    "Planos de leitura avançados",
-    "Áudio narrado da Bíblia",
-    "Modo offline ilimitado",
-    "Temas personalizados",
-    "Exportação de notas em PDF",
-    "Suporte prioritário",
-  ],
-  cta: "Assinar Agora",
-  highlighted: true,
-};
-
-const lifetimePlan = {
-  id: "lifetime",
-  name: "Vitalício",
-  price: "R$ 299",
-  period: "/pagamento único",
-  description: "Acesso premium para sempre, sem mensalidades",
-  badge: { text: "Melhor Custo-Benefício", icon: Crown, color: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-500" },
-  features: [
-    "Tudo do plano Premium",
-    "Acesso vitalício",
-    "Sem mensalidades",
-    "Atualizações gratuitas",
-    "Novos recursos inclusos",
-    "Badge exclusivo",
-    "Comunidade VIP",
-    "Influencie desenvolvimento",
-  ],
-  cta: "Comprar Acesso Vitalício",
-  highlighted: false,
-};
-
-const plans = [freePlan, premiumPlan, lifetimePlan];
+const plans = [
+  {
+    id: "free",
+    name: "Gratuito",
+    price: "R$ 0",
+    period: "/para sempre",
+    description: "Perfeito para começar sua jornada de estudo bíblico",
+    badge: null,
+    features: [
+      "Acesso completo à Bíblia (4 versões)",
+      "Versículo do Dia",
+      "Destaques em 6 cores",
+      "Notas e anotações",
+      "Modo offline básico",
+      "Diário de orações",
+      "Comunidade",
+      "Gamificação e conquistas",
+      "3 perguntas IA por dia",
+    ],
+    cta: "Plano Atual",
+    highlighted: false,
+    priceId: null,
+    planType: "free",
+  },
+  {
+    id: "monthly",
+    name: "Mensal",
+    price: "R$ 19,90",
+    period: "/mês",
+    description: "Desbloqueie todo o potencial do estudo bíblico",
+    badge: { text: "Mais Popular", icon: Sparkles, color: "bg-primary/20 text-primary" },
+    features: [
+      "Tudo do plano Gratuito",
+      "IA Teológica ilimitada",
+      "Podcasts integrados",
+      "Modo Professor completo",
+      "Planos de leitura avançados",
+      "Áudio narrado da Bíblia",
+      "Modo offline ilimitado",
+      "Temas personalizados",
+      "Exportação de notas em PDF",
+      "Suporte prioritário",
+    ],
+    cta: "Assinar Agora",
+    highlighted: true,
+    priceId: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || null,
+    planType: "monthly",
+  },
+  {
+    id: "yearly",
+    name: "Anual",
+    price: "R$ 149,90",
+    period: "/ano",
+    description: "Economize 37% com o plano anual",
+    badge: { text: "Melhor Custo-Benefício", icon: Crown, color: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-500" },
+    features: [
+      "Tudo do plano Mensal",
+      "Economia de 37%",
+      "Acesso por 12 meses",
+      "Atualizações gratuitas",
+      "Badge exclusivo",
+      "Comunidade VIP",
+      "Suporte prioritário",
+      "Influencie desenvolvimento",
+    ],
+    cta: "Assinar Anual",
+    highlighted: false,
+    priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || null,
+    planType: "yearly",
+  },
+];
 
 const faqs = [
   {
@@ -108,6 +129,119 @@ const faqs = [
 
 export default function Pricing() {
   const { t } = useLanguage();
+  const { toast } = useToast();
+  const [location] = useLocation();
+
+  // Check URL params for payment result
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      toast({
+        title: "Pagamento confirmado!",
+        description: "Sua assinatura foi ativada com sucesso. Aproveite todos os recursos premium!",
+      });
+      window.history.replaceState({}, '', '/pricing');
+    } else if (params.get('canceled') === 'true') {
+      toast({
+        title: "Pagamento cancelado",
+        description: "Você cancelou o processo de pagamento. Pode tentar novamente quando quiser.",
+        variant: "destructive",
+      });
+      window.history.replaceState({}, '', '/pricing');
+    }
+  }, [location, toast]);
+
+  // Fetch subscription status
+  const { data: subscription, isLoading: isLoadingStatus } = useQuery<SubscriptionStatus>({
+    queryKey: ['/api/subscriptions/status'],
+  });
+
+  // Checkout mutation
+  const checkoutMutation = useMutation({
+    mutationFn: async ({ priceId, planType }: { priceId: string; planType: string }) => {
+      const response = await apiRequest('/api/subscriptions/checkout', {
+        method: 'POST',
+        body: JSON.stringify({ priceId, planType }),
+      });
+      return response;
+    },
+    onSuccess: (data: { url: string }) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao processar pagamento",
+        description: error.message || "Tente novamente mais tarde",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Portal mutation (manage subscription)
+  const portalMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('/api/subscriptions/portal', {
+        method: 'POST',
+      });
+      return response;
+    },
+    onSuccess: (data: { url: string }) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao acessar portal",
+        description: error.message || "Tente novamente mais tarde",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubscribe = (plan: typeof plans[0]) => {
+    if (plan.id === 'free') return;
+    
+    if (!plan.priceId) {
+      toast({
+        title: "Configuração pendente",
+        description: "O sistema de pagamentos ainda não foi configurado. Configure as variáveis STRIPE_SECRET_KEY e VITE_STRIPE_MONTHLY_PRICE_ID/VITE_STRIPE_YEARLY_PRICE_ID.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    checkoutMutation.mutate({ priceId: plan.priceId, planType: plan.planType });
+  };
+
+  const currentPlan = subscription?.plan || 'free';
+  const isPremium = currentPlan === 'monthly' || currentPlan === 'yearly';
+
+  const getButtonState = (plan: typeof plans[0]) => {
+    // Current premium plan - show manage button
+    if (plan.id === currentPlan && isPremium) {
+      return { text: "Gerenciar Assinatura", disabled: false, variant: "default" as const, isPortal: true };
+    }
+    // Current free plan - just show as current
+    if (plan.id === 'free' && currentPlan === 'free') {
+      return { text: "Plano Atual", disabled: true, variant: "outline" as const };
+    }
+    // Free plan card when user is premium - allow downgrade via portal
+    if (plan.id === 'free' && isPremium) {
+      return { text: "Gerenciar Assinatura", disabled: false, variant: "outline" as const, isPortal: true };
+    }
+    // Other premium plans for free users
+    if (!isPremium && plan.id !== 'free') {
+      return { text: plan.cta, disabled: false, variant: plan.highlighted ? "default" as const : "outline" as const };
+    }
+    // Premium user looking at other premium plan - upgrade/change via portal
+    if (isPremium && plan.id !== currentPlan) {
+      return { text: "Mudar Plano", disabled: false, variant: "outline" as const, isPortal: true };
+    }
+    return { text: plan.cta, disabled: false, variant: plan.highlighted ? "default" as const : "outline" as const };
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,6 +262,16 @@ export default function Pricing() {
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
             Comece gratuitamente e evolua quando estiver pronto. Todos os planos incluem o essencial para transformar seu estudo bíblico.
           </p>
+
+          {/* Current subscription status */}
+          {isPremium && (
+            <div className="flex justify-center">
+              <Badge className="px-4 py-2 bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/20">
+                <Crown className="h-4 w-4 mr-2" />
+                Você é assinante {currentPlan === 'yearly' ? 'Anual' : 'Mensal'}
+              </Badge>
+            </div>
+          )}
         </div>
       </section>
 
@@ -135,76 +279,136 @@ export default function Pricing() {
       <section className="py-12 px-4 md:py-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            {plans.map((plan, index) => (
-              <Card 
-                key={plan.id}
-                className={`relative hover-elevate transition-all duration-300 flex flex-col ${
-                  plan.highlighted 
-                    ? 'border-primary shadow-lg scale-100 md:scale-105 z-10' 
-                    : ''
-                }`}
-                data-testid={`card-plan-${plan.id}`}
-              >
-                {plan.badge && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                    <Badge className={`px-4 py-1 ${plan.badge.color}`}>
-                      <plan.badge.icon className="h-3 w-3 mr-1" />
-                      {plan.badge.text}
-                    </Badge>
-                  </div>
-                )}
-
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
-                  <CardDescription className="min-h-12">
-                    {plan.description}
-                  </CardDescription>
-                  
-                  <div className="mt-4">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-4xl md:text-5xl font-bold tracking-tight">
-                        {plan.price}
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        {plan.period}
-                      </span>
+            {plans.map((plan) => {
+              const buttonState = getButtonState(plan);
+              const isCurrentPlan = plan.id === currentPlan || (plan.id === 'free' && currentPlan === 'free');
+              
+              return (
+                <Card 
+                  key={plan.id}
+                  className={`relative hover-elevate transition-all duration-300 flex flex-col ${
+                    plan.highlighted 
+                      ? 'border-primary shadow-lg scale-100 md:scale-105 z-10' 
+                      : ''
+                  } ${isCurrentPlan ? 'ring-2 ring-primary/50' : ''}`}
+                  data-testid={`card-plan-${plan.id}`}
+                >
+                  {plan.badge && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                      <Badge className={`px-4 py-1 ${plan.badge.color}`}>
+                        <plan.badge.icon className="h-3 w-3 mr-1" />
+                        {plan.badge.text}
+                      </Badge>
                     </div>
-                  </div>
-                </CardHeader>
+                  )}
 
-                <CardContent className="flex-1 pb-6">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3" data-testid={`feature-${plan.id}-${i}`}>
-                        <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                          <Check className="h-3 w-3 text-primary" />
-                        </div>
-                        <span className="text-sm flex-1 leading-relaxed">
-                          {feature}
+                  {isCurrentPlan && (
+                    <div className="absolute -top-4 right-4 z-20">
+                      <Badge className="px-3 py-1 bg-green-500 text-white">
+                        <Check className="h-3 w-3 mr-1" />
+                        Atual
+                      </Badge>
+                    </div>
+                  )}
+
+                  <CardHeader className="text-center pb-4">
+                    <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
+                    <CardDescription className="min-h-12">
+                      {plan.description}
+                    </CardDescription>
+                    
+                    <div className="mt-4">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-4xl md:text-5xl font-bold tracking-tight">
+                          {plan.price}
                         </span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
+                        <span className="text-muted-foreground text-sm">
+                          {plan.period}
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
 
-                <CardFooter>
-                  <Button 
-                    className={`w-full ${
-                      plan.highlighted 
-                        ? 'bg-primary hover:bg-primary/90' 
-                        : 'variant-outline'
-                    }`}
-                    variant={plan.highlighted ? 'default' : 'outline'}
-                    size="lg"
-                    data-testid={`button-cta-${plan.id}`}
-                  >
-                    {plan.cta}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+                  <CardContent className="flex-1 pb-6">
+                    <ul className="space-y-3">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-3" data-testid={`feature-${plan.id}-${i}`}>
+                          <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
+                            <Check className="h-3 w-3 text-primary" />
+                          </div>
+                          <span className="text-sm flex-1 leading-relaxed">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+
+                  <CardFooter className="flex flex-col gap-2">
+                    <Button 
+                      className="w-full"
+                      variant={buttonState.variant}
+                      size="lg"
+                      disabled={buttonState.disabled || checkoutMutation.isPending}
+                      onClick={() => {
+                        if (buttonState.isPortal) {
+                          portalMutation.mutate();
+                        } else {
+                          handleSubscribe(plan);
+                        }
+                      }}
+                      data-testid={`button-cta-${plan.id}`}
+                    >
+                      {(checkoutMutation.isPending || portalMutation.isPending) ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : null}
+                      {buttonState.text}
+                      {!buttonState.disabled && !buttonState.isPortal && (
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      )}
+                      {buttonState.isPortal && (
+                        <Settings className="h-4 w-4 ml-2" />
+                      )}
+                    </Button>
+
+                    {/* Manage subscription button for premium users */}
+                    {isPremium && plan.id !== 'free' && plan.id === currentPlan && (
+                      <Button 
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-muted-foreground"
+                        onClick={() => portalMutation.mutate()}
+                        disabled={portalMutation.isPending}
+                        data-testid={`button-manage-${plan.id}`}
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Gerenciar assinatura
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
+
+          {/* AI Usage indicator for free plan */}
+          {currentPlan === 'free' && subscription && (
+            <div className="mt-8 max-w-md mx-auto">
+              <Card className="border-amber-500/30 bg-amber-500/5">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">
+                      Perguntas IA hoje: {subscription.aiRequestsToday}/3
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Assine Premium para perguntas ilimitadas
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </section>
 
@@ -298,23 +502,44 @@ export default function Pricing() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-white text-primary hover:bg-white/90 text-lg px-8"
-              data-testid="button-cta-final-free"
-            >
-              Começar Grátis
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            
-            <Button 
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white/10 text-lg px-8"
-              data-testid="button-cta-final-premium"
-            >
-              Ver Planos Premium
-            </Button>
+            {!isPremium ? (
+              <>
+                <Button 
+                  size="lg"
+                  className="bg-white text-primary hover:bg-white/90 text-lg px-8"
+                  onClick={() => handleSubscribe(plans[1])}
+                  disabled={checkoutMutation.isPending}
+                  data-testid="button-cta-final-monthly"
+                >
+                  {checkoutMutation.isPending && <Loader2 className="h-5 w-5 mr-2 animate-spin" />}
+                  Assinar Mensal
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-white text-white hover:bg-white/10 text-lg px-8"
+                  onClick={() => handleSubscribe(plans[2])}
+                  disabled={checkoutMutation.isPending}
+                  data-testid="button-cta-final-yearly"
+                >
+                  Economize 37% - Anual
+                </Button>
+              </>
+            ) : (
+              <Button 
+                size="lg"
+                className="bg-white text-primary hover:bg-white/90 text-lg px-8"
+                onClick={() => portalMutation.mutate()}
+                disabled={portalMutation.isPending}
+                data-testid="button-cta-final-manage"
+              >
+                {portalMutation.isPending && <Loader2 className="h-5 w-5 mr-2 animate-spin" />}
+                <Settings className="mr-2 h-5 w-5" />
+                Gerenciar Minha Assinatura
+              </Button>
+            )}
           </div>
         </div>
       </section>

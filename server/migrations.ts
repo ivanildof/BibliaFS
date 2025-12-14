@@ -103,6 +103,32 @@ export async function runMigrations() {
         updated_at TIMESTAMP DEFAULT NOW()
       )
     `);
+
+    // Add subscription columns to users table
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS subscription_plan VARCHAR(20) DEFAULT 'free'
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(255)
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS stripe_subscription_id VARCHAR(255)
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_requests_today INTEGER DEFAULT 0
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_requests_reset_at TIMESTAMP
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {

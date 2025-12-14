@@ -932,6 +932,54 @@ export class DatabaseStorage implements IStorage {
       communityPosts: result?.count || 0,
     };
   }
+
+  // Subscription Management
+  async updateUserSubscription(userId: string, data: {
+    subscriptionPlan?: string;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
+    aiRequestsToday?: number;
+    aiRequestsResetAt?: Date | null;
+  }): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
+
+  async getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.stripeCustomerId, stripeCustomerId));
+    return user;
+  }
+
+  async incrementAiRequests(userId: string): Promise<{ count: number; resetAt: Date }> {
+    const now = new Date();
+    const user = await this.getUser(userId);
+    
+    let count = user?.aiRequestsToday || 0;
+    let resetAt = user?.aiRequestsResetAt;
+
+    // Reset if it's a new day
+    if (!resetAt || now > resetAt) {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      count = 1;
+      resetAt = tomorrow;
+    } else {
+      count++;
+    }
+
+    await this.updateUserSubscription(userId, {
+      aiRequestsToday: count,
+      aiRequestsResetAt: resetAt,
+    });
+
+    return { count, resetAt };
+  }
 }
 
 export const storage = new DatabaseStorage();

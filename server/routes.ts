@@ -38,6 +38,52 @@ if (process.env.STRIPE_SECRET_KEY) {
   console.warn("⚠️  STRIPE_SECRET_KEY not found - donation features will be disabled");
 }
 
+// AI Rate Limiting Constants
+const FREE_PLAN_AI_LIMIT = 3; // 3 AI requests per day for free users
+
+// Helper to check AI quota for free plan users
+async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; message?: string }> {
+  try {
+    const user = await storage.getUser(userId);
+    
+    // If no user found, treat as free with no prior usage
+    if (!user) {
+      return { allowed: true, remaining: FREE_PLAN_AI_LIMIT };
+    }
+    
+    const plan = user.subscriptionPlan || 'free';
+    
+    // Premium users have unlimited AI access
+    if (plan === 'monthly' || plan === 'yearly') {
+      return { allowed: true, remaining: -1 }; // -1 means unlimited
+    }
+    
+    // Check current usage for free users
+    const now = new Date();
+    let count = user.aiRequestsToday || 0;
+    const resetAt = user.aiRequestsResetAt;
+    
+    // If reset time has passed, count resets to 0
+    if (!resetAt || now > new Date(resetAt)) {
+      count = 0;
+    }
+    
+    if (count >= FREE_PLAN_AI_LIMIT) {
+      return { 
+        allowed: false, 
+        remaining: 0,
+        message: `Você atingiu o limite de ${FREE_PLAN_AI_LIMIT} perguntas IA por dia. Assine o Premium para perguntas ilimitadas!`
+      };
+    }
+    
+    return { allowed: true, remaining: FREE_PLAN_AI_LIMIT - count };
+  } catch (error) {
+    console.error("[AI Quota] Error checking quota:", error);
+    // On error, allow request but log it
+    return { allowed: true, remaining: FREE_PLAN_AI_LIMIT };
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Run database migrations
   await runMigrations();
@@ -867,6 +913,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(userCommentary);
       }
 
+      // Check AI quota for free plan users (only for new AI-generated content)
+      const quota = await checkAiQuota(userId);
+      if (!quota.allowed) {
+        return res.status(429).json({ 
+          error: quota.message,
+          remaining: quota.remaining,
+          upgradeUrl: '/pricing'
+        });
+      }
+
       // Fetch verse text
       const language = 'pt'; // Default to Portuguese for now
       const chapterData = await fetchBibleChapter(language, version, book, parseInt(chapter));
@@ -892,6 +948,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         commentaryType,
         chapterData
       );
+
+      // Increment AI request counter for free plan users
+      const user = await storage.getUser(userId);
+      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
+        await storage.incrementAiRequests(userId);
+        console.log(`[AI Quota] User ${userId} used an AI request`);
+      }
 
       // Save to BOTH global cache and user cache
       // Global cache for future users (reduces API costs significantly)
@@ -1593,6 +1656,170 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Subscription Routes (Stripe Integration)
+  app.post("/api/subscriptions/checkout", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!stripe) {
+        return res.status(503).json({ 
+          error: "Sistema de pagamentos não configurado. Configure STRIPE_SECRET_KEY nas variáveis de ambiente." 
+        });
+      }
+
+      const userId = req.user.claims.sub;
+      const { priceId, planType } = req.body;
+
+      if (!priceId || !planType) {
+        return res.status(400).json({ error: "priceId e planType são obrigatórios" });
+      }
+
+      // Get or create Stripe customer
+      let user = await storage.getUser(userId);
+      let customerId = user?.stripeCustomerId;
+
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: user?.email || undefined,
+          metadata: { userId },
+        });
+        customerId = customer.id;
+        await storage.updateUserSubscription(userId, { stripeCustomerId: customerId });
+      }
+
+      // Create checkout session
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: `${req.headers.origin}/pricing?success=true`,
+        cancel_url: `${req.headers.origin}/pricing?canceled=true`,
+        metadata: { userId, planType },
+      });
+
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error("Erro ao criar checkout session:", error);
+      res.status(500).json({ error: "Falha ao criar sessão de checkout: " + error.message });
+    }
+  });
+
+  app.post("/api/subscriptions/portal", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!stripe) {
+        return res.status(503).json({ error: "Sistema de pagamentos não configurado" });
+      }
+
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+
+      if (!user?.stripeCustomerId) {
+        return res.status(400).json({ error: "Você não possui uma assinatura ativa" });
+      }
+
+      const session = await stripe.billingPortal.sessions.create({
+        customer: user.stripeCustomerId,
+        return_url: `${req.headers.origin}/pricing`,
+      });
+
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error("Erro ao criar portal session:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/subscriptions/status", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+
+      res.json({
+        plan: user?.subscriptionPlan || 'free',
+        stripeCustomerId: user?.stripeCustomerId || null,
+        stripeSubscriptionId: user?.stripeSubscriptionId || null,
+        aiRequestsToday: user?.aiRequestsToday || 0,
+        aiRequestsResetAt: user?.aiRequestsResetAt || null,
+      });
+    } catch (error: any) {
+      console.error("Erro ao buscar status da assinatura:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Stripe Webhook for subscription updates
+  app.post("/api/webhooks/stripe", async (req: any, res) => {
+    if (!stripe) {
+      return res.status(503).json({ error: "Stripe not configured" });
+    }
+
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
+    try {
+      if (endpointSecret && sig) {
+        event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+      } else {
+        event = req.body;
+      }
+    } catch (err: any) {
+      console.error("Webhook signature verification failed:", err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const userId = session.metadata?.userId;
+        const planType = session.metadata?.planType;
+        
+        if (userId && planType) {
+          await storage.updateUserSubscription(userId, {
+            subscriptionPlan: planType,
+            stripeSubscriptionId: session.subscription as string,
+          });
+          console.log(`✅ Subscription activated for user ${userId}: ${planType}`);
+        }
+        break;
+      }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+        const customerId = subscription.customer;
+        
+        // Find user by customer ID and downgrade
+        const user = await storage.getUserByStripeCustomerId(customerId as string);
+        if (user) {
+          await storage.updateUserSubscription(user.id, {
+            subscriptionPlan: 'free',
+            stripeSubscriptionId: null,
+          });
+          console.log(`⚠️ Subscription canceled for user ${user.id}`);
+        }
+        break;
+      }
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object;
+        const customerId = subscription.customer;
+        const status = subscription.status;
+        
+        if (status === 'active') {
+          const user = await storage.getUserByStripeCustomerId(customerId as string);
+          if (user) {
+            const planType = subscription.items.data[0]?.price?.lookup_key || user.subscriptionPlan;
+            await storage.updateUserSubscription(user.id, {
+              subscriptionPlan: planType,
+            });
+          }
+        }
+        break;
+      }
+    }
+
+    res.json({ received: true });
+  });
+
   // Donations Routes (Stripe Integration - from javascript_stripe blueprint)
   app.post("/api/create-payment-intent", isAuthenticated, async (req: any, res) => {
     try {
@@ -1656,8 +1883,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // AI Study Assistant (OpenAI Integration)
-  app.post("/api/ai/study", isAuthenticated, async (req, res) => {
+  app.post("/api/ai/study", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const { question } = req.body;
       
       if (!question) {
@@ -1668,6 +1896,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!process.env.OPENAI_API_KEY) {
         return res.status(503).json({ 
           error: "Assistente de IA não configurado. Por favor, configure sua chave de API OpenAI." 
+        });
+      }
+
+      // Check AI quota for free plan users
+      const quota = await checkAiQuota(userId);
+      if (!quota.allowed) {
+        return res.status(429).json({ 
+          error: quota.message,
+          remaining: quota.remaining,
+          upgradeUrl: '/pricing'
         });
       }
 
@@ -1695,7 +1933,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const answer = completion.choices[0]?.message?.content || "Desculpe, não consegui gerar uma resposta.";
 
-      res.json({ answer });
+      // Increment AI request counter for free plan users
+      const user = await storage.getUser(userId);
+      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
+        await storage.incrementAiRequests(userId);
+        console.log(`[AI Quota] User ${userId} used an AI request (study)`);
+      }
+
+      res.json({ answer, remaining: quota.remaining > 0 ? quota.remaining - 1 : -1 });
     } catch (error: any) {
       console.error("Erro ao chamar OpenAI:", error);
       res.status(500).json({ error: "Erro ao processar sua pergunta. Por favor, tente novamente." });

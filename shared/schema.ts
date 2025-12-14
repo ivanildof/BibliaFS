@@ -87,7 +87,12 @@ export const users = pgTable("users", {
   isTeacher: boolean("is_teacher").default(false),
   
   // Subscription
+  subscriptionPlan: varchar("subscription_plan", { length: 20 }).default("free"), // free, monthly, annual
   subscriptionExpiresAt: timestamp("subscription_expires_at"),
+  stripeCustomerId: varchar("stripe_customer_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  aiRequestsToday: integer("ai_requests_today").default(0),
+  aiRequestsResetAt: timestamp("ai_requests_reset_at"),
   preferences: jsonb("preferences").default({}),
   
   // Timestamps
