@@ -154,11 +154,11 @@ function AppContent() {
         const hsl = hexToHSL(user.customTheme.primaryColor);
         root.style.setProperty("--primary", hsl);
       } else {
-        // Predefined themes
+        // Predefined themes - MUST match settings.tsx!
         const predefinedThemes: Record<string, string> = {
           classico: "#5711D9",
-          noite_sagrada: "#1A1A2E",
-          luz_do_dia: "#FFD700",
+          noite_sagrada: "#9D44C0",
+          luz_do_dia: "#00A0E3",
           terra_santa: "#8B4513",
         };
         
