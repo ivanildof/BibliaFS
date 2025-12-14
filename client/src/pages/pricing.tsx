@@ -93,9 +93,9 @@ const plans = [
       "Comunidade VIP",
       "Influencie recursos",
     ],
-    cta: "Em Breve",
+    cta: "Assinar",
     popular: false,
-    priceId: null,
+    priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || null,
     planType: "yearly",
   },
   {
@@ -113,9 +113,9 @@ const plans = [
       "Acesso antecipado a recursos",
       "Suporte VIP 24h",
     ],
-    cta: "Em Breve",
+    cta: "Assinar",
     popular: false,
-    priceId: null,
+    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PLUS_PRICE_ID || null,
     planType: "premium_plus",
   },
 ];
