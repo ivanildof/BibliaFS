@@ -2089,6 +2089,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/stripe/payment-methods", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!stripe) {
+        return res.status(503).json({ error: "Stripe não configurado" });
+      }
+
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+
+      if (!user?.stripeCustomerId) {
+        return res.json({ paymentMethods: [] });
+      }
+
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: user.stripeCustomerId,
+        type: "card",
+      });
+
+      const cards = paymentMethods.data.map((pm) => ({
+        id: pm.id,
+        brand: pm.card?.brand || "unknown",
+        last4: pm.card?.last4 || "****",
+        expMonth: pm.card?.exp_month,
+        expYear: pm.card?.exp_year,
+      }));
+
+      res.json({ paymentMethods: cards });
+    } catch (error: any) {
+      console.error("Erro ao buscar payment methods:", error);
+      res.status(500).json({ error: "Falha ao buscar cartões salvos" });
+    }
+  });
+
   app.post("/api/donations", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
