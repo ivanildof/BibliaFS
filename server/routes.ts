@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create session
-      (req as any).user = {
+      (req.session as any).user = {
         claims: {
           sub: user.id,
           email: user.email,
@@ -244,7 +244,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create session
-      (req as any).user = {
+      (req.session as any).user = {
         claims: {
           sub: finalUser.id,
           email: finalUser.email,
