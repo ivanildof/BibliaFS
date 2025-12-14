@@ -166,6 +166,26 @@ export async function runMigrations() {
       ALTER TABLE users 
       ADD COLUMN IF NOT EXISTS ai_spend_year_reset_at TIMESTAMP
     `);
+
+    // Create audio_cache table for caching generated TTS audio
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS audio_cache (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        language VARCHAR(10) NOT NULL,
+        version VARCHAR(20) NOT NULL,
+        book VARCHAR(50) NOT NULL,
+        chapter INTEGER NOT NULL,
+        verse INTEGER,
+        audio_data TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create index for faster audio cache lookups
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_audio_cache 
+      ON audio_cache(language, version, book, chapter, verse)
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {

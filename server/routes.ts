@@ -898,10 +898,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'tts-1-hd',
-          voice: 'shimmer',
+          model: 'tts-1',
+          voice: 'nova',
           input: verseText,
-          speed: 0.95,
+          speed: 1.0,
         }),
       });
 
@@ -1020,10 +1020,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'tts-1-hd',
-          voice: 'shimmer',
+          model: 'tts-1',
+          voice: 'nova',
           input: fullText,
-          speed: 0.95,
+          speed: 1.0,
         }),
       });
 
