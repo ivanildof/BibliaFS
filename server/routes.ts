@@ -2069,16 +2069,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { amount, currency } = req.body;
+      const userId = req.user.claims.sub;
+      const userEmail = req.user.claims.email;
       
       if (!amount || amount <= 0) {
         return res.status(400).json({ error: "Valor inválido para doação" });
       }
 
+      const user = await storage.getUser(userId);
+      let customerId = user?.stripeCustomerId;
+
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: userEmail,
+          metadata: { userId },
+        });
+        customerId = customer.id;
+        await storage.updateUserSubscription(userId, { stripeCustomerId: customerId });
+      }
+
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount), // amount in cents
+        amount: Math.round(amount),
         currency: currency || "brl",
+        customer: customerId,
+        setup_future_usage: "off_session",
         metadata: {
-          userId: req.user.claims.sub,
+          userId,
         },
       });
 

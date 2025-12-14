@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest } from "@/lib/queryClient";
+
+interface SavedCard {
+  id: string;
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +57,21 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [useNewCard, setUseNewCard] = useState(true);
+  const [selectedSavedCard, setSelectedSavedCard] = useState<string | null>(null);
+
+  const { data: savedCardsData, isLoading: loadingSavedCards } = useQuery<{ paymentMethods: SavedCard[] }>({
+    queryKey: ["/api/stripe/payment-methods"],
+  });
+
+  const savedCards = savedCardsData?.paymentMethods || [];
+
+  useEffect(() => {
+    if (savedCards.length > 0 && !selectedSavedCard) {
+      setSelectedSavedCard(savedCards[0].id);
+      setUseNewCard(false);
+    }
+  }, [savedCards]);
 
   const createDonationMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -60,22 +83,42 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe) {
       return;
     }
 
-    const cardNumberElement = elements.getElement(CardNumberElement);
-    if (!cardNumberElement) {
-      return;
+    if (useNewCard) {
+      if (!elements) return;
+      const cardNumberElement = elements.getElement(CardNumberElement);
+      if (!cardNumberElement) return;
     }
 
     setIsProcessing(true);
 
     try {
+      let paymentMethodConfig: any;
+      
+      if (useNewCard && elements) {
+        const cardNumberElement = elements.getElement(CardNumberElement);
+        if (!cardNumberElement) {
+          setIsProcessing(false);
+          return;
+        }
+        paymentMethodConfig = { card: cardNumberElement };
+      } else if (selectedSavedCard) {
+        paymentMethodConfig = selectedSavedCard;
+      } else {
+        toast({
+          title: "Erro",
+          description: "Selecione um cartão para continuar",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardNumberElement,
-        },
+        payment_method: paymentMethodConfig,
       });
 
       if (error) {
@@ -162,33 +205,125 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Número do Cartão</Label>
-                  <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
-                    <CardNumberElement options={elementStyle} />
-                  </div>
+              {loadingSavedCards ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
+              ) : savedCards.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <Label>Cartões Salvos</Label>
+                    {savedCards.map((card) => (
+                      <div
+                        key={card.id}
+                        onClick={() => {
+                          setSelectedSavedCard(card.id);
+                          setUseNewCard(false);
+                        }}
+                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                          !useNewCard && selectedSavedCard === card.id
+                            ? "border-primary bg-primary/5"
+                            : "hover:bg-muted/50"
+                        }`}
+                        data-testid={`card-saved-${card.last4}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <CreditCard className="h-5 w-5 text-muted-foreground" />
+                          <div className="flex-1">
+                            <p className="font-medium capitalize">{card.brand} •••• {card.last4}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Expira {String(card.expMonth).padStart(2, '0')}/{card.expYear}
+                            </p>
+                          </div>
+                          {!useNewCard && selectedSavedCard === card.id && (
+                            <CheckCircle2 className="h-5 w-5 text-primary" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Validade</Label>
-                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
-                      <CardExpiryElement options={elementStyle} />
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">ou</span>
                     </div>
                   </div>
+
+                  <Button
+                    type="button"
+                    variant={useNewCard ? "default" : "outline"}
+                    onClick={() => {
+                      setUseNewCard(true);
+                      setSelectedSavedCard(null);
+                    }}
+                    className="w-full"
+                    data-testid="button-use-new-card"
+                  >
+                    Usar novo cartão
+                  </Button>
+
+                  {useNewCard && (
+                    <div className="space-y-4 pt-2">
+                      <div className="space-y-2">
+                        <Label>Número do Cartão</Label>
+                        <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
+                          <CardNumberElement options={elementStyle} />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Validade</Label>
+                          <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
+                            <CardExpiryElement options={elementStyle} />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>CVV</Label>
+                          <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
+                            <CardCvcElement options={elementStyle} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    Seus dados são protegidos com criptografia de ponta a ponta
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>CVV</Label>
-                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
-                      <CardCvcElement options={elementStyle} />
+                    <Label>Número do Cartão</Label>
+                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
+                      <CardNumberElement options={elementStyle} />
                     </div>
                   </div>
-                </div>
 
-                <p className="text-xs text-muted-foreground">
-                  Seus dados são protegidos com criptografia de ponta a ponta
-                </p>
-              </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Validade</Label>
+                      <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
+                        <CardExpiryElement options={elementStyle} />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>CVV</Label>
+                      <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
+                        <CardCvcElement options={elementStyle} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    Seus dados são protegidos com criptografia de ponta a ponta
+                  </p>
+                </div>
+              )}
 
               <div className="bg-muted/50 p-4 rounded-lg space-y-2">
                 <div className="flex justify-between text-sm">
