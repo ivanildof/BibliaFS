@@ -898,25 +898,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'tts-1',
-          voice: 'alloy',
+          model: 'tts-1-hd',
+          voice: 'shimmer',
           input: verseText,
-          speed: 1.0,
+          speed: 0.95,
         }),
       });
 
       if (!ttsResponse.ok) {
+        const errorText = await ttsResponse.text();
+        console.error(`OpenAI TTS error: ${ttsResponse.status}`, errorText);
         throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
       }
 
       res.setHeader('Content-Type', 'audio/mpeg');
       res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${verse}-${language}.mp3"`);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
       
       const audioBuffer = await ttsResponse.arrayBuffer();
       res.send(Buffer.from(audioBuffer));
     } catch (error: any) {
-      console.error("Verse audio generation error:", error);
-      res.status(500).json({ error: "Erro ao gerar áudio do versículo" });
+      console.error("Verse audio generation error:", error?.message || error);
+      res.status(500).json({ error: "Erro ao gerar áudio do versículo", details: error?.message });
     }
   });
 
@@ -992,25 +995,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'tts-1',
-          voice: 'alloy',
+          model: 'tts-1-hd',
+          voice: 'shimmer',
           input: fullText,
-          speed: 1.0,
+          speed: 0.95,
         }),
       });
 
       if (!ttsResponse.ok) {
+        const errorText = await ttsResponse.text();
+        console.error(`OpenAI TTS error: ${ttsResponse.status}`, errorText);
         throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
       }
 
       res.setHeader('Content-Type', 'audio/mpeg');
       res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${language}.mp3"`);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
       
       const audioBuffer = await ttsResponse.arrayBuffer();
       res.send(Buffer.from(audioBuffer));
     } catch (error: any) {
-      console.error("Audio generation error:", error);
-      res.status(500).json({ error: "Erro ao gerar áudio" });
+      console.error("Audio generation error:", error?.message || error);
+      res.status(500).json({ error: "Erro ao gerar áudio", details: error?.message });
     }
   });
 

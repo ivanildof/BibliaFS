@@ -204,12 +204,12 @@ export default function BibleReader() {
           variant: "destructive",
         });
       };
-    } catch (error) {
+    } catch (error: any) {
       setIsLoadingAudio(false);
-      console.error("Audio fetch error:", error);
+      console.error("Audio fetch error:", error?.message || error);
       toast({
-        title: "Erro ao carregar áudio",
-        description: "Verifique sua conexão e tente novamente",
+        title: "Erro ao carregar áudio do capítulo",
+        description: error?.message || "Verifique sua conexão e tente novamente",
         variant: "destructive",
       });
     }
@@ -366,12 +366,12 @@ export default function BibleReader() {
           variant: "destructive",
         });
       };
-    } catch (error) {
+    } catch (error: any) {
       setIsLoadingAudio(false);
-      console.error("Audio fetch error:", error);
+      console.error("Audio fetch error:", error?.message || error);
       toast({
-        title: "Erro ao carregar áudio",
-        description: "Verifique sua conexão e tente novamente",
+        title: "Erro ao carregar áudio do versículo",
+        description: error?.message || "Verifique sua conexão e tente novamente",
         variant: "destructive",
       });
     }
