@@ -1,0 +1,102 @@
+1.1 Objetivo
+Implementar funcionalidades de cadastro e login de usuários em um aplicativo móvel/web utilizando o serviço de autenticação do Supabase, permitindo que usuários se registrem e acessem suas contas com e-mail e senha.
+
+1.2 Escopo
+Cadastro de novo usuário com e-mail e senha.
+Login de usuário com e-mail e senha.
+Tratamento de erros de validação e mensagens ao usuário.
+Integração com o Supabase Auth.
+Fora do escopo neste momento:
+
+Login com redes sociais (Google, GitHub, etc.)
+Recuperação de senha
+Verificação de e-mail (opcional, pode ser ativado no Supabase)
+Gerenciamento de perfis (nome, foto, etc.)
+2. Requisitos Funcionais
+2.1 Cadastro de Usuário
+RF-01: Formulário de Cadastro
+
+O usuário deve preencher:
+E-mail (obrigatório, formato válido)
+Senha (obrigatória, mínimo de 6 caracteres)
+Botão “Cadastrar”
+RF-02: Validação do Formulário
+
+Validar e-mail (formato: usuario@dominio.com)
+Validar senha (mínimo de 6 caracteres)
+Exibir mensagens de erro se os campos estiverem inválidos
+RF-03: Submissão do Cadastro
+
+Ao clicar em “Cadastrar”, o sistema envia os dados para o Supabase via signUp
+Em caso de sucesso:
+Redirecionar o usuário para a tela de login ou dashboard (conforme decisão de UX)
+Exibir mensagem de sucesso (ex: “Conta criada com sucesso!”)
+Em caso de erro (ex: e-mail já registrado):
+Exibir mensagem clara: “Este e-mail já está em uso.”
+2.2 Login de Usuário
+RF-04: Formulário de Login
+
+Campos:
+E-mail
+Senha
+Botão “Entrar”
+RF-05: Validação do Formulário
+
+Validar e-mail e senha (não vazios)
+RF-06: Submissão do Login
+
+Ao clicar em “Entrar”, o sistema envia os dados para o Supabase via signInWithPassword
+Em caso de sucesso:
+O usuário é autenticado
+Redirecionar para a tela principal (dashboard/home)
+Em caso de erro (credenciais inválidas):
+Exibir mensagem: “E-mail ou senha incorretos.”
+3. Requisitos Não Funcionais
+3.1 Segurança
+As senhas devem ser armazenadas com hash pelo Supabase (padrão do serviço).
+Nenhuma informação sensível deve ser armazenada localmente em texto claro.
+Usar HTTPS para todas as comunicações com o Supabase.
+3.2 Usabilidade
+Mensagens de erro devem ser claras e em linguagem acessível.
+Feedback visual durante requisições (ex: loading ao submeter formulário).
+Campos devem ter rótulos e placeholders descritivos.
+3.3 Desempenho
+Tempo máximo de resposta: 2 segundos após submissão (em boas condições de rede).
+4. Integração com Supabase
+4.1 Configuração Necessária no Supabase
+Ativar autenticação com e-mail/senha nas configurações do projeto no Supabase.
+(Opcional) Ativar confirmação de e-mail se for desejado no futuro.
+4.2 SDK/Cliente
+Usar o Supabase JS Client (@supabase/supabase-js) no frontend.
+Inicializar o cliente com:
+ts
+123
+4.3 Endpoints Utilizados
+supabase.auth.signUp({ email, password })
+supabase.auth.signInWithPassword({ email, password })
+5. Fluxos de Tela (Wireframes Básicos)
+Tela: Cadastro
+12345678
+[Logo do App]
+
+E-mail: ___________
+Senha: ___________
+
+[Cadastrar]
+
+Já tem conta? [Entrar]
+Tela: Login
+12345678
+[Logo do App]
+
+E-mail: ___________
+Senha: ___________
+
+[Entrar]
+
+Não tem conta? [Cadastrar]
+6. Métricas de Sucesso
+95% dos cadastros bem-sucedidos não geram erros de validação.
+
+Tempo médio de login < 1.5 segundos.
+Taxa de erro de “credenciais inválidas” < 10% (indicador de UX clara).
