@@ -45,7 +45,8 @@ export default function AIStudy() {
 
   const askMutation = useMutation({
     mutationFn: async (question: string) => {
-      return await apiRequest("POST", "/api/ai/study", { question });
+      const response = await apiRequest("POST", "/api/ai/study", { question });
+      return await response.json();
     },
     onSuccess: (data) => {
       setMessages(prev => [...prev, {

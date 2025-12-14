@@ -136,56 +136,75 @@ export default function BibleReader() {
       description: "Isso pode levar 20-40 segundos. Aguarde!",
     });
     
-    const audio = new Audio(url);
-    audioElementRef.current = audio;
-    
-    audio.onloadeddata = () => {
-      setIsLoadingAudio(false);
-      audio.play().then(() => {
-        setIsPlayingAudio(true);
-        setAudioUrl(url);
-        setPlayingVerseNumber(null);
-        
-        toast({
-          title: audioMode === 'book' ? `Tocando Capítulo ${chapter}` : "Áudio do capítulo iniciado",
-          description: audioMode === 'book' ? `${bookPlaylist.length - currentPlaylistIndex} capítulos restantes` : "Você pode continuar navegando enquanto ouve",
+    try {
+      const response = await fetch(url, { credentials: 'include' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const audio = new Audio(blobUrl);
+      audioElementRef.current = audio;
+      
+      audio.onloadeddata = () => {
+        setIsLoadingAudio(false);
+        audio.play().then(() => {
+          setIsPlayingAudio(true);
+          setAudioUrl(blobUrl);
+          setPlayingVerseNumber(null);
+          
+          toast({
+            title: audioMode === 'book' ? `Tocando Capítulo ${chapter}` : "Áudio do capítulo iniciado",
+            description: audioMode === 'book' ? `${bookPlaylist.length - currentPlaylistIndex} capítulos restantes` : "Você pode continuar navegando enquanto ouve",
+          });
+        }).catch(error => {
+          setIsLoadingAudio(false);
+          stopAllAudio();
+          URL.revokeObjectURL(blobUrl);
+          console.error("Audio playback error:", error);
+          toast({
+            title: "Erro ao reproduzir áudio",
+            description: "Tente novamente",
+            variant: "destructive",
+          });
         });
-      }).catch(error => {
+      };
+      
+      audio.onended = () => {
+        URL.revokeObjectURL(blobUrl);
+        if (audioMode === 'book' && currentPlaylistIndex < bookPlaylist.length - 1) {
+          const nextIndex = currentPlaylistIndex + 1;
+          setCurrentPlaylistIndex(nextIndex);
+          playChapterAudio(bookPlaylist[nextIndex]);
+        } else {
+          setIsPlayingAudio(false);
+          setPlayingVerseNumber(null);
+          setBookPlaylist([]);
+          setCurrentPlaylistIndex(0);
+          setAudioMode('chapter');
+        }
+      };
+      
+      audio.onerror = () => {
         setIsLoadingAudio(false);
         stopAllAudio();
-        console.error("Audio playback error:", error);
+        URL.revokeObjectURL(blobUrl);
         toast({
-          title: "Erro ao reproduzir áudio",
-          description: "Tente novamente",
+          title: "Erro ao carregar áudio",
+          description: "Verifique sua conexão e tente novamente",
           variant: "destructive",
         });
-      });
-    };
-    
-    audio.onended = () => {
-      if (audioMode === 'book' && currentPlaylistIndex < bookPlaylist.length - 1) {
-        // Tocar próximo capítulo
-        const nextIndex = currentPlaylistIndex + 1;
-        setCurrentPlaylistIndex(nextIndex);
-        playChapterAudio(bookPlaylist[nextIndex]);
-      } else {
-        setIsPlayingAudio(false);
-        setPlayingVerseNumber(null);
-        setBookPlaylist([]);
-        setCurrentPlaylistIndex(0);
-        setAudioMode('chapter');
-      }
-    };
-    
-    audio.onerror = () => {
+      };
+    } catch (error) {
       setIsLoadingAudio(false);
-      stopAllAudio();
+      console.error("Audio fetch error:", error);
       toast({
         title: "Erro ao carregar áudio",
         description: "Verifique sua conexão e tente novamente",
         variant: "destructive",
       });
-    };
+    }
   };
 
   const startBookAudio = async () => {
@@ -441,7 +460,8 @@ export default function BibleReader() {
   // Mark as read mutation
   const markReadMutation = useMutation({
     mutationFn: async (data: { book: string; chapter: number }) => {
-      return await apiRequest("POST", "/api/bible/mark-read", data);
+      const response = await apiRequest("POST", "/api/bible/mark-read", data);
+      return await response.json();
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/stats/gamification"] });
@@ -1090,7 +1110,6 @@ export default function BibleReader() {
                           size="sm"
                           className="w-full"
                           onClick={async () => {
-                            // Stop any playing audio (chapter or other verse) - síncrono via ref
                             stopAllAudio();
                             
                             const url = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verse.number}`;
@@ -1100,39 +1119,59 @@ export default function BibleReader() {
                               description: "Aguarde alguns segundos",
                             });
                             
-                            const audio = new Audio(url);
-                            audioElementRef.current = audio;
                             setPlayingVerseNumber(verse.number);
                             
-                            audio.onloadeddata = () => {
-                              audio.play().then(() => {
-                                setIsPlayingAudio(true);
-                                setAudioUrl(url);
-                                toast({
-                                  title: "Áudio do versículo iniciado",
+                            try {
+                              const response = await fetch(url, { credentials: 'include' });
+                              if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}`);
+                              }
+                              const blob = await response.blob();
+                              const blobUrl = URL.createObjectURL(blob);
+                              
+                              const audio = new Audio(blobUrl);
+                              audioElementRef.current = audio;
+                              
+                              audio.onloadeddata = () => {
+                                audio.play().then(() => {
+                                  setIsPlayingAudio(true);
+                                  setAudioUrl(blobUrl);
+                                  toast({
+                                    title: "Áudio do versículo iniciado",
+                                  });
+                                }).catch(error => {
+                                  console.error("Audio error:", error);
+                                  stopAllAudio();
+                                  URL.revokeObjectURL(blobUrl);
+                                  toast({
+                                    title: "Erro ao reproduzir áudio",
+                                    variant: "destructive",
+                                  });
                                 });
-                              }).catch(error => {
-                                console.error("Audio error:", error);
+                              };
+                              
+                              audio.onended = () => {
+                                setIsPlayingAudio(false);
+                                setPlayingVerseNumber(null);
+                                URL.revokeObjectURL(blobUrl);
+                              };
+                              
+                              audio.onerror = () => {
                                 stopAllAudio();
+                                URL.revokeObjectURL(blobUrl);
                                 toast({
-                                  title: "Erro ao reproduzir áudio",
+                                  title: "Erro ao carregar áudio",
                                   variant: "destructive",
                                 });
-                              });
-                            };
-                            
-                            audio.onended = () => {
-                              setIsPlayingAudio(false);
+                              };
+                            } catch (error) {
+                              console.error("Audio fetch error:", error);
                               setPlayingVerseNumber(null);
-                            };
-                            
-                            audio.onerror = () => {
-                              stopAllAudio();
                               toast({
                                 title: "Erro ao carregar áudio",
                                 variant: "destructive",
                               });
-                            };
+                            }
                           }}
                           data-testid={`button-audio-verse-${verse.number}`}
                         >
