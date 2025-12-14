@@ -1081,6 +1081,63 @@ export const insertDailyVerseSchema = createInsertSchema(dailyVerses).omit({ id:
 export type InsertDailyVerse = z.infer<typeof insertDailyVerseSchema>;
 export type DailyVerse = typeof dailyVerses.$inferSelect;
 
+// ============================================
+// PUSH NOTIFICATIONS
+// ============================================
+
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  userAgent: text("user_agent"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const notificationPreferences = pgTable("notification_preferences", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  readingReminders: boolean("reading_reminders").default(true),
+  readingReminderTime: varchar("reading_reminder_time", { length: 5 }).default("08:00"),
+  prayerReminders: boolean("prayer_reminders").default(true),
+  prayerReminderTime: varchar("prayer_reminder_time", { length: 5 }).default("07:00"),
+  dailyVerseNotification: boolean("daily_verse_notification").default(true),
+  dailyVerseTime: varchar("daily_verse_time", { length: 5 }).default("06:00"),
+  communityActivity: boolean("community_activity").default(false),
+  teacherModeUpdates: boolean("teacher_mode_updates").default(true),
+  weekendOnly: boolean("weekend_only").default(false),
+  timezone: varchar("timezone", { length: 50 }).default("America/Sao_Paulo"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const notificationHistory = pgTable("notification_history", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 50 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  data: jsonb("data"),
+  sentAt: timestamp("sent_at").defaultNow(),
+  clicked: boolean("clicked").default(false),
+  clickedAt: timestamp("clicked_at"),
+});
+
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+
+export const insertNotificationPreferencesSchema = createInsertSchema(notificationPreferences).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertNotificationPreferences = z.infer<typeof insertNotificationPreferencesSchema>;
+export type NotificationPreferences = typeof notificationPreferences.$inferSelect;
+
+export const insertNotificationHistorySchema = createInsertSchema(notificationHistory).omit({ id: true, sentAt: true });
+export type InsertNotificationHistory = z.infer<typeof insertNotificationHistorySchema>;
+export type NotificationHistory = typeof notificationHistory.$inferSelect;
+
 // Bible content types
 export type BibleTranslation = typeof bibleTranslations.$inferSelect;
 export type BibleBook = typeof bibleBooks.$inferSelect;
