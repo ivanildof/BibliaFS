@@ -76,14 +76,14 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Welcome Header */}
-        <div>
-          <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-welcome">
+        <div className="space-y-2">
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent" data-testid="text-welcome">
             Bem-vindo, {user?.firstName || "estudante"}!
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base sm:text-lg text-muted-foreground">
             Continue sua jornada espiritual hoje
           </p>
         </div>
@@ -92,14 +92,16 @@ export default function Home() {
         <DailyVerse />
 
         {/* Stats Overview */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="hover-elevate">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <Card className="hover-elevate bg-gradient-to-br from-white/50 to-white/30 dark:from-slate-800/50 dark:to-slate-900/30 backdrop-blur-sm border-white/40 dark:border-slate-700/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Sequência de Leitura</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 rounded-lg bg-primary/10">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary" data-testid="text-reading-streak">
+              <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent" data-testid="text-reading-streak">
                 {readingStreak} dias
               </div>
               <p className="text-xs text-muted-foreground mt-2">
@@ -108,32 +110,36 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover-elevate">
+          <Card className="hover-elevate bg-gradient-to-br from-white/50 to-white/30 dark:from-slate-800/50 dark:to-slate-900/30 backdrop-blur-sm border-white/40 dark:border-slate-700/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Nível Espiritual</CardTitle>
-              <Award className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 rounded-lg bg-accent/10">
+                <Award className="h-4 w-4 text-accent" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold" data-testid="text-level">
+              <div className="text-2xl sm:text-3xl font-bold" data-testid="text-level">
                 {levelLabels[level]}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                {user?.experiencePoints || 0} pontos de experiência
+                {user?.experiencePoints || 0} XP
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover-elevate">
+          <Card className="hover-elevate bg-gradient-to-br from-white/50 to-white/30 dark:from-slate-800/50 dark:to-slate-900/30 backdrop-blur-sm border-white/40 dark:border-slate-700/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Atividade Comunitária</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 rounded-lg bg-green-500/10">
+                <Users className="h-4 w-4 text-green-500" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold" data-testid="text-community-count">
+              <div className="text-2xl sm:text-3xl font-bold" data-testid="text-community-count">
                 {stats?.communityPosts || 0}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Publicações compartilhadas
+                Publicações
               </p>
             </CardContent>
           </Card>
@@ -141,17 +147,17 @@ export default function Home() {
 
         {/* Current Reading Plan */}
         {currentPlan && (
-          <Card className="border-l-4 border-l-primary">
+          <Card className="border-l-4 border-l-primary bg-gradient-to-r from-white/60 to-white/40 dark:from-slate-800/60 dark:to-slate-900/40 backdrop-blur-sm">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <CardTitle className="flex items-center gap-2 text-xl">
                     <Calendar className="h-5 w-5 text-primary" />
                     Leitura de Hoje
                   </CardTitle>
                   <CardDescription className="mt-1">{currentPlan.title}</CardDescription>
                 </div>
-                <Badge variant="secondary" data-testid="badge-plan-day">
+                <Badge variant="secondary" data-testid="badge-plan-day" className="whitespace-nowrap">
                   Dia {currentPlan.currentDay}
                 </Badge>
               </div>
@@ -181,9 +187,9 @@ export default function Home() {
         )}
 
         {/* Quick Actions */}
-        <div>
-          <h2 className="font-display text-2xl font-bold mb-4">Ações Rápidas</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="space-y-4">
+          <h2 className="font-display text-2xl font-bold">Ações Rápidas</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
                 <Card className="hover-elevate active-elevate-2 cursor-pointer" data-testid={`card-quick-action-${index}`}>
@@ -202,14 +208,14 @@ export default function Home() {
         </div>
 
         {/* Recent Activity */}
-        <Card>
+        <Card className="bg-gradient-to-r from-white/60 to-white/40 dark:from-slate-800/60 dark:to-slate-900/40 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Sparkles className="h-5 w-5 text-primary" />
               Atividade Recente
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3 sm:space-y-4">
             <div className="space-y-4">
               <div className="flex items-start gap-3 text-sm">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
