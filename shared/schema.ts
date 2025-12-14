@@ -685,11 +685,16 @@ export const donations = pgTable("donations", {
   amount: integer("amount").notNull(),
   currency: varchar("currency", { length: 10 }).default("BRL"),
   type: varchar("type", { length: 50 }).notNull(), // one_time, recurring
-  stripePaymentId: varchar("stripe_payment_id"),
+  frequency: varchar("frequency"),
+  destination: varchar("destination", { length: 50 }).default("app_operations"),
+  stripePaymentIntentId: varchar("stripe_payment_intent_id"),
+  stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   status: varchar("status", { length: 20 }).default("pending"), // pending, completed, failed, cancelled
+  isAnonymous: boolean("is_anonymous").default(false),
+  message: text("message"),
   createdAt: timestamp("created_at").defaultNow(),
-  completedAt: timestamp("completed_at"),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // ============================================

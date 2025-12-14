@@ -1014,12 +1014,12 @@ export class DatabaseStorage implements IStorage {
     return donation;
   }
 
-  async updateDonationStatus(id: string, status: string, stripePaymentId?: string): Promise<Donation> {
+  async updateDonationStatus(id: string, status: string, stripePaymentIntentId?: string): Promise<Donation> {
     const [updated] = await db
       .update(donations)
       .set({ 
         status, 
-        ...(stripePaymentId && { stripePaymentId })
+        ...(stripePaymentIntentId && { stripePaymentIntentId })
       })
       .where(eq(donations.id, id))
       .returning();
