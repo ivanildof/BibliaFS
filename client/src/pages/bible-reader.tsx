@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/lib/supabase";
 import { 
   Sheet, 
   SheetContent, 
@@ -137,12 +138,16 @@ export default function BibleReader() {
     });
     
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const authHeaders = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
       
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        headers: authHeaders,
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -326,12 +331,16 @@ export default function BibleReader() {
     });
     
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const authHeaders = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
       
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        headers: authHeaders,
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
