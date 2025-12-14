@@ -1,4 +1,4 @@
-// Blueprint: javascript_log_in_with_replit, javascript_openai, and javascript_stripe
+// Authentication: email/password with bcrypt, AI with OpenAI, Payments with Stripe
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -176,9 +176,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Email ou senha incorretos" });
       }
 
-      // Check if user has password (might be Replit auth user)
+      // Check if user has password
       if (!user.passwordHash) {
-        return res.status(401).json({ message: "Esta conta usa login via Replit. Use o botão 'Entrar com Replit'." });
+        return res.status(401).json({ message: "Esta conta não tem senha configurada. Por favor, redefina sua senha." });
       }
 
       // Verify password
