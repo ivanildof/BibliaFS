@@ -668,6 +668,43 @@ export default function Settings() {
 
             <Card>
               <CardHeader>
+                <CardTitle>Plano de Assinatura</CardTitle>
+                <CardDescription>
+                  Visualize seu plano atual e faça upgrade
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Plano Atual</Label>
+                  <p className="text-sm text-muted-foreground mt-1 capitalize font-semibold">
+                    {user?.subscriptionPlan === 'free' ? 'Gratuito' : 
+                     user?.subscriptionPlan === 'monthly' ? 'Mensal' : 
+                     user?.subscriptionPlan === 'yearly' ? 'Anual' : 
+                     user?.subscriptionPlan === 'premium_plus' ? 'Premium Plus' :
+                     user?.subscriptionPlan || 'Gratuito'}
+                  </p>
+                </div>
+                {user?.subscriptionExpiresAt && (
+                  <div>
+                    <Label>Válido Até</Label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {new Date(user.subscriptionExpiresAt).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  onClick={() => window.location.href = '/pricing'}
+                  data-testid="button-upgrade-plan"
+                >
+                  {user?.subscriptionPlan === 'free' ? 'Fazer Upgrade' : 'Ver Planos'}
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Modo Professor</CardTitle>
                 <CardDescription>
                   Ative recursos de ensino
