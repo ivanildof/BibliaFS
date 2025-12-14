@@ -1067,9 +1067,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Bible Commentary Route (with Global Cache for cost reduction)
-  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
+  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // Use guest ID if not authenticated
+      const userId = req.user?.claims?.sub || 'guest';
       const { version, book, chapter, verse } = req.params;
       const { type } = req.query; // exegese, historico, aplicacao, referencias, teologico
       
