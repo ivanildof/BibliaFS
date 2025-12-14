@@ -26,7 +26,6 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "wouter";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -150,26 +149,8 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-6 border-t">
-        {user && (
-          <Link href="/perfil">
-            <div className="flex items-center gap-3 rounded-2xl p-3 hover-elevate active-elevate-2 cursor-pointer shadow-md" data-testid="link-profile">
-              <Avatar className="h-11 w-11 ring-2 ring-accent/50">
-                <AvatarImage src={user.profileImageUrl || undefined} />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground font-semibold">
-                  {user.firstName?.[0] || user.email?.[0] || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate" data-testid="text-username">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-              </div>
-            </div>
-          </Link>
-        )}
-        <div className="mt-4 text-center text-xs text-muted-foreground">
+      <SidebarFooter className="p-4 border-t">
+        <div className="text-center text-xs text-muted-foreground">
           © 2026 - BíbliaFS. Todos os direitos reservados. Desenvolvido por |{" "}
           <a 
             href="https://fabrisite.com.br/" 
