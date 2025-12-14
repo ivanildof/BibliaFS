@@ -308,11 +308,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       resetTokens.set(token, { email: user.email!, expiresAt });
 
       // Clean up expired tokens periodically
-      for (const [t, data] of resetTokens.entries()) {
+      const entriesToDelete: string[] = [];
+      resetTokens.forEach((data, t) => {
         if (data.expiresAt < Date.now()) {
-          resetTokens.delete(t);
+          entriesToDelete.push(t);
         }
-      }
+      });
+      entriesToDelete.forEach(t => resetTokens.delete(t));
 
       // In production, send email with link
       // For now, log the token (development only)
