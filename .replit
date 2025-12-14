@@ -39,4 +39,11 @@ args = "npm run dev"
 waitForPort = 5000
 
 [agent]
-integrations = ["javascript_database:1.0.0", "javascript_openai:1.0.0", "javascript_log_in_with_replit:1.0.0", "javascript_stripe:1.0.0", "javascript_openai_ai_integrations:1.0.0"]
+integrations = ["javascript_database:1.0.0", "javascript_openai:1.0.0", "javascript_log_in_with_replit:1.0.0", "javascript_stripe:1.0.0", "javascript_openai_ai_integrations:1.0.0", "stripe:2.0.0"]
+
+[userenv]
+
+[userenv.shared]
+VITE_STRIPE_MONTHLY_PRICE_ID = "price_1Se84N82ft0q6w1Xuo1yi66J"
+VITE_STRIPE_YEARLY_PRICE_ID = "price_1Se84O82ft0q6w1XEYAiudZR"
+VITE_STRIPE_PREMIUM_PLUS_PRICE_ID = "price_1Se84O82ft0q6w1XkDML8Kbz"
