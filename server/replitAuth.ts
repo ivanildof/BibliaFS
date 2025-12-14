@@ -75,20 +75,6 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
-  // Development bypass: Allow testing without auth
-  if (process.env.NODE_ENV !== 'production' && process.env.DEV_BYPASS_AUTH === 'true') {
-    (req as any).user = {
-      claims: {
-        sub: 'dev-user-123',
-        email: 'dev@example.com',
-        first_name: 'Dev',
-        last_name: 'User',
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
-    };
-    return next();
-  }
-
   const user = (req as any).user;
 
   if (!user || !user.claims || !user.expires_at) {
