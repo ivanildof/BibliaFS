@@ -4,20 +4,21 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
 function getDatabaseUrl(): string {
-  // Check for DATABASE_URL environment variable (should be set as Replit secret)
-  const dbUrl = process.env.DATABASE_URL;
+  // Check for SUPABASE_DATABASE_URL first, then DATABASE_URL
+  const dbUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
   
   if (!dbUrl) {
     throw new Error(
-      "DATABASE_URL must be set. Did you forget to provision a database or add the secret?",
+      "DATABASE_URL or SUPABASE_DATABASE_URL must be set. Did you forget to provision a database or add the secret?",
     );
   }
   
   // Validate it looks like a proper connection string
   if (!dbUrl.startsWith('postgresql://') && !dbUrl.startsWith('postgres://')) {
-    console.error('DATABASE_URL does not appear to be a valid PostgreSQL connection string');
+    console.error('Database URL does not appear to be a valid PostgreSQL connection string');
+    console.error('Current value starts with:', dbUrl.substring(0, 20));
     console.error('Expected format: postgresql://user:password@host:port/database');
-    throw new Error('Invalid DATABASE_URL format');
+    throw new Error('Invalid DATABASE_URL format. Please set SUPABASE_DATABASE_URL with the correct connection string.');
   }
   
   // Log connection info (without password) for debugging
