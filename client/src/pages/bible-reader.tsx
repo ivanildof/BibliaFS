@@ -1613,7 +1613,7 @@ export default function BibleReader() {
           <DialogHeader>
             <DialogTitle>Escolha o modo de áudio</DialogTitle>
             <DialogDescription>
-              Selecione um versículo para ouvir
+              Você pode ouvir um versículo, o capítulo ou o livro completo
             </DialogDescription>
           </DialogHeader>
           
@@ -1631,6 +1631,21 @@ export default function BibleReader() {
               </div>
               <p className="text-sm text-muted-foreground text-left">
                 {selectedVerse !== null ? `Ouvir apenas versículo ${selectedVerse}` : 'Selecione um versículo primeiro'}
+              </p>
+            </Button>
+            
+            <Button
+              onClick={() => handleStartAudio('chapter')}
+              variant="outline"
+              className="h-auto flex-col items-start p-4 gap-2"
+              data-testid="button-audio-chapter"
+            >
+              <div className="flex items-center gap-2">
+                <Book className="h-5 w-5" />
+                <span className="font-semibold">Capítulo Atual</span>
+              </div>
+              <p className="text-sm text-muted-foreground text-left">
+                Ouvir apenas {selectedBook} {selectedChapter}
               </p>
             </Button>
             
