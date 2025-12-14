@@ -26,6 +26,17 @@ import {
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
 import { runMigrations } from "./migrations";
+import {
+  initPushTables,
+  getVapidPublicKey,
+  savePushSubscription,
+  removePushSubscription,
+  getNotificationPreferences,
+  updateNotificationPreferences,
+  sendPushNotification,
+  markNotificationClicked,
+  getRandomInsight,
+} from "./push-notifications";
 
 // Initialize Stripe (from javascript_stripe blueprint)
 // User will need to configure STRIPE_SECRET_KEY in environment variables
@@ -139,6 +150,9 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   // Run database migrations
   await runMigrations();
+  
+  // Initialize push notification tables
+  await initPushTables();
   
   // Import bcrypt for password reset
   const bcrypt = await import("bcryptjs");
@@ -2169,6 +2183,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Erro ao chamar OpenAI:", error);
       res.status(500).json({ error: "Erro ao processar sua pergunta. Por favor, tente novamente." });
+    }
+  });
+
+  // ============================================
+  // PUSH NOTIFICATIONS
+  // ============================================
+
+  // Get VAPID public key for client subscription
+  app.get("/api/notifications/vapid-key", (req, res) => {
+    const key = getVapidPublicKey();
+    if (!key) {
+      return res.status(503).json({ error: "Push notifications not configured" });
+    }
+    res.json({ publicKey: key });
+  });
+
+  // Subscribe to push notifications
+  app.post("/api/notifications/subscribe", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { subscription } = req.body;
+      
+      if (!subscription || !subscription.endpoint || !subscription.keys) {
+        return res.status(400).json({ error: "Invalid subscription data" });
+      }
+      
+      await savePushSubscription(userId, subscription, req.headers['user-agent']);
+      res.json({ success: true, message: "Subscription saved" });
+    } catch (error: any) {
+      console.error("[Push] Subscribe error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Unsubscribe from push notifications
+  app.post("/api/notifications/unsubscribe", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { endpoint } = req.body;
+      
+      if (!endpoint) {
+        return res.status(400).json({ error: "Endpoint required" });
+      }
+      
+      await removePushSubscription(userId, endpoint);
+      res.json({ success: true, message: "Subscription removed" });
+    } catch (error: any) {
+      console.error("[Push] Unsubscribe error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get notification preferences
+  app.get("/api/notifications/preferences", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const preferences = await getNotificationPreferences(userId);
+      res.json(preferences);
+    } catch (error: any) {
+      console.error("[Push] Get preferences error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Update notification preferences
+  app.patch("/api/notifications/preferences", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const updated = await updateNotificationPreferences(userId, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[Push] Update preferences error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Mark notification as clicked
+  app.post("/api/notifications/clicked", async (req, res) => {
+    try {
+      const { notificationId } = req.body;
+      if (notificationId) {
+        await markNotificationClicked(notificationId);
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("[Push] Mark clicked error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Send test notification (for debugging)
+  app.post("/api/notifications/test", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const result = await sendPushNotification(userId, {
+        title: "BíbliaFS",
+        body: getRandomInsight('reading'),
+        icon: "/icons/icon-192x192.png",
+        tag: "test",
+        data: { url: "/" },
+      });
+      res.json(result);
+    } catch (error: any) {
+      console.error("[Push] Test notification error:", error);
+      res.status(500).json({ error: error.message });
     }
   });
 
