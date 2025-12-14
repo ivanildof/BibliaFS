@@ -256,6 +256,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug: Create confirmed user (temporary for testing)
+  app.post('/api/auth/debug/create-confirmed-user', async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email e senha são obrigatórios" });
+      }
+
+      if (!supabaseAdmin) {
+        return res.status(500).json({ message: "Supabase not configured" });
+      }
+
+      // Create user using admin API - already confirmed
+      const { data, error } = await (supabaseAdmin.auth.admin as any).createUser({
+        email,
+        password,
+        email_confirm: true, // Mark as confirmed
+        user_metadata: {
+          first_name: firstName || 'User',
+          last_name: lastName || '',
+        },
+      });
+
+      if (error) {
+        console.error("[Debug] Create user error:", error);
+        return res.status(400).json({ message: error.message });
+      }
+
+      console.log("[Debug] User created and confirmed:", data.user?.id);
+      res.json({ message: "Usuário criado e confirmado com sucesso!", user: data.user });
+    } catch (error: any) {
+      console.error("[Debug] Error:", error);
+      res.status(500).json({ message: "Erro ao criar usuário", error: error.message });
+    }
+  });
+
   // Auth user endpoint
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
