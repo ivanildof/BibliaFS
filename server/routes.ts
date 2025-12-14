@@ -1942,8 +1942,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/subscriptions/status", isAuthenticated, async (req: any, res) => {
+  app.get("/api/subscriptions/status", async (req: any, res) => {
     try {
+      // If user is not authenticated, return free plan
+      if (!req.user) {
+        return res.json({
+          plan: 'free',
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+          aiRequestsToday: 0,
+          aiRequestsResetAt: null,
+        });
+      }
+
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
 
