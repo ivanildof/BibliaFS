@@ -94,6 +94,15 @@ export const users = pgTable("users", {
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   aiRequestsToday: integer("ai_requests_today").default(0),
   aiRequestsResetAt: timestamp("ai_requests_reset_at"),
+  
+  // AI Spending Limits (25% of budget for monthly and annual)
+  aiSpendMonth: decimal("ai_spend_month", { precision: 10, scale: 4 }).default("0"),
+  aiSpendYear: decimal("ai_spend_year", { precision: 10, scale: 4 }).default("0"),
+  aiMonthlyBudgetLimit: decimal("ai_monthly_budget_limit", { precision: 10, scale: 4 }).default("0"),
+  aiAnnualBudgetLimit: decimal("ai_annual_budget_limit", { precision: 10, scale: 4 }).default("0"),
+  aiSpendMonthResetAt: timestamp("ai_spend_month_reset_at"),
+  aiSpendYearResetAt: timestamp("ai_spend_year_reset_at"),
+  
   preferences: jsonb("preferences").default({}),
   
   // Timestamps

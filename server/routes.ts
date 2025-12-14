@@ -40,6 +40,8 @@ if (process.env.STRIPE_SECRET_KEY) {
 
 // AI Rate Limiting Constants
 const FREE_PLAN_AI_LIMIT = 3; // 3 AI requests per day for free users
+const AI_REQUEST_COST = 0.01; // Cost per AI request in USD
+const AI_BUDGET_PERCENTAGE = 0.25; // 25% of subscription budget
 
 // Helper to check AI quota for free plan users
 async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; message?: string }> {
@@ -73,6 +75,28 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
         allowed: false, 
         remaining: 0,
         message: `Você atingiu o limite de ${FREE_PLAN_AI_LIMIT} perguntas IA por dia. Assine o Premium para perguntas ilimitadas!`
+      };
+    }
+
+    // Check 25% budget limit
+    const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
+    const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
+    const monthlyLimit = user.aiMonthlyBudgetLimit ? Number(user.aiMonthlyBudgetLimit) : 0;
+    const yearlyLimit = user.aiAnnualBudgetLimit ? Number(user.aiAnnualBudgetLimit) : 0;
+
+    if (monthlyLimit > 0 && monthlySpend >= monthlyLimit) {
+      return {
+        allowed: false,
+        remaining: 0,
+        message: `Você atingiu o limite de orçamento mensal de IA (25% do mês). Tente novamente o próximo mês.`
+      };
+    }
+
+    if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
+      return {
+        allowed: false,
+        remaining: 0,
+        message: `Você atingiu o limite de orçamento anual de IA (25% do ano). Tente novamente o próximo ano.`
       };
     }
     
@@ -1075,11 +1099,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         chapterData
       );
 
-      // Increment AI request counter for free plan users
+      // Increment AI request counter and track spending for free plan users
       const user = await storage.getUser(userId);
       if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
         await storage.incrementAiRequests(userId);
         console.log(`[AI Quota] User ${userId} used an AI request`);
+        
+        // Track spending (25% budget limit)
+        try {
+          const spending = await storage.trackAISpending(userId, AI_REQUEST_COST);
+          if (!spending.withinBudget) {
+            console.warn(`[AI Budget] User ${userId} exceeded spending limit - Monthly: $${spending.monthlyRemaining.toFixed(2)} remaining, Yearly: $${spending.yearlyRemaining.toFixed(2)} remaining`);
+          } else {
+            console.log(`[AI Budget] User ${userId} spending tracked - Monthly remaining: $${spending.monthlyRemaining.toFixed(2)}, Yearly remaining: $${spending.yearlyRemaining.toFixed(2)}`);
+          }
+        } catch (trackError) {
+          console.error("[AI Budget] Error tracking spending:", trackError);
+        }
       }
 
       // Save to BOTH global cache and user cache

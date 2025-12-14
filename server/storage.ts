@@ -76,6 +76,7 @@ export interface IStorage {
   updateUserStats(userId: string, data: { experiencePoints?: number; readingStreak?: number; level?: string; lastReadDate?: Date }): Promise<User>;
   updateUserTheme(userId: string, data: { selectedTheme?: string; customTheme?: any }): Promise<User>;
   updateUserImage(userId: string, imageData: string): Promise<User>;
+  trackAISpending(userId: string, cost: number): Promise<{ user: User; withinBudget: boolean; monthlyRemaining: number; yearlyRemaining: number }>;
   
   // Gamification (transactional)
   processGamificationRewards(userId: string, xpEarned: number, newStreak: number, lastReadDate: Date): Promise<{ user: User; unlockedAchievements: UserAchievement[] }>;
@@ -261,6 +262,60 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return user;
+  }
+
+  async trackAISpending(userId: string, cost: number): Promise<{ user: User; withinBudget: boolean; monthlyRemaining: number; yearlyRemaining: number }> {
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    if (!user) throw new Error("User not found");
+
+    const now = new Date();
+    
+    // Reset monthly budget if needed
+    let aiSpendMonth = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
+    let aiMonthlyBudgetLimit = user.aiMonthlyBudgetLimit ? Number(user.aiMonthlyBudgetLimit) : 0;
+    let aiSpendMonthResetAt = user.aiSpendMonthResetAt;
+    
+    if (!aiSpendMonthResetAt || now > aiSpendMonthResetAt) {
+      aiSpendMonth = 0;
+      const nextMonth = new Date(now);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      aiSpendMonthResetAt = nextMonth;
+    }
+
+    // Reset yearly budget if needed
+    let aiSpendYear = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
+    let aiAnnualBudgetLimit = user.aiAnnualBudgetLimit ? Number(user.aiAnnualBudgetLimit) : 0;
+    let aiSpendYearResetAt = user.aiSpendYearResetAt;
+
+    if (!aiSpendYearResetAt || now > aiSpendYearResetAt) {
+      aiSpendYear = 0;
+      const nextYear = new Date(now);
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+      aiSpendYearResetAt = nextYear;
+    }
+
+    // Add cost
+    aiSpendMonth += cost;
+    aiSpendYear += cost;
+
+    // Update user with new spending
+    const [updatedUser] = await db
+      .update(users)
+      .set({
+        aiSpendMonth: aiSpendMonth.toString(),
+        aiSpendYear: aiSpendYear.toString(),
+        aiSpendMonthResetAt,
+        aiSpendYearResetAt,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+
+    const monthlyRemaining = Math.max(0, aiMonthlyBudgetLimit - aiSpendMonth);
+    const yearlyRemaining = Math.max(0, aiAnnualBudgetLimit - aiSpendYear);
+    const withinBudget = aiSpendMonth <= aiMonthlyBudgetLimit && aiSpendYear <= aiAnnualBudgetLimit;
+
+    return { user: updatedUser, withinBudget, monthlyRemaining, yearlyRemaining };
   }
 
   async processGamificationRewards(

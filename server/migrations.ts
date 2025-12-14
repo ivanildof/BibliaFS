@@ -135,6 +135,37 @@ export async function runMigrations() {
       ALTER TABLE users 
       ADD COLUMN IF NOT EXISTS ai_requests_reset_at TIMESTAMP
     `);
+
+    // Add AI spending tracking columns for 25% budget limit
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_spend_month NUMERIC(10, 4) DEFAULT 0
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_spend_year NUMERIC(10, 4) DEFAULT 0
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_monthly_budget_limit NUMERIC(10, 4) DEFAULT 0
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_annual_budget_limit NUMERIC(10, 4) DEFAULT 0
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_spend_month_reset_at TIMESTAMP
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_spend_year_reset_at TIMESTAMP
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {
