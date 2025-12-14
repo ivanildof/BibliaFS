@@ -2219,7 +2219,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         max_tokens: 1000,
       });
 
-      const answer = completion.choices[0]?.message?.content || "Desculpe, não consegui gerar uma resposta.";
+      let answer = completion.choices[0]?.message?.content || "Desculpe, não consegui gerar uma resposta.";
+      
+      // Enrich response with Bible context
+      if (answer && answer.length > 0) {
+        // Add source attribution if not already there
+        if (!answer.toLowerCase().includes('referência') && !answer.toLowerCase().includes('versículo')) {
+          answer += "\n\nPara estudos mais aprofundados, recomendo consultar as referências bíblicas mencionadas e comentários teológicos especializados.";
+        }
+      }
 
       // Increment AI request counter for free plan users
       const user = await storage.getUser(userId);

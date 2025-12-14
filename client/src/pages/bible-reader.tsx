@@ -139,7 +139,12 @@ export default function BibleReader() {
     try {
       const response = await fetch(url, { credentials: 'include' });
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
+      }
+      if (!response.headers.get('content-type')?.includes('audio')) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || "Falha ao gerar áudio");
       }
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
@@ -304,7 +309,12 @@ export default function BibleReader() {
     try {
       const response = await fetch(url, { credentials: 'include' });
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
+      }
+      if (!response.headers.get('content-type')?.includes('audio')) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || "Falha ao gerar áudio");
       }
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
