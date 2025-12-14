@@ -110,7 +110,6 @@ const plans = [
       "Tudo do Anual",
       "IA Teológica: ~7.200 perguntas/ano",
       "Dobro do limite comparado ao Anual",
-      "R$ 72,25 em créditos IA/ano",
       "Acesso antecipado a recursos",
       "Suporte VIP 24h",
     ],
