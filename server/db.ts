@@ -9,7 +9,7 @@ import { join } from "path";
 neonConfig.webSocketConstructor = ws;
 
 function getDatabaseUrl(): string {
-  // First, try to get from envCache (Replit's internal database - most reliable)
+  // First, try to get from envCache (Replit's internal database - most stable)
   try {
     const envCachePath = join(process.env.HOME || '/home/runner', 'workspace/.cache/replit/env/latest.json');
     const envCache = JSON.parse(readFileSync(envCachePath, 'utf8'));
@@ -20,12 +20,12 @@ function getDatabaseUrl(): string {
     // Ignore cache read errors
   }
 
-  // Second, try SUPABASE_DATABASE_URL if available and valid
+  // Fallback to SUPABASE_DATABASE_URL (production - requires additional driver configuration)
   if (process.env.SUPABASE_DATABASE_URL && process.env.SUPABASE_DATABASE_URL.startsWith('postgresql://')) {
     return process.env.SUPABASE_DATABASE_URL;
   }
 
-  // Fallback to environment variable if it's a valid PostgreSQL URL
+  // Last resort - try environment variable
   if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgresql://')) {
     return process.env.DATABASE_URL;
   }

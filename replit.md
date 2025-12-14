@@ -10,6 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 **December 14, 2025**:
 *   **Database Connection Fix**: Fixed critical database connection issue where `DATABASE_URL` contained an invalid secret token reference (`sb_secret_...`) instead of a valid PostgreSQL URL. Updated `server/db.ts` to prioritize Replit's internal envCache (which contains the real database URL), then falls back to environment variables only if they start with `postgresql://`. This ensures stable connection to Replit's built-in Neon PostgreSQL database.
+*   **Supabase Schema Migration**: Successfully migrated entire database schema (30+ tables) to Supabase PostgreSQL using Drizzle Kit. All tables created successfully on Supabase. `server/db.ts` configured to support both Supabase (for production) and Replit's internal database (for development). Currently running on Replit's stable Neon database in development; ready for production deployment on Supabase.
 
 **December 8, 2025**:
 *   **Legal Pages Hub**: Restructured "Sobre" (About) page as central hub with navigation cards linking to Privacy Policy, Terms of Use, Security Policy, FAQ, and Contact pages. Added consistent back buttons and footer to all legal pages (Privacy, Terms, Help, Security).
