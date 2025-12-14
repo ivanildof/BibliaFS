@@ -269,6 +269,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Password Reset Token Storage (in-memory for simplicity)
+  const resetTokens = new Map<string, { email: string; expiresAt: number }>();
+
+  // Generate secure random token
+  function generateResetToken(): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let token = '';
+    for (let i = 0; i < 64; i++) {
+      token += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return token;
+  }
+
+  // Forgot password - request reset link
+  app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email é obrigatório" });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      
+      // Always return success to prevent email enumeration attacks
+      if (!user) {
+        console.log(`[Forgot Password] Email not found: ${email}`);
+        return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
+      }
+
+      // Generate reset token
+      const token = generateResetToken();
+      const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+
+      // Store token
+      resetTokens.set(token, { email: user.email!, expiresAt });
+
+      // Clean up expired tokens periodically
+      for (const [t, data] of resetTokens.entries()) {
+        if (data.expiresAt < Date.now()) {
+          resetTokens.delete(t);
+        }
+      }
+
+      // In production, send email with link
+      // For now, log the token (development only)
+      const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${token}`;
+      console.log(`\n📧 [Password Reset] Link para ${email}:`);
+      console.log(`   ${resetLink}\n`);
+
+      res.json({ 
+        message: "Se este email estiver cadastrado, você receberá um link de recuperação.",
+        // In development, return the link for testing
+        ...(process.env.NODE_ENV !== 'production' && { resetLink })
+      });
+    } catch (error: any) {
+      console.error("Erro ao processar forgot-password:", error);
+      res.status(500).json({ message: "Erro ao processar solicitação" });
+    }
+  });
+
+  // Reset password - set new password
+  app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const { token, password } = req.body;
+      
+      if (!token || !password) {
+        return res.status(400).json({ message: "Token e senha são obrigatórios" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Senha deve ter pelo menos 6 caracteres" });
+      }
+
+      // Find and validate token
+      const tokenData = resetTokens.get(token);
+      
+      if (!tokenData) {
+        return res.status(400).json({ message: "Link inválido ou expirado. Solicite um novo link." });
+      }
+
+      if (tokenData.expiresAt < Date.now()) {
+        resetTokens.delete(token);
+        return res.status(400).json({ message: "Link expirado. Solicite um novo link." });
+      }
+
+      // Find user
+      const user = await storage.getUserByEmail(tokenData.email);
+      if (!user) {
+        resetTokens.delete(token);
+        return res.status(400).json({ message: "Usuário não encontrado" });
+      }
+
+      // Hash new password
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      // Update user password
+      await storage.updateUserPassword(user.id, passwordHash);
+
+      // Invalidate token
+      resetTokens.delete(token);
+
+      console.log(`✅ Password reset successful for: ${tokenData.email}`);
+      res.json({ message: "Senha redefinida com sucesso" });
+    } catch (error: any) {
+      console.error("Erro ao redefinir senha:", error);
+      res.status(500).json({ message: "Erro ao redefinir senha" });
+    }
+  });
+
   // Auth user endpoint
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {

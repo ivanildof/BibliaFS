@@ -76,6 +76,7 @@ export interface IStorage {
   updateUserStats(userId: string, data: { experiencePoints?: number; readingStreak?: number; level?: string; lastReadDate?: Date }): Promise<User>;
   updateUserTheme(userId: string, data: { selectedTheme?: string; customTheme?: any }): Promise<User>;
   updateUserImage(userId: string, imageData: string): Promise<User>;
+  updateUserPassword(userId: string, passwordHash: string): Promise<User>;
   trackAISpending(userId: string, cost: number): Promise<{ user: User; withinBudget: boolean; monthlyRemaining: number; yearlyRemaining: number }>;
   
   // Gamification (transactional)
@@ -259,6 +260,15 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db
       .update(users)
       .set({ profileImageUrl: imageData, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async updateUserPassword(userId: string, passwordHash: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ passwordHash, updatedAt: new Date() })
       .where(eq(users.id, userId))
       .returning();
     return user;

@@ -126,6 +126,15 @@ export default function Login() {
                   </FormItem>
                 )}
               />
+              <div className="flex justify-end">
+                <Link 
+                  href="/forgot-password" 
+                  className="text-sm text-primary hover:underline"
+                  data-testid="link-forgot-password"
+                >
+                  Esqueceu sua senha?
+                </Link>
+              </div>
               <Button
                 type="submit"
                 className="w-full"
