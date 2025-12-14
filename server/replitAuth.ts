@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 function getDatabaseUrl(): string {
-  // First, try to get from envCache (Replit's internal database - most stable)
+  // First, try to get from internal environment cache (most stable)
   try {
     const envCachePath = join(process.env.HOME || '/home/runner', 'workspace/.cache/replit/env/latest.json');
     const envCache = JSON.parse(readFileSync(envCachePath, 'utf8'));

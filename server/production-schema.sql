@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 1. USERS AND PROFILES
 -- ============================================
 
--- Main users table (compatible with Replit Auth)
+-- Main users table
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR PRIMARY KEY,
     email VARCHAR(255),

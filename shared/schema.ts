@@ -20,7 +20,7 @@ import { z } from "zod";
 // 1. USERS AND PROFILES
 // ============================================
 
-// Session storage table (required for Replit Auth)
+// Session storage table
 export const sessions = pgTable(
   "sessions",
   {
@@ -44,7 +44,7 @@ export const churches = pgTable("churches", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Users table (required for Replit Auth)
+// Users table
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email", { length: 255 }).unique(),
