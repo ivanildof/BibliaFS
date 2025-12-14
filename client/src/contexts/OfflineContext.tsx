@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { offlineStorage, type OfflineChapter } from "@/lib/offline/offlineStorage";
+import { bibleSqlite } from "@/lib/offline/bibleSqlite";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -8,12 +9,14 @@ interface OfflineContextType {
   downloadedChapters: Set<string>;
   isDownloading: boolean;
   downloadProgress: number;
+  sqliteReady: boolean;
   downloadChapter: (book: string, chapter: number, version: string) => Promise<void>;
   downloadBook: (book: string, version: string, totalChapters: number) => Promise<void>;
   deleteChapter: (book: string, chapter: number, version: string) => Promise<void>;
   deleteBook: (book: string, version: string) => Promise<void>;
   isChapterOffline: (book: string, chapter: number, version: string) => boolean;
   getOfflineChapter: (book: string, chapter: number, version: string) => Promise<any | null>;
+  getSqliteChapter: (book: string, chapter: number) => Promise<any | null>;
   clearAllOffline: () => Promise<void>;
   getStorageStats: () => Promise<any>;
 }
@@ -33,9 +36,10 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
   const [downloadedChapters, setDownloadedChapters] = useState<Set<string>>(new Set());
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [sqliteReady, setSqliteReady] = useState(false);
   const { toast } = useToast();
 
-  // Initialize offline storage and load downloaded chapters
+  // Initialize offline storage and SQLite database
   useEffect(() => {
     async function init() {
       try {
@@ -43,6 +47,13 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
         const chapters = await offlineStorage.getAllChapters();
         const keys = new Set(chapters.map(ch => `${ch.book}-${ch.chapter}-${ch.version}`));
         setDownloadedChapters(keys);
+        
+        // Initialize SQLite database for complete offline Bible
+        const ready = await bibleSqlite.init();
+        setSqliteReady(ready);
+        if (ready) {
+          console.log("[OfflineProvider] SQLite Bible database ready");
+        }
       } catch (error) {
         console.error("Error initializing offline storage:", error);
       }
@@ -224,10 +235,53 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
 
   const getOfflineChapter = async (book: string, chapter: number, version: string) => {
     try {
+      // First try IndexedDB (user-downloaded content)
       const chapterData = await offlineStorage.getChapter(book, chapter, version);
-      return chapterData?.content || null;
+      if (chapterData?.content) {
+        return chapterData.content;
+      }
+      
+      // Fallback to SQLite database (NVI only, full Bible available)
+      if (sqliteReady && (version.toLowerCase() === "nvi" || version.toLowerCase() === "pt_nvi")) {
+        const sqliteData = await bibleSqlite.getChapter(book, chapter);
+        if (sqliteData) {
+          return {
+            book: sqliteData.book,
+            bookName: sqliteData.bookName,
+            chapter: sqliteData.chapter,
+            verses: sqliteData.verses,
+            totalChapters: sqliteData.totalChapters,
+          };
+        }
+      }
+      
+      return null;
     } catch (error) {
       console.error("Error fetching offline chapter:", error);
+      return null;
+    }
+  };
+
+  const getSqliteChapter = async (book: string, chapter: number) => {
+    try {
+      if (!sqliteReady) {
+        await bibleSqlite.init();
+        setSqliteReady(bibleSqlite.isReady());
+      }
+      
+      const data = await bibleSqlite.getChapter(book, chapter);
+      if (data) {
+        return {
+          book: data.book,
+          bookName: data.bookName,
+          chapter: data.chapter,
+          verses: data.verses,
+          totalChapters: data.totalChapters,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching SQLite chapter:", error);
       return null;
     }
   };
@@ -261,12 +315,14 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
         downloadedChapters,
         isDownloading,
         downloadProgress,
+        sqliteReady,
         downloadChapter,
         downloadBook,
         deleteChapter,
         deleteBook,
         isChapterOffline,
         getOfflineChapter,
+        getSqliteChapter,
         clearAllOffline,
         getStorageStats,
       }}
