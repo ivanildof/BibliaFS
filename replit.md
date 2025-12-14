@@ -8,6 +8,9 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 14, 2025**:
+*   **Database Connection Fix**: Fixed critical database connection issue where `DATABASE_URL` contained an invalid secret token reference (`sb_secret_...`) instead of a valid PostgreSQL URL. Updated `server/db.ts` to prioritize Replit's internal envCache (which contains the real database URL), then falls back to environment variables only if they start with `postgresql://`. This ensures stable connection to Replit's built-in Neon PostgreSQL database.
+
 **December 8, 2025**:
 *   **Legal Pages Hub**: Restructured "Sobre" (About) page as central hub with navigation cards linking to Privacy Policy, Terms of Use, Security Policy, FAQ, and Contact pages. Added consistent back buttons and footer to all legal pages (Privacy, Terms, Help, Security).
 *   **Security Policy Page**: Created comprehensive Security Policy page documenting TLS encryption, PostgreSQL security, OAuth authentication, session protection, privacy practices, cloud infrastructure, best practices for users, incident response protocols, and vulnerability reporting procedures.

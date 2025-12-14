@@ -1,42 +1,40 @@
-// Database connection - Compatible with Supabase/PostgreSQL
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
+// Blueprint: javascript_database
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from "ws";
 import * as schema from "@shared/schema";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+neonConfig.webSocketConstructor = ws;
 
 function getDatabaseUrl(): string {
-  // Check for SUPABASE_DATABASE_URL first, then DATABASE_URL
-  const dbUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
-  
-  if (!dbUrl) {
-    throw new Error(
-      "DATABASE_URL or SUPABASE_DATABASE_URL must be set. Did you forget to provision a database or add the secret?",
-    );
-  }
-  
-  // Validate it looks like a proper connection string
-  if (!dbUrl.startsWith('postgresql://') && !dbUrl.startsWith('postgres://')) {
-    console.error('Database URL does not appear to be a valid PostgreSQL connection string');
-    console.error('Current value starts with:', dbUrl.substring(0, 20));
-    console.error('Expected format: postgresql://user:password@host:port/database');
-    throw new Error('Invalid DATABASE_URL format. Please set SUPABASE_DATABASE_URL with the correct connection string.');
-  }
-  
-  // Log connection info (without password) for debugging
+  // First, try to get from envCache (Replit's internal database)
   try {
-    const url = new URL(dbUrl);
-    console.log(`Connecting to database: ${url.hostname}:${url.port}${url.pathname}`);
+    const envCachePath = join(process.env.HOME || '/home/runner', 'workspace/.cache/replit/env/latest.json');
+    const envCache = JSON.parse(readFileSync(envCachePath, 'utf8'));
+    if (envCache.environment?.DATABASE_URL && envCache.environment.DATABASE_URL.startsWith('postgresql://')) {
+      return envCache.environment.DATABASE_URL;
+    }
   } catch (e) {
-    console.log('Connecting to database...');
+    // Ignore cache read errors
   }
-  
-  return dbUrl;
+
+  // Fallback to environment variable if it's a valid PostgreSQL URL
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgresql://')) {
+    return process.env.DATABASE_URL;
+  }
+
+  // Try SUPABASE_DATABASE_URL as last resort
+  if (process.env.SUPABASE_DATABASE_URL && process.env.SUPABASE_DATABASE_URL.startsWith('postgresql://')) {
+    return process.env.SUPABASE_DATABASE_URL;
+  }
+
+  throw new Error(
+    "DATABASE_URL must be set. Did you forget to provision a database?",
+  );
 }
 
 const databaseUrl = getDatabaseUrl();
-export const pool = new Pool({ 
-  connectionString: databaseUrl,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-export const db = drizzle(pool, { schema });
+export const pool = new Pool({ connectionString: databaseUrl });
+export const db = drizzle({ client: pool, schema });
