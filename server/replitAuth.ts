@@ -2,12 +2,35 @@
 import session from "express-session";
 import type { Express, RequestHandler } from "express";
 import connectPg from "connect-pg-simple";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+function getDatabaseUrl(): string {
+  // First, try to get from envCache (Replit's internal database - most stable)
+  try {
+    const envCachePath = join(process.env.HOME || '/home/runner', 'workspace/.cache/replit/env/latest.json');
+    const envCache = JSON.parse(readFileSync(envCachePath, 'utf8'));
+    if (envCache.environment?.DATABASE_URL && envCache.environment.DATABASE_URL.startsWith('postgresql://')) {
+      return envCache.environment.DATABASE_URL;
+    }
+  } catch (e) {
+    // Ignore cache read errors
+  }
+
+  // Fallback to environment variable
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgresql://')) {
+    return process.env.DATABASE_URL;
+  }
+
+  throw new Error("No valid database URL found for sessions");
+}
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
+  const databaseUrl = getDatabaseUrl();
   const sessionStore = new pgStore({
-    conString: process.env.DATABASE_URL,
+    conString: databaseUrl,
     createTableIfMissing: false,
     ttl: sessionTtl,
     tableName: "sessions",
