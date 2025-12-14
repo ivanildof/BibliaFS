@@ -1,8 +1,8 @@
-// Authentication: email/password with bcrypt, AI with OpenAI, Payments with Stripe
+// Authentication: Supabase Auth with JWT, AI with OpenAI, Payments with Stripe
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { isAuthenticated, supabaseAdmin } from "./supabaseAuth";
 import Stripe from "stripe";
 import OpenAI from "openai";
 import {
@@ -140,147 +140,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Run database migrations
   await runMigrations();
   
-  // Auth middleware (from blueprint)
-  await setupAuth(app);
-
-  // Email/Password Authentication Routes
+  // Import bcrypt for password reset
   const bcrypt = await import("bcryptjs");
-
-  // Register with email/password
-  app.post('/api/auth/register', async (req, res) => {
-    try {
-      const { email, password, firstName, lastName } = req.body;
-      console.log(`[Register] Attempt for: ${email}`);
-      
-      if (!email || !password || !firstName || !lastName) {
-        return res.status(400).json({ message: "Todos os campos são obrigatórios" });
-      }
-
-      // Check if email already exists
-      const existingUser = await storage.getUserByEmail(email);
-      if (existingUser) {
-        console.log(`[Register] Email already exists: ${email}`);
-        return res.status(400).json({ message: "Este email já está cadastrado" });
-      }
-
-      // Hash password
-      const passwordHash = await bcrypt.hash(password, 10);
-
-      // Determine if admin
-      const isAdmin = email === 'fabrisite1@gmail.com';
-
-      // Create user
-      const user = await storage.createUserWithPassword({
-        email,
-        passwordHash,
-        firstName,
-        lastName,
-        role: isAdmin ? 'admin' : 'user',
-      });
-      console.log(`[Register] User created in DB: ${user.id}`);
-
-      if (isAdmin) {
-        console.log(`✅ Admin user created via register: ${email}`);
-      }
-
-      // Create session data
-      const sessionUser = {
-        claims: {
-          sub: user.id,
-          email: user.email,
-          first_name: user.firstName,
-          last_name: user.lastName,
-        },
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
-      };
-      (req.session as any).user = sessionUser;
-      console.log(`[Register] Session data set for: ${user.id}`);
-
-      req.session.save((err) => {
-        if (err) {
-          console.error("[Register] Session save error:", err);
-          return res.status(500).json({ message: "Erro ao criar sessão" });
-        }
-        console.log(`[Register] Session saved successfully for: ${user.id}, sessionID: ${req.sessionID}`);
-        // Omit passwordHash from response
-        const { passwordHash: _, ...safeUser } = user;
-        res.json(safeUser);
-      });
-    } catch (error: any) {
-      console.error("[Register] Error:", error);
-      res.status(500).json({ message: "Falha ao criar conta" });
-    }
-  });
-
-  // Login with email/password
-  app.post('/api/auth/login', async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      console.log(`[Login] Attempt for: ${email}`);
-      
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email e senha são obrigatórios" });
-      }
-
-      // Find user by email
-      const user = await storage.getUserByEmail(email);
-      if (!user) {
-        console.log(`[Login] User not found: ${email}`);
-        return res.status(401).json({ message: "Email ou senha incorretos" });
-      }
-
-      // Check if user has password
-      if (!user.passwordHash) {
-        console.log(`[Login] No password hash for: ${email}`);
-        return res.status(401).json({ message: "Esta conta não tem senha configurada. Por favor, redefina sua senha." });
-      }
-
-      // Verify password
-      const validPassword = await bcrypt.compare(password, user.passwordHash);
-      if (!validPassword) {
-        console.log(`[Login] Invalid password for: ${email}`);
-        return res.status(401).json({ message: "Email ou senha incorretos" });
-      }
-      console.log(`[Login] Password valid for: ${email}`);
-
-      // Update last login
-      await storage.updateUserLastLogin(user.id);
-
-      // Ensure admin role for fabrisite1@gmail.com
-      let finalUser = user;
-      const normalizedEmail = email.toLowerCase().trim();
-      if (normalizedEmail === 'fabrisite1@gmail.com' && user.role !== 'admin') {
-        finalUser = await storage.updateUserRole(user.id, 'admin');
-        console.log(`✅ Admin role applied on login: ${normalizedEmail}`);
-      }
-
-      // Create session
-      (req.session as any).user = {
-        claims: {
-          sub: finalUser.id,
-          email: finalUser.email,
-          first_name: finalUser.firstName,
-          last_name: finalUser.lastName,
-        },
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
-      };
-
-      console.log(`[Login] Session data set for: ${finalUser.id}`);
-      req.session.save((err) => {
-        if (err) {
-          console.error("[Login] Session save error:", err);
-          return res.status(500).json({ message: "Erro ao criar sessão" });
-        }
-        console.log(`[Login] Session saved successfully for: ${finalUser.id}, sessionID: ${req.sessionID}`);
-        // Omit passwordHash from response
-        const { passwordHash: _, ...safeUser } = finalUser;
-        res.json(safeUser);
-      });
-    } catch (error: any) {
-      console.error("[Login] Error:", error);
-      res.status(500).json({ message: "Falha ao fazer login" });
-    }
-  });
 
   // Password Reset Token Storage (in-memory for simplicity)
   const resetTokens = new Map<string, { email: string; expiresAt: number }>();

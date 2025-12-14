@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { supabase } from "@/lib/supabase";
 import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -18,10 +19,7 @@ const registerSchema = z.object({
   firstName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   lastName: z.string().min(2, "Sobrenome deve ter pelo menos 2 caracteres"),
   password: z.string()
-    .min(8, "Senha deve ter pelo menos 8 caracteres")
-    .regex(/[A-Z]/, "Senha deve ter pelo menos uma letra maiúscula")
-    .regex(/[a-z]/, "Senha deve ter pelo menos uma letra minúscula")
-    .regex(/[0-9]/, "Senha deve ter pelo menos um número"),
+    .min(6, "Senha deve ter pelo menos 6 caracteres"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
@@ -49,17 +47,42 @@ export default function Register() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterFormData) => {
-      const { confirmPassword, ...registerData } = data;
-      const response = await apiRequest("POST", "/api/auth/register", registerData);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      toast({
-        title: "Conta criada!",
-        description: "Bem-vindo à BíbliaFS!",
+      const { data: authData, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName,
+          },
+        },
       });
-      setLocation("/");
+      
+      if (error) {
+        if (error.message.includes("already registered")) {
+          throw new Error("Este e-mail já está em uso.");
+        }
+        throw new Error(error.message);
+      }
+      
+      return authData;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      
+      if (data.user && !data.session) {
+        toast({
+          title: "Conta criada!",
+          description: "Verifique seu e-mail para confirmar a conta.",
+        });
+        setLocation("/login");
+      } else {
+        toast({
+          title: "Conta criada!",
+          description: "Bem-vindo à BíbliaFS!",
+        });
+        setLocation("/");
+      }
     },
     onError: (error: any) => {
       toast({
@@ -153,7 +176,7 @@ export default function Register() {
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
-                          placeholder="Sua senha"
+                          placeholder="Sua senha (mínimo 6 caracteres)"
                           data-testid="input-password"
                           {...field}
                         />
