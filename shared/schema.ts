@@ -1131,6 +1131,20 @@ export const notificationHistory = pgTable("notification_history", {
   clickedAt: timestamp("clicked_at"),
 });
 
+// Audio cache for chapters and verses
+export const audioCache = pgTable("audio_cache", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  language: varchar("language", { length: 10 }).notNull(),
+  version: varchar("version", { length: 20 }).notNull(),
+  book: varchar("book", { length: 50 }).notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse"), // NULL for full chapters, set for verses
+  audioData: text("audio_data").notNull(), // Base64 encoded MP3
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("IDX_audio_cache").on(table.language, table.version, table.book, table.chapter, table.verse),
+]);
+
 export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
@@ -1142,6 +1156,10 @@ export type NotificationPreferences = typeof notificationPreferences.$inferSelec
 export const insertNotificationHistorySchema = createInsertSchema(notificationHistory).omit({ id: true, sentAt: true });
 export type InsertNotificationHistory = z.infer<typeof insertNotificationHistorySchema>;
 export type NotificationHistory = typeof notificationHistory.$inferSelect;
+
+export const insertAudioCacheSchema = createInsertSchema(audioCache).omit({ id: true, createdAt: true });
+export type InsertAudioCache = z.infer<typeof insertAudioCacheSchema>;
+export type AudioCache = typeof audioCache.$inferSelect;
 
 // Bible content types
 export type BibleTranslation = typeof bibleTranslations.$inferSelect;

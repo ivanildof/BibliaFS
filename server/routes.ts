@@ -963,6 +963,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Check cache first
+      try {
+        const { db } = await import("./db");
+        const { audioCache } = await import("@shared/schema");
+        const { sql } = await import("drizzle-orm");
+        
+        const cached = await db.query.audioCache.findFirst({
+          where: sql`language = ${language} AND version = ${version} AND book = ${book} AND chapter = ${parseInt(chapter)} AND verse IS NULL`
+        });
+
+        if (cached) {
+          console.log(`[Audio] Cache hit for ${book} ${chapter} - returning cached audio`);
+          res.setHeader('Content-Type', 'audio/mpeg');
+          res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${language}.mp3"`);
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          res.setHeader('X-Cache', 'HIT');
+          res.send(Buffer.from(cached.audioData, 'base64'));
+          return;
+        }
+      } catch (cacheErr) {
+        console.warn("[Audio] Cache check failed:", cacheErr);
+        // Continue without cache
+      }
+
       // Fetch chapter in correct language
       const chapterData = await fetchBibleChapter(
         language,
@@ -1009,11 +1033,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
       }
 
+      const audioBuffer = await ttsResponse.arrayBuffer();
+      const audioBase64 = Buffer.from(audioBuffer).toString('base64');
+
+      // Save to cache
+      try {
+        const { db } = await import("./db");
+        const { audioCache } = await import("@shared/schema");
+        
+        await db.insert(audioCache).values({
+          language,
+          version,
+          book,
+          chapter: parseInt(chapter),
+          audioData: audioBase64,
+        }).onConflictDoNothing();
+        console.log(`[Audio] Cached audio for ${book} ${chapter}`);
+      } catch (cacheErr) {
+        console.warn("[Audio] Cache save failed:", cacheErr);
+        // Don't fail - just skip cache save
+      }
+
       res.setHeader('Content-Type', 'audio/mpeg');
       res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${language}.mp3"`);
       res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.setHeader('X-Cache', 'MISS');
       
-      const audioBuffer = await ttsResponse.arrayBuffer();
       res.send(Buffer.from(audioBuffer));
     } catch (error: any) {
       console.error("Audio generation error:", error?.message || error);
