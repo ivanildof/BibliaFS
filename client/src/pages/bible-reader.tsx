@@ -137,10 +137,16 @@ export default function BibleReader() {
     });
     
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+      
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
@@ -207,9 +213,21 @@ export default function BibleReader() {
     } catch (error: any) {
       setIsLoadingAudio(false);
       console.error("Audio fetch error:", error?.message || error);
+      
+      let errorTitle = "Erro ao carregar áudio do capítulo";
+      let errorDescription = "Verifique sua conexão e tente novamente";
+      
+      if (error.name === 'AbortError') {
+        errorTitle = "Tempo limite excedido";
+        errorDescription = "A geração de áudio levou mais de 60 segundos. Verifique sua conexão e tente novamente.";
+      } else if (error?.message?.includes('401') || error?.message?.includes('403')) {
+        errorTitle = "Não autorizado";
+        errorDescription = "Faça login novamente e tente";
+      }
+      
       toast({
-        title: "Erro ao carregar áudio do capítulo",
-        description: error?.message || "Verifique sua conexão e tente novamente",
+        title: errorTitle,
+        description: errorDescription,
         variant: "destructive",
       });
     }
@@ -308,10 +326,16 @@ export default function BibleReader() {
     });
     
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+      
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
@@ -369,9 +393,21 @@ export default function BibleReader() {
     } catch (error: any) {
       setIsLoadingAudio(false);
       console.error("Audio fetch error:", error?.message || error);
+      
+      let errorTitle = "Erro ao carregar áudio do versículo";
+      let errorDescription = "Verifique sua conexão e tente novamente";
+      
+      if (error.name === 'AbortError') {
+        errorTitle = "Tempo limite excedido";
+        errorDescription = "A geração de áudio levou mais de 60 segundos. Verifique sua conexão e tente novamente.";
+      } else if (error?.message?.includes('401') || error?.message?.includes('403')) {
+        errorTitle = "Não autorizado";
+        errorDescription = "Faça login novamente e tente";
+      }
+      
       toast({
-        title: "Erro ao carregar áudio do versículo",
-        description: error?.message || "Verifique sua conexão e tente novamente",
+        title: errorTitle,
+        description: errorDescription,
         variant: "destructive",
       });
     }
