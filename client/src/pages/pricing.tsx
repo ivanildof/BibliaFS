@@ -93,9 +93,9 @@ const plans = [
       "Comunidade VIP",
       "Influencie recursos",
     ],
-    cta: "Assinar",
+    cta: "Em Breve",
     popular: false,
-    priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || null,
+    priceId: null,
     planType: "yearly",
   },
   {
