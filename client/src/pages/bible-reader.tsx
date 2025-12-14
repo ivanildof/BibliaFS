@@ -272,17 +272,94 @@ export default function BibleReader() {
     setAudioModeDialogOpen(true);
   };
 
-  const handleStartAudio = (mode: 'chapter' | 'book') => {
+  const handleStartAudio = (mode: 'verse' | 'chapter' | 'book', verseNumber?: number) => {
     setAudioModeDialogOpen(false);
     stopAllAudio();
     
-    if (mode === 'chapter') {
+    if (mode === 'verse' && verseNumber !== undefined) {
+      playVerseAudio(verseNumber);
+    } else if (mode === 'chapter') {
       setAudioMode('chapter');
       setBookPlaylist([]);
       setCurrentPlaylistIndex(0);
       playChapterAudio(selectedChapter);
     } else {
       startBookAudio();
+    }
+  };
+
+  const playVerseAudio = async (verseNumber: number) => {
+    if (!selectedBook || !chapterData) return;
+    
+    const url = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verseNumber}`;
+    
+    setIsLoadingAudio(true);
+    setAudioMode('chapter');
+    
+    toast({
+      title: "Gerando áudio do versículo...",
+      description: "Isso pode levar 10-20 segundos. Aguarde!",
+    });
+    
+    try {
+      const response = await fetch(url, { credentials: 'include' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const audio = new Audio(blobUrl);
+      audioElementRef.current = audio;
+      
+      audio.onloadeddata = () => {
+        setIsLoadingAudio(false);
+        audio.play().then(() => {
+          setIsPlayingAudio(true);
+          setAudioUrl(blobUrl);
+          setPlayingVerseNumber(verseNumber);
+          
+          toast({
+            title: `Tocando versículo ${verseNumber}`,
+            description: "Você pode continuar navegando enquanto ouve",
+          });
+        }).catch(error => {
+          setIsLoadingAudio(false);
+          stopAllAudio();
+          URL.revokeObjectURL(blobUrl);
+          console.error("Audio playback error:", error);
+          toast({
+            title: "Erro ao reproduzir áudio",
+            description: "Tente novamente",
+            variant: "destructive",
+          });
+        });
+      };
+      
+      audio.onended = () => {
+        URL.revokeObjectURL(blobUrl);
+        setIsPlayingAudio(false);
+        setPlayingVerseNumber(null);
+      };
+      
+      audio.onerror = () => {
+        setIsLoadingAudio(false);
+        stopAllAudio();
+        URL.revokeObjectURL(blobUrl);
+        toast({
+          title: "Erro ao carregar áudio",
+          description: "Verifique sua conexão e tente novamente",
+          variant: "destructive",
+        });
+      };
+    } catch (error) {
+      setIsLoadingAudio(false);
+      console.error("Audio fetch error:", error);
+      toast({
+        title: "Erro ao carregar áudio",
+        description: "Verifique sua conexão e tente novamente",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1465,11 +1542,28 @@ export default function BibleReader() {
           <DialogHeader>
             <DialogTitle>Escolha o modo de áudio</DialogTitle>
             <DialogDescription>
-              Você pode ouvir apenas o capítulo atual ou o livro completo
+              Você pode ouvir um versículo, o capítulo ou o livro completo
             </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-3 py-4">
+            {selectedVerse !== null && (
+              <Button
+                onClick={() => handleStartAudio('verse', selectedVerse)}
+                variant="outline"
+                className="h-auto flex-col items-start p-4 gap-2"
+                data-testid="button-audio-verse"
+              >
+                <div className="flex items-center gap-2">
+                  <Volume2 className="h-5 w-5" />
+                  <span className="font-semibold">Versículo Selecionado</span>
+                </div>
+                <p className="text-sm text-muted-foreground text-left">
+                  Ouvir apenas versículo {selectedVerse}
+                </p>
+              </Button>
+            )}
+            
             <Button
               onClick={() => handleStartAudio('chapter')}
               variant="outline"
