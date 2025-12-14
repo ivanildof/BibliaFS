@@ -30,10 +30,12 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log("[Auth] No token provided");
       return res.status(401).json({ message: "Unauthorized - No token provided" });
     }
     
     const token = authHeader.substring(7);
+    console.log("[Auth] Verifying token, length:", token.length);
     
     if (!supabaseAdmin) {
       console.error("[Auth] Supabase not configured");
@@ -42,10 +44,17 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
     
-    if (error || !user) {
-      console.log("[Auth] Invalid token:", error?.message);
-      return res.status(401).json({ message: "Unauthorized - Invalid token" });
+    if (error) {
+      console.error("[Auth] Token validation error:", error.message, error.status);
+      return res.status(401).json({ message: "Unauthorized - Invalid token", error: error.message });
     }
+    
+    if (!user) {
+      console.log("[Auth] No user found for token");
+      return res.status(401).json({ message: "Unauthorized - User not found" });
+    }
+    
+    console.log("[Auth] User authenticated:", user.id, user.email);
     
     (req as any).user = {
       claims: {
@@ -59,7 +68,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     
     return next();
   } catch (error: any) {
-    console.error("[Auth] Error verifying token:", error);
-    return res.status(401).json({ message: "Unauthorized" });
+    console.error("[Auth] Error verifying token:", error.message);
+    return res.status(500).json({ message: "Unauthorized", error: error.message });
   }
 };
