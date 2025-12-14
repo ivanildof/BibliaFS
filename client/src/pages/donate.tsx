@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Loader2, CheckCircle2, CreditCard, ArrowLeft } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
@@ -64,8 +64,8 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
       return;
     }
 
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) {
+    const cardNumberElement = elements.getElement(CardNumberElement);
+    if (!cardNumberElement) {
       return;
     }
 
@@ -74,7 +74,7 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
     try {
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          card: cardElement,
+          card: cardNumberElement,
         },
       });
 
@@ -119,7 +119,7 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
     }
   };
 
-  const cardElementOptions = {
+  const elementStyle = {
     style: {
       base: {
         fontSize: "16px",
@@ -133,7 +133,6 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
         color: "#9e2146",
       },
     },
-    hidePostalCode: true,
   };
 
   return (
@@ -163,11 +162,29 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label>Número do Cartão</Label>
-                <div className="p-3 border rounded-md bg-background">
-                  <CardElement options={cardElementOptions} />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Número do Cartão</Label>
+                  <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
+                    <CardNumberElement options={elementStyle} />
+                  </div>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Validade</Label>
+                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
+                      <CardExpiryElement options={elementStyle} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>CVV</Label>
+                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
+                      <CardCvcElement options={elementStyle} />
+                    </div>
+                  </div>
+                </div>
+
                 <p className="text-xs text-muted-foreground">
                   Seus dados são protegidos com criptografia de ponta a ponta
                 </p>
