@@ -153,6 +153,8 @@ function AppContent() {
       if (user.selectedTheme === "custom" && user.customTheme) {
         const hsl = hexToHSL(user.customTheme.primaryColor);
         root.style.setProperty("--primary", hsl);
+        root.style.setProperty("--sidebar-primary", hsl);
+        root.style.setProperty("--sidebar-accent-foreground", hsl);
       } else {
         // Predefined themes - MUST match settings.tsx!
         const predefinedThemes: Record<string, string> = {
@@ -165,6 +167,8 @@ function AppContent() {
         const themeColor = predefinedThemes[user.selectedTheme] || predefinedThemes.classico;
         const hsl = hexToHSL(themeColor);
         root.style.setProperty("--primary", hsl);
+        root.style.setProperty("--sidebar-primary", hsl);
+        root.style.setProperty("--sidebar-accent-foreground", hsl);
       }
     }
   }, [user?.selectedTheme, user?.customTheme]);
