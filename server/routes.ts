@@ -858,10 +858,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bible Audio Route - Single Verse (FAST - only a few seconds!)
-  app.get("/api/bible/audio/verse/:language/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
+  app.get("/api/bible/audio/verse/:language/:version/:book/:chapter/:verse", async (req: any, res) => {
     try {
       const { language, version, book, chapter, verse } = req.params;
-      const userId = req.user.claims.sub;
       
       if (!process.env.OPENAI_API_KEY) {
         return res.status(503).json({ 
@@ -890,7 +889,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const verseText = verseData.text;
 
-      console.log(`[Audio] Generating verse audio: ${book} ${chapter}:${verse} (${verseText.length} chars) - User: ${userId}`);
+      console.log(`[Audio] Generating verse audio: ${book} ${chapter}:${verse} (${verseText.length} chars)`);
 
       const ttsResponse = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -922,7 +921,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get book metadata (for book audio playlist)
-  app.get("/api/bible/book-info/:book", isAuthenticated, async (req: any, res) => {
+  app.get("/api/bible/book-info/:book", async (req: any, res) => {
     try {
       const { book } = req.params;
       const { BIBLE_BOOKS_FALLBACK } = await import('./bible-books-fallback');
@@ -949,10 +948,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bible Audio Route - Full Chapter (SLOW - 20-40 seconds)
-  app.get("/api/bible/audio/:language/:version/:book/:chapter", isAuthenticated, async (req: any, res) => {
+  app.get("/api/bible/audio/:language/:version/:book/:chapter", async (req: any, res) => {
     try {
       const { language, version, book, chapter } = req.params;
-      const userId = req.user.claims.sub;
       
       if (!process.env.OPENAI_API_KEY) {
         return res.status(503).json({ 

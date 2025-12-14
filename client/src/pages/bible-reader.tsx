@@ -137,7 +137,10 @@ export default function BibleReader() {
     });
     
     try {
-      const response = await fetch(url, { credentials: 'include' });
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
@@ -218,11 +221,9 @@ export default function BibleReader() {
     try {
       // Buscar informações do livro
       const response = await fetch(`/api/bible/book-info/${selectedBook}`, {
-        credentials: 'include',
+        method: "GET",
+        credentials: "include",
       });
-      
-      if (!response.ok) throw new Error("Erro ao buscar informações do livro");
-      
       const bookInfo = await response.json();
       
       // Criar playlist de todos os capítulos
@@ -307,7 +308,10 @@ export default function BibleReader() {
     });
     
     try {
-      const response = await fetch(url, { credentials: 'include' });
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
