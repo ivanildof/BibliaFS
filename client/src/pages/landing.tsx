@@ -254,7 +254,7 @@ export default function Landing() {
             </div>
             
             <div className="flex gap-6">
-              <a href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
+              <a href="/planos" className="text-sm text-muted-foreground hover:text-foreground">
                 {t.landing.footer_plans}
               </a>
               <a href="/contact" className="text-sm text-muted-foreground hover:text-foreground">

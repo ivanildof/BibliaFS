@@ -695,7 +695,7 @@ export default function Settings() {
               </CardContent>
               <CardFooter>
                 <Button 
-                  onClick={() => window.location.href = '/pricing'}
+                  onClick={() => window.location.href = '/planos'}
                   data-testid="button-upgrade-plan"
                 >
                   {user?.subscriptionPlan === 'free' ? 'Fazer Upgrade' : 'Ver Planos'}

@@ -70,6 +70,7 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/planos" component={Pricing} />
           <Route path="/pricing" component={Pricing} />
         </>
       ) : (
@@ -92,6 +93,7 @@ function Router() {
           <Route path="/perfil" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
+          <Route path="/planos" component={Pricing} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/help" component={Help} />
           <Route path="/about" component={About} />
