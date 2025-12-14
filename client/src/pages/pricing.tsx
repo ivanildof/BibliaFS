@@ -98,6 +98,28 @@ const plans = [
     priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || null,
     planType: "yearly",
   },
+  {
+    id: "premium_plus",
+    name: "Premium Plus",
+    price: "R$ 289,00",
+    period: "/ano",
+    description: "O plano mais completo para uso intensivo de IA",
+    badge: { text: "Máximo Poder", icon: Zap, color: "bg-purple-500/20 text-purple-600 dark:text-purple-400" },
+    features: [
+      "Tudo do plano Anual",
+      "Dobro do limite de IA",
+      "R$ 72,25 em créditos IA/ano",
+      "Prioridade em novos recursos",
+      "Badge Premium Plus exclusivo",
+      "Acesso antecipado a atualizações",
+      "Suporte VIP 24h",
+      "Sessões de estudo personalizadas",
+    ],
+    cta: "Assinar Premium Plus",
+    highlighted: false,
+    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PLUS_PRICE_ID || null,
+    planType: "premium_plus",
+  },
 ];
 
 const faqs = [

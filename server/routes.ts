@@ -55,9 +55,54 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     
     const plan = user.subscriptionPlan || 'free';
     
-    // Premium users (monthly/yearly plans) have unlimited AI access - NO BLOCKING
-    if (plan === 'monthly' || plan === 'yearly') {
-      return { allowed: true, remaining: -1 }; // -1 means unlimited
+    // Premium users (monthly/yearly/premium_plus plans) - check their specific budget limits
+    if (plan === 'monthly' || plan === 'yearly' || plan === 'premium_plus') {
+      // Each plan has its own 25% budget limit
+      // monthly: R$19.90 * 25% = R$4.97/month
+      // yearly: R$149.90 * 25% = R$37.47/year
+      // premium_plus: R$289.00 * 25% = R$72.25/year
+      const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
+      const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
+      
+      // Set limits based on plan
+      let monthlyLimit = 0;
+      let yearlyLimit = 0;
+      
+      if (plan === 'monthly') {
+        monthlyLimit = 4.97; // 25% of R$19.90
+      } else if (plan === 'yearly') {
+        yearlyLimit = 37.47; // 25% of R$149.90
+      } else if (plan === 'premium_plus') {
+        yearlyLimit = 72.25; // 25% of R$289.00
+      }
+      
+      // Check monthly limit (for monthly plan)
+      if (monthlyLimit > 0 && monthlySpend >= monthlyLimit) {
+        return {
+          allowed: false,
+          remaining: 0,
+          message: `Limite de IA do plano mensal atingido (R$${monthlyLimit.toFixed(2)}). Faça upgrade para Premium Plus para mais créditos.`
+        };
+      }
+      
+      // Check yearly limit (for yearly and premium_plus plans)
+      if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
+        if (plan === 'premium_plus') {
+          return {
+            allowed: false,
+            remaining: 0,
+            message: `Limite de IA do plano Premium Plus atingido (R$${yearlyLimit.toFixed(2)}/ano). O limite será renovado no próximo período.`
+          };
+        } else {
+          return {
+            allowed: false,
+            remaining: 0,
+            message: `Limite de IA do plano anual atingido (R$${yearlyLimit.toFixed(2)}). Faça upgrade para Premium Plus para mais créditos.`
+          };
+        }
+      }
+      
+      return { allowed: true, remaining: -1 }; // Still has budget
     }
     
     // FREE USERS: Check 25% budget limit
