@@ -1,12 +1,9 @@
-// Blueprint: javascript_database
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+// Database connection - Compatible with Supabase/PostgreSQL
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 import { readFileSync } from "fs";
 import { join } from "path";
-
-neonConfig.webSocketConstructor = ws;
 
 function getDatabaseUrl(): string {
   if (process.env.DATABASE_URL) {
@@ -28,5 +25,10 @@ function getDatabaseUrl(): string {
 }
 
 const databaseUrl = getDatabaseUrl();
-export const pool = new Pool({ connectionString: databaseUrl });
-export const db = drizzle({ client: pool, schema });
+export const pool = new Pool({ 
+  connectionString: databaseUrl,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+export const db = drizzle(pool, { schema });
