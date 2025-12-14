@@ -141,26 +141,27 @@ export default function Community() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto px-6 sm:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-display text-4xl font-bold mb-2 flex items-center gap-3" data-testid="text-page-title">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700">
-                <Users className="h-6 w-6 text-white" />
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 flex items-center gap-3 flex-wrap" data-testid="text-page-title">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700 flex-shrink-0">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
               {t.community.title}
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
               Compartilhe insights e conecte-se com outros
             </p>
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-post">
+              <Button size="lg" data-testid="button-create-post" className="whitespace-nowrap">
                 <Plus className="h-5 w-5 mr-2" />
-                {t.community.post}
+                <span className="hidden sm:inline">{t.community.post}</span>
+                <span className="sm:hidden">Post</span>
               </Button>
             </DialogTrigger>
             <DialogContent>

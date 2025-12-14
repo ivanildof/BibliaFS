@@ -63,16 +63,16 @@ export default function Bible() {
     <div className="min-h-screen bg-background">
       {/* Floating Toolbar */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Navigation */}
-            <div className="flex items-center gap-2">
+        <div className="max-w-4xl mx-auto px-6 py-4 sm:px-8">
+          <div className="flex flex-col gap-4 sm:gap-3">
+            {/* Navigation Row */}
+            <div className="flex items-center gap-2 flex-wrap">
               <Button variant="outline" size="icon" data-testid="button-prev-chapter">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               
               <Select value={selectedBook} onValueChange={setSelectedBook}>
-                <SelectTrigger className="w-40" data-testid="select-book">
+                <SelectTrigger className="w-32 sm:w-40" data-testid="select-book">
                   <SelectValue>{getBookName(selectedBook, language)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -85,7 +85,7 @@ export default function Bible() {
               </Select>
               
               <Select value={selectedChapter.toString()} onValueChange={(v) => setSelectedChapter(parseInt(v))}>
-                <SelectTrigger className="w-24" data-testid="select-chapter">
+                <SelectTrigger className="w-20 sm:w-24" data-testid="select-chapter">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -100,69 +100,69 @@ export default function Bible() {
               <Button variant="outline" size="icon" data-testid="button-next-chapter">
                 <ChevronRight className="h-4 w-4" />
               </Button>
-            </div>
 
-            <Separator orientation="vertical" className="h-8" />
-
-            {/* Font Size Controls */}
-            <div className="flex items-center gap-2">
-              <Type className="h-4 w-4 text-muted-foreground" />
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setFontSize(Math.max(14, fontSize - 2))}
-                data-testid="button-decrease-font"
-              >
-                A-
-              </Button>
-              <span className="text-sm min-w-12 text-center">{fontSize}px</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setFontSize(Math.min(24, fontSize + 2))}
-                data-testid="button-increase-font"
-              >
-                A+
-              </Button>
-            </div>
-
-            <Separator orientation="vertical" className="h-8" />
-
-            {/* Highlight Tool */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" data-testid="button-highlight-tool">
-                  <Highlighter className="h-4 w-4 mr-2" />
-                  Destacar
+              {/* Font Size Controls - Mobile */}
+              <div className="flex items-center gap-1 ml-auto sm:ml-2">
+                <Type className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setFontSize(Math.max(14, fontSize - 2))}
+                  className="px-2"
+                  data-testid="button-decrease-font"
+                >
+                  A-
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-64">
-                <div className="space-y-3">
-                  <h4 className="font-medium text-sm">Cores de Destaque</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {highlightColors.map((color) => (
-                      <button
-                        key={color.value}
-                        className={`${color.class} rounded-md p-3 border-2 border-transparent hover:border-primary transition-colors`}
-                        data-testid={`button-highlight-${color.value}`}
-                      >
-                        <span className="sr-only">{color.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                <span className="text-xs sm:text-sm min-w-10 text-center">{fontSize}px</span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setFontSize(Math.min(24, fontSize + 2))}
+                  className="px-2"
+                  data-testid="button-increase-font"
+                >
+                  A+
+                </Button>
+              </div>
+            </div>
 
-            {/* Search */}
-            <div className="ml-auto flex items-center gap-2">
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Buscar na Bíblia..." 
-                  className="pl-9"
-                  data-testid="input-search-bible"
-                />
+            {/* Tools Row */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" data-testid="button-highlight-tool">
+                    <Highlighter className="h-4 w-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Destacar</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56">
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Cores de Destaque</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {highlightColors.map((color) => (
+                        <button
+                          key={color.value}
+                          className={`${color.class} rounded-md p-3 border-2 border-transparent hover:border-primary transition-colors`}
+                          data-testid={`button-highlight-${color.value}`}
+                        >
+                          <span className="sr-only">{color.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              {/* Search */}
+              <div className="flex-1 sm:flex-none ml-auto">
+                <div className="relative w-full sm:w-56">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    placeholder="Buscar..." 
+                    className="pl-9 text-sm"
+                    data-testid="input-search-bible"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -170,7 +170,7 @@ export default function Bible() {
       </div>
 
       {/* Bible Reading Area */}
-      <div className="max-w-4xl mx-auto p-6 md:p-12">
+      <div className="max-w-4xl mx-auto px-6 sm:px-8 py-6 sm:py-12">
         <Card className="border-none shadow-none">
           <CardHeader className="text-center pb-8">
             <div className="space-y-2">

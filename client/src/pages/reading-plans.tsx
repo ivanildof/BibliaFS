@@ -101,20 +101,20 @@ export default function ReadingPlans() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-6 sm:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2" data-testid="text-page-title">
               {t.plans.title}
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
               {t.plans.subtitle}
             </p>
           </div>
           
           <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-plan">
+              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap">
                 <Plus className="h-5 w-5 mr-2" />
                 {t.plans.startPlan}
               </Button>

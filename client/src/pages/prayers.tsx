@@ -118,6 +118,9 @@ export default function Prayers() {
 
   const activePrayers = prayers.filter(p => !p.isAnswered);
   const answeredPrayers = prayers.filter(p => p.isAnswered);
+  
+  // Extract padding classes for reuse
+  const pageContainerClass = "max-w-5xl mx-auto px-6 sm:px-8 py-6 sm:py-8";
 
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);

@@ -103,6 +103,8 @@ export default function Settings() {
   const [customColor, setCustomColor] = useState(user?.customTheme?.primaryColor || "#5711D9");
   const [fontSize, setFontSize] = useState(16);
   
+  const headerClass = "font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2";
+  
   const {
     isSupported: pushSupported,
     isSubscribed: pushSubscribed,

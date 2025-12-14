@@ -77,13 +77,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Welcome Header */}
         <div className="space-y-2">
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent" data-testid="text-welcome">
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight" data-testid="text-welcome">
             Bem-vindo, {user?.firstName || "estudante"}!
           </h1>
-          <p className="text-base sm:text-lg text-muted-foreground">
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
             Continue sua jornada espiritual hoje
           </p>
         </div>
