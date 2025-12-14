@@ -44,7 +44,7 @@ const AI_REQUEST_COST = 0.01; // Cost per AI request in USD
 const AI_BUDGET_PERCENTAGE = 0.25; // 25% of subscription budget
 
 // Helper to check AI quota for free plan users
-async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; message?: string }> {
+async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; message?: string; warning?: boolean; suggestUpgrade?: boolean }> {
   try {
     const user = await storage.getUser(userId);
     
@@ -69,34 +69,34 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     if (!resetAt || now > new Date(resetAt)) {
       count = 0;
     }
-    
-    if (count >= FREE_PLAN_AI_LIMIT) {
-      return { 
-        allowed: false, 
-        remaining: 0,
-        message: `Você atingiu o limite de ${FREE_PLAN_AI_LIMIT} perguntas IA por dia. Assine o Premium para perguntas ilimitadas!`
-      };
-    }
 
-    // Check 25% budget limit
+    // Check 25% budget limit - suggest upgrade instead of blocking
     const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
     const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
     const monthlyLimit = user.aiMonthlyBudgetLimit ? Number(user.aiMonthlyBudgetLimit) : 0;
     const yearlyLimit = user.aiAnnualBudgetLimit ? Number(user.aiAnnualBudgetLimit) : 0;
 
-    if (monthlyLimit > 0 && monthlySpend >= monthlyLimit) {
+    // Check if approaching or at 25% limit
+    const monthlyUsagePercent = monthlyLimit > 0 ? (monthlySpend / monthlyLimit) * 100 : 0;
+    const yearlyUsagePercent = yearlyLimit > 0 ? (yearlySpend / yearlyLimit) * 100 : 0;
+
+    if (monthlyLimit > 0 && monthlyUsagePercent >= 90) {
       return {
-        allowed: false,
-        remaining: 0,
-        message: `Você atingiu o limite de orçamento mensal de IA (25% do mês). Tente novamente o próximo mês.`
+        allowed: true,
+        remaining: FREE_PLAN_AI_LIMIT - count,
+        warning: true,
+        suggestUpgrade: true,
+        message: `Você está próximo do limite de orçamento mensal de IA (${monthlyUsagePercent.toFixed(1)}%). Considere um plano superior para acesso ilimitado!`
       };
     }
 
-    if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
+    if (yearlyLimit > 0 && yearlyUsagePercent >= 90) {
       return {
-        allowed: false,
-        remaining: 0,
-        message: `Você atingiu o limite de orçamento anual de IA (25% do ano). Tente novamente o próximo ano.`
+        allowed: true,
+        remaining: FREE_PLAN_AI_LIMIT - count,
+        warning: true,
+        suggestUpgrade: true,
+        message: `Você está próximo do limite de orçamento anual de IA (${yearlyUsagePercent.toFixed(1)}%). Considere um plano superior para acesso ilimitado!`
       };
     }
     
@@ -1065,12 +1065,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check AI quota for free plan users (only for new AI-generated content)
       const quota = await checkAiQuota(userId);
-      if (!quota.allowed) {
-        return res.status(429).json({ 
-          error: quota.message,
-          remaining: quota.remaining,
-          upgradeUrl: '/pricing'
-        });
+      // Always proceed (no blocking), but warn user if they should upgrade
+      if (quota.warning) {
+        console.log(`[AI Budget Warning] User ${userId}: ${quota.message}`);
       }
 
       // Fetch verse text
@@ -1101,18 +1098,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Increment AI request counter and track spending for free plan users
       const user = await storage.getUser(userId);
+      let spending = null;
       if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
         await storage.incrementAiRequests(userId);
         console.log(`[AI Quota] User ${userId} used an AI request`);
         
         // Track spending (25% budget limit)
         try {
-          const spending = await storage.trackAISpending(userId, AI_REQUEST_COST);
-          if (!spending.withinBudget) {
-            console.warn(`[AI Budget] User ${userId} exceeded spending limit - Monthly: $${spending.monthlyRemaining.toFixed(2)} remaining, Yearly: $${spending.yearlyRemaining.toFixed(2)} remaining`);
-          } else {
-            console.log(`[AI Budget] User ${userId} spending tracked - Monthly remaining: $${spending.monthlyRemaining.toFixed(2)}, Yearly remaining: $${spending.yearlyRemaining.toFixed(2)}`);
-          }
+          spending = await storage.trackAISpending(userId, AI_REQUEST_COST);
+          console.log(`[AI Budget] User ${userId} spending tracked - Monthly remaining: $${spending.monthlyRemaining.toFixed(2)}, Yearly remaining: $${spending.yearlyRemaining.toFixed(2)}`);
         } catch (trackError) {
           console.error("[AI Budget] Error tracking spending:", trackError);
         }
@@ -1143,7 +1137,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         source: 'ai',
       });
 
-      res.json(commentary);
+      // Include upgrade suggestion if user is near limit
+      const response: any = commentary;
+      if (quota.warning) {
+        response.upgradeWarning = {
+          message: quota.message,
+          upgradeUrl: '/pricing'
+        };
+      }
+
+      res.json(response);
     } catch (error: any) {
       console.error("Commentary generation error:", error);
       res.status(500).json({ error: "Erro ao gerar comentário" });
