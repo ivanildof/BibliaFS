@@ -2,26 +2,33 @@
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 function getDatabaseUrl(): string {
-  if (process.env.DATABASE_URL) {
-    return process.env.DATABASE_URL;
+  // Check for DATABASE_URL environment variable (should be set as Replit secret)
+  const dbUrl = process.env.DATABASE_URL;
+  
+  if (!dbUrl) {
+    throw new Error(
+      "DATABASE_URL must be set. Did you forget to provision a database or add the secret?",
+    );
   }
-
+  
+  // Validate it looks like a proper connection string
+  if (!dbUrl.startsWith('postgresql://') && !dbUrl.startsWith('postgres://')) {
+    console.error('DATABASE_URL does not appear to be a valid PostgreSQL connection string');
+    console.error('Expected format: postgresql://user:password@host:port/database');
+    throw new Error('Invalid DATABASE_URL format');
+  }
+  
+  // Log connection info (without password) for debugging
   try {
-    const envCachePath = join(process.env.HOME || '/home/runner', 'workspace/.cache/replit/env/latest.json');
-    const envCache = JSON.parse(readFileSync(envCachePath, 'utf8'));
-    if (envCache.environment?.DATABASE_URL) {
-      return envCache.environment.DATABASE_URL;
-    }
+    const url = new URL(dbUrl);
+    console.log(`Connecting to database: ${url.hostname}:${url.port}${url.pathname}`);
   } catch (e) {
+    console.log('Connecting to database...');
   }
-
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+  
+  return dbUrl;
 }
 
 const databaseUrl = getDatabaseUrl();
