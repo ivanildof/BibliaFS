@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,7 +14,7 @@ import { LogOut, User, Settings } from "lucide-react";
 import { Link } from "wouter";
 
 export function UserProfile() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
 
   if (!user) return null;
 
@@ -27,16 +28,18 @@ export function UserProfile() {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('sb-auth-token') || localStorage.getItem('auth_token');
-      await fetch("/api/auth/logout", { 
-        method: "POST",
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json'
-        }
-      });
-      localStorage.removeItem('sb-auth-token');
-      localStorage.removeItem('auth_token');
+      // Logout from Supabase (this clears the session from localStorage)
+      await supabase.auth.signOut();
+      // Then notify backend (optional, for audit purposes)
+      if (session?.access_token) {
+        await fetch("/api/auth/logout", { 
+          method: "POST",
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        }).catch(() => {}); // Ignore backend logout errors
+      }
       window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
