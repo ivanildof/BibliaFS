@@ -15,7 +15,7 @@
 |-----------------|--------|---------------|
 | SQL Injection | ✅ | Drizzle ORM com queries parametrizadas |
 | XSS (Cross-Site Scripting) | ✅ | Helmet CSP headers configurados |
-| CSRF | ⚠️ | SameSite cookies + headers de segurança |
+| CSRF | ⚠️ | SameSite cookies + Supabase JWT tokens (parcial) |
 | Broken Authentication | ✅ | Supabase Auth + bcrypt + session management |
 | Sensitive Data Exposure | ✅ | passwordHash removido de respostas |
 | Security Misconfiguration | ✅ | Helmet headers + rate limiting |

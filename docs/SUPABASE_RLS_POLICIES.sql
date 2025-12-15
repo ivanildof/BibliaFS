@@ -209,7 +209,8 @@ USING (
 
 -- ============================================================================
 -- POLÍTICA: COMMUNITY_POSTS (Posts da Comunidade)
--- Posts são públicos para leitura, mas só o autor pode editar/deletar
+-- Posts são públicos para leitura, mas só usuários autenticados podem criar
+-- e só o autor pode editar/deletar
 -- ============================================================================
 
 CREATE POLICY "Anyone can view community posts"
@@ -218,7 +219,10 @@ USING (true);
 
 CREATE POLICY "Authenticated users can create posts"
 ON community_posts FOR INSERT
-WITH CHECK (auth.uid()::text = user_id);
+WITH CHECK (
+  auth.uid() IS NOT NULL 
+  AND auth.uid()::text = user_id
+);
 
 CREATE POLICY "Users can update own posts"
 ON community_posts FOR UPDATE

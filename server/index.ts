@@ -9,32 +9,48 @@ import { startNotificationScheduler } from "./notification-scheduler";
 const app = express();
 
 // Security headers with Helmet
+const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com"],
+      scriptSrc: isProduction 
+        ? ["'self'", "https://js.stripe.com", "https://m.stripe.network"]
+        : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://m.stripe.network"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://api.stripe.com", "https://*.supabase.co", "wss://*.supabase.co", "https://api.openai.com"],
-      frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:", "https://*.stripe.com"],
+      connectSrc: [
+        "'self'", 
+        "https://api.stripe.com", 
+        "https://m.stripe.network",
+        "https://*.supabase.co", 
+        "wss://*.supabase.co", 
+        "https://api.openai.com",
+        "https://sql.js.org"
+      ],
+      frameSrc: [
+        "'self'", 
+        "https://js.stripe.com", 
+        "https://hooks.stripe.com",
+        "https://checkout.stripe.com"
+      ],
       objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
+      upgradeInsecureRequests: isProduction ? [] : null,
     },
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
 
-// Rate limiting for API endpoints
+// Rate limiting ONLY for API endpoints (not static assets)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 200, // Limit each IP to 200 API requests per windowMs
   message: { error: "Muitas requisições. Tente novamente em alguns minutos." },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => !req.path.startsWith('/api'),
 });
 
 // Stricter rate limiting for auth endpoints
@@ -46,7 +62,8 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use(apiLimiter);
+// Apply rate limiting only to /api routes
+app.use('/api', apiLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 app.use('/api/auth/forgot-password', authLimiter);
