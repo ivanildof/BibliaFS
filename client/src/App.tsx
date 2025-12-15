@@ -93,6 +93,7 @@ function Router() {
           <Route path="/perfil" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
+          <Route path="/doar" component={Donate} />
           <Route path="/planos" component={Pricing} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/help" component={Help} />
