@@ -344,7 +344,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/logout', isAuthenticated, async (req: any, res) => {
     try {
       // Sign out from Supabase
-      await supabaseAdmin.auth.signOut();
+      if (supabaseAdmin) {
+        await supabaseAdmin.auth.signOut();
+      }
       res.json({ message: "Logout realizado com sucesso" });
     } catch (error: any) {
       console.error("Erro ao fazer logout:", error);
