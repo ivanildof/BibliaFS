@@ -340,6 +340,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Logout endpoint
+  app.post('/api/auth/logout', isAuthenticated, async (req: any, res) => {
+    try {
+      // Sign out from Supabase
+      await supabaseAdmin.auth.signOut();
+      res.json({ message: "Logout realizado com sucesso" });
+    } catch (error: any) {
+      console.error("Erro ao fazer logout:", error);
+      res.status(500).json({ message: "Falha ao fazer logout" });
+    }
+  });
+
   // Update user theme settings
   app.patch('/api/settings/theme', isAuthenticated, async (req: any, res) => {
     try {
