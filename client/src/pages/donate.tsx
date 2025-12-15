@@ -423,7 +423,7 @@ function DonationFormContent() {
   });
 
   const createCheckoutSessionMutation = useMutation({
-    mutationFn: async (data: { amount: number; currency: string; destination: string; isAnonymous: boolean; message?: string }) => {
+    mutationFn: async (data: { amount: number; currency: string; type: string; destination: string; isAnonymous: boolean; message?: string }) => {
       const res = await apiRequest("POST", "/api/donations/checkout", data);
       return res.json();
     },
@@ -451,6 +451,7 @@ function DonationFormContent() {
         const { url, error } = await createCheckoutSessionMutation.mutateAsync({
           amount: Math.round(amount * 100),
           currency: data.currency,
+          type: data.type,
           destination: data.destination,
           isAnonymous: data.isAnonymous,
           message: data.message,

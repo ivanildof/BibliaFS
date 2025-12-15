@@ -2142,7 +2142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const { amount, currency, destination, isAnonymous, message } = req.body;
+      const { amount, currency, type, destination, isAnonymous, message } = req.body;
       const userId = req.user.claims.sub;
       const userEmail = req.user.claims.email;
       
@@ -2162,10 +2162,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateUserSubscription(userId, { stripeCustomerId: customerId });
       }
 
+      const isRecurring = type === 'recurring';
+      const mode = isRecurring ? 'subscription' : 'payment';
+
       // Create checkout session with custom donation product
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
-        mode: 'payment',
+        mode,
         payment_method_types: ['card'],
         line_items: [{
           price_data: {
@@ -2174,7 +2177,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               name: 'Doação - BíbliaFS',
               description: destination === 'bible_translation' ? 'Doação para Tradução Bíblica' : 'Doação para Operações do App',
             },
-            unit_amount: Math.round(amount), // amount already in cents from frontend
+            unit_amount: Math.round(amount),
+            ...(isRecurring && { recurring: { interval: 'month' } }),
           },
           quantity: 1,
         }],
@@ -2183,6 +2187,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: { 
           userId, 
           type: 'donation',
+          donationType: type,
           destination: destination || 'app_operations',
           isAnonymous: isAnonymous ? 'true' : 'false',
           message: message || '',
