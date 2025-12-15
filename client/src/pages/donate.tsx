@@ -446,8 +446,8 @@ function DonationFormContent() {
         return;
       }
 
-      // Use Stripe Checkout for custom amounts (using product ID)
-      if (selectedAmount === -1) {
+      // For custom amounts with recurring donations, use Stripe Checkout
+      if (selectedAmount === -1 && data.type === 'recurring') {
         const { url, error } = await createCheckoutSessionMutation.mutateAsync({
           amount: Math.round(amount * 100),
           currency: data.currency,
@@ -473,7 +473,7 @@ function DonationFormContent() {
         return;
       }
 
-      // Use embedded payment form for preset amounts
+      // Use embedded payment form for preset amounts or one-time custom amounts
       const { clientSecret: secret, error } = await createPaymentIntentMutation.mutateAsync({
         amount: Math.round(amount * 100),
         currency: data.currency,
