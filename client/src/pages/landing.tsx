@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { 
@@ -18,8 +17,6 @@ import {
   Check,
   ArrowRight,
   Menu,
-  LogIn,
-  UserPlus,
   Star,
   Zap,
   Shield,
@@ -176,31 +173,8 @@ export default function Landing() {
             </a>
           </nav>
 
-          {/* Auth Buttons and Mobile Menu */}
-          <div className="flex items-center gap-2 md:gap-3">
-            {/* Desktop Auth Buttons */}
-            <div className="hidden sm:flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => window.location.href = "/api/login"}
-                data-testid="button-login-desktop"
-              >
-                <LogIn className="h-4 w-4 mr-2" />
-                Entrar
-              </Button>
-              <Button 
-                size="sm"
-                onClick={() => window.location.href = "/api/register"}
-                data-testid="button-register-desktop"
-                className="bg-gradient-to-r from-primary to-accent"
-              >
-                <UserPlus className="h-4 w-4 mr-2" />
-                Cadastro
-              </Button>
-            </div>
-
-            {/* Mobile Menu with Dropdown */}
+          {/* Mobile Menu with Navigation Links Only */}
+          <div className="lg:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
@@ -212,38 +186,29 @@ export default function Landing() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem asChild className="sm:hidden">
+                <DropdownMenuItem asChild>
                   <a href="#recursos" className="cursor-pointer flex items-center">
                     <Sparkles className="h-4 w-4 mr-2" />
                     Recursos
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="sm:hidden">
+                <DropdownMenuItem asChild>
                   <a href="#temas" className="cursor-pointer flex items-center">
                     <Sparkles className="h-4 w-4 mr-2" />
                     Temas
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="sm:hidden">
+                <DropdownMenuItem asChild>
                   <a href="#testemunhos" className="cursor-pointer flex items-center">
                     <Star className="h-4 w-4 mr-2" />
                     Testemunhos
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="sm:hidden" />
-                <DropdownMenuItem 
-                  onClick={() => window.location.href = "/api/login"}
-                  data-testid="menu-login-mobile"
-                >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  <span>Entrar</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => window.location.href = "/api/register"}
-                  data-testid="menu-register-mobile"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  <span>Cadastro</span>
+                <DropdownMenuItem asChild>
+                  <a href="#faq" className="cursor-pointer flex items-center">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Perguntas
+                  </a>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
