@@ -18,7 +18,7 @@ export function BottomNav() {
     { title: t.nav.bible, url: '/bible-reader', icon: BookOpen, testId: 'nav-bible' },
     { title: t.nav.plans, url: '/plans', icon: Book, testId: 'nav-plans' },
     { title: t.nav.progress, url: '/progress', icon: Trophy, testId: 'nav-progress' },
-    { title: t.nav.you, url: '/profile', icon: User, testId: 'nav-you' },
+    { title: t.nav.you, url: '/perfil', icon: User, testId: 'nav-you' },
   ];
 
   return (
