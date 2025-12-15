@@ -2170,7 +2170,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         line_items: [{
           price_data: {
             currency: currency || 'brl',
-            product: CUSTOM_DONATION_PRODUCT_ID,
+            product_data: {
+              name: 'Doação - BíbliaFS',
+              description: destination === 'bible_translation' ? 'Doação para Tradução Bíblica' : 'Doação para Operações do App',
+            },
             unit_amount: Math.round(amount), // amount already in cents from frontend
           },
           quantity: 1,
