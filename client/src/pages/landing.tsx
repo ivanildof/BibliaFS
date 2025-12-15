@@ -173,8 +173,20 @@ export default function Landing() {
             </a>
           </nav>
 
-          {/* Mobile Menu with Navigation Links Only */}
-          <div className="lg:hidden">
+          {/* Desktop Login Button */}
+          <div className="hidden sm:block">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.location.href = "/api/login"}
+              data-testid="button-login-header"
+            >
+              Entrar
+            </Button>
+          </div>
+
+          {/* Mobile Menu with Navigation Links */}
+          <div className="sm:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
