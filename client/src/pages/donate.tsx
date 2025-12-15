@@ -1,8 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { apiRequest } from "@/lib/queryClient";
+
+interface SavedCard {
+  id: string;
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +22,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Heart, ExternalLink } from "lucide-react";
-import { SiPaypal } from "react-icons/si";
+import { Heart, Loader2, CheckCircle2, CreditCard, ArrowLeft } from "lucide-react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
 const PRESET_AMOUNTS = [10, 25, 50, 100];
 
@@ -21,17 +34,351 @@ const donationFormSchema = z.object({
   amount: z.number().min(1, "Valor mínimo é R$ 1"),
   customAmount: z.string().optional(),
   type: z.enum(["one_time", "recurring"]),
+  frequency: z.enum(["monthly"]).optional(),
   destination: z.enum(["app_operations", "bible_translation"]),
   isAnonymous: z.boolean().default(false),
   message: z.string().optional(),
+  currency: z.string().default("brl"),
 });
 
 type DonationForm = z.infer<typeof donationFormSchema>;
 
-export default function DonatePage() {
+interface PaymentFormProps {
+  clientSecret: string;
+  amount: number;
+  formData: DonationForm;
+  onSuccess: () => void;
+  onBack: () => void;
+}
+
+function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: PaymentFormProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(25);
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [useNewCard, setUseNewCard] = useState(true);
+  const [selectedSavedCard, setSelectedSavedCard] = useState<string | null>(null);
+
+  const { data: savedCardsData, isLoading: loadingSavedCards } = useQuery<{ paymentMethods: SavedCard[] }>({
+    queryKey: ["/api/stripe/payment-methods"],
+  });
+
+  const savedCards = savedCardsData?.paymentMethods || [];
+
+  useEffect(() => {
+    if (savedCards.length > 0 && !selectedSavedCard) {
+      setSelectedSavedCard(savedCards[0].id);
+      setUseNewCard(false);
+    }
+  }, [savedCards]);
+
+  const createDonationMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("POST", "/api/donations", data);
+      return res.json();
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe) {
+      return;
+    }
+
+    if (useNewCard) {
+      if (!elements) return;
+      const cardNumberElement = elements.getElement(CardNumberElement);
+      if (!cardNumberElement) return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      let paymentMethodConfig: any;
+      
+      if (useNewCard && elements) {
+        const cardNumberElement = elements.getElement(CardNumberElement);
+        if (!cardNumberElement) {
+          setIsProcessing(false);
+          return;
+        }
+        paymentMethodConfig = { card: cardNumberElement };
+      } else if (selectedSavedCard) {
+        paymentMethodConfig = selectedSavedCard;
+      } else {
+        toast({
+          title: "Erro",
+          description: "Selecione um cartão para continuar",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: paymentMethodConfig,
+      });
+
+      if (error) {
+        toast({
+          title: "Erro no pagamento",
+          description: error.message || "Falha ao processar pagamento",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      if (paymentIntent?.status === "succeeded") {
+        await createDonationMutation.mutateAsync({
+          amount: Math.round(amount * 100),
+          currency: formData.currency,
+          type: formData.type,
+          frequency: formData.type === "recurring" ? "monthly" : undefined,
+          destination: formData.destination,
+          isAnonymous: formData.isAnonymous,
+          message: formData.message,
+          stripePaymentIntentId: paymentIntent.id,
+          status: "completed",
+        });
+
+        toast({
+          title: t.donate.success_title,
+          description: t.donate.success_message,
+        });
+        onSuccess();
+      }
+    } catch (error: any) {
+      console.error("Payment error:", error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao processar doação",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const elementStyle = {
+    style: {
+      base: {
+        fontSize: "16px",
+        color: "#424770",
+        "::placeholder": {
+          color: "#aab7c4",
+        },
+        fontFamily: "system-ui, -apple-system, sans-serif",
+      },
+      invalid: {
+        color: "#9e2146",
+      },
+    },
+  };
+
+  return (
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-lg mx-auto space-y-6">
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="mb-4"
+          data-testid="button-back-to-form"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar
+        </Button>
+
+        <Card data-testid="card-payment-form">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+            <CardTitle>Dados do Cartão</CardTitle>
+            <CardDescription>
+              Doação de <strong>R$ {amount.toFixed(2)}</strong>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {loadingSavedCards ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : savedCards.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <Label>Cartões Salvos</Label>
+                    {savedCards.map((card) => (
+                      <div
+                        key={card.id}
+                        onClick={() => {
+                          setSelectedSavedCard(card.id);
+                          setUseNewCard(false);
+                        }}
+                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                          !useNewCard && selectedSavedCard === card.id
+                            ? "border-primary bg-primary/5"
+                            : "hover:bg-muted/50"
+                        }`}
+                        data-testid={`card-saved-${card.last4}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <CreditCard className="h-5 w-5 text-muted-foreground" />
+                          <div className="flex-1">
+                            <p className="font-medium capitalize">{card.brand} •••• {card.last4}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Expira {String(card.expMonth).padStart(2, '0')}/{card.expYear}
+                            </p>
+                          </div>
+                          {!useNewCard && selectedSavedCard === card.id && (
+                            <CheckCircle2 className="h-5 w-5 text-primary" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">ou</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant={useNewCard ? "default" : "outline"}
+                    onClick={() => {
+                      setUseNewCard(true);
+                      setSelectedSavedCard(null);
+                    }}
+                    className="w-full"
+                    data-testid="button-use-new-card"
+                  >
+                    Usar novo cartão
+                  </Button>
+
+                  {useNewCard && (
+                    <div className="space-y-4 pt-2">
+                      <div className="space-y-2">
+                        <Label>Número do Cartão</Label>
+                        <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
+                          <CardNumberElement options={elementStyle} />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Validade</Label>
+                          <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
+                            <CardExpiryElement options={elementStyle} />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>CVV</Label>
+                          <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
+                            <CardCvcElement options={elementStyle} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    Seus dados são protegidos com criptografia de ponta a ponta
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Número do Cartão</Label>
+                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
+                      <CardNumberElement options={elementStyle} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Validade</Label>
+                      <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
+                        <CardExpiryElement options={elementStyle} />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>CVV</Label>
+                      <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
+                        <CardCvcElement options={elementStyle} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    Seus dados são protegidos com criptografia de ponta a ponta
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Valor:</span>
+                  <span className="font-medium">R$ {amount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Tipo:</span>
+                  <span>{formData.type === "one_time" ? "Única" : "Mensal"}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Destino:</span>
+                  <span>{formData.destination === "app_operations" ? "Operações do App" : "Tradução Bíblica"}</span>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!stripe || isProcessing}
+                data-testid="button-confirm-payment"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processando pagamento...
+                  </>
+                ) : (
+                  <>
+                    <Heart className="mr-2 h-4 w-4 fill-current" />
+                    Confirmar Doação de R$ {amount.toFixed(2)}
+                  </>
+                )}
+              </Button>
+
+              <p className="text-center text-xs text-muted-foreground">
+                🔒 Pagamento seguro processado pelo Stripe
+              </p>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function DonationFormContent() {
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [donationSuccess, setDonationSuccess] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<"form" | "payment">("form");
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [finalAmount, setFinalAmount] = useState<number>(0);
 
   const form = useForm<DonationForm>({
     resolver: zodResolver(donationFormSchema),
@@ -40,28 +387,113 @@ export default function DonatePage() {
       type: "one_time",
       destination: "app_operations",
       isAnonymous: false,
+      currency: "brl",
     },
   });
 
   const donationType = form.watch("type");
   const customAmountStr = form.watch("customAmount");
 
-  const handlePayPalDonation = () => {
-    const amount = selectedAmount === -1 && customAmountStr 
-      ? parseFloat(customAmountStr) 
-      : selectedAmount || 25;
+  const createPaymentIntentMutation = useMutation({
+    mutationFn: async (data: { amount: number; currency: string }) => {
+      const res = await apiRequest("POST", "/api/create-payment-intent", data);
+      return res.json();
+    },
+  });
 
-    if (!amount || amount < 1) {
+  const handleProceedToPayment = async (data: DonationForm) => {
+    try {
+      setIsProcessing(true);
+
+      const amount = selectedAmount === -1 && customAmountStr 
+        ? parseFloat(customAmountStr) 
+        : selectedAmount || data.amount;
+
+      if (!amount || amount < 1) {
+        toast({
+          title: "Erro",
+          description: "Por favor, selecione um valor válido",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { clientSecret: secret, error } = await createPaymentIntentMutation.mutateAsync({
+        amount: Math.round(amount * 100),
+        currency: data.currency,
+      });
+
+      if (error) {
+        toast({
+          title: t.donate.error_title,
+          description: error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setClientSecret(secret);
+      setFinalAmount(amount);
+      setPaymentStep("payment");
+    } catch (error: any) {
+      console.error("Error creating payment intent:", error);
       toast({
-        title: "Erro",
-        description: "Por favor, selecione um valor válido",
+        title: t.donate.error_title,
+        description: error.message || "Erro ao iniciar pagamento",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsProcessing(false);
     }
-
-    window.open("https://www.paypal.com/donate?hosted_button_id=AR4ZV6HSH9V6C", "_blank");
   };
+
+  if (donationSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+            <CardTitle>{t.donate.success_title}</CardTitle>
+            <CardDescription>{t.donate.success_message}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => {
+                setDonationSuccess(false);
+                setPaymentStep("form");
+                setClientSecret(null);
+              }} 
+              className="w-full"
+              data-testid="button-donate-another"
+            >
+              Fazer outra doação
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (paymentStep === "payment" && clientSecret) {
+    return (
+      <Elements stripe={stripePromise} options={{ clientSecret }}>
+        <PaymentForm
+          clientSecret={clientSecret}
+          amount={finalAmount}
+          formData={form.getValues()}
+          onSuccess={() => setDonationSuccess(true)}
+          onBack={() => {
+            setPaymentStep("form");
+            setClientSecret(null);
+          }}
+        />
+      </Elements>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -75,7 +507,7 @@ export default function DonatePage() {
           <h1 className="text-3xl font-bold">{t.donate.title}</h1>
           <div className="text-muted-foreground text-base space-y-3 max-w-2xl mx-auto">
             <p className="font-medium">
-              🔒 <strong>Doação 100% segura:</strong> Utilizamos o PayPal, uma das plataformas de pagamento mais confiáveis do mundo. Seus dados estão protegidos.
+              🔒 <strong>Doação 100% segura:</strong> Utilizamos o Stripe, a plataforma de pagamento mais confiável do mundo, com criptografia de ponta a ponta. Seus dados estão protegidos e nunca são compartilhados.
             </p>
             <p className="font-semibold text-foreground">
               Faça parte dessa missão. Doe agora e transforme vidas através da Palavra!
@@ -83,13 +515,10 @@ export default function DonatePage() {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleProceedToPayment)} className="space-y-6">
           <Card data-testid="card-donation-form">
             <CardHeader>
               <CardTitle>{t.donate.amount}</CardTitle>
-              <CardDescription>
-                Escolha um valor sugerido ou digite um valor personalizado
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
@@ -115,7 +544,7 @@ export default function DonatePage() {
               </div>
 
               <div className="space-y-3">
-                <Label>Valores sugeridos</Label>
+                <Label>Escolha um valor</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {PRESET_AMOUNTS.map((amount) => (
                     <Button
@@ -194,57 +623,57 @@ export default function DonatePage() {
                 <Label htmlFor="message">{t.donate.message}</Label>
                 <Textarea
                   id="message"
-                  placeholder="Deixe uma mensagem de apoio (opcional)"
+                  placeholder={t.donate.message_placeholder}
                   {...form.register("message")}
                   data-testid="textarea-message"
+                  className="resize-none"
+                  rows={3}
                 />
               </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isProcessing || !selectedAmount}
+                data-testid="button-proceed-to-payment"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Preparando pagamento...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Continuar para Pagamento
+                  </>
+                )}
+              </Button>
             </CardContent>
           </Card>
+        </form>
 
-          <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <div className="flex justify-center">
-                  <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                    <SiPaypal className="h-6 w-6 text-blue-600" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Doar via PayPal</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Você será redirecionado para o PayPal para concluir sua doação de forma segura
-                  </p>
-                </div>
-                
-                <Button
-                  onClick={handlePayPalDonation}
-                  className="w-full h-14 text-lg bg-[#0070ba] hover:bg-[#005ea6]"
-                  data-testid="button-donate-paypal"
-                >
-                  <SiPaypal className="mr-2 h-5 w-5" />
-                  Doar com PayPal
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-
-                <p className="text-xs text-muted-foreground">
-                  🔒 Pagamento seguro processado pelo PayPal. Você pode definir o valor exato na página do PayPal.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="text-center text-sm text-muted-foreground space-y-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Sobre as doações</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-muted-foreground">
             <p>
-              <strong>Sobre as doações:</strong> 100% das doações são utilizadas para manter e melhorar o aplicativo BíbliaFS, 
-              incluindo custos de servidor, desenvolvimento de novas funcionalidades e tradução bíblica.
+              <strong>Operações do aplicativo:</strong> Sua doação ajuda a manter os servidores, desenvolvimento de novos recursos e melhorias contínuas.
             </p>
             <p>
-              Que Deus abençoe sua generosidade! 🙏
+              <strong>Tradução bíblica:</strong> Apoia projetos de tradução da Bíblia para idiomas e comunidades que ainda não têm acesso às Escrituras.
             </p>
-          </div>
-        </div>
+            <p className="text-xs">
+              Processado com segurança através do Stripe. Suas informações de pagamento são protegidas.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
+}
+
+export default function Donate() {
+  return <DonationFormContent />;
 }
