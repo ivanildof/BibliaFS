@@ -2411,6 +2411,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Auth Routes - Redirect to Login/Register Pages
+  app.get("/api/login", (req, res) => {
+    res.redirect("/login");
+  });
+
+  app.get("/api/register", (req, res) => {
+    res.redirect("/register");
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

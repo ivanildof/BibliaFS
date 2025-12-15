@@ -20,7 +20,8 @@ import {
   Star,
   Zap,
   Shield,
-  Globe
+  Globe,
+  LogIn
 } from "lucide-react";
 import { Link } from "wouter";
 import heroImage from "@assets/generated_images/Open_Bible_with_warm_sunlight_407fbff0.png";
@@ -176,11 +177,12 @@ export default function Landing() {
           {/* Desktop Login Button */}
           <div className="hidden sm:block">
             <Button 
-              variant="outline" 
               size="sm"
               onClick={() => window.location.href = "/api/login"}
               data-testid="button-login-header"
+              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg"
             >
+              <LogIn className="h-4 w-4 mr-1" />
               Entrar
             </Button>
           </div>
