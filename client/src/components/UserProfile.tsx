@@ -27,10 +27,20 @@ export function UserProfile() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      const token = localStorage.getItem('sb-auth-token') || localStorage.getItem('auth_token');
+      await fetch("/api/auth/logout", { 
+        method: "POST",
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        }
+      });
+      localStorage.removeItem('sb-auth-token');
+      localStorage.removeItem('auth_token');
       window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
+      window.location.href = "/";
     }
   };
 
