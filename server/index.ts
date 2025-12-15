@@ -8,6 +8,9 @@ import { startNotificationScheduler } from "./notification-scheduler";
 
 const app = express();
 
+// Trust proxy for rate limiting behind reverse proxy (Replit)
+app.set('trust proxy', 1);
+
 // Security headers with Helmet
 const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
 
