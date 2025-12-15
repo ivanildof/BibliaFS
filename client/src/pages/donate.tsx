@@ -446,8 +446,8 @@ function DonationFormContent() {
         return;
       }
 
-      // For custom amounts with recurring donations, use Stripe Checkout
-      if (selectedAmount === -1 && data.type === 'recurring') {
+      // Use Stripe Checkout for all custom amounts
+      if (selectedAmount === -1) {
         const { url, error } = await createCheckoutSessionMutation.mutateAsync({
           amount: Math.round(amount * 100),
           currency: data.currency,
@@ -473,22 +473,22 @@ function DonationFormContent() {
         return;
       }
 
-      // Use embedded payment form for preset amounts or one-time custom amounts
-      const { clientSecret: secret, error } = await createPaymentIntentMutation.mutateAsync({
+      // Use embedded payment form for preset amounts only
+      const response = await createPaymentIntentMutation.mutateAsync({
         amount: Math.round(amount * 100),
         currency: data.currency,
       });
 
-      if (error) {
+      if (!response?.clientSecret) {
         toast({
           title: t.donate.error_title,
-          description: error,
+          description: "Falha ao iniciar pagamento",
           variant: "destructive",
         });
         return;
       }
 
-      setClientSecret(secret);
+      setClientSecret(response.clientSecret);
       setFinalAmount(amount);
       setPaymentStep("payment");
     } catch (error: any) {
