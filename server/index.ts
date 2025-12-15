@@ -16,8 +16,8 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: isProduction 
-        ? ["'self'", "https://js.stripe.com", "https://m.stripe.network"]
-        : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://m.stripe.network"],
+        ? ["'self'", "https://js.stripe.com", "https://m.stripe.network", "https://www.paypal.com", "https://www.paypalobjects.com"]
+        : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://m.stripe.network", "https://www.paypal.com", "https://www.paypalobjects.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
       imgSrc: ["'self'", "data:", "https:", "blob:", "https://*.stripe.com"],
@@ -28,13 +28,17 @@ app.use(helmet({
         "https://*.supabase.co", 
         "wss://*.supabase.co", 
         "https://api.openai.com",
-        "https://sql.js.org"
+        "https://sql.js.org",
+        "https://www.paypal.com",
+        "https://www.sandbox.paypal.com"
       ],
       frameSrc: [
         "'self'", 
         "https://js.stripe.com", 
         "https://hooks.stripe.com",
-        "https://checkout.stripe.com"
+        "https://checkout.stripe.com",
+        "https://www.paypal.com",
+        "https://www.sandbox.paypal.com"
       ],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: isProduction ? [] : null,

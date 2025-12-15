@@ -690,6 +690,7 @@ export const donations = pgTable("donations", {
   stripePaymentIntentId: varchar("stripe_payment_intent_id"),
   stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
+  paypalOrderId: varchar("paypal_order_id"),
   status: varchar("status", { length: 20 }).default("pending"), // pending, completed, failed, cancelled
   isAnonymous: boolean("is_anonymous").default(false),
   message: text("message"),

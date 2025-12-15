@@ -2,17 +2,9 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest } from "@/lib/queryClient";
-
-interface SavedCard {
-  id: string;
-  brand: string;
-  last4: string;
-  expMonth: number;
-  expYear: number;
-}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,11 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Heart, Loader2, CheckCircle2, CreditCard, ArrowLeft } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from "@stripe/react-stripe-js";
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
+import { Heart, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
+import { SiPaypal } from "react-icons/si";
 
 const PRESET_AMOUNTS = [10, 25, 50, 100];
 
@@ -43,35 +32,24 @@ const donationFormSchema = z.object({
 
 type DonationForm = z.infer<typeof donationFormSchema>;
 
-interface PaymentFormProps {
-  clientSecret: string;
+declare global {
+  interface Window {
+    paypal?: any;
+  }
+}
+
+interface PayPalPaymentProps {
   amount: number;
   formData: DonationForm;
   onSuccess: () => void;
   onBack: () => void;
 }
 
-function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: PaymentFormProps) {
+function PayPalPayment({ amount, formData, onSuccess, onBack }: PayPalPaymentProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [useNewCard, setUseNewCard] = useState(true);
-  const [selectedSavedCard, setSelectedSavedCard] = useState<string | null>(null);
-
-  const { data: savedCardsData, isLoading: loadingSavedCards } = useQuery<{ paymentMethods: SavedCard[] }>({
-    queryKey: ["/api/stripe/payment-methods"],
-  });
-
-  const savedCards = savedCardsData?.paymentMethods || [];
-
-  useEffect(() => {
-    if (savedCards.length > 0 && !selectedSavedCard) {
-      setSelectedSavedCard(savedCards[0].id);
-      setUseNewCard(false);
-    }
-  }, [savedCards]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [paypalLoaded, setPaypalLoaded] = useState(false);
 
   const createDonationMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -80,103 +58,129 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe) {
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+    
+    if (!clientId) {
+      toast({
+        title: "Erro de configuração",
+        description: "PayPal não está configurado. Entre em contato com o suporte.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
       return;
     }
 
-    if (useNewCard) {
-      if (!elements) return;
-      const cardNumberElement = elements.getElement(CardNumberElement);
-      if (!cardNumberElement) return;
+    if (window.paypal) {
+      setPaypalLoaded(true);
+      setIsLoading(false);
+      return;
     }
 
-    setIsProcessing(true);
-
-    try {
-      let paymentMethodConfig: any;
-      
-      if (useNewCard && elements) {
-        const cardNumberElement = elements.getElement(CardNumberElement);
-        if (!cardNumberElement) {
-          setIsProcessing(false);
-          return;
-        }
-        paymentMethodConfig = { card: cardNumberElement };
-      } else if (selectedSavedCard) {
-        paymentMethodConfig = selectedSavedCard;
-      } else {
-        toast({
-          title: "Erro",
-          description: "Selecione um cartão para continuar",
-          variant: "destructive",
-        });
-        setIsProcessing(false);
-        return;
-      }
-
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: paymentMethodConfig,
-      });
-
-      if (error) {
-        toast({
-          title: "Erro no pagamento",
-          description: error.message || "Falha ao processar pagamento",
-          variant: "destructive",
-        });
-        setIsProcessing(false);
-        return;
-      }
-
-      if (paymentIntent?.status === "succeeded") {
-        await createDonationMutation.mutateAsync({
-          amount: Math.round(amount * 100),
-          currency: formData.currency,
-          type: formData.type,
-          frequency: formData.type === "recurring" ? "monthly" : undefined,
-          destination: formData.destination,
-          isAnonymous: formData.isAnonymous,
-          message: formData.message,
-          stripePaymentIntentId: paymentIntent.id,
-          status: "completed",
-        });
-
-        toast({
-          title: t.donate.success_title,
-          description: t.donate.success_message,
-        });
-        onSuccess();
-      }
-    } catch (error: any) {
-      console.error("Payment error:", error);
+    const script = document.createElement("script");
+    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=BRL&locale=pt_BR`;
+    script.async = true;
+    
+    script.onload = () => {
+      setPaypalLoaded(true);
+      setIsLoading(false);
+    };
+    
+    script.onerror = () => {
       toast({
         title: "Erro",
-        description: error.message || "Erro ao processar doação",
+        description: "Não foi possível carregar o PayPal. Tente novamente.",
         variant: "destructive",
       });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+      setIsLoading(false);
+    };
 
-  const elementStyle = {
-    style: {
-      base: {
-        fontSize: "16px",
-        color: "#424770",
-        "::placeholder": {
-          color: "#aab7c4",
-        },
-        fontFamily: "system-ui, -apple-system, sans-serif",
+    document.body.appendChild(script);
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, [toast]);
+
+  useEffect(() => {
+    if (!paypalLoaded || !window.paypal) return;
+
+    const container = document.getElementById("paypal-button-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    window.paypal.Buttons({
+      style: {
+        layout: "vertical",
+        color: "blue",
+        shape: "rect",
+        label: "donate",
       },
-      invalid: {
-        color: "#9e2146",
+      createOrder: (_data: any, actions: any) => {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: amount.toFixed(2),
+              currency_code: "BRL",
+            },
+            description: `Doação BíbliaFS - ${formData.destination === "app_operations" ? "Operações do App" : "Tradução Bíblica"}`,
+          }],
+          application_context: {
+            brand_name: "BíbliaFS",
+            landing_page: "NO_PREFERENCE",
+            user_action: "PAY_NOW",
+          },
+        });
       },
-    },
-  };
+      onApprove: async (_data: any, actions: any) => {
+        try {
+          const order = await actions.order.capture();
+          
+          await createDonationMutation.mutateAsync({
+            amount: Math.round(amount * 100),
+            currency: formData.currency,
+            type: formData.type,
+            frequency: formData.type === "recurring" ? "monthly" : undefined,
+            destination: formData.destination,
+            isAnonymous: formData.isAnonymous,
+            message: formData.message,
+            paypalOrderId: order.id,
+            status: "completed",
+          });
+
+          toast({
+            title: t.donate.success_title,
+            description: t.donate.success_message,
+          });
+          onSuccess();
+        } catch (error: any) {
+          console.error("PayPal capture error:", error);
+          toast({
+            title: "Erro",
+            description: "Erro ao processar doação. Tente novamente.",
+            variant: "destructive",
+          });
+        }
+      },
+      onError: (err: any) => {
+        console.error("PayPal error:", err);
+        toast({
+          title: "Erro no PayPal",
+          description: "Ocorreu um erro. Tente novamente.",
+          variant: "destructive",
+        });
+      },
+      onCancel: () => {
+        toast({
+          title: "Cancelado",
+          description: "Doação cancelada.",
+        });
+      },
+    }).render("#paypal-button-container");
+  }, [paypalLoaded, amount, formData, onSuccess, toast, t, createDonationMutation]);
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -194,175 +198,42 @@ function PaymentForm({ clientSecret, amount, formData, onSuccess, onBack }: Paym
         <Card data-testid="card-payment-form">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-primary" />
+              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <SiPaypal className="h-6 w-6 text-blue-600" />
               </div>
             </div>
-            <CardTitle>Dados do Cartão</CardTitle>
+            <CardTitle>Doar com PayPal</CardTitle>
             <CardDescription>
               Doação de <strong>R$ {amount.toFixed(2)}</strong>
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {loadingSavedCards ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : savedCards.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <Label>Cartões Salvos</Label>
-                    {savedCards.map((card) => (
-                      <div
-                        key={card.id}
-                        onClick={() => {
-                          setSelectedSavedCard(card.id);
-                          setUseNewCard(false);
-                        }}
-                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                          !useNewCard && selectedSavedCard === card.id
-                            ? "border-primary bg-primary/5"
-                            : "hover:bg-muted/50"
-                        }`}
-                        data-testid={`card-saved-${card.last4}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <CreditCard className="h-5 w-5 text-muted-foreground" />
-                          <div className="flex-1">
-                            <p className="font-medium capitalize">{card.brand} •••• {card.last4}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Expira {String(card.expMonth).padStart(2, '0')}/{card.expYear}
-                            </p>
-                          </div>
-                          {!useNewCard && selectedSavedCard === card.id && (
-                            <CheckCircle2 className="h-5 w-5 text-primary" />
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-card px-2 text-muted-foreground">ou</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant={useNewCard ? "default" : "outline"}
-                    onClick={() => {
-                      setUseNewCard(true);
-                      setSelectedSavedCard(null);
-                    }}
-                    className="w-full"
-                    data-testid="button-use-new-card"
-                  >
-                    Usar novo cartão
-                  </Button>
-
-                  {useNewCard && (
-                    <div className="space-y-4 pt-2">
-                      <div className="space-y-2">
-                        <Label>Número do Cartão</Label>
-                        <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
-                          <CardNumberElement options={elementStyle} />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Validade</Label>
-                          <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
-                            <CardExpiryElement options={elementStyle} />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>CVV</Label>
-                          <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
-                            <CardCvcElement options={elementStyle} />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <p className="text-xs text-muted-foreground">
-                    Seus dados são protegidos com criptografia de ponta a ponta
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Número do Cartão</Label>
-                    <div className="p-3 border rounded-md bg-background" data-testid="input-card-number">
-                      <CardNumberElement options={elementStyle} />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Validade</Label>
-                      <div className="p-3 border rounded-md bg-background" data-testid="input-card-expiry">
-                        <CardExpiryElement options={elementStyle} />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>CVV</Label>
-                      <div className="p-3 border rounded-md bg-background" data-testid="input-card-cvc">
-                        <CardCvcElement options={elementStyle} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground">
-                    Seus dados são protegidos com criptografia de ponta a ponta
-                  </p>
-                </div>
-              )}
-
-              <div className="bg-muted/50 p-4 rounded-lg space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Valor:</span>
-                  <span className="font-medium">R$ {amount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Tipo:</span>
-                  <span>{formData.type === "one_time" ? "Única" : "Mensal"}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Destino:</span>
-                  <span>{formData.destination === "app_operations" ? "Operações do App" : "Tradução Bíblica"}</span>
-                </div>
+          <CardContent className="space-y-6">
+            <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Valor:</span>
+                <span className="font-medium">R$ {amount.toFixed(2)}</span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span>Tipo:</span>
+                <span>{formData.type === "one_time" ? "Única" : "Mensal"}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Destino:</span>
+                <span>{formData.destination === "app_operations" ? "Operações do App" : "Tradução Bíblica"}</span>
+              </div>
+            </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={!stripe || isProcessing}
-                data-testid="button-confirm-payment"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando pagamento...
-                  </>
-                ) : (
-                  <>
-                    <Heart className="mr-2 h-4 w-4 fill-current" />
-                    Confirmar Doação de R$ {amount.toFixed(2)}
-                  </>
-                )}
-              </Button>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+              </div>
+            ) : (
+              <div id="paypal-button-container" className="min-h-[150px]" data-testid="paypal-buttons" />
+            )}
 
-              <p className="text-center text-xs text-muted-foreground">
-                🔒 Pagamento seguro processado pelo Stripe
-              </p>
-            </form>
+            <p className="text-center text-xs text-muted-foreground">
+              🔒 Pagamento seguro processado pelo PayPal
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -374,10 +245,8 @@ function DonationFormContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [donationSuccess, setDonationSuccess] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"form" | "payment">("form");
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [finalAmount, setFinalAmount] = useState<number>(0);
 
   const form = useForm<DonationForm>({
@@ -394,57 +263,22 @@ function DonationFormContent() {
   const donationType = form.watch("type");
   const customAmountStr = form.watch("customAmount");
 
-  const createPaymentIntentMutation = useMutation({
-    mutationFn: async (data: { amount: number; currency: string }) => {
-      const res = await apiRequest("POST", "/api/create-payment-intent", data);
-      return res.json();
-    },
-  });
-
   const handleProceedToPayment = async (data: DonationForm) => {
-    try {
-      setIsProcessing(true);
+    const amount = selectedAmount === -1 && customAmountStr 
+      ? parseFloat(customAmountStr) 
+      : selectedAmount || data.amount;
 
-      const amount = selectedAmount === -1 && customAmountStr 
-        ? parseFloat(customAmountStr) 
-        : selectedAmount || data.amount;
-
-      if (!amount || amount < 1) {
-        toast({
-          title: "Erro",
-          description: "Por favor, selecione um valor válido",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const { clientSecret: secret, error } = await createPaymentIntentMutation.mutateAsync({
-        amount: Math.round(amount * 100),
-        currency: data.currency,
-      });
-
-      if (error) {
-        toast({
-          title: t.donate.error_title,
-          description: error,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setClientSecret(secret);
-      setFinalAmount(amount);
-      setPaymentStep("payment");
-    } catch (error: any) {
-      console.error("Error creating payment intent:", error);
+    if (!amount || amount < 1) {
       toast({
-        title: t.donate.error_title,
-        description: error.message || "Erro ao iniciar pagamento",
+        title: "Erro",
+        description: "Por favor, selecione um valor válido",
         variant: "destructive",
       });
-    } finally {
-      setIsProcessing(false);
+      return;
     }
+
+    setFinalAmount(amount);
+    setPaymentStep("payment");
   };
 
   if (donationSuccess) {
@@ -465,7 +299,6 @@ function DonationFormContent() {
               onClick={() => {
                 setDonationSuccess(false);
                 setPaymentStep("form");
-                setClientSecret(null);
               }} 
               className="w-full"
               data-testid="button-donate-another"
@@ -478,20 +311,14 @@ function DonationFormContent() {
     );
   }
 
-  if (paymentStep === "payment" && clientSecret) {
+  if (paymentStep === "payment") {
     return (
-      <Elements stripe={stripePromise} options={{ clientSecret }}>
-        <PaymentForm
-          clientSecret={clientSecret}
-          amount={finalAmount}
-          formData={form.getValues()}
-          onSuccess={() => setDonationSuccess(true)}
-          onBack={() => {
-            setPaymentStep("form");
-            setClientSecret(null);
-          }}
-        />
-      </Elements>
+      <PayPalPayment
+        amount={finalAmount}
+        formData={form.getValues()}
+        onSuccess={() => setDonationSuccess(true)}
+        onBack={() => setPaymentStep("form")}
+      />
     );
   }
 
@@ -507,7 +334,7 @@ function DonationFormContent() {
           <h1 className="text-3xl font-bold">{t.donate.title}</h1>
           <div className="text-muted-foreground text-base space-y-3 max-w-2xl mx-auto">
             <p className="font-medium">
-              🔒 <strong>Doação 100% segura:</strong> Utilizamos o Stripe, a plataforma de pagamento mais confiável do mundo, com criptografia de ponta a ponta. Seus dados estão protegidos e nunca são compartilhados.
+              🔒 <strong>Doação 100% segura:</strong> Utilizamos o PayPal, uma das plataformas de pagamento mais confiáveis do mundo. Seus dados estão protegidos.
             </p>
             <p className="font-semibold text-foreground">
               Faça parte dessa missão. Doe agora e transforme vidas através da Palavra!
@@ -623,57 +450,29 @@ function DonationFormContent() {
                 <Label htmlFor="message">{t.donate.message}</Label>
                 <Textarea
                   id="message"
-                  placeholder={t.donate.message_placeholder}
+                  placeholder="Deixe uma mensagem de apoio (opcional)"
                   {...form.register("message")}
                   data-testid="textarea-message"
-                  className="resize-none"
-                  rows={3}
                 />
               </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isProcessing || !selectedAmount}
-                data-testid="button-proceed-to-payment"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Preparando pagamento...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Continuar para Pagamento
-                  </>
-                )}
-              </Button>
             </CardContent>
           </Card>
-        </form>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Sobre as doações</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm text-muted-foreground">
-            <p>
-              <strong>Operações do aplicativo:</strong> Sua doação ajuda a manter os servidores, desenvolvimento de novos recursos e melhorias contínuas.
-            </p>
-            <p>
-              <strong>Tradução bíblica:</strong> Apoia projetos de tradução da Bíblia para idiomas e comunidades que ainda não têm acesso às Escrituras.
-            </p>
-            <p className="text-xs">
-              Processado com segurança através do Stripe. Suas informações de pagamento são protegidas.
-            </p>
-          </CardContent>
-        </Card>
+          <Button
+            type="submit"
+            className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700"
+            disabled={!selectedAmount || selectedAmount === 0}
+            data-testid="button-proceed-to-payment"
+          >
+            <SiPaypal className="mr-2 h-5 w-5" />
+            Continuar com PayPal
+          </Button>
+        </form>
       </div>
     </div>
   );
 }
 
-export default function Donate() {
+export default function DonatePage() {
   return <DonationFormContent />;
 }
