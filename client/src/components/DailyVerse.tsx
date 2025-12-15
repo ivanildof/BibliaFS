@@ -116,15 +116,17 @@ export function DailyVerse() {
         </Card>
       </div>
 
-      <div className="flex justify-center gap-2">
+      <div className="flex justify-center gap-2 px-6 sm:px-0 flex-wrap">
         <Button
           variant="outline"
           size="sm"
           onClick={handleCopyText}
           data-testid="button-copy-verse"
+          className="text-xs sm:text-sm"
         >
-          <Copy className="w-4 h-4 mr-2" />
-          {t.dailyVerse.copy}
+          <Copy className="w-4 h-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">{t.dailyVerse.copy}</span>
+          <span className="sm:hidden">Copiar</span>
         </Button>
         
         <Button
@@ -132,9 +134,11 @@ export function DailyVerse() {
           size="sm"
           onClick={handleDownloadImage}
           data-testid="button-download-verse"
+          className="text-xs sm:text-sm"
         >
-          <Download className="w-4 h-4 mr-2" />
-          {t.dailyVerse.download_image}
+          <Download className="w-4 h-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">{t.dailyVerse.download_image}</span>
+          <span className="sm:hidden">Baixar</span>
         </Button>
 
         <Button
@@ -142,9 +146,11 @@ export function DailyVerse() {
           size="sm"
           onClick={handleCopyText}
           data-testid="button-share-verse"
+          className="text-xs sm:text-sm"
         >
-          <Share2 className="w-4 h-4 mr-2" />
-          {t.dailyVerse.share}
+          <Share2 className="w-4 h-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">{t.dailyVerse.share}</span>
+          <span className="sm:hidden">Compartilhar</span>
         </Button>
       </div>
     </div>
