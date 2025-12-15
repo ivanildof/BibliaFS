@@ -97,7 +97,7 @@ export default function Landing() {
           </div>
 
           {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             <a 
               href="#features" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -119,7 +119,12 @@ export default function Landing() {
             >
               Planos
             </a>
-            <div className="flex items-center gap-3">
+          </nav>
+
+          {/* Auth Buttons and Mobile Menu */}
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Desktop Auth Buttons */}
+            <div className="hidden sm:flex items-center gap-2">
               <Button 
                 variant="outline" 
                 size="sm"
@@ -127,7 +132,7 @@ export default function Landing() {
                 data-testid="button-login-desktop"
               >
                 <LogIn className="h-4 w-4 mr-2" />
-                Login
+                Entrar
               </Button>
               <Button 
                 size="sm"
@@ -138,10 +143,8 @@ export default function Landing() {
                 Cadastro
               </Button>
             </div>
-          </nav>
 
-          {/* Mobile Menu */}
-          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile Menu with Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
@@ -152,36 +155,39 @@ export default function Landing() {
                   <Menu className="h-6 w-6" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <a href="#features" className="cursor-pointer">
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild className="sm:hidden">
+                  <a href="#features" className="cursor-pointer flex items-center">
+                    <Sparkles className="h-4 w-4 mr-2" />
                     Recursos
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="#themes" className="cursor-pointer">
+                <DropdownMenuItem asChild className="sm:hidden">
+                  <a href="#themes" className="cursor-pointer flex items-center">
+                    <Sparkles className="h-4 w-4 mr-2" />
                     Temas
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="/planos" className="cursor-pointer">
+                <DropdownMenuItem asChild className="sm:hidden">
+                  <a href="/planos" className="cursor-pointer flex items-center">
+                    <Sparkles className="h-4 w-4 mr-2" />
                     Planos
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="sm:hidden" />
                 <DropdownMenuItem 
                   onClick={() => window.location.href = "/api/login"}
                   data-testid="menu-login-mobile"
                 >
                   <LogIn className="h-4 w-4 mr-2" />
-                  Login
+                  <span>Entrar</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => window.location.href = "/api/register"}
                   data-testid="menu-register-mobile"
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Cadastro
+                  <span>Cadastro</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
