@@ -2130,6 +2130,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Donations Routes (Stripe Integration - from javascript_stripe blueprint)
+  
+  // Custom donation checkout session using Stripe product
+  const CUSTOM_DONATION_PRODUCT_ID = "prod_TbyDuA08WlJb79";
+  
+  app.post("/api/donations/checkout", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!stripe) {
+        return res.status(503).json({ 
+          error: "Sistema de doações não configurado. Configure STRIPE_SECRET_KEY nas variáveis de ambiente." 
+        });
+      }
+
+      const { amount, currency, destination, isAnonymous, message } = req.body;
+      const userId = req.user.claims.sub;
+      const userEmail = req.user.claims.email;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Valor inválido para doação" });
+      }
+
+      const user = await storage.getUser(userId);
+      let customerId = user?.stripeCustomerId;
+
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: userEmail,
+          metadata: { userId },
+        });
+        customerId = customer.id;
+        await storage.updateUserSubscription(userId, { stripeCustomerId: customerId });
+      }
+
+      // Create checkout session with custom donation product
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: 'payment',
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: currency || 'brl',
+            product: CUSTOM_DONATION_PRODUCT_ID,
+            unit_amount: Math.round(amount), // amount already in cents from frontend
+          },
+          quantity: 1,
+        }],
+        success_url: `${req.headers.origin}/doar?success=true`,
+        cancel_url: `${req.headers.origin}/doar?canceled=true`,
+        metadata: { 
+          userId, 
+          type: 'donation',
+          destination: destination || 'app_operations',
+          isAnonymous: isAnonymous ? 'true' : 'false',
+          message: message || '',
+        },
+      });
+
+      res.json({ url: session.url, sessionId: session.id });
+    } catch (error: any) {
+      console.error("Erro ao criar checkout session de doação:", error);
+      res.status(500).json({ error: "Falha ao criar sessão de checkout: " + error.message });
+    }
+  });
+
   app.post("/api/create-payment-intent", isAuthenticated, async (req: any, res) => {
     try {
       if (!stripe) {

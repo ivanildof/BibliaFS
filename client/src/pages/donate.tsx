@@ -380,6 +380,27 @@ function DonationFormContent() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [finalAmount, setFinalAmount] = useState<number>(0);
 
+  // Check URL params for Stripe Checkout callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      setDonationSuccess(true);
+      toast({
+        title: t.donate.success_title,
+        description: t.donate.success_message,
+      });
+      // Clean URL
+      window.history.replaceState({}, '', '/doar');
+    } else if (urlParams.get('canceled') === 'true') {
+      toast({
+        title: "Doação cancelada",
+        description: "Você pode tentar novamente quando quiser.",
+      });
+      // Clean URL
+      window.history.replaceState({}, '', '/doar');
+    }
+  }, []);
+
   const form = useForm<DonationForm>({
     resolver: zodResolver(donationFormSchema),
     defaultValues: {
@@ -401,6 +422,13 @@ function DonationFormContent() {
     },
   });
 
+  const createCheckoutSessionMutation = useMutation({
+    mutationFn: async (data: { amount: number; currency: string; destination: string; isAnonymous: boolean; message?: string }) => {
+      const res = await apiRequest("POST", "/api/donations/checkout", data);
+      return res.json();
+    },
+  });
+
   const handleProceedToPayment = async (data: DonationForm) => {
     try {
       setIsProcessing(true);
@@ -418,6 +446,33 @@ function DonationFormContent() {
         return;
       }
 
+      // Use Stripe Checkout for custom amounts (using product ID)
+      if (selectedAmount === -1) {
+        const { url, error } = await createCheckoutSessionMutation.mutateAsync({
+          amount: Math.round(amount * 100),
+          currency: data.currency,
+          destination: data.destination,
+          isAnonymous: data.isAnonymous,
+          message: data.message,
+        });
+
+        if (error) {
+          toast({
+            title: t.donate.error_title,
+            description: error,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Redirect to Stripe Checkout
+        if (url) {
+          window.location.href = url;
+        }
+        return;
+      }
+
+      // Use embedded payment form for preset amounts
       const { clientSecret: secret, error } = await createPaymentIntentMutation.mutateAsync({
         amount: Math.round(amount * 100),
         currency: data.currency,
