@@ -270,8 +270,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Debug: Create confirmed user (temporary for testing)
+  // Debug: Create confirmed user (ONLY available in development)
   app.post('/api/auth/debug/create-confirmed-user', async (req, res) => {
+    // SECURITY: Block in production
+    if (process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1') {
+      return res.status(404).json({ message: "Not found" });
+    }
+    
     try {
       const { email, password, firstName, lastName } = req.body;
       
