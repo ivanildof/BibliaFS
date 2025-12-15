@@ -1,6 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Book, 
   Brain, 
@@ -9,8 +16,12 @@ import {
   Users, 
   Sparkles,
   Check,
-  ArrowRight
+  ArrowRight,
+  Menu,
+  LogIn,
+  UserPlus
 } from "lucide-react";
+import { Link } from "wouter";
 import heroImage from "@assets/generated_images/Open_Bible_with_warm_sunlight_407fbff0.png";
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -35,7 +46,7 @@ const comparisonFeatures = [
 
 export default function Landing() {
   const { t } = useLanguage();
-  
+
   const features = [
     {
       icon: Brain,
@@ -71,8 +82,115 @@ export default function Landing() {
   
   return (
     <div className="min-h-screen bg-background">
+      {/* Header Navigation */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* Logo/Brand */}
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+              <Book className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h2 className="font-display font-bold text-lg text-foreground">BíbliaFS</h2>
+              <p className="text-xs text-muted-foreground">Estudo Bíblico Premium</p>
+            </div>
+          </div>
+
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center gap-8">
+            <a 
+              href="#features" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              data-testid="link-features"
+            >
+              Recursos
+            </a>
+            <a 
+              href="#themes" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              data-testid="link-themes"
+            >
+              Temas
+            </a>
+            <a 
+              href="/planos" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              data-testid="link-plans"
+            >
+              Planos
+            </a>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => window.location.href = "/api/login"}
+                data-testid="button-login-desktop"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
+              </Button>
+              <Button 
+                size="sm"
+                onClick={() => window.location.href = "/api/register"}
+                data-testid="button-register-desktop"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Cadastro
+              </Button>
+            </div>
+          </nav>
+
+          {/* Mobile Menu */}
+          <div className="md:hidden flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  data-testid="button-menu-mobile"
+                >
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <a href="#features" className="cursor-pointer">
+                    Recursos
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="#themes" className="cursor-pointer">
+                    Temas
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/planos" className="cursor-pointer">
+                    Planos
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => window.location.href = "/api/login"}
+                  data-testid="menu-login-mobile"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Login
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => window.location.href = "/api/register"}
+                  data-testid="menu-register-mobile"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Cadastro
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-20">
         <div 
           className="absolute inset-0 z-0"
           style={{
@@ -156,7 +274,7 @@ export default function Landing() {
       </section>
 
       {/* Theme Showcase */}
-      <section className="py-24 px-6 bg-muted/30">
+      <section id="themes" className="py-24 px-6 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
