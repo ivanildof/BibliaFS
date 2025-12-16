@@ -1,0 +1,74 @@
+Possíveis Causas dos Problemas
+1. Áudio de versículos / capítulos / livros não reproduz
+Causas comuns:
+Arquivos de áudio não estão no Storage do Supabase ou não foram feitas as permissões corretas de leitura.
+Políticas de segurança (RLS – Row Level Security) no bucket do Storage impedem o acesso público.
+URLs mal formadas ou caminhos incorretos ao buscar os arquivos.
+CORS ou bloqueio do navegador ao tentar carregar o áudio (especialmente se o Storage não estiver com domínio configurado).
+✅ Verifique:
+
+ts
+// Exemplo de como acessar um áudio no Supabase Storage
+const { data } = supabase.storage
+  .from('bible-audio')
+  .getPublicUrl('livros/joao/cap1/vers1.mp3');
+
+// O bucket 'bible-audio' precisa ter RLS desativado ou regras que permitam acesso anônimo
+
+Solução:
+
+No Supabase Dashboard > Storage > bucket > Policies, adicione uma política como:
+
+sql
+CREATE POLICY "Permitir leitura pública de áudios"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'bible-audio');
+
+Ou use um token de acesso temporário se quiser manter RLS ativo.
+2. Podcast não funciona
+Possibilidades:
+O feed RSS do podcast não está sendo gerado corretamente (falta rota /rss.xml ou /podcast/feed).
+Os arquivos de áudio do podcast não são acessíveis publicamente (mesmo problema do item 1).
+Metadados ausentes (título, descrição, data, link) impedem o reconhecimento como podcast válido.
+✅ Verifique se:
+
+Seu backend (ex: Supabase Edge Functions, Next.js API, etc.) gera um XML válido conforme especificação RSS 2.0 com Apple Podcasts tags.
+3. Sistema de assinatura (premium) não funciona
+Causas comuns:
+Integração com Stripe não configurada em produção (ex: usando chaves de teste localmente, mas sem configurar as chaves reais no ambiente de produção).
+Webhooks do Stripe não verificados ou endpoint /api/webhooks/stripe não está recebendo eventos (ex: assinatura criada, pagamento falhou).
+Tabela de usuários no Supabase não está atualizando o campo is_premium com base no status do Stripe.
+✅ Verifique:
+
+Variáveis de ambiente em produção:
+
+env
+
+NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_live_...
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+
+Se o webhook está registrado no Stripe Dashboard com a URL correta (ex: https://bibliafs.com.br/api/webhooks/stripe).
+Se há log de erro no backend ao receber eventos do Stripe (stripe.webhooks.constructEvent).
+4. Doações não funcionam
+Possibilidades:
+Mesmo problema da assinatura: chaves do Stripe incorretas.
+Checkout de doação não está vinculado a um produto/price válido no Stripe.
+Falta de rota de confirmação ou atualização no banco quando a doação é concluída.
+Botão de doação não dispara a chamada correta (ex: stripe.redirectToCheckout com sessionId inválido).
+✅ Teste:
+
+Simule uma doação com modo de teste do Stripe em produção (use cartão de teste 4242...).
+Veja se o evento checkout.session.completed é disparado e processado.
+🔧 Recomendações Gerais para Produção com Supabase
+Ative logs no Supabase (SQL logs, function logs) para ver falhas reais.
+Use supabase logs ou integre com ferramentas como Sentry ou Logtail.
+Valide todas as políticas RLS — em produção, elas bloqueiam tudo por padrão.
+Teste funcionalidades críticas com usuários anônimos e logados — RLS pode se comportar diferente.
+Verifique CORS e Content Security Policy (CSP) no seu frontend — pode bloquear reprodução de áudio ou chamadas à API.
+💡 Dica Rápida: Teste de Áudio Offline
+Se o app é offline-first, os áudios não podem depender de internet. Nesse caso, você não pode usar o Supabase Storage para áudio offline — precisa baixar e armazenar localmente (ex: com IndexedDB ou Cache API).
+⚠️ O Supabase Storage não funciona offline — ele é um serviço HTTP.
+
+Se você promete "offline total", os áudios deveriam ser pré-embalados no app (PWA) ou baixáveis para armazenamento local via Service Worker + Cache.

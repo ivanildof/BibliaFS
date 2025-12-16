@@ -1,5 +1,5 @@
 // Authentication: Supabase Auth with JWT, AI with OpenAI, Payments with Stripe
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { isAuthenticated, supabaseAdmin } from "./supabaseAuth";
@@ -1132,6 +1132,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Check cache first
+      try {
+        const { db } = await import("./db");
+        const { audioCache } = await import("@shared/schema");
+        const { sql } = await import("drizzle-orm");
+        
+        const cached = await db.query.audioCache.findFirst({
+          where: sql`language = ${language} AND version = ${version} AND book = ${book} AND chapter = ${parseInt(chapter)} AND verse = ${parseInt(verse)}`
+        });
+
+        if (cached) {
+          console.log(`[Audio] Verse cache hit for ${book} ${chapter}:${verse}`);
+          res.setHeader('Content-Type', 'audio/mpeg');
+          res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${verse}-${language}.mp3"`);
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          res.setHeader('X-Cache', 'HIT');
+          res.send(Buffer.from(cached.audioData, 'base64'));
+          return;
+        }
+      } catch (cacheErr) {
+        console.warn("[Audio] Verse cache check failed:", cacheErr);
+      }
+
       // Fetch chapter to get the specific verse
       const chapterData = await fetchBibleChapter(
         language,
@@ -1174,11 +1197,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
       }
 
+      const audioBuffer = await ttsResponse.arrayBuffer();
+      const audioBase64 = Buffer.from(audioBuffer).toString('base64');
+
+      // Save to cache
+      try {
+        const { db } = await import("./db");
+        const { audioCache } = await import("@shared/schema");
+        
+        await db.insert(audioCache).values({
+          language,
+          version,
+          book,
+          chapter: parseInt(chapter),
+          verse: parseInt(verse),
+          audioData: audioBase64,
+        }).onConflictDoNothing();
+        console.log(`[Audio] Cached verse audio for ${book} ${chapter}:${verse}`);
+      } catch (cacheErr) {
+        console.warn("[Audio] Verse cache save failed:", cacheErr);
+      }
+
       res.setHeader('Content-Type', 'audio/mpeg');
       res.setHeader('Content-Disposition', `inline; filename="${book}-${chapter}-${verse}-${language}.mp3"`);
       res.setHeader('Cache-Control', 'public, max-age=86400');
       
-      const audioBuffer = await ttsResponse.arrayBuffer();
       res.send(Buffer.from(audioBuffer));
     } catch (error: any) {
       console.error("Verse audio generation error:", error?.message || error);
@@ -2369,7 +2412,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe Webhook for subscription updates
-  app.post("/api/webhooks/stripe", async (req: any, res) => {
+  app.post("/api/webhooks/stripe", express.raw({type: 'application/json'}), async (req: any, res) => {
     if (!stripe) {
       return res.status(503).json({ error: "Stripe not configured" });
     }
@@ -2381,9 +2424,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       if (endpointSecret && sig) {
-        event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+        // req.body is Buffer when using express.raw() middleware
+        const body = typeof req.body === 'string' ? req.body : req.body.toString('utf8');
+        event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
       } else {
-        event = req.body;
+        event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       }
     } catch (err: any) {
       console.error("Webhook signature verification failed:", err.message);
