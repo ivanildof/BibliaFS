@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Loader2, Search as SearchIcon } from "lucide-react";
 
@@ -18,7 +17,6 @@ const VERSIONS = ["nvi", "acf", "arc", "ra"];
 const LANGUAGES = ["pt", "en", "es", "nl"];
 
 export default function Search() {
-  const { t, language } = useLanguage();
   const [query, setQuery] = useState("");
   const [selectedVersion, setSelectedVersion] = useState("nvi");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -153,18 +151,19 @@ export default function Search() {
 
           {/* Version Tabs */}
           <div className="mt-4">
-            <TabsList className="w-full grid grid-cols-4">
-              {VERSIONS.map(v => (
-                <TabsTrigger 
-                  key={v} 
-                  value={v}
-                  onClick={() => handleVersionChange(v)}
-                  data-testid={`tab-version-${v}`}
-                >
-                  {v.toUpperCase()}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <Tabs value={selectedVersion} onValueChange={handleVersionChange}>
+              <TabsList className="w-full grid grid-cols-4">
+                {VERSIONS.map(v => (
+                  <TabsTrigger 
+                    key={v} 
+                    value={v}
+                    data-testid={`tab-version-${v}`}
+                  >
+                    {v.toUpperCase()}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
         </div>
       </div>
