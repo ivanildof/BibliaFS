@@ -1937,11 +1937,10 @@ IMPORTANTE:
       const results: any[] = [];
       const bookAbbrevs = ["gn", "ex", "lv", "nm", "dt", "js", "jz", "rt", "1sm", "2sm", "1rs", "2rs", "1cr", "2cr", "ed", "ne", "et", "job", "sl", "pv", "ec", "ct", "is", "jr", "lm", "ez", "dn", "os", "jl", "am", "ob", "jn", "mq", "na", "hc", "sf", "ag", "zc", "ml", "mt", "mc", "lc", "jo", "at", "rm", "1co", "2co", "gl", "ef", "fp", "cl", "1ts", "2ts", "1tm", "2tm", "tt", "fm", "hb", "tg", "1pe", "2pe", "1jo", "2jo", "3jo", "jd", "ap"];
       
-      // Build promises to fetch chapters - limit to first 3 chapters per book + use batching
+      // Build promises to fetch chapters - search all books up to 50 chapters with batching
       const promises: Promise<any>[] = [];
       for (const abbrev of bookAbbrevs) {
-        // Search only first 3 chapters per book for speed
-        for (let ch = 1; ch <= 3; ch++) {
+        for (let ch = 1; ch <= 50; ch++) {
           promises.push(
             fetchBibleChapter("pt", version, abbrev, ch)
               .then(data => ({ abbrev, chapter: ch, data }))
@@ -1950,8 +1949,8 @@ IMPORTANTE:
         }
       }
 
-      // Execute in batches of 30 instead of all at once
-      const batchSize = 30;
+      // Execute in batches of 50 to avoid overwhelming the API
+      const batchSize = 50;
       for (let i = 0; i < promises.length; i += batchSize) {
         const batch = promises.slice(i, i + batchSize);
         const batchResults = await Promise.all(batch);
