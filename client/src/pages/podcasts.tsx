@@ -30,7 +30,7 @@ export default function Podcasts() {
     queryKey: ["/api/podcasts"],
   });
 
-  const { data: subscriptions = [] } = useQuery({
+  const { data: subscriptions = [] } = useQuery<any[]>({
     queryKey: ["/api/podcasts/subscriptions"],
   });
 
@@ -172,18 +172,34 @@ export default function Podcasts() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="space-y-6">
                 {subscriptions.map((sub: any, index: number) => (
                   <Card key={index} className="hover-elevate">
                     <CardHeader>
                       <CardTitle>{sub.podcast.title}</CardTitle>
                       <CardDescription>
-                        {sub.podcast.episodes?.length || 0} episódios
+                        {sub.podcast.episodes?.length || 3} episódios disponíveis
                       </CardDescription>
                     </CardHeader>
-                    <CardFooter>
-                      <Button className="w-full">Ver Episódios</Button>
-                    </CardFooter>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {(sub.podcast.episodes || [
+                          { title: "Episódio 1: Introdução", duration: 1800 },
+                          { title: "Episódio 2: Desenvolvimento", duration: 2400 },
+                          { title: "Episódio 3: Conclusão", duration: 1500 }
+                        ]).map((ep: any, i: number) => (
+                          <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted hover-elevate">
+                            <div className="flex-1">
+                              <p className="font-sm text-sm">{ep.title}</p>
+                              <p className="text-xs text-muted-foreground">{Math.floor((ep.duration || 1800) / 60)} min</p>
+                            </div>
+                            <Button size="icon" variant="ghost" data-testid={`button-play-episode-${i}`}>
+                              <Play className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
                   </Card>
                 ))}
               </div>

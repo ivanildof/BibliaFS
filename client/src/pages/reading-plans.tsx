@@ -84,7 +84,10 @@ export default function ReadingPlans() {
   const activePlans = plans.filter(p => !p.isCompleted);
   const completedPlans = plans.filter(p => p.isCompleted);
 
-  if (plansLoading) {
+  // Show templates loading if no plans and templates are loading
+  const showTemplatesOnEmpty = activePlans.length === 0 && completedPlans.length === 0 && !templatesLoading && templates.length > 0;
+
+  if (plansLoading && activePlans.length === 0 && completedPlans.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto p-6">

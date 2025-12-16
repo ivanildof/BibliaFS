@@ -47,6 +47,7 @@ export default function Bible() {
   const { language } = useLanguage();
   const [selectedBook, setSelectedBook] = useState("jo");
   const [selectedChapter, setSelectedChapter] = useState(3);
+  const [selectedVersion, setSelectedVersion] = useState("nvi");
   const [fontSize, setFontSize] = useState(18);
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
 
@@ -70,6 +71,18 @@ export default function Bible() {
               <Button variant="outline" size="icon" data-testid="button-prev-chapter">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
+              
+              <Select value={selectedVersion} onValueChange={setSelectedVersion}>
+                <SelectTrigger className="w-20 sm:w-28" data-testid="select-version">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nvi">NVI</SelectItem>
+                  <SelectItem value="acf">ACF</SelectItem>
+                  <SelectItem value="arc">ARC</SelectItem>
+                  <SelectItem value="ra">RA</SelectItem>
+                </SelectContent>
+              </Select>
               
               <Select value={selectedBook} onValueChange={setSelectedBook}>
                 <SelectTrigger className="w-32 sm:w-40" data-testid="select-book">

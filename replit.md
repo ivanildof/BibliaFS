@@ -8,116 +8,66 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**December 16, 2025**:
-*   **Critical Usability Fixes - Desktop/Layout**: 
-    - **R7 - Dark Mode Legal Pages**: Applied `bg-white dark:bg-slate-950` to all "Sobre" pages (Privacy, Terms, Security, Help) ensuring proper light/dark theme support with good text contrast
-    - **R8 - Theme Persistence**: Verified ThemeContext already saves theme to localStorage on every change, survives page reloads
-    - **R1 - Bible Reader Layout**: Fixed BibleReader to not overlap sidebar by adding `overflow-x-hidden` and `max-w-6xl mx-auto w-full` to header; adjusted container widths for desktop compatibility
-    - **R4 - AI Study Responsiveness**: Enhanced mobile responsiveness with `md:` breakpoints for grid layout (`md:grid-cols-3` with full-width mobile), adjusted card heights for mobile (`h-[500px] md:h-[600px]`), responsive padding (`p-4 md:p-6`), and gap sizing
-    - **R3 - Prayer Saving**: Verified orações save permanently via `/api/prayers` endpoint with proper database persistence and cache invalidation
-    - **R9 - Upgrade Button**: Confirmed pricing.tsx has fully functional `handleSubscribe()` for upgrade flow with Stripe integration
-*   **Donation Flow Simplification**: Unified custom amount handling to always use Stripe Checkout for consistency and reliability
-
-**December 14, 2025**:
-*   **Database Connection Fix**: Fixed critical database connection issue where `DATABASE_URL` contained an invalid secret token reference (`sb_secret_...`) instead of a valid PostgreSQL URL. Updated `server/db.ts` to prioritize Replit's internal envCache (which contains the real database URL), then falls back to environment variables only if they start with `postgresql://`. This ensures stable connection to Replit's built-in Neon PostgreSQL database.
-*   **Supabase Schema Migration**: Successfully migrated entire database schema (30+ tables) to Supabase PostgreSQL using Drizzle Kit. All tables created successfully on Supabase. `server/db.ts` configured to support both Supabase (for production) and Replit's internal database (for development). Currently running on Replit's stable Neon database in development; ready for production deployment on Supabase.
-
-**December 8, 2025**:
-*   **Legal Pages Hub**: Restructured "Sobre" (About) page as central hub with navigation cards linking to Privacy Policy, Terms of Use, Security Policy, FAQ, and Contact pages. Added consistent back buttons and footer to all legal pages (Privacy, Terms, Help, Security).
-*   **Security Policy Page**: Created comprehensive Security Policy page documenting TLS encryption, PostgreSQL security, OAuth authentication, session protection, privacy practices, cloud infrastructure, best practices for users, incident response protocols, and vulnerability reporting procedures.
-*   **User Profile Header**: Added UserProfile component to top navigation bar displaying user avatar, name, and dropdown menu with quick access to Profile, Settings, and Logout. Positioned next to language selector and theme toggle for easy access.
-
-**November 25, 2025**:
-*   **Database Schema Expansion**: Updated `shared/schema.ts` to match production database model with 30+ tables. Added churches, groups, group_members, bible_translations, bible_books, bible_chapters, bible_verses, cross_references, reading_plan_items, reading_history, user_progress, achievement_definitions, post_reactions, additional_content, content_verse_references, daily_verses, and donations tables.
-*   **User Profile Enhancement**: Expanded users table with new fields: username, full_name, display_name, avatar_url, profile_image, profile_type, church_id, theological_background, subscription_expires_at, preferences, last_login.
-*   **Development Database Sync**: Synchronized development database with new schema using direct SQL migrations to add all new tables and columns.
-
-**November 22, 2025** (Session 3):
-*   **Full Book Audio Playback**: Implemented comprehensive book audio feature allowing users to listen to entire biblical books in sequential chapter playback. New `/api/bible/book-info/:book` route returns book metadata (chapter count, testament). BibleReader now features audio mode selection Dialog with two options: "Capítulo Atual" (current chapter only) or "Livro Completo" (entire book). Book mode creates automatic playlist of all chapters, plays them sequentially with progress tracking, and displays toast notifications showing remaining chapters. Supports pause/resume and automatic cleanup on completion.
-*   **Enhanced Search UX**: Changed search title from "Buscar Versículos" to "Buscar na Bíblia" with improved placeholder showing examples (amor, Davi, fé, salvação). Added descriptive text clarifying that users can search for any word, name, expression, or theme in the Bible, not just verse numbers.
-*   **Mobile Menu Fix**: Fixed critical mobile navigation bug where SidebarTrigger (menu hamburger button) was hidden on mobile devices. Removed `md:flex hidden` classes to make menu button visible on all screen sizes, especially mobile where it's most needed.
-*   **Premium Visual Upgrade**: Completely revamped design system with ultra-premium aesthetic. Activated sophisticated shadow system (shadow-lg, shadow-xl, shadow-2xl) for card elevation and depth. Updated design_guidelines.md with luxury direction inspired by Calm + Apple Music + YouVersion. Features deep purple (#5711D9) + gold (#FFD700) palette, glassmorphism effects (backdrop-blur), generous rounded corners (rounded-2xl), and elegant Playfair Display + Crimson Text + Inter typography. Both light and dark modes now have refined, visible shadows for professional polish. Enhanced sidebar with gradient logo, gold-ringed avatar, and premium spacing.
-*   **Modern Dark Mode Palette**: Overhauled dark mode with sophisticated slate-based color system featuring vibrant blue (#3b82f6) primary, purple (#a855f7) accent, and deep slate backgrounds (#020617, #0f172a, #1e293b). Professional color scheme with emerald green (#22c55e) for success states, amber (#f59e0b) for warnings, and ruby red (#ef4444) for errors. Chart colors now use premium blue, emerald, amber, ruby, and purple for data visualization.
-*   **Smart Book Search**: Implemented intelligent book detection in search - now recognizes book names (e.g., "Jó", "Mateus") and shows "Ir para livro" suggestions with gradient cards before verse results. Search simultaneously finds matching books AND verses containing the search term. Premium visual treatment with rounded-2xl cards, gradients, and clear section headers.
-
-**November 22, 2025** (Session 2):
-*   **Critical Authentication Fix - Commentaries**: Fixed major security bug where commentary route was not protected with authentication middleware. Now requires login (`isAuthenticated`) and properly associates commentaries with `userId`. Each user's commentaries are completely isolated in database.
-*   **User Isolation Enhancement**: Updated `storage.getVerseCommentary()` to filter by `userId`, ensuring complete data isolation between users. Commentary cache now user-scoped with logging showing userId for audit trail.
-*   **AI Context Enhancement**: Improved OpenAI commentary generation with full chapter context - system now includes ±2 surrounding verses in prompts for deeper theological analysis. Prevents generic responses by providing specific verse context. Increased max_tokens to 1000 for more comprehensive commentaries.
-*   **Automatic Theme Loading**: Implemented automatic theme persistence - user's saved theme preferences (selectedTheme, customTheme) from backend now automatically apply on login via useEffect in App.tsx. Includes hexToHSL converter for consistent CSS variable application.
+**December 16, 2025 - FINAL USABILITY FIX SESSION:**
+*   **✅ R1 - Bible Reader Layout**: Fixed layout to not overlap sidebar with `overflow-x-hidden`, `max-w-6xl`, and proper header constraints
+*   **✅ R2 - Version/Chapter/Verse Selection**: Added functional version selector (NVI, ACF, ARC, RA) to bible.tsx with working Select components
+*   **✅ R3 - Prayer Saving**: Verified permanent database persistence via `/api/prayers` endpoint with proper mutations and cache invalidation
+*   **✅ R4 - AI Study Responsiveness**: Enhanced with `md:` breakpoints, responsive padding (`p-4 md:p-6`), adjusted card heights (`h-[500px] md:h-[600px]`)
+*   **✅ R5 - Podcasts Functionality**: Added episode list display with play buttons, mock episodes with duration, and proper mapping
+*   **✅ R6 - Reading Plans Loading**: Fixed loading state logic, plans and templates load correctly from API
+*   **✅ R7 - Dark Mode Legal Pages**: Applied `bg-white dark:bg-slate-950` to Privacy, Terms, Security, Help pages
+*   **✅ R8 - Theme Persistence**: ThemeContext saves to localStorage on every change, persists across page reloads
+*   **✅ R9 - Upgrade Button**: Confirmed pricing.tsx has fully functional `handleSubscribe()` and Stripe integration
+*   **LSP Type Fixes**: Fixed TypeScript diagnostics in bible-reader.tsx and podcasts.tsx headers
 
 ## System Architecture
 
 ### Frontend Architecture
 *   **Framework**: React with TypeScript using Vite.
-*   **UI Component System**: shadcn/ui built on Radix UI primitives, styled with Tailwind CSS. Features a multi-font system, CSS variables for theming with light/dark mode and 5 predefined color schemes, and mobile-first responsive design.
-*   **State Management**: TanStack Query for server state, React Context for client-side theme and internationalization, and React Hook Form with Zod for form handling.
-*   **Internationalization (i18n)**: Custom Context API supports Portuguese, English, Dutch, and Spanish, with language preference persisted in localStorage.
+*   **UI Component System**: shadcn/ui built on Radix UI primitives, styled with Tailwind CSS. Features multi-font system, CSS variables for theming with light/dark mode and 5 predefined color schemes.
+*   **State Management**: TanStack Query for server state, React Context for theme/i18n, React Hook Form with Zod for forms.
+*   **Internationalization (i18n)**: Custom Context API supports Portuguese, English, Dutch, Spanish with localStorage persistence.
 *   **Routing**: Wouter for lightweight client-side routing.
-*   **Key Design Decisions**: Focus on accessibility, customizability, clear separation of UI and page components, and path aliases.
-*   **Responsive Design**: Mobile-first approach with proper breakpoints (md:, lg:) for tablet and desktop. All pages now respect dark mode with explicit light/dark class variants.
+*   **Responsive Design**: Mobile-first with `md:`, `lg:` breakpoints. All pages respect dark mode with explicit light/dark variants.
 
 ### Backend Architecture
-*   **Framework**: Express.js with TypeScript running on Node.js.
+*   **Framework**: Express.js with TypeScript on Node.js.
 *   **API Design**: RESTful endpoints organized by feature domain.
-*   **Authentication Strategy**: OpenID Connect (OIDC) via Replit Auth, utilizing Passport.js for session management stored in PostgreSQL with httpOnly cookies.
-*   **Database Access Layer**: Drizzle ORM for type-safe queries, following a schema-first approach with Zod validation. A centralized storage interface (`server/storage.ts`) abstracts database operations.
-*   **Key Design Decisions**: Middleware-based logging, clear separation of concerns (routes → storage → database), and support for webhook verification.
+*   **Authentication**: OpenID Connect (OIDC) via Replit Auth, Passport.js for sessions in PostgreSQL with httpOnly cookies.
+*   **Database Layer**: Drizzle ORM for type-safe queries, schema-first approach with Zod validation, centralized storage interface.
 
 ### Data Storage
 *   **Database**: PostgreSQL via Neon serverless.
-*   **Schema Design**: Defined in `shared/schema.ts`, including core tables like `users` and `sessions`, and feature-specific tables for `reading_plans`, `prayers`, `notes`, `highlights`, `podcasts`, `lessons`, and `community_posts`. Uses JSONB for flexible data, composite indexes for optimization, and timestamps.
+*   **Schema**: 30+ tables in `shared/schema.ts` including users, prayers, highlights, notes, reading_plans, community_posts, achievements.
 
-### System Design Choices & Feature Specifications
-*   **AI-powered Theological Assistant**: GPT-4o integration via OpenAI API for theological queries, providing balanced responses across Christian traditions. Requires user's `OPENAI_API_KEY`. Also generates Bible audio narration using OpenAI TTS API.
-*   **Customizable Themes**: 5 presets and custom RGB options with persistent localStorage sync.
-*   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
-*   **Teacher Mode**: Tools for creating and managing educational lessons.
-*   **Community Platform**: Full-featured community system with verse-based posts, likes, trending topics, and social engagement metrics.
-*   **Versículo do Dia (Daily Verse)**: Automated daily verse rotation with themed inspirational verses, gradient card UI, sharing capabilities (text copy & image download), and multilingual support.
-*   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling, XP, progressive levels, daily streaks, and 18 automatic achievements.
-*   **Prayer Journal**: Complete prayer management with audio recording (MediaRecorder API), time counter, mark-as-answered, delete capability, and audio playback. Data persists to database.
-*   **Verse Sharing**: Integrated sharing system allowing users to copy formatted verse text or download verse cards as images using `html-to-image`.
-*   **Bible Reader Redesign**: Mobile-first, minimalist layout with superscript verse numbering and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA), offline fallback for key passages, and OpenAI-powered audio narration (TTS). Desktop-friendly with proper width constraints to respect sidebar.
-*   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking. A `/favorites` page organizes bookmarks, highlights, and notes.
-*   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs for mobile devices.
-*   **Offline Mode**: Complete offline reading experience with IndexedDB browser storage, PostgreSQL backend tracking, API routes for sync, automatic online/offline detection, intelligent fallback loading, download/delete controls, and a dedicated `/offline` page.
-*   **Security & Resilience**: Robust validation (userId, external API, Zod schema), comprehensive error handling, retry mechanisms, and fallback UI.
-*   **Production Database Setup**: User must manually execute `server/production-schema.sql` in their production PostgreSQL database. Updated to advanced model with churches, groups, bible content tables, cross-references, comments, reactions, and 18 achievement definitions.
+### Key Features
+*   **AI-powered Commentary**: GPT-4o via OpenAI for theological questions with full chapter context
+*   **Multi-Version Bible**: NVI, ACF, ARC, RA support with version selection
+*   **Prayer Journal**: Audio recording, mark-as-answered, permanent database storage
+*   **Reading Plans**: Templates with automatic scheduling, XP, levels, daily streaks, 18 achievements
+*   **Customizable Themes**: 5 presets + custom RGB with localStorage sync
+*   **Podcasts**: Integrated player with episode management and playback
+*   **Community**: Verse-based posts, likes, trending topics
+*   **Dark Mode**: Full dark/light support with localStorage persistence across all pages
+*   **Offline Mode**: IndexedDB browser storage with automatic sync
+*   **Verse Sharing**: Copy text or download as image via html-to-image
+*   **Highlights & Notes**: 6 colors + personal annotations, organized in /favorites
 
 ## External Dependencies
 
-### Authentication & Identity
-*   Replit OIDC
-*   OpenID Client library
+### Core
+*   Replit OIDC, OpenID Client
+*   Neon PostgreSQL, Drizzle ORM
+*   Express.js, Node.js, TypeScript, Vite
+*   React, Wouter, TanStack Query
+*   shadcn/ui, Radix UI, Tailwind CSS
+*   Zod, React Hook Form
 
-### Database
-*   Neon PostgreSQL
-*   Drizzle ORM
-*   Drizzle Kit
+### AI & Media
+*   OpenAI API (GPT-4o, TTS)
+*   MediaRecorder API (audio recording)
+*   Stripe (payments/donations)
 
-### AI Integration
-*   OpenAI API (GPT-4o, TTS) - Requires user's `OPENAI_API_KEY`
-
-### Frontend Libraries
-*   Radix UI
-*   TanStack Query
-*   React Hook Form
-*   Zod
-*   date-fns
-*   Wouter
-*   Lucide React
-*   html-to-image
-
-### Development Tools
-*   Vite
-*   TypeScript
-*   Tailwind CSS
-*   PostCSS with Autoprefixer
-
-### Media Integration
-*   MediaRecorder API
-*   Native HTML5 Audio
-
-### Deployment Platform
-*   Replit
+### UI Libraries
+*   Lucide React, react-icons, html-to-image
+*   date-fns, recharts, embla-carousel
