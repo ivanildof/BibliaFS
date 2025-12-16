@@ -9,21 +9,22 @@ import { join } from "path";
 neonConfig.webSocketConstructor = ws;
 
 function getDatabaseUrl(): string {
-  // First, use SUPABASE_DATABASE_URL (production - external database)
-  if (process.env.SUPABASE_DATABASE_URL && process.env.SUPABASE_DATABASE_URL.startsWith('postgresql://')) {
-    console.log("[Database] Using Supabase database");
-    return process.env.SUPABASE_DATABASE_URL;
-  }
-
-  // Fallback to internal Replit database
+  // First, try to get from internal environment cache (Replit database)
   try {
     const envCachePath = join(process.env.HOME || '/home/runner', 'workspace/.cache/replit/env/latest.json');
     const envCache = JSON.parse(readFileSync(envCachePath, 'utf8'));
     if (envCache.environment?.DATABASE_URL && envCache.environment.DATABASE_URL.startsWith('postgresql://')) {
+      console.log("[Database] Using Replit database");
       return envCache.environment.DATABASE_URL;
     }
   } catch (e) {
     // Ignore cache read errors
+  }
+
+  // Fallback to SUPABASE_DATABASE_URL (external database)
+  if (process.env.SUPABASE_DATABASE_URL && process.env.SUPABASE_DATABASE_URL.startsWith('postgresql://')) {
+    console.log("[Database] Using Supabase database");
+    return process.env.SUPABASE_DATABASE_URL;
   }
 
   // Last resort - try environment variable
@@ -32,7 +33,7 @@ function getDatabaseUrl(): string {
   }
 
   throw new Error(
-    "No valid database URL found. Ensure SUPABASE_DATABASE_URL is set.",
+    "No valid database URL found. Ensure DATABASE_URL or SUPABASE_DATABASE_URL is set.",
   );
 }
 
