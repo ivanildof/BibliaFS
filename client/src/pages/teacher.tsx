@@ -410,10 +410,14 @@ export default function Teacher() {
   });
 
   const handleEditLesson = (lesson: Lesson) => {
+    const scriptureBase = typeof lesson.scriptureReferences?.[0] === 'string' 
+      ? lesson.scriptureReferences[0] 
+      : lesson.scriptureReferences?.[0]?.verses || "";
+    
     form.reset({
       title: lesson.title,
       description: lesson.description || "",
-      scriptureBase: lesson.scriptureReferences?.[0] || "",
+      scriptureBase,
     });
     setObjectives(lesson.objectives || []);
     setQuestions((lesson.questions || []).map(q => typeof q === 'string' ? q : q.question));
@@ -496,10 +500,9 @@ export default function Teacher() {
             </p>
           </div>
           
-          {currentTab === "lessons" && (
-            <Dialog open={isCreateDialogOpen} onOpenChange={(open) => !open && handleCloseDialog()}>
+          <Dialog open={isCreateDialogOpen} onOpenChange={(open) => open ? setIsCreateDialogOpen(true) : handleCloseDialog()}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-lesson">
+              <Button size="lg" data-testid="button-create-lesson" onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="h-5 w-5 mr-2" />
                 {t.teacherMode.new_lesson}
               </Button>
@@ -704,7 +707,6 @@ export default function Teacher() {
               </Form>
             </DialogContent>
           </Dialog>
-          )}
         </div>
 
         {/* Tabs */}
