@@ -995,8 +995,8 @@ export default function BibleReader() {
 
             <Sheet open={isChaptersOpen} onOpenChange={setIsChaptersOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" data-testid="button-navigate">
-                  Navegar
+                <Button variant="ghost" size="sm" data-testid="button-version">
+                  {VERSIONS.find(v => v.value === version)?.label || "NVI"}
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
@@ -1086,7 +1086,7 @@ export default function BibleReader() {
                   </TabsContent>
                   
                   <TabsContent value="version" className="mt-4">
-                    <div className="max-w-xs">
+                    <div>
                       <h3 className="text-sm font-medium mb-2">Versão da Bíblia</h3>
                       <div className="grid grid-cols-2 gap-2">
                         {VERSIONS.map(v => (
