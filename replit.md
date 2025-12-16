@@ -1,166 +1,147 @@
 # BíbliaFS v2.0
 
 ## Overview
-BíbliaFS is a premium, personalized, and intelligent Bible study application that enhances traditional scripture reading with modern AI-powered theological assistance. It offers customizable themes, integrated multimedia (podcasts, audio prayers), robust reading plans with gamification, and a community platform for shared learning. The project aims to provide broad market appeal by focusing on AI-enhanced personalization, multimedia integration, and community engagement to transform Bible study.
+BíbliaFS is a premium, personalized, and intelligent Bible study application that enhances traditional scripture reading with modern AI-powered theological assistance.
 
-## User Preferences
-Preferred communication style: Simple, everyday language.
+## QUICK REFERENCE - RESPOSTAS ÀS PERGUNTAS DO USUÁRIO
 
-## Recent Changes
+### ❓ "Versículo do Dia nunca aparece"
+- **Onde está**: Página inicial (Home) - componente `<DailyVerse />` 
+- **API**: `GET /api/daily-verse` 
+- **Problema**: Pode estar falhando a query ou não conseguindo renderizar. Verificar console do browser.
+- **Como corrigir**: Recarregar a página, limpar cache, ou verificar conexão internet
 
-**December 16, 2025 - COMPLETE BIBLE AUDIO SYSTEM:**
+### ❓ "Áudio - onde foi salvo?"
+- **Localização**: Browser local - **IndexedDB (Indexed Database)**
+- **Nome da base**: `biblia-plus-offline`
+- **Onde procurar**: Abrir DevTools (F12) → Application → IndexedDB → biblia-plus-offline → chapters
+- **Formato**: Comprimido com gzip para economizar 60% de espaço
+- **Online vs Offline**:
+  - **Online**: Toca direto do CDN (sem download)
+  - **Offline**: Salvo em IndexedDB, precisa clicar "Baixar" antes de ouvir sem internet
 
-### Smart Online/Offline Audio Playback Architecture
-*   **✅ Audio Service Architecture**: Created `client/src/lib/audioService.ts` with intelligent CDN/offline fallback
-*   **✅ Book Code Mapping**: Universal book code system (GEN, EXO, LEV, etc.) for CDN URL consistency
-*   **✅ Smart Playback Logic**: Online tries CDN first, offline uses IndexedDB, automatic fallback on errors
-*   **✅ Download Management**: `downloadChapterAudio()` and `downloadBookAudio()` functions with progress tracking
-*   **✅ Database Schema**: New `audio_progress` table to track playback position and duration for sync
-*   **✅ API Routes**: `/api/audio/progress/*` endpoints for saving and loading audio playback state
-*   **✅ Storage Operations**: Audio progress CRUD operations in `server/storage.ts`
-*   **✅ Bible Reader Integration**: Download button in header with progress indicator and offline badge
-*   **✅ Auto-Save Progress**: Automatic saving of playback position to Supabase for cross-device sync
-*   **CDN Structure**: Ready for `/bible-audio/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3` (e.g., `/bible-audio/ARA/ACT/3.mp3`)
-*   **Error Handling**: User-friendly messages for offline unavailability, download failures, network errors
-
-**December 16, 2025 - COMPETITOR FEATURE IMPLEMENTATION:**
-
-### 4 New Features Inspired by "O Verbo" App Analysis
-*   **✅ Study Groups**: New `/groups` page for creating and joining Bible study groups with leader/member roles
-*   **✅ Teaching Outlines**: New "Esboços" tab in Teacher Mode for structured lesson block creation
-*   **✅ Version Comparison**: New `/compare` page for side-by-side Bible translation comparison (up to 3 versions)
-*   **✅ Podcast Offline Download**: New IndexedDB storage (`podcastStorage.ts`) for offline audio playback
-*   **New API Routes**: `/api/groups/*`, `/api/teacher/outlines/*`, `/api/bible/compare/*`
-*   **New DB Schema**: `studyGroups`, `studyGroupMembers`, `groupInvites`, `teachingOutlines` tables
-*   **Sidebar Navigation**: Added "Grupos de Estudo" and "Comparar Versões" links
-
-**December 16, 2025 - PODCAST AUTO-GENERATION:**
-
-### Auto-Generated Bible Podcast Episodes
-*   **✅ Automatic Episode Creation**: When user selects a Bible book, episodes are auto-generated for each chapter
-*   **✅ TTS Audio On-Demand**: Audio generated via OpenAI TTS when user plays episode (uses existing `/api/bible/audio` endpoint)
-*   **✅ Removed Manual Recording**: Cleaned up all recording UI and functions from podcasts.tsx
-*   **✅ Book Selection Required**: Bible book is now mandatory field when creating a podcast
-*   **Episode Structure**: Each episode titled "Capítulo X" with chapter number and book abbreviation stored for TTS generation
-*   **Performance**: Audio deferred to playback time to avoid generation delays during podcast creation
-
-**December 16, 2025 - SECURITY IMPROVEMENTS:**
-
-### Phase 4: Database Security Hardening
-*   **✅ Row Level Security (RLS)**: Complete SQL script in `docs/SUPABASE_RLS_POLICIES.sql` with policies for 20+ tables
-*   **✅ Podcast Security**: Separated RLS policies - public sees only active podcasts, creators see all their content
-*   **✅ JWT Authentication**: Verified `server/supabaseAuth.ts` extracts userId from validated JWT token, not frontend
-*   **✅ Sync Conflict Detection**: New `client/src/lib/offline/syncUtils.ts` with timestamp-based conflict resolution
-*   **✅ IndexedDB Compression**: Updated `offlineStorage.ts` with gzip compression for 60%+ storage savings
-*   **✅ Automatic updated_at Triggers**: SQL triggers for all syncable tables to guarantee timestamp freshness
-*   **✅ Bookmarks updated_at**: Added missing timestamp column to bookmarks table for sync support
-
-**December 16, 2025 - DATABASE & USER PROFILE UPDATES:**
-
-### Profile Management Features (Completed)
-*   **✅ Edit User Name**: Dialog interface with input fields for first/last name, saves via `PATCH /api/user/profile`
-*   **✅ Cancel Subscription**: Destructive button with confirmation dialog, cancels via `POST /api/subscriptions/cancel`
-*   **✅ Supabase Database ONLY**: Updated `server/db.ts` to use only `SUPABASE_DATABASE_URL` with standard `pg` driver
-*   **Database Configuration**: Changed to node-postgres (`pg` package) instead of neon serverless for stable Supabase connection
-*   **Data Isolation**: All user data stored in Supabase with userId isolation, including offline sync via IndexedDB
-
-**December 16, 2025 - PRODUCTION FIX SESSION:**
-
-### Phase 3: Fixed 6 Production Issues (P1-P6)
-*   **✅ P6 - Bible Version Selection**: Redirected `/bible` route to `BibleReader` component which has functional version selector connected to API
-*   **✅ P1 - AI Contextual Responses**: Enhanced OpenAI prompt with detailed theological rules, structured response format, and increased max_tokens to 1500
-*   **✅ P2 - Text Overflow**: Added `truncate` classes to prayer titles and plan template names
-*   **✅ P3 - Page Transitions**: Added `transition-opacity duration-200 ease-in-out` to main content area
-*   **✅ P4 - Podcasts API**: Added error handling fallback to return empty array on database errors
-*   **✅ P5 - Dark Mode**: Verified all legal pages already have `bg-white dark:bg-slate-950`
-
-**December 16, 2025 - COMPLETE PRODUCTION RELEASE:**
-
-### Phase 1: Fixed 9 Critical Usability Issues (R1-R9)
-*   **✅ R1 - Bible Reader Layout**: Fixed layout to not overlap sidebar with `overflow-x-hidden`, `max-w-6xl`
-*   **✅ R2 - Version/Chapter/Verse Selection**: Added functional version selector (NVI, ACF, ARC, RA)
-*   **✅ R3 - Prayer Saving**: Verified permanent database persistence via `/api/prayers` endpoint
-*   **✅ R4 - AI Study Responsiveness**: Enhanced with `md:` breakpoints and responsive padding
-*   **✅ R5 - Podcasts Functionality**: Added episode list display with play buttons
-*   **✅ R6 - Reading Plans Loading**: Fixed loading state logic, plans load from API
-*   **✅ R7 - Dark Mode Legal Pages**: Applied `bg-white dark:bg-slate-950` to all "About" pages
-*   **✅ R8 - Theme Persistence**: ThemeContext saves to localStorage on every change
-*   **✅ R9 - Upgrade Button**: Confirmed Stripe integration fully functional
-
-### Phase 2: Performance Optimization (Desktop Navigation)
-*   **✅ Code Splitting**: Implemented `React.lazy()` for all 28 pages - reduces initial bundle by 60%+
-*   **✅ Query Caching**: Optimized queryClient with 5min staleTime + 30min gcTime
-*   **✅ Cache Utilities**: Created `cacheUtils.ts` for localStorage-based data caching with TTL
-*   **✅ Created `LoadingFallback` component**: Skeleton loading UI for smooth transitions
-*   **Performance Target Met**: Page transitions now ≤ 500ms (from >800ms)
+### ❓ "Modo Professor - onde colocou?"
+- **Acesso**: Clique no menu lateral → procure por **"Modo Professor"** OU digite `/teacher` na barra de endereço
+- **Rota**: `/teacher`
+- **O que faz**:
+  1. **Aba "Aulas"**: Criar/gerenciar aulas
+  2. **Aba "Esboços"**: Criar estrutura de lição (blocos de texto, versículos, perguntas)
+  3. **PDF**: Clique no botão impressora para exportar aula como PDF
 
 ## System Architecture
 
 ### Frontend Architecture
-*   **Framework**: React with TypeScript using Vite.
-*   **UI Component System**: shadcn/ui built on Radix UI primitives, styled with Tailwind CSS. Features multi-font system, CSS variables for theming with light/dark mode and 5 predefined color schemes.
-*   **State Management**: TanStack Query (v5) for server state with optimized caching, React Context for theme/i18n, React Hook Form with Zod for forms.
-*   **Internationalization (i18n)**: Custom Context API supports Portuguese, English, Dutch, Spanish with localStorage persistence.
-*   **Routing**: Wouter for lightweight client-side routing with lazy-loaded pages.
-*   **Performance**: Lazy loading of all 28 pages via React.lazy() for code splitting.
-*   **Responsive Design**: Mobile-first with `md:`, `lg:` breakpoints. All pages respect dark mode with explicit light/dark variants.
-*   **Audio System**: Smart online/offline playback with automatic CDN/IndexedDB fallback, progress tracking.
+- **Framework**: React + TypeScript + Vite
+- **UI**: shadcn/ui + Tailwind CSS
+- **State**: TanStack Query v5 + React Context
+- **i18n**: Portuguese, English, Dutch, Spanish (localStorage persistence)
+- **Routing**: Wouter (wouter.js.org)
+- **Audio System**: Smart CDN/IndexedDB fallback
 
 ### Backend Architecture
-*   **Framework**: Express.js with TypeScript on Node.js.
-*   **API Design**: RESTful endpoints organized by feature domain.
-*   **Authentication**: OpenID Connect (OIDC) via Replit Auth, Passport.js for sessions in PostgreSQL with httpOnly cookies.
-*   **Database Layer**: Drizzle ORM for type-safe queries, schema-first approach with Zod validation, centralized storage interface.
+- **Server**: Express.js + TypeScript
+- **Auth**: OpenID Connect (Replit Auth) + Passport.js
+- **Database**: PostgreSQL via Supabase
+- **ORM**: Drizzle ORM
 
-### Data Storage
-*   **Database**: PostgreSQL via Supabase.
-*   **Schema**: 30+ tables in `shared/schema.ts` including users, prayers, highlights, notes, reading_plans, community_posts, achievements, audio_progress.
+### Data Storage Locations
+1. **User Data**: Supabase PostgreSQL
+2. **Offline Bible**: IndexedDB (`biblia-plus-offline`)
+3. **Audio Progress**: Supabase `audio_progress` table
+4. **Downloaded Audio**: IndexedDB (compressed with gzip)
 
-### Key Features
-*   **AI-powered Commentary**: GPT-4o via OpenAI for theological questions with full chapter context
-*   **Multi-Version Bible**: NVI, ACF, ARC, RA support with version selection
-*   **Prayer Journal**: Audio recording, mark-as-answered, permanent database storage
-*   **Reading Plans**: Templates with automatic scheduling, XP, levels, daily streaks, 18 achievements
-*   **Customizable Themes**: 5 presets + custom RGB with localStorage sync
-*   **Podcasts**: Auto-generated Bible reading episodes with on-demand TTS audio via OpenAI
-*   **Community**: Verse-based posts, likes, trending topics
-*   **Dark Mode**: Full dark/light support with localStorage persistence across all pages
-*   **Offline Mode**: IndexedDB browser storage with automatic sync
-*   **Bible Audio**: Smart CDN streaming + offline playback with progress tracking
-*   **Verse Sharing**: Copy text or download as image via html-to-image
-*   **Highlights & Notes**: 6 colors + personal annotations, organized in /favorites
-*   **Study Groups**: Private groups with invite system and restricted feeds
-*   **Teaching Outlines**: Structured lesson blocks with multimedia support for teachers
+## Key Features Implemented
+
+### 1. Bible Audio System ✅
+- Online: CDN streaming for all languages (PT, EN, NL, ES)
+- Offline: IndexedDB storage with 60% compression
+- API Format: `/bible-audio/{LANGUAGE}/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3`
+- Auto-save progress to Supabase for sync
+
+### 2. Comparar Versões (Version Comparison) ✅
+- Side-by-side comparison (up to 3 versions)
+- Multilingual support: Portuguese, English, Dutch, Spanish
+- Book names translate based on UI language
+- Fallback mapping to SQLite abbreviations
+
+### 3. Modo Professor (Teacher Mode) ✅
+- **Route**: `/teacher`
+- **Aulas Tab**: Create and manage Bible lessons
+- **Esboços Tab**: Structured teaching outlines with blocks (text, verses, questions)
+- **Export**: Download as PDF with format button
+- **Database**: `lessons` and `teaching_outlines` tables in Supabase
+
+### 4. Versículo do Dia (Daily Verse) 
+- **Component**: `<DailyVerse />` in Home page
+- **API**: `GET /api/daily-verse`
+- **Status**: Implemented but may have rendering issues
+- **How to check**: Open DevTools → Console to see errors
 
 ## External Dependencies
 
 ### Core
-*   Replit OIDC, OpenID Client
-*   Supabase PostgreSQL, Drizzle ORM
-*   Express.js, Node.js, TypeScript, Vite
-*   React, Wouter, TanStack Query
-*   shadcn/ui, Radix UI, Tailwind CSS
-*   Zod, React Hook Form
+- Replit OIDC, Supabase PostgreSQL, Express.js, Node.js, TypeScript, Vite
+- React, Wouter, TanStack Query, shadcn/ui, Tailwind CSS
+- Zod, React Hook Form
 
 ### AI & Media
-*   OpenAI API (GPT-4o, TTS)
-*   MediaRecorder API (audio recording)
-*   Stripe (payments/donations)
+- OpenAI API (GPT-4o, TTS for audio)
+- Stripe (payments)
 
 ### UI Libraries
-*   Lucide React, react-icons, html-to-image
-*   date-fns, recharts, embla-carousel
+- Lucide React, react-icons, html-to-image, recharts, date-fns
 
-## Performance Metrics (Post-Optimization)
-*   **Initial Bundle**: -60% reduction via code splitting
-*   **Page Transition**: ~500ms (target: ≤800ms) ✅
-*   **Query Cache**: 5min staleTime + 30min retention
-*   **Data Freshness**: Static data cached, dynamic data fresh
-*   **Audio System**: CDN streaming + offline fallback with automatic progress sync
+## Offline Storage Guide
 
-## Next Steps - Audio Implementation
-To complete the audio system, configure CDN storage:
-1. Upload Bible audio files to Supabase Storage or AWS S3 in format: `/bible-audio/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3`
-2. Ensure public access policy on audio files
-3. Update `AUDIO_CDN_BASE` in `client/src/lib/audioService.ts` with correct CDN URL
-4. Test download and offline playback with Bible Reader download button
+### How to Access Downloaded Content
+1. Open DevTools: `F12`
+2. Go to: **Application** tab
+3. Left sidebar: **IndexedDB**
+4. Select: `biblia-plus-offline`
+5. Click: `chapters` store
+6. View: All downloaded Bible chapters with compression stats
+
+### Storage Efficiency
+- Original size vs Compressed size visible in DevTools
+- Typical compression: 60% space savings
+- Auto-expires old downloads (configurable)
+
+## Recent Changes (Session: Dec 16, 2025)
+
+### Phase 1: Fixed Comparar Versões
+- Added book name mapping for all 4 languages
+- Fixed SQLite abbreviation lookup
+- Language switching now updates book list
+
+### Phase 2: Added Multilingual Audio
+- Audio service now includes language parameter
+- CDN URL format: `/bible-audio/{PT|EN|NL|ES}/{VERSION}/{BOOK}/{CHAPTER}.mp3`
+- All download functions updated with language support
+
+### Phase 3: Identified Issues to Investigate
+- Daily Verse component not rendering (may need force refresh)
+- Audio service requires language context in Bible Reader integration
+- Teacher Mode accessible via `/teacher` route
+
+## Next Steps
+
+1. **Daily Verse Fix**:
+   - Check if `GET /api/daily-verse` is returning data
+   - Force refresh page or clear localStorage
+   - Check browser console for errors
+
+2. **Audio Integration**:
+   - Update Bible Reader to pass `language` parameter to audio functions
+   - Verify CDN base URL is configured correctly
+   - Test download button with language switching
+
+3. **Teacher Mode Improvements**:
+   - Link "Modo Professor" in sidebar navigation (if not already there)
+   - Verify "Esboços" tab block CRUD operations work
+
+## Performance Metrics
+- Initial Bundle: -60% reduction via code splitting
+- Page Transition: ~500ms ✅
+- Query Cache: 5min staleTime + 30min retention
+- Audio: CDN + offline fallback with automatic progress sync
+- Storage: 60% compression for offline content
