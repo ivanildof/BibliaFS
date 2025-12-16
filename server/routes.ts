@@ -1924,66 +1924,6 @@ IMPORTANTE:
     res.json(result.data);
   });
   
-  // Fast search endpoint - optimized for finding text across all books
-  app.get("/api/search", async (req, res) => {
-    try {
-      const query = (req.query.q || "").toLowerCase().trim();
-      const version = (req.query.version || "nvi").toLowerCase();
-      
-      if (!query || query.length < 2) {
-        return res.json([]);
-      }
-
-      const results: any[] = [];
-      const bookAbbrevs = ["gn", "ex", "lv", "nm", "dt", "js", "jz", "rt", "1sm", "2sm", "1rs", "2rs", "1cr", "2cr", "ed", "ne", "et", "job", "sl", "pv", "ec", "ct", "is", "jr", "lm", "ez", "dn", "os", "jl", "am", "ob", "jn", "mq", "na", "hc", "sf", "ag", "zc", "ml", "mt", "mc", "lc", "jo", "at", "rm", "1co", "2co", "gl", "ef", "fp", "cl", "1ts", "2ts", "1tm", "2tm", "tt", "fm", "hb", "tg", "1pe", "2pe", "1jo", "2jo", "3jo", "jd", "ap"];
-      
-      // Build promises to fetch chapters - search all books up to 50 chapters with batching
-      const promises: Promise<any>[] = [];
-      for (const abbrev of bookAbbrevs) {
-        for (let ch = 1; ch <= 50; ch++) {
-          promises.push(
-            fetchBibleChapter("pt", version, abbrev, ch)
-              .then(data => ({ abbrev, chapter: ch, data }))
-              .catch(() => null)
-          );
-        }
-      }
-
-      // Execute in batches of 50 to avoid overwhelming the API
-      const batchSize = 50;
-      for (let i = 0; i < promises.length; i += batchSize) {
-        const batch = promises.slice(i, i + batchSize);
-        const batchResults = await Promise.all(batch);
-        
-        for (const item of batchResults) {
-          if (!item?.data?.verses) continue;
-          
-          for (let idx = 0; idx < item.data.verses.length; idx++) {
-            const verse = item.data.verses[idx];
-            if (verse && verse.toLowerCase().includes(query)) {
-              results.push({
-                book: item.data.book?.name || "",
-                abbrev: item.abbrev,
-                chapter: item.chapter,
-                verse: idx + 1,
-                text: verse.substring(0, 150),
-                version
-              });
-            }
-          }
-        }
-        
-        // Stop early if we have enough results
-        if (results.length >= 100) break;
-      }
-
-      res.json(results.slice(0, 100));
-    } catch (error: any) {
-      console.error("[Search] Error:", error);
-      res.json([]);
-    }
-  });
-
   // Search Bible text
   app.get("/api/bible/search", async (req, res) => {
     try {

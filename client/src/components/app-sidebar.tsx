@@ -46,7 +46,6 @@ export function AppSidebar() {
   ];
 
   const studyItems = [
-    { title: "Buscar", url: "/search", icon: Search },
     { title: "Comparar Versões", url: "/compare", icon: Columns },
     { title: t.nav.discover, url: "/community", icon: Users },
     { title: "Grupos de Estudo", url: "/groups", icon: UsersRound },
