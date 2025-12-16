@@ -1062,36 +1062,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calcular quantidade de conteúdo baseado em duração
       const numObjectives = duration <= 30 ? 2 : duration <= 60 ? 4 : 6;
+      const numContentBlocks = duration <= 30 ? 3 : duration <= 60 ? 5 : 7;
       const numQuestions = duration <= 30 ? 2 : duration <= 60 ? 5 : 8;
 
-      const prompt = `Você é um assistente especializado em educação bíblica. Gere conteúdo para uma aula bíblica de ${duration} minutos.
+      const prompt = `Você é um assistente especializado em educação bíblica. Gere conteúdo COMPLETO para uma aula bíblica de ${duration} minutos.
 
 Título da Aula: ${title}
 Texto-Base: ${scriptureBase}
 Duração: ${duration} minutos
 
-Adapte o conteúdo para a duração especificada:
-- Gere ${numObjectives} objetivos de aprendizado (quanto maior a duração, mais profundidade)
-- Gere ${numQuestions} perguntas para discussão COM RESPOSTAS/GABARITO (para aulas mais longas, adicione perguntas mais complexas e com tempo para reflexão profunda)
-- Se a aula tiver mais de 60 minutos, inclua pontos de aplicação prática adicional
+ESTRUTURA DA AULA:
+1. Descrição concisa (o que é a aula)
+2. ${numObjectives} Objetivos de aprendizado
+3. ${numContentBlocks} BLOCOS DE CONTEÚDO PRINCIPAL (com 2-3 pontos cada, com versículos bíblicos)
+4. ${numQuestions} PERGUNTAS PARA DISCUSSÃO com RESPOSTAS/GABARITO (para o FINAL da aula)
 
 Responda em JSON com a seguinte estrutura:
 {
-  "description": "Uma descrição concisa da aula proporcional à duração (2-4 frases)",
+  "description": "Uma descrição concisa da aula (2-3 frases)",
   "objectives": ["Objetivo 1", "Objetivo 2", ...],
+  "contentBlocks": [
+    {
+      "title": "Título do bloco de conteúdo",
+      "content": "2-3 parágrafos explicativos com versículos bíblicos (ex: João 3:16) e aplicações práticas"
+    },
+    {
+      "title": "Segundo bloco",
+      "content": "Conteúdo detalhado..."
+    },
+    ...
+  ],
   "questions": [
-    {"question": "Pergunta 1", "answer": "Resposta/gabarito 1 (2-3 frases com fundamentação bíblica)"},
-    {"question": "Pergunta 2", "answer": "Resposta/gabarito 2"},
+    {"question": "Pergunta de reflexão para o final", "answer": "Resposta/gabarito (2-3 frases com fundamentação)"},
     ...
   ]
 }
 
-IMPORTANTE: 
-- Calibre a profundidade e quantidade de conteúdo com base no tempo disponível
-- Aulas curtas devem ser concretas e focadas
-- Aulas longas podem ser mais teóricas e exploratórias
-- TODAS as respostas devem ser em português do Brasil
-- As respostas do gabarito devem ser concisas mas completas, com referências bíblicas quando apropriado`;
+REGRAS IMPORTANTES:
+- ${numContentBlocks} blocos de conteúdo é OBRIGATÓRIO
+- Cada bloco tem TÍTULO + CONTEÚDO substantivo (não genérico)
+- Use versículos bíblicos reais para fundamentar
+- Perguntas vêm no FINAL da aula para discussão
+- Para ${duration} minutos: tempo proporcionalmente distribuído
+- TODAS as respostas em português do Brasil`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const response = await openaiInstance.chat.completions.create({

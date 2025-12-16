@@ -194,6 +194,9 @@ export default function Teacher() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [objectives, setObjectives] = useState<string[]>([]);
   const [newObjective, setNewObjective] = useState("");
+  const [contentBlocks, setContentBlocks] = useState<Array<{title: string; content: string}>>([]);
+  const [newBlockTitle, setNewBlockTitle] = useState("");
+  const [newBlockContent, setNewBlockContent] = useState("");
   const [questions, setQuestions] = useState<Array<{question: string; answer: string}>>([]);
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
@@ -234,6 +237,18 @@ export default function Teacher() {
 
   const removeObjective = (index: number) => {
     setObjectives(objectives.filter((_, i) => i !== index));
+  };
+
+  const addContentBlock = () => {
+    if (newBlockTitle.trim() && newBlockContent.trim()) {
+      setContentBlocks([...contentBlocks, { title: newBlockTitle.trim(), content: newBlockContent.trim() }]);
+      setNewBlockTitle("");
+      setNewBlockContent("");
+    }
+  };
+
+  const removeContentBlock = (index: number) => {
+    setContentBlocks(contentBlocks.filter((_, i) => i !== index));
   };
 
   const addQuestion = () => {
@@ -307,6 +322,7 @@ export default function Teacher() {
       
       if (data.description) form.setValue("description", data.description);
       if (data.objectives?.length) setObjectives(data.objectives);
+      if (data.contentBlocks?.length) setContentBlocks(data.contentBlocks);
       if (data.questions?.length) {
         // Convert questions to {question, answer} format if needed
         const formattedQuestions = data.questions.map((q: any) => 
@@ -340,6 +356,7 @@ export default function Teacher() {
       const lessonData = {
         ...data,
         objectives,
+        contentBlocks,
         questions: questions.map((q, i) => ({
           id: `q-${i}`,
           question: typeof q === 'string' ? q : q.question,
@@ -356,6 +373,7 @@ export default function Teacher() {
       setIsCreateDialogOpen(false);
       form.reset();
       setObjectives([]);
+      setContentBlocks([]);
       setQuestions([]);
       toast({
         title: "Aula criada!",
@@ -384,6 +402,7 @@ export default function Teacher() {
       const lessonData = {
         ...data,
         objectives,
+        contentBlocks,
         questions: questions.map((q, i) => ({
           id: `q-${i}`,
           question: typeof q === 'string' ? q : q.question,
@@ -401,6 +420,7 @@ export default function Teacher() {
       setIsCreateDialogOpen(false);
       form.reset();
       setObjectives([]);
+      setContentBlocks([]);
       setQuestions([]);
       toast({ title: "Aula atualizada!", description: "Alterações salvas com sucesso." });
     },
@@ -434,6 +454,7 @@ export default function Teacher() {
       scriptureBase,
     });
     setObjectives(lesson.objectives || []);
+    setContentBlocks(lesson.contentBlocks || []);
     setQuestions((lesson.questions || []).map((q: any) => {
       if (typeof q === 'string') return { question: q, answer: "" };
       if (q.question) return { question: q.question, answer: q.answer || "" };
@@ -454,7 +475,11 @@ export default function Teacher() {
     setEditingLessonId(null);
     form.reset();
     setObjectives([]);
+    setContentBlocks([]);
     setQuestions([]);
+    setNewBlockTitle("");
+    setNewBlockContent("");
+    setExpandedAnswerIndex(null);
   };
 
   const publishedLessons = lessons.filter(l => l.isPublished);
@@ -672,6 +697,57 @@ export default function Teacher() {
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    {/* Content Blocks Section */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <FormLabel className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4" />
+                        Conteúdo da Aula (Blocos Principais)
+                      </FormLabel>
+                      <div className="space-y-2">
+                        <Input
+                          placeholder="Título do bloco (ex: A Incarnação de Cristo)"
+                          value={newBlockTitle}
+                          onChange={(e) => setNewBlockTitle(e.target.value)}
+                          data-testid="input-block-title"
+                        />
+                        <Textarea
+                          placeholder="Conteúdo do bloco (parágrafos com versículos, exemplos e aplicações)"
+                          value={newBlockContent}
+                          onChange={(e) => setNewBlockContent(e.target.value)}
+                          className="min-h-24"
+                          data-testid="textarea-block-content"
+                        />
+                        <Button type="button" onClick={addContentBlock} className="w-full gap-2" data-testid="button-add-block">
+                          <Plus className="h-4 w-4" />
+                          Adicionar Bloco de Conteúdo
+                        </Button>
+                      </div>
+                      {contentBlocks.length > 0 && (
+                        <ul className="space-y-2">
+                          {contentBlocks.map((block, i) => (
+                            <li key={i} className="p-3 bg-muted rounded-lg space-y-2">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1">
+                                  <p className="font-semibold text-sm mb-1">{block.title}</p>
+                                  <p className="text-xs text-muted-foreground whitespace-pre-wrap">{block.content}</p>
+                                </div>
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => removeContentBlock(i)}
+                                  className="h-6 w-6 flex-shrink-0"
+                                  data-testid={`button-remove-block-${i}`}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
                             </li>
                           ))}
                         </ul>
