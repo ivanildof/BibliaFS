@@ -8,6 +8,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 16, 2025 - DATABASE & USER PROFILE UPDATES:**
+
+### Profile Management Features (Completed)
+*   **✅ Edit User Name**: Dialog interface with input fields for first/last name, saves via `PATCH /api/user/profile`
+*   **✅ Cancel Subscription**: Destructive button with confirmation dialog, cancels via `POST /api/subscriptions/cancel`
+*   **✅ Supabase Database Priority**: Updated `server/db.ts` to use `SUPABASE_DATABASE_URL` first - all data now saves to Supabase, not Replit
+*   **Database Configuration**: Changed priority order: Supabase → Replit → Environment variable
+
 **December 16, 2025 - PRODUCTION FIX SESSION:**
 
 ### Phase 3: Fixed 6 Production Issues (P1-P6)
