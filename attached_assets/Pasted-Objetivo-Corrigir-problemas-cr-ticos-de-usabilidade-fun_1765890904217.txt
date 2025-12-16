@@ -1,0 +1,60 @@
+Objetivo
+Corrigir problemas críticos de usabilidade, funcionalidade e consistência visual na versão desktop do aplicativo, garantindo que os principais fluxos (navegação bíblica, oração, estudo com IA, planos de leitura, etc.) funcionem conforme esperado e respeitem o layout do sistema, especialmente em relação ao menu lateral e modo escuro.
+
+2. Problemas Identificados
+2.1. Layout e Navegação
+Problema: A opção "Navegar" ocupa toda a tela ao ser aberta, cobrindo o menu lateral.
+Comportamento Esperado: Manter a altura atual, mas limitar a largura para não sobrepor o menu lateral. Deve respeitar o container principal do layout desktop.
+2.2. Funcionalidades com Falhas
+Seleção de versão bíblica: Não funciona ao clicar.
+Capítulos e versículos: Não respondem à seleção.
+"Registrar Nova Oração": Dados são gravados temporariamente, mas não são salvos permanentemente.
+"Estudar com IA":
+Interface não é responsiva (layout quebrado em desktop).
+O sistema faz perguntas, mas não formaliza/responde adequadamente às entradas do usuário.
+Podcasts: Seção está incompleta e sem funcionalidade (ex: play, lista de episódios).
+Planos de Leitura: Nenhum plano carrega ou permite interação.
+2.3. Tema Escuro e Persistência
+Páginas "Sobre": Apresentam fundo branco mesmo no modo escuro, causando má legibilidade.
+Persistência de tema: O sistema não salva a preferência do usuário (modo claro/escuro) após recarregar a página.
+Upgrade: Não é possível realizar upgrade da conta (botão inoperante ou fluxo quebrado).
+3. Requisitos de Correção
+ID
+Requisito
+Critério de Aceitação
+R1
+Ajustar layout da tela "Navegar"
+Não deve sobrepor o menu lateral; largura máxima definida (ex: max-width: calc(100% - 280px)).
+R2
+Corrigir seleção de versão, capítulo e versículo
+Deve carregar corretamente o conteúdo bíblico ao selecionar.
+R3
+Garantir salvamento de orações
+Após clicar em "Salvar", a oração deve persistir no banco e aparecer na lista.
+R4
+Corrigir módulo "Estudar com IA"
+- Layout responsivo em desktop<br> - Respostas da IA devem ser exibidas claramente após a pergunta<br> - Histórico de diálogo deve ser mantido
+R5
+Finalizar e ativar seção "Podcasts"
+Exibir lista de episódios com botão de play funcional (mesmo que com dados mockados, se necessário).
+R6
+Corrigir "Planos de Leitura"
+Carregar planos disponíveis e permitir iniciar/seguir leitura diária.
+R7
+Aplicar modo escuro em todas as páginas "Sobre"
+Fundo e texto devem seguir a paleta de cores do tema escuro.
+R8
+Persistir preferência de tema
+O modo escolhido (claro/escuro) deve ser salvo em localStorage ou conta do usuário e restaurado na próxima visita.
+R9
+Habilitar funcionalidade de upgrade
+Botão "Fazer Upgrade" deve redirecionar ou abrir modal com opções reais de upgrade.
+4. Não Escopo (por enquanto)
+Novas funcionalidades além das corrigidas.
+Versão mobile (salvo impacto colateral de correções no desktop).
+Alterações no design visual principal (apenas correções de consistência de tema).
+5. Métricas de Sucesso
+100% dos fluxos principais (oração, navegação bíblica, IA) funcionando sem erros.
+Zero sobreposição do menu lateral em qualquer tela.
+100% das páginas respeitando o modo escuro quando ativado.
+Persistência de tema verificada em múltiplas sessões.

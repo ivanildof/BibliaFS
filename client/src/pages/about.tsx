@@ -83,7 +83,7 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 bg-white dark:bg-slate-950">
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <div className="flex justify-center mb-4">
