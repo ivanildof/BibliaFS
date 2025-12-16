@@ -756,9 +756,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/podcasts", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { title, description, bibleBook, category } = req.body;
+      const { title, description, bibleBook, bibleVersion, chapters, verses, category } = req.body;
       
-      console.log('[Podcast] Creating podcast:', { title, description, bibleBook, category, userId });
+      console.log('[Podcast] Creating podcast:', { title, description, bibleBook, bibleVersion, chapters, verses, category, userId });
       
       // Validate required fields
       if (!title || typeof title !== 'string' || title.trim().length === 0) {
@@ -781,7 +781,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Livro da Bíblia não encontrado" });
       }
       
-      // Auto-generate episodes for each chapter
+      // Parse selected chapters
+      let selectedChapters: number[] = [];
+      if (chapters && typeof chapters === 'string' && chapters.trim().length > 0) {
+        try {
+          // Support formats like "1-3" or "1,2,5"
+          if (chapters.includes('-')) {
+            const [start, end] = chapters.split('-').map(c => parseInt(c.trim()));
+            for (let i = start; i <= end && i <= bookInfo.chapters; i++) {
+              selectedChapters.push(i);
+            }
+          } else if (chapters.includes(',')) {
+            selectedChapters = chapters.split(',').map(c => {
+              const num = parseInt(c.trim());
+              return num > 0 && num <= bookInfo.chapters ? num : null;
+            }).filter(Boolean) as number[];
+          } else {
+            const num = parseInt(chapters.trim());
+            if (num > 0 && num <= bookInfo.chapters) {
+              selectedChapters = [num];
+            }
+          }
+        } catch (e) {
+          console.warn('[Podcast] Could not parse chapters:', chapters);
+          selectedChapters = [];
+        }
+      }
+      
+      // If no chapters selected, use all
+      if (selectedChapters.length === 0) {
+        for (let i = 1; i <= bookInfo.chapters; i++) {
+          selectedChapters.push(i);
+        }
+      }
+      
+      // Auto-generate episodes for selected chapters
       const episodes: Array<{
         id: string;
         title: string;
@@ -793,11 +827,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         bookAbbrev: string;
       }> = [];
       
-      for (let chapter = 1; chapter <= bookInfo.chapters; chapter++) {
+      for (const chapter of selectedChapters) {
         episodes.push({
           id: `ep-${bookInfo.abbrev.pt}-${chapter}-${Date.now()}`,
           title: `${bookInfo.name} - Capítulo ${chapter}`,
-          description: `Leitura completa do capítulo ${chapter} de ${bookInfo.name}`,
+          description: verses ? `Versículos: ${verses}` : `Leitura completa do capítulo ${chapter} de ${bookInfo.name}`,
           audioData: "", // Audio will be generated on-demand when user plays
           duration: 0, // Will be updated when audio is generated
           publishedAt: new Date().toISOString(),
@@ -808,12 +842,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const podcastData = {
         title: title.trim().substring(0, 200),
-        description: description ? description.substring(0, 1000) : `Podcast com leitura narrada de ${bookInfo.name} - ${bookInfo.chapters} capítulos`,
+        description: description ? description.substring(0, 1000) : `Podcast com leitura narrada de ${bookInfo.name} - ${selectedChapters.length} capítulo(s) - Versão ${(bibleVersion || 'nvi').toUpperCase()}`,
         author: req.user.claims.username || "BíbliaFS",
         category: (category || "Leitura Bíblica").substring(0, 50),
         creatorId: userId,
         bibleBook: bookInfo.name,
-        bibleChapter: null, // null means all chapters
+        bibleVersion: bibleVersion || "nvi",
+        bibleChapter: null, // null means all chapters selected by user
         language: "pt",
         isActive: true,
         accessLevel: "free",
