@@ -45,53 +45,64 @@ export default function Search() {
     setSearchHistory(newHistory);
     localStorage.setItem("bibleSearchHistory", JSON.stringify(newHistory));
 
-    // Fetch all books for the version
-    const books = [
-      "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-      "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-      "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-      "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
-      "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah",
-      "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel",
-      "Amos", "Obadiah", "Jonah", "Micah", "Nahum",
-      "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi",
-      "Matthew", "Mark", "Luke", "John", "Acts",
-      "Romans", "1 Corinthians", "2 Corinthians", "Galatians",
-      "Ephesians", "Philippians", "Colossians", "1 Thessalonians",
-      "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus",
-      "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
-      "1 John", "2 John", "3 John", "Jude", "Revelation"
-    ];
+    // Map of book abbreviations
+    const bookMap: { [key: string]: string } = {
+      "gn": "Genesis", "ex": "Exodus", "lv": "Leviticus", "nm": "Numbers", "dt": "Deuteronomy",
+      "js": "Joshua", "jz": "Judges", "rt": "Ruth", "1sm": "1 Samuel", "2sm": "2 Samuel",
+      "1rs": "1 Kings", "2rs": "2 Kings", "1cr": "1 Chronicles", "2cr": "2 Chronicles",
+      "ed": "Ezra", "ne": "Nehemiah", "et": "Esther", "job": "Job", "sl": "Psalms", "pv": "Proverbs",
+      "ec": "Ecclesiastes", "ct": "Song of Solomon", "is": "Isaiah", "jr": "Jeremiah",
+      "lm": "Lamentations", "ez": "Ezekiel", "dn": "Daniel", "os": "Hosea", "jl": "Joel",
+      "am": "Amos", "ob": "Obadiah", "jn": "Jonah", "mq": "Micah", "na": "Nahum",
+      "hc": "Habakkuk", "sf": "Zephaniah", "ag": "Haggai", "zc": "Zechariah", "ml": "Malachi",
+      "mt": "Matthew", "mc": "Mark", "lc": "Luke", "jo": "John", "at": "Acts",
+      "rm": "Romans", "1co": "1 Corinthians", "2co": "2 Corinthians", "gl": "Galatians",
+      "ef": "Ephesians", "fp": "Philippians", "cl": "Colossians", "1ts": "1 Thessalonians",
+      "2ts": "2 Thessalonians", "1tm": "1 Timothy", "2tm": "2 Timothy", "tt": "Titus",
+      "fm": "Philemon", "hb": "Hebrews", "tg": "James", "1pe": "1 Peter", "2pe": "2 Peter",
+      "1jo": "1 John", "2jo": "2 John", "3jo": "3 John", "jd": "Jude", "ap": "Revelation"
+    };
 
+    const bookAbbrevs = Object.keys(bookMap);
     const searchResults: SearchResult[] = [];
     const lowerQuery = searchQuery.toLowerCase();
 
-    // Search in frontend cache only (offline-first approach)
-    for (const book of books) {
-      try {
-        const cached = localStorage.getItem(`bible-${selectedVersion}-${book.toLowerCase()}`);
-        if (cached) {
-          const chapters = JSON.parse(cached);
-          
-          for (const [chapNum, verses] of Object.entries(chapters)) {
-            if (Array.isArray(verses)) {
-              for (let verseNum = 0; verseNum < (verses as any[]).length; verseNum++) {
-                const verseText = (verses as any[])[verseNum];
-                if (verseText && verseText.toLowerCase().includes(lowerQuery)) {
-                  searchResults.push({
-                    book,
-                    chapter: parseInt(chapNum),
-                    verse: verseNum + 1,
-                    text: verseText.substring(0, 150),
-                    version: selectedVersion
-                  });
-                }
-              }
-            }
-          }
+    // Build list of URLs - search all 66 books, chapters 1-50
+    const urls: { url: string; book: string; chapter: number }[] = [];
+    for (const abbrev of bookAbbrevs) {
+      for (let ch = 1; ch <= 50; ch++) {
+        urls.push({
+          url: `/api/bible/multilang/pt/${selectedVersion}/${abbrev}/${ch}`,
+          book: bookMap[abbrev],
+          chapter: ch
+        });
+      }
+    }
+
+    // Fetch all in parallel with proper error handling
+    const fetches = urls.map(item =>
+      fetch(item.url, { credentials: "include" })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => ({ data, ...item }))
+        .catch(() => null)
+    );
+
+    const results = await Promise.all(fetches);
+    
+    for (const result of results) {
+      if (!result?.data?.verses) continue;
+      
+      for (let idx = 0; idx < result.data.verses.length; idx++) {
+        const verseText = result.data.verses[idx];
+        if (verseText && verseText.toLowerCase().includes(lowerQuery)) {
+          searchResults.push({
+            book: result.book,
+            chapter: result.chapter,
+            verse: idx + 1,
+            text: verseText.substring(0, 150),
+            version: selectedVersion
+          });
         }
-      } catch {
-        continue;
       }
     }
 
