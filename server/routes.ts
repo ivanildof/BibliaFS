@@ -1310,36 +1310,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .join(' ');
 
       const textLength = fullText.length;
-      if (textLength > 4000 * 4) {
-        return res.status(400).json({ 
-          error: "Capítulo muito longo para narração",
-          message: "Este capítulo excede o limite de áudio. Tente capítulos menores."
-        });
-      }
-
+      const MAX_TTS_CHARS = 4000; // OpenAI limit is 4096, leave some margin
+      
       console.log(`[Audio] Generating ${language} audio for ${book} ${chapter} (${textLength} chars) - User: ${userId}`);
 
-      const ttsResponse = await fetch('https://api.openai.com/v1/audio/speech', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'tts-1',
-          voice: 'nova',
-          input: fullText,
-          speed: 1.0,
-        }),
-      });
-
-      if (!ttsResponse.ok) {
-        const errorText = await ttsResponse.text();
-        console.error(`OpenAI TTS error: ${ttsResponse.status}`, errorText);
-        throw new Error(`OpenAI TTS failed: ${ttsResponse.status}`);
+      // Function to split text into chunks respecting sentence boundaries
+      function splitTextIntoChunks(text: string, maxChars: number): string[] {
+        if (text.length <= maxChars) return [text];
+        
+        const chunks: string[] = [];
+        let currentChunk = "";
+        
+        // Split by verse numbers to maintain logical breaks
+        const versePattern = /(\d+\.\s)/g;
+        const parts = text.split(versePattern).filter(p => p.trim());
+        
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          
+          if ((currentChunk + part).length > maxChars && currentChunk.length > 0) {
+            chunks.push(currentChunk.trim());
+            currentChunk = part;
+          } else {
+            currentChunk += part;
+          }
+        }
+        
+        if (currentChunk.trim()) {
+          chunks.push(currentChunk.trim());
+        }
+        
+        return chunks.length > 0 ? chunks : [text.substring(0, maxChars)];
       }
 
-      const audioBuffer = await ttsResponse.arrayBuffer();
+      const textChunks = splitTextIntoChunks(fullText, MAX_TTS_CHARS);
+      console.log(`[Audio] Text split into ${textChunks.length} chunks`);
+
+      // Generate audio for each chunk
+      const audioBuffers: ArrayBuffer[] = [];
+      
+      for (let i = 0; i < textChunks.length; i++) {
+        const chunk = textChunks[i];
+        console.log(`[Audio] Generating chunk ${i + 1}/${textChunks.length} (${chunk.length} chars)`);
+        
+        const ttsResponse = await fetch('https://api.openai.com/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'tts-1',
+            voice: 'nova',
+            input: chunk,
+            speed: 1.0,
+          }),
+        });
+
+        if (!ttsResponse.ok) {
+          const errorText = await ttsResponse.text();
+          console.error(`OpenAI TTS error on chunk ${i + 1}: ${ttsResponse.status}`, errorText);
+          throw new Error(`OpenAI TTS failed on chunk ${i + 1}: ${ttsResponse.status}`);
+        }
+
+        const chunkBuffer = await ttsResponse.arrayBuffer();
+        audioBuffers.push(chunkBuffer);
+      }
+
+      // Concatenate all audio buffers
+      const totalLength = audioBuffers.reduce((sum, buf) => sum + buf.byteLength, 0);
+      const audioBuffer = new ArrayBuffer(totalLength);
+      const uint8View = new Uint8Array(audioBuffer);
+      let offset = 0;
+      for (const buf of audioBuffers) {
+        uint8View.set(new Uint8Array(buf), offset);
+        offset += buf.byteLength;
+      }
+      
+      console.log(`[Audio] Combined ${audioBuffers.length} chunks into ${totalLength} bytes`);
       const audioBase64 = Buffer.from(audioBuffer).toString('base64');
 
       // Save to cache
