@@ -84,15 +84,23 @@ export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter } = useOffline();
-  const [version, setVersion] = useState("nvi");
-  const [selectedBook, setSelectedBook] = useState<string | null>(null);
-  const [selectedChapter, setSelectedChapter] = useState(1);
+  
+  // Parse URL query params for search results
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryBook = urlParams.get("book");
+  const queryChapter = urlParams.get("chapter");
+  const queryVerse = urlParams.get("verse");
+  const queryVersion = urlParams.get("version");
+  
+  const [version, setVersion] = useState(queryVersion || "nvi");
+  const [selectedBook, setSelectedBook] = useState<string | null>(queryBook);
+  const [selectedChapter, setSelectedChapter] = useState(queryChapter ? parseInt(queryChapter) : 1);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBooksOpen, setIsBooksOpen] = useState(false);
   const [matchedBooks, setMatchedBooks] = useState<BibleBook[]>([]);
   const [isChaptersOpen, setIsChaptersOpen] = useState(false);
-  const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
+  const [selectedVerse, setSelectedVerse] = useState<number | null>(queryVerse ? parseInt(queryVerse) : null);
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [shareSheetOpen, setShareSheetOpen] = useState(false);

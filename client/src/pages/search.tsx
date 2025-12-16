@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Loader2, Search as SearchIcon } from "lucide-react";
+import { BookOpen, Loader2, Search as SearchIcon, ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 
 interface SearchResult {
   book: string;
@@ -11,7 +12,26 @@ interface SearchResult {
   verse: number;
   text: string;
   version: string;
+  abbrev?: string;
 }
+
+// Map book names to abbreviations
+const BOOK_ABBREV_MAP: { [key: string]: string } = {
+  "Genesis": "gn", "Exodus": "ex", "Leviticus": "lv", "Numbers": "nm", "Deuteronomy": "dt",
+  "Joshua": "js", "Judges": "jz", "Ruth": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm",
+  "1 Kings": "1rs", "2 Kings": "2rs", "1 Chronicles": "1cr", "2 Chronicles": "2cr",
+  "Ezra": "ed", "Nehemiah": "ne", "Esther": "et", "Job": "job", "Psalms": "sl", "Proverbs": "pv",
+  "Ecclesiastes": "ec", "Song of Solomon": "ct", "Isaiah": "is", "Jeremiah": "jr",
+  "Lamentations": "lm", "Ezekiel": "ez", "Daniel": "dn", "Hosea": "os", "Joel": "jl",
+  "Amos": "am", "Obadiah": "ob", "Jonah": "jn", "Micah": "mq", "Nahum": "na",
+  "Habakkuk": "hc", "Zephaniah": "sf", "Haggai": "ag", "Zechariah": "zc", "Malachi": "ml",
+  "Matthew": "mt", "Mark": "mc", "Luke": "lc", "John": "jo", "Acts": "at",
+  "Romans": "rm", "1 Corinthians": "1co", "2 Corinthians": "2co", "Galatians": "gl",
+  "Ephesians": "ef", "Philippians": "fp", "Colossians": "cl", "1 Thessalonians": "1ts",
+  "2 Thessalonians": "2ts", "1 Timothy": "1tm", "2 Timothy": "2tm", "Titus": "tt",
+  "Philemon": "fm", "Hebrews": "hb", "James": "tg", "1 Peter": "1pe", "2 Peter": "2pe",
+  "1 John": "1jo", "2 John": "2jo", "3 John": "3jo", "Jude": "jd", "Revelation": "ap"
+};
 
 const VERSIONS = ["nvi", "acf", "arc", "ra"];
 const LANGUAGES = ["pt", "en", "es", "nl"];
@@ -100,7 +120,8 @@ export default function Search() {
             chapter: result.chapter,
             verse: idx + 1,
             text: verseText.substring(0, 150),
-            version: selectedVersion
+            version: selectedVersion,
+            abbrev: BOOK_ABBREV_MAP[result.book]
           });
         }
       }
@@ -228,25 +249,33 @@ export default function Search() {
 
               <div className="space-y-3">
                 {results.map((result, idx) => (
-                  <Card key={idx} className="p-4 hover-elevate cursor-pointer" data-testid={`result-card-${idx}`}>
-                    <div className="flex gap-3">
-                      <BookOpen className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className="font-semibold text-sm">
-                            {result.book} {result.chapter}:{result.verse}
-                          </h3>
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                            {result.version.toUpperCase()}
-                          </span>
+                  <Link
+                    key={idx}
+                    href={`/bible-reader?book=${result.abbrev}&chapter=${result.chapter}&verse=${result.verse}&version=${result.version}`}
+                  >
+                    <Card className="p-4 hover-elevate cursor-pointer" data-testid={`result-card-${idx}`}>
+                      <div className="flex gap-3">
+                        <BookOpen className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="font-semibold text-sm">
+                              {result.book} {result.chapter}:{result.verse}
+                            </h3>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                                {result.version.toUpperCase()}
+                              </span>
+                              <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {result.text}
+                            {result.text.length >= 150 && "..."}
+                          </p>
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {result.text}
-                          {result.text.length >= 150 && "..."}
-                        </p>
                       </div>
-                    </div>
-                  </Card>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
