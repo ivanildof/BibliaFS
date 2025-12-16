@@ -258,10 +258,18 @@ export default function Teacher() {
     setIsAssistantLoading(true);
 
     try {
-      const data = await apiRequest("POST", "/api/teacher/ask-assistant", { question: questionToSend, context: "Aula bíblica" });
-      if (!data.answer) throw new Error("Resposta vazia do assistente");
+      const res = await apiRequest("POST", "/api/teacher/ask-assistant", { question: questionToSend, context: "Aula bíblica" });
+      const data = await res.json();
+      console.log("Resposta do assistente:", data);
+      
+      if (!data || !data.answer) {
+        console.error("Resposta inválida:", data);
+        throw new Error("Resposta vazia do assistente - tente novamente");
+      }
+      
       setAssistantMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
     } catch (error: any) {
+      console.error("Erro no assistente:", error);
       toast({
         title: "Erro",
         description: error.message || "Não foi possível consultar o assistente IA",
@@ -288,7 +296,8 @@ export default function Teacher() {
 
     setIsGeneratingAI(true);
     try {
-      const data = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase });
+      const res = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase });
+      const data = await res.json();
       
       if (data.description) form.setValue("description", data.description);
       if (data.objectives?.length) setObjectives(data.objectives);
@@ -326,7 +335,8 @@ export default function Teacher() {
           correctAnswer: -1,
         })),
       };
-      return await apiRequest("POST", "/api/teacher/lessons", lessonData);
+      const res = await apiRequest("POST", "/api/teacher/lessons", lessonData);
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });
@@ -368,7 +378,8 @@ export default function Teacher() {
           correctAnswer: -1,
         })),
       };
-      return await apiRequest("PATCH", `/api/teacher/lessons/${editingLessonId}`, lessonData);
+      const res = await apiRequest("PATCH", `/api/teacher/lessons/${editingLessonId}`, lessonData);
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });
@@ -386,7 +397,8 @@ export default function Teacher() {
 
   const deleteMutation = useMutation({
     mutationFn: async (lessonId: string) => {
-      return await apiRequest("DELETE", `/api/teacher/lessons/${lessonId}`, {});
+      const res = await apiRequest("DELETE", `/api/teacher/lessons/${lessonId}`, {});
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });

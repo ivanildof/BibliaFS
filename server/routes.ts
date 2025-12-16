@@ -1129,12 +1129,16 @@ IMPORTANTE:
       });
 
       const answer = response.choices[0]?.message?.content;
-      if (!answer) {
-        console.error("Resposta vazia da IA para pergunta:", question);
-        throw new Error("Resposta vazia da IA");
+      if (!answer || answer.trim() === "") {
+        console.error("Resposta vazia da IA para pergunta:", question, "Response:", response);
+        return res.status(500).json({ error: "Resposta vazia da IA - tente novamente" });
       }
 
-      console.log("Assistente respondeu:", { question: question.substring(0, 50), answer: answer.substring(0, 100) });
+      console.log("✅ Assistente respondeu com sucesso:", { 
+        question: question.substring(0, 50), 
+        answerLength: answer.length,
+        answer: answer.substring(0, 150) 
+      });
       res.json({ answer });
     } catch (error: any) {
       console.error("Erro no assistente IA:", error);
