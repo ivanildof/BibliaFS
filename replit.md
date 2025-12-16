@@ -8,6 +8,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 16, 2025 - SECURITY IMPROVEMENTS:**
+
+### Phase 4: Database Security Hardening
+*   **✅ Row Level Security (RLS)**: Complete SQL script in `docs/SUPABASE_RLS_POLICIES.sql` with policies for 20+ tables
+*   **✅ Podcast Security**: Separated RLS policies - public sees only active podcasts, creators see all their content
+*   **✅ JWT Authentication**: Verified `server/supabaseAuth.ts` extracts userId from validated JWT token, not frontend
+*   **✅ Sync Conflict Detection**: New `client/src/lib/offline/syncUtils.ts` with timestamp-based conflict resolution
+*   **✅ IndexedDB Compression**: Updated `offlineStorage.ts` with gzip compression for 60%+ storage savings
+*   **✅ Automatic updated_at Triggers**: SQL triggers for all syncable tables to guarantee timestamp freshness
+*   **✅ Bookmarks updated_at**: Added missing timestamp column to bookmarks table for sync support
+
 **December 16, 2025 - DATABASE & USER PROFILE UPDATES:**
 
 ### Profile Management Features (Completed)

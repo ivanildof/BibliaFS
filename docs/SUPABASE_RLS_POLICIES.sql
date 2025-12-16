@@ -320,6 +320,131 @@ ON podcast_subscriptions FOR DELETE
 USING (auth.uid()::text = user_id);
 
 -- ============================================================================
+-- POLÍTICA: READING_HISTORY (Histórico de Leitura)
+-- ============================================================================
+
+ALTER TABLE reading_history ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own reading history"
+ON reading_history FOR SELECT
+USING (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can create reading history"
+ON reading_history FOR INSERT
+WITH CHECK (auth.uid()::text = user_id);
+
+-- ============================================================================
+-- POLÍTICA: BIBLE_SETTINGS (Configurações de Leitura)
+-- ============================================================================
+
+ALTER TABLE bible_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own settings"
+ON bible_settings FOR SELECT
+USING (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can create own settings"
+ON bible_settings FOR INSERT
+WITH CHECK (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can update own settings"
+ON bible_settings FOR UPDATE
+USING (auth.uid()::text = user_id)
+WITH CHECK (auth.uid()::text = user_id);
+
+-- ============================================================================
+-- POLÍTICA: GROUP_MEMBERS (Membros de Grupos)
+-- ============================================================================
+
+ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view groups they belong to"
+ON group_members FOR SELECT
+USING (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can join groups"
+ON group_members FOR INSERT
+WITH CHECK (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can leave groups"
+ON group_members FOR DELETE
+USING (auth.uid()::text = user_id);
+
+-- ============================================================================
+-- POLÍTICA: PODCASTS (Podcasts criados por usuários)
+-- ============================================================================
+
+ALTER TABLE podcasts ENABLE ROW LEVEL SECURITY;
+
+-- Público pode ver apenas podcasts ATIVOS
+CREATE POLICY "Public can view active podcasts"
+ON podcasts FOR SELECT
+USING (is_active = true);
+
+-- Criadores podem ver TODOS os seus podcasts (incluindo inativos/rascunhos)
+CREATE POLICY "Creators can view own podcasts"
+ON podcasts FOR SELECT
+USING (auth.uid()::text = creator_id);
+
+-- Criadores podem criar podcasts
+CREATE POLICY "Creators can create podcasts"
+ON podcasts FOR INSERT
+WITH CHECK (auth.uid()::text = creator_id);
+
+-- Criadores podem atualizar seus podcasts
+CREATE POLICY "Creators can update own podcasts"
+ON podcasts FOR UPDATE
+USING (auth.uid()::text = creator_id)
+WITH CHECK (auth.uid()::text = creator_id);
+
+-- Criadores podem deletar seus podcasts
+CREATE POLICY "Creators can delete own podcasts"
+ON podcasts FOR DELETE
+USING (auth.uid()::text = creator_id);
+
+-- ============================================================================
+-- POLÍTICA: POST_COMMENTS (Comentários de Posts)
+-- ============================================================================
+
+ALTER TABLE post_comments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view comments"
+ON post_comments FOR SELECT
+USING (true);
+
+CREATE POLICY "Users can create comments"
+ON post_comments FOR INSERT
+WITH CHECK (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can update own comments"
+ON post_comments FOR UPDATE
+USING (auth.uid()::text = user_id)
+WITH CHECK (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can delete own comments"
+ON post_comments FOR DELETE
+USING (auth.uid()::text = user_id);
+
+-- ============================================================================
+-- POLÍTICA: USER_PROGRESS (Progresso de Gamificação)
+-- ============================================================================
+
+ALTER TABLE user_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own progress"
+ON user_progress FOR SELECT
+USING (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can track progress"
+ON user_progress FOR INSERT
+WITH CHECK (auth.uid()::text = user_id);
+
+CREATE POLICY "Users can update progress"
+ON user_progress FOR UPDATE
+USING (auth.uid()::text = user_id)
+WITH CHECK (auth.uid()::text = user_id);
+
+-- ============================================================================
 -- NOTA IMPORTANTE
 -- ============================================================================
 -- 
@@ -337,4 +462,75 @@ USING (auth.uid()::text = user_id);
 -- Recomendação: Mantenha AMBAS as proteções:
 -- 1. Filtros userId no código (já implementado)
 -- 2. RLS policies como backup (este script)
+-- ============================================================================
+
+-- ============================================================================
+-- COMO APLICAR ESTE SCRIPT
+-- ============================================================================
+--
+-- 1. Acesse o Supabase Dashboard
+-- 2. Vá para SQL Editor
+-- 3. Cole e execute este script
+-- 4. Verifique no menu Authentication > Policies se as políticas foram criadas
+--
+-- IMPORTANTE: Execute apenas UMA VEZ. Se precisar reexecutar, primeiro delete
+-- as políticas existentes ou use DROP POLICY IF EXISTS antes de cada CREATE.
+-- ============================================================================
+
+-- ============================================================================
+-- VERIFICAÇÃO DE SEGURANÇA
+-- ============================================================================
+-- Execute esta query para verificar quais tabelas têm RLS habilitado:
+--
+-- SELECT tablename, rowsecurity 
+-- FROM pg_tables 
+-- WHERE schemaname = 'public' 
+-- ORDER BY tablename;
+-- ============================================================================
+
+-- ============================================================================
+-- TRIGGERS PARA UPDATED_AT AUTOMÁTICO
+-- ============================================================================
+-- Estes triggers garantem que updated_at seja atualizado automaticamente
+-- em cada UPDATE, essencial para detecção de conflitos de sync offline/online
+
+-- Função para atualizar updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Aplicar trigger em todas as tabelas com updated_at
+DO $$
+DECLARE
+    tbl TEXT;
+    tables TEXT[] := ARRAY[
+        'users', 'notes', 'highlights', 'bookmarks', 'prayers', 
+        'reading_plans', 'verse_commentaries', 'user_achievements',
+        'community_posts', 'post_comments', 'lessons', 'podcasts',
+        'user_progress', 'bible_settings', 'churches', 'groups'
+    ];
+BEGIN
+    FOREACH tbl IN ARRAY tables
+    LOOP
+        EXECUTE format('
+            DROP TRIGGER IF EXISTS update_%I_updated_at ON %I;
+            CREATE TRIGGER update_%I_updated_at
+                BEFORE UPDATE ON %I
+                FOR EACH ROW
+                EXECUTE FUNCTION update_updated_at_column();
+        ', tbl, tbl, tbl, tbl);
+    END LOOP;
+END $$;
+
+-- ============================================================================
+-- VERIFICAR TRIGGERS CRIADOS
+-- ============================================================================
+-- Execute para ver os triggers:
+-- SELECT trigger_name, event_object_table 
+-- FROM information_schema.triggers 
+-- WHERE trigger_name LIKE 'update_%_updated_at';
 -- ============================================================================

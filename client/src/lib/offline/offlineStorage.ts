@@ -1,12 +1,17 @@
-// IndexedDB wrapper for offline Bible content storage
+// IndexedDB wrapper for offline Bible content storage with compression
+
+import { compressData, decompressData, calculateCompressionRatio } from './syncUtils';
 
 interface OfflineChapter {
   book: string;
   chapter: number;
   version: string;
   content: any; // Chapter data from API
+  compressedContent?: Uint8Array; // Compressed content for storage efficiency
+  isCompressed?: boolean;
   downloadedAt: number;
   size: number;
+  originalSize?: number; // Original size before compression
 }
 
 class OfflineStorage {
@@ -41,13 +46,37 @@ class OfflineStorage {
     });
   }
 
-  async saveChapter(chapter: OfflineChapter): Promise<void> {
+  async saveChapter(chapter: OfflineChapter, enableCompression = true): Promise<void> {
     if (!this.db) await this.init();
+    
+    let chapterToSave = { ...chapter };
+    
+    if (enableCompression && chapter.content) {
+      try {
+        const contentString = JSON.stringify(chapter.content);
+        const originalSize = new TextEncoder().encode(contentString).length;
+        const compressed = await compressData(contentString);
+        
+        chapterToSave = {
+          ...chapter,
+          compressedContent: compressed,
+          isCompressed: true,
+          originalSize,
+          size: compressed.length,
+          content: null,
+        };
+        
+        const ratio = calculateCompressionRatio(originalSize, compressed.length);
+        console.log(`[OfflineStorage] Compressed ${chapter.book} ${chapter.chapter}: ${ratio}% saved`);
+      } catch (error) {
+        console.warn('[OfflineStorage] Compression failed, saving uncompressed:', error);
+      }
+    }
     
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], "readwrite");
       const objectStore = transaction.objectStore(this.storeName);
-      const request = objectStore.put(chapter);
+      const request = objectStore.put(chapterToSave);
 
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
@@ -57,41 +86,94 @@ class OfflineStorage {
   async getChapter(book: string, chapter: number, version: string): Promise<OfflineChapter | null> {
     if (!this.db) await this.init();
     
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], "readonly");
       const objectStore = transaction.objectStore(this.storeName);
       const request = objectStore.get([book, chapter, version]);
 
-      request.onsuccess = () => resolve(request.result || null);
+      request.onsuccess = async () => {
+        const result = request.result;
+        if (!result) {
+          resolve(null);
+          return;
+        }
+        
+        if (result.isCompressed && result.compressedContent) {
+          try {
+            const decompressed = await decompressData(result.compressedContent);
+            result.content = JSON.parse(decompressed);
+            delete result.compressedContent;
+          } catch (error) {
+            console.error('[OfflineStorage] Decompression failed:', error);
+          }
+        }
+        
+        resolve(result);
+      };
       request.onerror = () => reject(request.error);
     });
   }
 
-  async getAllChapters(): Promise<OfflineChapter[]> {
+  async getAllChapters(decompressContent = true): Promise<OfflineChapter[]> {
     if (!this.db) await this.init();
     
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], "readonly");
       const objectStore = transaction.objectStore(this.storeName);
       const request = objectStore.getAll();
 
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = async () => {
+        let chapters = request.result;
+        
+        if (decompressContent) {
+          chapters = await Promise.all(chapters.map(async (ch: OfflineChapter) => {
+            if (ch.isCompressed && ch.compressedContent) {
+              try {
+                const decompressed = await decompressData(ch.compressedContent);
+                return { ...ch, content: JSON.parse(decompressed), compressedContent: undefined };
+              } catch (error) {
+                console.error('[OfflineStorage] Decompression failed for:', ch.book, ch.chapter);
+                return ch;
+              }
+            }
+            return ch;
+          }));
+        }
+        
+        resolve(chapters);
+      };
       request.onerror = () => reject(request.error);
     });
   }
 
-  async getBookChapters(book: string, version: string): Promise<OfflineChapter[]> {
+  async getBookChapters(book: string, version: string, decompressContent = true): Promise<OfflineChapter[]> {
     if (!this.db) await this.init();
     
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], "readonly");
       const objectStore = transaction.objectStore(this.storeName);
       const request = objectStore.getAll();
 
-      request.onsuccess = () => {
-        const chapters = request.result.filter(
+      request.onsuccess = async () => {
+        let chapters = request.result.filter(
           (ch: OfflineChapter) => ch.book === book && ch.version === version
         );
+        
+        if (decompressContent) {
+          chapters = await Promise.all(chapters.map(async (ch: OfflineChapter) => {
+            if (ch.isCompressed && ch.compressedContent) {
+              try {
+                const decompressed = await decompressData(ch.compressedContent);
+                return { ...ch, content: JSON.parse(decompressed), compressedContent: undefined };
+              } catch (error) {
+                console.error('[OfflineStorage] Decompression failed for:', ch.book, ch.chapter);
+                return ch;
+              }
+            }
+            return ch;
+          }));
+        }
+        
         resolve(chapters);
       };
       request.onerror = () => reject(request.error);
@@ -146,14 +228,28 @@ class OfflineStorage {
   async getStorageStats(): Promise<{
     totalChapters: number;
     totalSize: number;
+    originalSize: number;
+    compressionSavings: number;
+    compressionRatio: number;
     byBook: Record<string, number>;
     byVersion: Record<string, number>;
   }> {
     const chapters = await this.getAllChapters();
     
+    let totalCompressed = 0;
+    let totalOriginal = 0;
+    
+    chapters.forEach((ch) => {
+      totalCompressed += ch.size || 0;
+      totalOriginal += ch.originalSize || ch.size || 0;
+    });
+    
     const stats = {
       totalChapters: chapters.length,
-      totalSize: chapters.reduce((total, ch) => total + (ch.size || 0), 0),
+      totalSize: totalCompressed,
+      originalSize: totalOriginal,
+      compressionSavings: totalOriginal - totalCompressed,
+      compressionRatio: totalOriginal > 0 ? Math.round((1 - totalCompressed / totalOriginal) * 100) : 0,
       byBook: {} as Record<string, number>,
       byVersion: {} as Record<string, number>,
     };

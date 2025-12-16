@@ -300,6 +300,7 @@ export const bookmarks = pgTable("bookmarks", {
   tags: text("tags").array(),
   
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Personal notes
