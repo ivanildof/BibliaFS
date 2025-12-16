@@ -8,6 +8,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 16, 2025 - PODCAST AUTO-GENERATION:**
+
+### Auto-Generated Bible Podcast Episodes
+*   **✅ Automatic Episode Creation**: When user selects a Bible book, episodes are auto-generated for each chapter
+*   **✅ TTS Audio On-Demand**: Audio generated via OpenAI TTS when user plays episode (uses existing `/api/bible/audio` endpoint)
+*   **✅ Removed Manual Recording**: Cleaned up all recording UI and functions from podcasts.tsx
+*   **✅ Book Selection Required**: Bible book is now mandatory field when creating a podcast
+*   **Episode Structure**: Each episode titled "Capítulo X" with chapter number and book abbreviation stored for TTS generation
+*   **Performance**: Audio deferred to playback time to avoid generation delays during podcast creation
+
 **December 16, 2025 - SECURITY IMPROVEMENTS:**
 
 ### Phase 4: Database Security Hardening
@@ -85,7 +95,7 @@ Preferred communication style: Simple, everyday language.
 *   **Prayer Journal**: Audio recording, mark-as-answered, permanent database storage
 *   **Reading Plans**: Templates with automatic scheduling, XP, levels, daily streaks, 18 achievements
 *   **Customizable Themes**: 5 presets + custom RGB with localStorage sync
-*   **Podcasts**: Integrated player with episode management and playback
+*   **Podcasts**: Auto-generated Bible reading episodes with on-demand TTS audio via OpenAI
 *   **Community**: Verse-based posts, likes, trending topics
 *   **Dark Mode**: Full dark/light support with localStorage persistence across all pages
 *   **Offline Mode**: IndexedDB browser storage with automatic sync

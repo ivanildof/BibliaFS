@@ -17,13 +17,8 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
-  Download,
-  Clock,
-  Calendar,
   Plus,
-  Mic,
-  Square,
-  Upload
+  Loader2
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -54,6 +49,8 @@ interface Episode {
   audioData: string;
   duration: number;
   publishedAt: string;
+  chapterNumber?: number;
+  bookAbbrev?: string;
 }
 
 export default function Podcasts() {
@@ -63,6 +60,7 @@ export default function Podcasts() {
   const [volume, setVolume] = useState(75);
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
   const [currentPodcast, setCurrentPodcast] = useState<Podcast | null>(null);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
 
@@ -71,18 +69,6 @@ export default function Podcasts() {
   const [newPodcastTitle, setNewPodcastTitle] = useState("");
   const [newPodcastDescription, setNewPodcastDescription] = useState("");
   const [newPodcastBook, setNewPodcastBook] = useState("");
-  const [newPodcastChapter, setNewPodcastChapter] = useState("");
-  
-  // Episode recording state
-  const [addEpisodeDialogOpen, setAddEpisodeDialogOpen] = useState(false);
-  const [selectedPodcastForEpisode, setSelectedPodcastForEpisode] = useState<Podcast | null>(null);
-  const [episodeTitle, setEpisodeTitle] = useState("");
-  const [episodeDescription, setEpisodeDescription] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordedAudio, setRecordedAudio] = useState<string>("");
-  const [recordingTime, setRecordingTime] = useState(0);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: podcasts = [] } = useQuery<Podcast[]>({
     queryKey: ["/api/podcasts"],
@@ -132,35 +118,10 @@ export default function Podcasts() {
     },
   });
 
-  const addEpisodeMutation = useMutation({
-    mutationFn: async ({ podcastId, data }: { podcastId: string; data: any }) => {
-      return apiRequest("POST", `/api/podcasts/${podcastId}/episodes`, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
-      toast({ title: "Episódio adicionado!", description: "Seu episódio foi publicado" });
-      setAddEpisodeDialogOpen(false);
-      resetEpisodeForm();
-    },
-    onError: () => {
-      toast({ title: "Erro", description: "Não foi possível adicionar o episódio", variant: "destructive" });
-    },
-  });
-
   const resetCreateForm = () => {
     setNewPodcastTitle("");
     setNewPodcastDescription("");
     setNewPodcastBook("");
-    setNewPodcastChapter("");
-  };
-
-  const resetEpisodeForm = () => {
-    setEpisodeTitle("");
-    setEpisodeDescription("");
-    setRecordedAudio("");
-    setRecordingTime(0);
-    setSelectedPodcastForEpisode(null);
   };
 
   // Audio player controls
@@ -189,30 +150,74 @@ export default function Podcasts() {
     }
   }, [volume]);
 
-  const playEpisode = (episode: Episode, podcast: Podcast) => {
+  const playEpisode = async (episode: Episode, podcast: Podcast) => {
     setCurrentEpisode(episode);
     setCurrentPodcast(podcast);
-    setIsPlaying(true);
     
-    setTimeout(() => {
-      if (audioRef.current && episode.audioData) {
+    // If episode has pre-recorded audio, use it
+    if (episode.audioData) {
+      if (audioRef.current) {
         audioRef.current.src = episode.audioData;
         audioRef.current.play().catch(() => {
-          toast({ 
-            title: "Áudio não disponível", 
-            description: "Este episódio ainda não tem áudio gravado",
-            variant: "destructive"
-          });
           setIsPlaying(false);
         });
-      } else {
-        toast({ 
-          title: "Áudio não disponível", 
-          description: "Este episódio ainda não tem áudio gravado" 
-        });
-        setIsPlaying(false);
+        setIsPlaying(true);
       }
-    }, 100);
+      return;
+    }
+    
+    // Generate audio via TTS using the chapter info
+    if (episode.bookAbbrev && episode.chapterNumber) {
+      setIsLoadingAudio(true);
+      toast({ 
+        title: "Gerando áudio...", 
+        description: "O áudio está sendo gerado. Isso pode levar alguns segundos." 
+      });
+      
+      try {
+        const response = await fetch(
+          `/api/bible/audio/pt/nvi/${episode.bookAbbrev}/${episode.chapterNumber}`,
+          { credentials: 'include' }
+        );
+        
+        if (response.ok) {
+          const blob = await response.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          
+          if (audioRef.current) {
+            audioRef.current.src = audioUrl;
+            audioRef.current.play().catch(() => {
+              toast({ 
+                title: "Erro ao reproduzir", 
+                description: "Não foi possível reproduzir o áudio",
+                variant: "destructive"
+              });
+              setIsPlaying(false);
+            });
+            setIsPlaying(true);
+          }
+        } else {
+          toast({ 
+            title: "Áudio não disponível", 
+            description: "Não foi possível gerar o áudio neste momento",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        toast({ 
+          title: "Erro de conexão", 
+          description: "Verifique sua conexão e tente novamente",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoadingAudio(false);
+      }
+    } else {
+      toast({ 
+        title: "Áudio não disponível", 
+        description: "Este episódio não tem informações do capítulo" 
+      });
+    }
   };
 
   const togglePlay = () => {
@@ -240,53 +245,6 @@ export default function Podcasts() {
     }
   };
 
-  // Recording functions
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
-      const chunks: Blob[] = [];
-
-      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "audio/webm" });
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setRecordedAudio(reader.result as string);
-        };
-        reader.readAsDataURL(blob);
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
-      setIsRecording(true);
-      setRecordingTime(0);
-
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => {
-          if (prev >= 300) {
-            stopRecording();
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    } catch (error) {
-      toast({ title: "Erro", description: "Não foi possível acessar o microfone", variant: "destructive" });
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-      }
-    }
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -294,31 +252,15 @@ export default function Podcasts() {
   };
 
   const handleCreatePodcast = () => {
-    if (!newPodcastTitle.trim()) {
-      toast({ title: "Erro", description: "Digite um título para o podcast", variant: "destructive" });
+    if (!newPodcastBook) {
+      toast({ title: "Erro", description: "Selecione um livro da Bíblia", variant: "destructive" });
       return;
     }
+    const title = newPodcastTitle.trim() || `Leitura de ${newPodcastBook}`;
     createPodcastMutation.mutate({
-      title: newPodcastTitle,
+      title,
       description: newPodcastDescription,
-      bibleBook: newPodcastBook || undefined,
-      bibleChapter: newPodcastChapter ? parseInt(newPodcastChapter) : undefined,
-    });
-  };
-
-  const handleAddEpisode = () => {
-    if (!selectedPodcastForEpisode || !episodeTitle.trim()) {
-      toast({ title: "Erro", description: "Preencha o título do episódio", variant: "destructive" });
-      return;
-    }
-    addEpisodeMutation.mutate({
-      podcastId: selectedPodcastForEpisode.id,
-      data: {
-        title: episodeTitle,
-        description: episodeDescription,
-        audioData: recordedAudio,
-        duration: recordingTime,
-      },
+      bibleBook: newPodcastBook,
     });
   };
 
@@ -348,55 +290,42 @@ export default function Podcasts() {
               <DialogHeader>
                 <DialogTitle>Criar Novo Podcast</DialogTitle>
                 <DialogDescription>
-                  Crie seu próprio podcast sobre um livro ou capítulo da Bíblia
+                  Escolha um livro da Bíblia e o sistema gerará automaticamente os episódios para cada capítulo com áudio narrado.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
+                  <Label>Livro da Bíblia *</Label>
+                  <Select value={newPodcastBook} onValueChange={setNewPodcastBook}>
+                    <SelectTrigger data-testid="select-bible-book">
+                      <SelectValue placeholder="Selecione um livro..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BIBLE_BOOKS.map(book => (
+                        <SelectItem key={book} value={book}>{book}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="podcast-title">Título do Podcast</Label>
                   <Input 
                     id="podcast-title" 
-                    placeholder="Ex: Estudos em Romanos"
+                    placeholder={newPodcastBook ? `Leitura de ${newPodcastBook}` : "Ex: Leitura de Romanos"}
                     value={newPodcastTitle}
                     onChange={(e) => setNewPodcastTitle(e.target.value)}
                     data-testid="input-podcast-title"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="podcast-description">Descrição</Label>
+                  <Label htmlFor="podcast-description">Descrição (opcional)</Label>
                   <Textarea 
                     id="podcast-description" 
-                    placeholder="Descreva seu podcast..."
+                    placeholder="Descrição será gerada automaticamente se não preenchida"
                     value={newPodcastDescription}
                     onChange={(e) => setNewPodcastDescription(e.target.value)}
                     data-testid="input-podcast-description"
                   />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Livro da Bíblia (opcional)</Label>
-                    <Select value={newPodcastBook} onValueChange={setNewPodcastBook}>
-                      <SelectTrigger data-testid="select-bible-book">
-                        <SelectValue placeholder="Selecione..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {BIBLE_BOOKS.map(book => (
-                          <SelectItem key={book} value={book}>{book}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="podcast-chapter">Capítulo (opcional)</Label>
-                    <Input 
-                      id="podcast-chapter" 
-                      type="number" 
-                      placeholder="1"
-                      value={newPodcastChapter}
-                      onChange={(e) => setNewPodcastChapter(e.target.value)}
-                      data-testid="input-podcast-chapter"
-                    />
-                  </div>
                 </div>
               </div>
               <DialogFooter>
@@ -405,10 +334,10 @@ export default function Podcasts() {
                 </Button>
                 <Button 
                   onClick={handleCreatePodcast}
-                  disabled={createPodcastMutation.isPending}
+                  disabled={createPodcastMutation.isPending || !newPodcastBook}
                   data-testid="button-confirm-create"
                 >
-                  {createPodcastMutation.isPending ? "Criando..." : "Criar Podcast"}
+                  {createPodcastMutation.isPending ? "Gerando episódios..." : "Criar Podcast"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -570,11 +499,11 @@ export default function Podcasts() {
               <Card className="border-dashed">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <Mic className="h-8 w-8 text-muted-foreground" />
+                    <Headphones className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Nenhum podcast criado</h3>
                   <p className="text-muted-foreground mb-4">
-                    Crie seu próprio podcast sobre livros e capítulos da Bíblia
+                    Escolha um livro da Bíblia e o sistema gerará episódios automaticamente
                   </p>
                   <Button onClick={() => setCreateDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />
@@ -588,44 +517,30 @@ export default function Podcasts() {
                   const episodes: Episode[] = podcast.episodes || [];
                   return (
                     <Card key={podcast.id}>
-                      <CardHeader className="flex flex-row items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <CardTitle>{podcast.title}</CardTitle>
-                          {podcast.description && (
-                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                              {podcast.description}
-                            </p>
+                      <CardHeader>
+                        <CardTitle>{podcast.title}</CardTitle>
+                        {podcast.description && (
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            {podcast.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                          {podcast.bibleBook && (
+                            <Badge variant="secondary">{podcast.bibleBook}</Badge>
                           )}
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
-                            {podcast.bibleBook && (
-                              <span>{podcast.bibleBook}{podcast.bibleChapter ? ` ${podcast.bibleChapter}` : ''}</span>
-                            )}
-                            {podcast.bibleBook && <span>•</span>}
-                            <span>{episodes.length} episódios</span>
-                            <span>•</span>
-                            <span>{podcast.category || 'Reflexões'}</span>
-                          </div>
+                          <span>{episodes.length} capítulos</span>
+                          <span>•</span>
+                          <span>Gerado automaticamente</span>
                         </div>
-                        <Button 
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedPodcastForEpisode(podcast);
-                            setAddEpisodeDialogOpen(true);
-                          }}
-                          data-testid={`button-add-episode-${podcast.id}`}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Episódio
-                        </Button>
                       </CardHeader>
                       <CardContent>
                         {episodes.length === 0 ? (
                           <p className="text-sm text-muted-foreground text-center py-4">
-                            Nenhum episódio ainda. Grave seu primeiro!
+                            Gerando episódios...
                           </p>
                         ) : (
-                          <div className="space-y-2">
-                            {episodes.map((ep: Episode) => (
+                          <div className="grid gap-2 max-h-64 overflow-y-auto">
+                            {episodes.slice(0, 10).map((ep: Episode) => (
                               <div 
                                 key={ep.id} 
                                 className="flex items-center justify-between p-3 rounded-lg bg-muted hover-elevate cursor-pointer"
@@ -633,13 +548,18 @@ export default function Podcasts() {
                               >
                                 <div className="flex-1 min-w-0">
                                   <p className="font-medium text-sm truncate">{ep.title}</p>
-                                  <p className="text-xs text-muted-foreground">{formatTime(ep.duration)}</p>
+                                  <p className="text-xs text-muted-foreground">Áudio narrado</p>
                                 </div>
                                 <Button size="icon" variant="ghost">
                                   <Play className="h-4 w-4" />
                                 </Button>
                               </div>
                             ))}
+                            {episodes.length > 10 && (
+                              <p className="text-sm text-muted-foreground text-center py-2">
+                                +{episodes.length - 10} capítulos
+                              </p>
+                            )}
                           </div>
                         )}
                       </CardContent>
@@ -651,96 +571,6 @@ export default function Podcasts() {
           </TabsContent>
         </Tabs>
       </div>
-
-      {/* Add Episode Dialog */}
-      <Dialog open={addEpisodeDialogOpen} onOpenChange={(open) => {
-        setAddEpisodeDialogOpen(open);
-        if (!open) {
-          stopRecording();
-          resetEpisodeForm();
-        }
-      }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Adicionar Episódio</DialogTitle>
-            <DialogDescription>
-              Grave um novo episódio para {selectedPodcastForEpisode?.title}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="episode-title">Título do Episódio</Label>
-              <Input 
-                id="episode-title" 
-                placeholder="Ex: Introdução ao Capítulo 1"
-                value={episodeTitle}
-                onChange={(e) => setEpisodeTitle(e.target.value)}
-                data-testid="input-episode-title"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="episode-description">Descrição</Label>
-              <Textarea 
-                id="episode-description" 
-                placeholder="Descreva o episódio..."
-                value={episodeDescription}
-                onChange={(e) => setEpisodeDescription(e.target.value)}
-                data-testid="input-episode-description"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Gravação de Áudio</Label>
-              <div className="flex flex-col items-center gap-4 p-6 border rounded-lg bg-muted/50">
-                {isRecording ? (
-                  <>
-                    <div className="w-16 h-16 rounded-full bg-red-500 animate-pulse flex items-center justify-center">
-                      <Mic className="h-8 w-8 text-white" />
-                    </div>
-                    <p className="text-2xl font-mono">{formatTime(recordingTime)}</p>
-                    <Button variant="destructive" onClick={stopRecording} data-testid="button-stop-recording">
-                      <Square className="h-4 w-4 mr-2" />
-                      Parar Gravação
-                    </Button>
-                  </>
-                ) : recordedAudio ? (
-                  <>
-                    <audio src={recordedAudio} controls className="w-full" />
-                    <p className="text-sm text-muted-foreground">Duração: {formatTime(recordingTime)}</p>
-                    <Button variant="outline" onClick={() => { setRecordedAudio(""); setRecordingTime(0); }}>
-                      Gravar Novamente
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Mic className="h-8 w-8 text-primary" />
-                    </div>
-                    <p className="text-sm text-muted-foreground text-center">
-                      Máximo 5 minutos de gravação
-                    </p>
-                    <Button onClick={startRecording} data-testid="button-start-recording">
-                      <Mic className="h-4 w-4 mr-2" />
-                      Iniciar Gravação
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddEpisodeDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleAddEpisode}
-              disabled={addEpisodeMutation.isPending || !episodeTitle.trim()}
-              data-testid="button-confirm-episode"
-            >
-              {addEpisodeMutation.isPending ? "Salvando..." : "Publicar Episódio"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Fixed Player Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t z-50">
@@ -767,10 +597,16 @@ export default function Podcasts() {
                 size="icon" 
                 className="h-12 w-12"
                 onClick={togglePlay}
-                disabled={!currentEpisode}
+                disabled={!currentEpisode || isLoadingAudio}
                 data-testid="button-play-pause"
               >
-                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                {isLoadingAudio ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : isPlaying ? (
+                  <Pause className="h-5 w-5" />
+                ) : (
+                  <Play className="h-5 w-5" />
+                )}
               </Button>
               <Button size="icon" variant="ghost" onClick={() => skip(30)} data-testid="button-skip-forward">
                 <SkipForward className="h-5 w-5" />

@@ -752,51 +752,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create user podcast
+  // Create user podcast - Auto-generates episodes based on Bible book
   app.post("/api/podcasts", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { title, description, bibleBook, bibleChapter, category } = req.body;
+      const { title, description, bibleBook, category } = req.body;
       
-      console.log('[Podcast] Creating podcast:', { title, description, bibleBook, bibleChapter, category, userId });
+      console.log('[Podcast] Creating podcast:', { title, description, bibleBook, category, userId });
       
       // Validate required fields
       if (!title || typeof title !== 'string' || title.trim().length === 0) {
         return res.status(400).json({ error: "Título é obrigatório" });
       }
       
-      // Validate optional chapter number
-      let validChapter: number | undefined;
-      if (bibleChapter !== undefined && bibleChapter !== null && bibleChapter !== "") {
-        validChapter = parseInt(bibleChapter);
-        if (isNaN(validChapter) || validChapter < 1 || validChapter > 150) {
-          return res.status(400).json({ error: "Capítulo inválido" });
-        }
+      // Bible book is required for auto-generation
+      if (!bibleBook || typeof bibleBook !== 'string') {
+        return res.status(400).json({ error: "Livro da Bíblia é obrigatório para criar um podcast" });
+      }
+      
+      // Find the book in our fallback data to get chapter count
+      const { BIBLE_BOOKS_FALLBACK } = await import('./bible-books-fallback');
+      const bookInfo = BIBLE_BOOKS_FALLBACK.find(
+        (b: any) => b.name.toLowerCase() === bibleBook.toLowerCase() || 
+                    b.abbrev.pt.toLowerCase() === bibleBook.toLowerCase()
+      );
+      
+      if (!bookInfo) {
+        return res.status(400).json({ error: "Livro da Bíblia não encontrado" });
+      }
+      
+      // Auto-generate episodes for each chapter
+      const episodes: Array<{
+        id: string;
+        title: string;
+        description: string;
+        audioData: string;
+        duration: number;
+        publishedAt: string;
+        chapterNumber: number;
+        bookAbbrev: string;
+      }> = [];
+      
+      for (let chapter = 1; chapter <= bookInfo.chapters; chapter++) {
+        episodes.push({
+          id: `ep-${bookInfo.abbrev.pt}-${chapter}-${Date.now()}`,
+          title: `${bookInfo.name} - Capítulo ${chapter}`,
+          description: `Leitura completa do capítulo ${chapter} de ${bookInfo.name}`,
+          audioData: "", // Audio will be generated on-demand when user plays
+          duration: 0, // Will be updated when audio is generated
+          publishedAt: new Date().toISOString(),
+          chapterNumber: chapter,
+          bookAbbrev: bookInfo.abbrev.pt,
+        });
       }
       
       const podcastData = {
         title: title.trim().substring(0, 200),
-        description: (description || "").substring(0, 1000),
-        author: req.user.claims.username || "Usuário",
-        category: (category || "Reflexões").substring(0, 50),
+        description: description ? description.substring(0, 1000) : `Podcast com leitura narrada de ${bookInfo.name} - ${bookInfo.chapters} capítulos`,
+        author: req.user.claims.username || "BíbliaFS",
+        category: (category || "Leitura Bíblica").substring(0, 50),
         creatorId: userId,
-        bibleBook: bibleBook ? bibleBook.substring(0, 100) : null,
-        bibleChapter: validChapter || null,
+        bibleBook: bookInfo.name,
+        bibleChapter: null, // null means all chapters
         language: "pt",
         isActive: true,
         accessLevel: "free",
-        episodes: [],
-        totalEpisodes: 0,
+        episodes: episodes,
+        totalEpisodes: episodes.length,
       };
       
-      console.log('[Podcast] Saving to database:', podcastData);
+      console.log('[Podcast] Auto-generated', episodes.length, 'episodes for', bookInfo.name);
       
       const podcast = await storage.createPodcast(podcastData);
       
-      console.log('[Podcast] Saved successfully:', podcast);
+      console.log('[Podcast] Saved successfully with', podcast.totalEpisodes, 'episodes');
       
       res.json(podcast);
     } catch (error: any) {
+      console.error('[Podcast] Error:', error);
       res.status(500).json({ error: error.message });
     }
   });
