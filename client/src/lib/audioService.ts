@@ -1,14 +1,14 @@
-// Bible Audio Service - Online/Offline Smart Playback with CDN + Backend fallback
+// Bible Audio Service - Online/Offline Smart Playback with Supabase Storage
 
 // Define inline type to avoid circular dependency
 interface OfflineContextType {
   getOfflineAudio?: (bookCode: string, chapter: number, version: string) => Promise<ArrayBuffer | null>;
 }
 
-// Primary: CDN for pre-recorded audio
-// Fallback: Backend API for on-demand generation with OpenAI TTS
-const AUDIO_CDN_BASE = "https://cdn.bibliafs.com.br/bible-audio";
-const AUDIO_API_BASE = "/api/bible/audio";
+// Supabase Storage URL for Bible audio files
+// Format: {SUPABASE_URL}/storage/v1/object/public/bible-audio/{LANG}/{VERSION}/{BOOK}/{CHAPTER}.mp3
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
+const AUDIO_STORAGE_BASE = `${SUPABASE_URL}/storage/v1/object/public/bible-audio`;
 
 // Comprehensive book mapping: Portuguese + English names → abbreviations
 const BOOK_CODES: { [key: string]: string } = {
@@ -97,33 +97,24 @@ function getAuthToken(): string | null {
 export async function getAudioUrl(
   book: string,
   chapter: number,
-  version: string = "nvi",
-  language: string = "pt"
+  version: string = "WEB",
+  language: string = "EN"
 ): Promise<string> {
   const bookCode = getBookCode(book);
-  // Format: /bible-audio/{LANGUAGE}/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3
-  return `${AUDIO_CDN_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
+  // Format: {SUPABASE}/storage/v1/object/public/bible-audio/{LANG}/{VERSION}/{BOOK}/{CHAPTER}.mp3
+  return `${AUDIO_STORAGE_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
 }
 
 export async function playBibleAudio(
   options: AudioPlayOptions,
   audioElement: HTMLAudioElement,
-  language: string = "pt"
+  language: string = "EN"
 ): Promise<void> {
   const { book, chapter, version, offline, isOnline } = options;
   const bookCode = getBookCode(book);
 
   try {
-    // Online: try CDN first
-    if (isOnline) {
-      const url = await getAudioUrl(book, chapter, version, language);
-      console.log(`[Audio] Trying CDN: ${url}`);
-      audioElement.src = url;
-      await audioElement.play();
-      return;
-    }
-
-    // Offline: check IndexedDB
+    // Offline: check IndexedDB first
     if (offline?.getOfflineAudio) {
       const cachedAudio = await offline.getOfflineAudio(bookCode, chapter, version);
       if (cachedAudio) {
@@ -136,7 +127,16 @@ export async function playBibleAudio(
       }
     }
 
-    throw new Error("Áudio não disponível. Baixe para ouvir offline.");
+    // Online: stream from Supabase Storage
+    if (isOnline) {
+      const url = await getAudioUrl(book, chapter, version, language);
+      console.log(`[Audio] Streaming from Supabase: ${url}`);
+      audioElement.src = url;
+      await audioElement.play();
+      return;
+    }
+
+    throw new Error("Áudio não disponível. Conecte à internet para ouvir.");
   } catch (error) {
     console.error("Erro ao reproduzir áudio:", error);
     throw error;
@@ -146,8 +146,8 @@ export async function playBibleAudio(
 export async function downloadChapterAudio(
   book: string,
   chapter: number,
-  version: string = "nvi",
-  language: string = "pt",
+  version: string = "WEB",
+  language: string = "EN",
   onProgress?: (progress: number) => void
 ): Promise<Blob> {
   const url = await getAudioUrl(book, chapter, version, language);
@@ -186,7 +186,8 @@ export async function downloadChapterAudio(
 export async function downloadBookAudio(
   book: string,
   chapters: number,
-  version: string = "nvi",
+  version: string = "WEB",
+  language: string = "EN",
   onProgress?: (progress: number) => void
 ): Promise<Map<number, Blob>> {
   const audioMap = new Map<number, Blob>();
@@ -194,7 +195,7 @@ export async function downloadBookAudio(
 
   for (let ch = 1; ch <= totalChapters; ch++) {
     try {
-      const audio = await downloadChapterAudio(book, ch, version);
+      const audio = await downloadChapterAudio(book, ch, version, language);
       audioMap.set(ch, audio);
       onProgress?.(Math.round((ch / totalChapters) * 100));
     } catch (error) {
