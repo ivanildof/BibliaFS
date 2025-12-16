@@ -45,15 +45,18 @@ function getBookCode(bookName: string): string {
 export async function getAudioUrl(
   book: string,
   chapter: number,
-  version: string = "ARA"
+  version: string = "ARA",
+  language: string = "pt"
 ): Promise<string> {
   const bookCode = getBookCode(book);
-  return `${AUDIO_CDN_BASE}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
+  // Format: /bible-audio/{LANGUAGE}/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3
+  return `${AUDIO_CDN_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
 }
 
 export async function playBibleAudio(
   options: AudioPlayOptions,
-  audioElement: HTMLAudioElement
+  audioElement: HTMLAudioElement,
+  language: string = "pt"
 ): Promise<void> {
   const { book, chapter, version, offline, isOnline } = options;
   const bookCode = getBookCode(book);
@@ -61,7 +64,7 @@ export async function playBibleAudio(
   try {
     // Online: try CDN first
     if (isOnline) {
-      const url = await getAudioUrl(book, chapter, version);
+      const url = await getAudioUrl(book, chapter, version, language);
       audioElement.src = url;
       await audioElement.play();
       return;
@@ -90,9 +93,10 @@ export async function downloadChapterAudio(
   book: string,
   chapter: number,
   version: string = "ARA",
+  language: string = "pt",
   onProgress?: (progress: number) => void
 ): Promise<Blob> {
-  const url = await getAudioUrl(book, chapter, version);
+  const url = await getAudioUrl(book, chapter, version, language);
 
   const response = await fetch(url);
   if (!response.ok) {

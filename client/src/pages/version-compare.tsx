@@ -17,7 +17,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useOffline } from "@/contexts/OfflineContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const BIBLE_BOOKS_PT = [
+// Multilingual Bible Books
+const BIBLE_BOOKS = {
+  pt: [
   "Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio",
   "Josué", "Juízes", "Rute", "1 Samuel", "2 Samuel",
   "1 Reis", "2 Reis", "1 Crônicas", "2 Crônicas", "Esdras",
@@ -32,10 +34,60 @@ const BIBLE_BOOKS_PT = [
   "2 Timóteo", "Tito", "Filemom", "Hebreus", "Tiago",
   "1 Pedro", "2 Pedro", "1 João", "2 João", "3 João",
   "Judas", "Apocalipse"
-];
+  ],
+  en: [
+  "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+  "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+  "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra",
+  "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
+  "Ecclesiastes", "Song of Songs", "Isaiah", "Jeremiah", "Lamentations",
+  "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+  "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk",
+  "Zephaniah", "Haggai", "Zechariah", "Malachi",
+  "Matthew", "Mark", "Luke", "John", "Acts",
+  "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+  "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy",
+  "2 Timothy", "Titus", "Philemon", "Hebrews", "James",
+  "1 Peter", "2 Peter", "1 John", "2 John", "3 John",
+  "Jude", "Revelation"
+  ],
+  nl: [
+  "Genesis", "Exodus", "Leviticus", "Numeri", "Deuteronomium",
+  "Jozua", "Richteren", "Ruth", "1 Samuel", "2 Samuel",
+  "1 Koningen", "2 Koningen", "1 Kronieken", "2 Kronieken", "Ezra",
+  "Nehemia", "Esther", "Job", "Psalmen", "Spreuken",
+  "Prediker", "Hooglied", "Jesaja", "Jeremia", "Klaagliederen",
+  "Ezechiël", "Daniël", "Hosea", "Joël", "Amos",
+  "Obadja", "Jona", "Micha", "Nahum", "Habakuk",
+  "Zefanja", "Haggaï", "Zacharia", "Maleachi",
+  "Mattheus", "Markus", "Lukas", "Johannes", "Handelingen",
+  "Romeinen", "1 Corinthiërs", "2 Corinthiërs", "Galaten", "Efeziërs",
+  "Filippenzen", "Colossenzen", "1 Thessalonicenzen", "2 Thessalonicenzen", "1 Timoteüs",
+  "2 Timoteüs", "Titus", "Filemon", "Hebreeën", "Jakobus",
+  "1 Petrus", "2 Petrus", "1 Johannes", "2 Johannes", "3 Johannes",
+  "Judas", "Openbaring"
+  ],
+  es: [
+  "Génesis", "Éxodo", "Levítico", "Números", "Deuteronomio",
+  "Josué", "Jueces", "Rut", "1 Samuel", "2 Samuel",
+  "1 Reyes", "2 Reyes", "1 Crónicas", "2 Crónicas", "Esdras",
+  "Nehemías", "Ester", "Job", "Salmos", "Proverbios",
+  "Eclesiastés", "Cantar de los Cantares", "Isaías", "Jeremías", "Lamentaciones",
+  "Ezequiel", "Daniel", "Oseas", "Joel", "Amós",
+  "Abdías", "Jonás", "Miqueas", "Nahúm", "Habacuc",
+  "Sofonías", "Ageo", "Zacarías", "Malaquías",
+  "Mateo", "Marcos", "Lucas", "Juan", "Hechos",
+  "Romanos", "1 Corintios", "2 Corintios", "Gálatas", "Efesios",
+  "Filipenses", "Colosenses", "1 Tesalonicenses", "2 Tesalonicenses", "1 Timoteo",
+  "2 Timoteo", "Tito", "Filemón", "Hebreos", "Santiago",
+  "1 Pedro", "2 Pedro", "1 Juan", "2 Juan", "3 Juan",
+  "Judas", "Apocalipsis"
+  ]
+};
 
-// Map Portuguese names to SQLite abbreviations
-const bookNameToAbbrev: { [key: string]: string } = {
+// Map book names to SQLite abbreviations (universal for all languages)
+const bookNameToAbbrev: { [lang: string]: { [key: string]: string } } = {
+  pt: {
   "Gênesis": "gn", "Êxodo": "ex", "Levítico": "lv", "Números": "nm", "Deuteronômio": "dt",
   "Josué": "js", "Juízes": "jz", "Rute": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm",
   "1 Reis": "1rs", "2 Reis": "2rs", "1 Crônicas": "1cr", "2 Crônicas": "2cr", "Esdras": "esd",
@@ -50,6 +102,55 @@ const bookNameToAbbrev: { [key: string]: string } = {
   "2 Timóteo": "2tm", "Tito": "tt", "Filemom": "fm", "Hebreus": "hb", "Tiago": "tg",
   "1 Pedro": "1pd", "2 Pedro": "2pd", "1 João": "1jo", "2 João": "2jo", "3 João": "3jo",
   "Judas": "jd", "Apocalipse": "ap"
+  },
+  en: {
+  "Genesis": "gn", "Exodus": "ex", "Leviticus": "lv", "Numbers": "nm", "Deuteronomy": "dt",
+  "Joshua": "js", "Judges": "jz", "Ruth": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm",
+  "1 Kings": "1rs", "2 Kings": "2rs", "1 Chronicles": "1cr", "2 Chronicles": "2cr", "Ezra": "esd",
+  "Nehemiah": "ne", "Esther": "et", "Job": "jó", "Psalms": "sl", "Proverbs": "pv",
+  "Ecclesiastes": "ec", "Song of Songs": "ct", "Isaiah": "is", "Jeremiah": "jr", "Lamentations": "lm",
+  "Ezekiel": "ez", "Daniel": "dn", "Hosea": "os", "Joel": "jl", "Amos": "am",
+  "Obadiah": "ob", "Jonah": "jn", "Micah": "mq", "Nahum": "na", "Habakkuk": "hc",
+  "Zephaniah": "sf", "Haggai": "ag", "Zechariah": "zc", "Malachi": "ml",
+  "Matthew": "mt", "Mark": "mc", "Luke": "lc", "John": "jo", "Acts": "at",
+  "Romans": "rm", "1 Corinthians": "1co", "2 Corinthians": "2co", "Galatians": "gl", "Ephesians": "ef",
+  "Philippians": "fp", "Colossians": "cl", "1 Thessalonians": "1ts", "2 Thessalonians": "2ts", "1 Timothy": "1tm",
+  "2 Timothy": "2tm", "Titus": "tt", "Philemon": "fm", "Hebrews": "hb", "James": "tg",
+  "1 Peter": "1pd", "2 Peter": "2pd", "1 John": "1jo", "2 John": "2jo", "3 John": "3jo",
+  "Jude": "jd", "Revelation": "ap"
+  },
+  nl: {
+  "Genesis": "gn", "Exodus": "ex", "Leviticus": "lv", "Numeri": "nm", "Deuteronomium": "dt",
+  "Jozua": "js", "Richteren": "jz", "Ruth": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm",
+  "1 Koningen": "1rs", "2 Koningen": "2rs", "1 Kronieken": "1cr", "2 Kronieken": "2cr", "Ezra": "esd",
+  "Nehemia": "ne", "Esther": "et", "Job": "jó", "Psalmen": "sl", "Spreuken": "pv",
+  "Prediker": "ec", "Hooglied": "ct", "Jesaja": "is", "Jeremia": "jr", "Klaagliederen": "lm",
+  "Ezechiël": "ez", "Daniël": "dn", "Hosea": "os", "Joël": "jl", "Amos": "am",
+  "Obadja": "ob", "Jona": "jn", "Micha": "mq", "Nahum": "na", "Habakuk": "hc",
+  "Zefanja": "sf", "Haggaï": "ag", "Zacharia": "zc", "Maleachi": "ml",
+  "Mattheus": "mt", "Markus": "mc", "Lukas": "lc", "Johannes": "jo", "Handelingen": "at",
+  "Romeinen": "rm", "1 Corinthiërs": "1co", "2 Corinthiërs": "2co", "Galaten": "gl", "Efeziërs": "ef",
+  "Filippenzen": "fp", "Colossenzen": "cl", "1 Thessalonicenzen": "1ts", "2 Thessalonicenzen": "2ts", "1 Timoteüs": "1tm",
+  "2 Timoteüs": "2tm", "Titus": "tt", "Filemon": "fm", "Hebreeën": "hb", "Jakobus": "tg",
+  "1 Petrus": "1pd", "2 Petrus": "2pd", "1 Johannes": "1jo", "2 Johannes": "2jo", "3 Johannes": "3jo",
+  "Judas": "jd", "Openbaring": "ap"
+  },
+  es: {
+  "Génesis": "gn", "Éxodo": "ex", "Levítico": "lv", "Números": "nm", "Deuteronomio": "dt",
+  "Josué": "js", "Jueces": "jz", "Rut": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm",
+  "1 Reyes": "1rs", "2 Reyes": "2rs", "1 Crónicas": "1cr", "2 Crónicas": "2cr", "Esdras": "esd",
+  "Nehemías": "ne", "Ester": "et", "Job": "jó", "Salmos": "sl", "Proverbios": "pv",
+  "Eclesiastés": "ec", "Cantar de los Cantares": "ct", "Isaías": "is", "Jeremías": "jr", "Lamentaciones": "lm",
+  "Ezequiel": "ez", "Daniel": "dn", "Oseas": "os", "Joel": "jl", "Amós": "am",
+  "Abdías": "ob", "Jonás": "jn", "Miqueas": "mq", "Nahúm": "na", "Habacuc": "hc",
+  "Sofonías": "sf", "Ageo": "ag", "Zacarías": "zc", "Malaquías": "ml",
+  "Mateo": "mt", "Marcos": "mc", "Lucas": "lc", "Juan": "jo", "Hechos": "at",
+  "Romanos": "rm", "1 Corintios": "1co", "2 Corintios": "2co", "Gálatas": "gl", "Efesios": "ef",
+  "Filipenses": "fp", "Colosenses": "cl", "1 Tesalonicenses": "1ts", "2 Tesalonicenses": "2ts", "1 Timoteo": "1tm",
+  "2 Timoteo": "2tm", "Tito": "tt", "Filemón": "fm", "Hebreos": "hb", "Santiago": "tg",
+  "1 Pedro": "1pd", "2 Pedro": "2pd", "1 Juan": "1jo", "2 Juan": "2jo", "3 Juan": "3jo",
+  "Judas": "jd", "Apocalipsis": "ap"
+  }
 };
 
 const VERSIONS = [
@@ -74,10 +175,14 @@ interface VersionData {
 
 export default function VersionCompare() {
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const { sqliteReady, getSqliteChapter } = useOffline();
   
-  const [selectedBook, setSelectedBook] = useState("João");
+  // Get books for current language, default to first book
+  const currentBooks = BIBLE_BOOKS[language as keyof typeof BIBLE_BOOKS] || BIBLE_BOOKS.pt;
+  const bookMapping = bookNameToAbbrev[language as keyof typeof bookNameToAbbrev] || bookNameToAbbrev.pt;
+  
+  const [selectedBook, setSelectedBook] = useState(currentBooks[42]); // John
   const [selectedChapter, setSelectedChapter] = useState(3);
   const [selectedVersions, setSelectedVersions] = useState(["nvi", "acf"]);
   const [versionsData, setVersionsData] = useState<VersionData[]>([]);
@@ -92,7 +197,7 @@ export default function VersionCompare() {
 
     for (const versionId of selectedVersions) {
       try {
-        const abbrev = bookNameToAbbrev[selectedBook] || selectedBook.toLowerCase();
+        const abbrev = bookMapping[selectedBook] || selectedBook.toLowerCase();
         const chapterData = await getSqliteChapter(abbrev, selectedChapter);
         
         if (chapterData?.verses) {
@@ -133,7 +238,12 @@ export default function VersionCompare() {
     if (sqliteReady) {
       fetchChapterData();
     }
-  }, [selectedBook, selectedChapter, selectedVersions, sqliteReady]);
+  }, [selectedBook, selectedChapter, selectedVersions, sqliteReady, language]);
+
+  // Update selected book when language changes
+  useEffect(() => {
+    setSelectedBook(currentBooks[42]); // Reset to John in new language
+  }, [language]);
 
   const toggleVersion = (versionId: string) => {
     if (selectedVersions.includes(versionId)) {
@@ -187,7 +297,7 @@ export default function VersionCompare() {
                     <SelectValue placeholder="Livro" />
                   </SelectTrigger>
                   <SelectContent>
-                    {BIBLE_BOOKS_PT.map((book) => (
+                    {currentBooks.map((book) => (
                       <SelectItem key={book} value={book}>
                         {book}
                       </SelectItem>
