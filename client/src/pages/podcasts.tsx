@@ -410,11 +410,7 @@ export default function Podcasts() {
                               >
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-medium truncate">{ep.title}</p>
-                                  {ep.description && (
-                                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                                      {ep.description}
-                                    </p>
-                                  )}
+                                  <p className="text-xs text-muted-foreground">{formatTime(ep.duration)}</p>
                                 </div>
                                 <Button size="icon" variant="ghost" data-testid={`button-play-${ep.id}`}>
                                   <Play className="h-4 w-4" />
@@ -482,11 +478,7 @@ export default function Podcasts() {
                             >
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-sm truncate">{ep.title}</p>
-                                {ep.description && (
-                                  <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                                    {ep.description}
-                                  </p>
-                                )}
+                                <p className="text-xs text-muted-foreground">{formatTime(ep.duration)}</p>
                               </div>
                               <Button size="icon" variant="ghost" data-testid={`button-play-sub-${ep.id}`}>
                                 <Play className="h-4 w-4" />
@@ -556,11 +548,7 @@ export default function Podcasts() {
                               >
                                 <div className="flex-1 min-w-0">
                                   <p className="font-medium text-sm truncate">{ep.title}</p>
-                                  {ep.description && (
-                                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                                      {ep.description}
-                                    </p>
-                                  )}
+                                  <p className="text-xs text-muted-foreground">Áudio narrado</p>
                                 </div>
                                 <Button size="icon" variant="ghost">
                                   <Play className="h-4 w-4" />

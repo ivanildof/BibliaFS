@@ -752,7 +752,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create user podcast - Auto-generates episodes based on Bible book with REAL text
+  // Create user podcast - Auto-generates episodes based on Bible book
   app.post("/api/podcasts", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -781,10 +781,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Livro da Bíblia não encontrado" });
       }
       
-      // Import the Bible API function to fetch real chapter text
-      const { fetchBibleChapter } = await import("./multilingual-bible-apis");
-      
-      // Auto-generate episodes for each chapter with REAL Bible text
+      // Auto-generate episodes for each chapter
       const episodes: Array<{
         id: string;
         title: string;
@@ -794,74 +791,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         publishedAt: string;
         chapterNumber: number;
         bookAbbrev: string;
-        fullText?: string;
       }> = [];
       
-      console.log('[Podcast] Fetching real Bible text for', bookInfo.chapters, 'chapters...');
-      
-      // Fetch real text for each chapter (batch in groups of 5 to avoid rate limits)
-      const batchSize = 5;
-      for (let i = 0; i < bookInfo.chapters; i += batchSize) {
-        const batch = [];
-        for (let j = i; j < Math.min(i + batchSize, bookInfo.chapters); j++) {
-          const chapter = j + 1;
-          batch.push(
-            fetchBibleChapter('pt', 'nvi', bookInfo.abbrev.pt, chapter)
-              .then((chapterData: any) => {
-                let fullText = '';
-                let preview = '';
-                
-                if (chapterData?.verses && Array.isArray(chapterData.verses)) {
-                  fullText = chapterData.verses
-                    .map((v: any) => `${v.number}. ${v.text}`)
-                    .join('\n');
-                  // Get first 3 verses as preview for description
-                  preview = chapterData.verses
-                    .slice(0, 3)
-                    .map((v: any) => `${v.number}. ${v.text}`)
-                    .join(' ')
-                    .substring(0, 500);
-                }
-                
-                return {
-                  id: `ep-${bookInfo.abbrev.pt}-${chapter}-${Date.now()}`,
-                  title: `${bookInfo.name} - Capítulo ${chapter}`,
-                  description: preview || `Leitura do capítulo ${chapter} de ${bookInfo.name}`,
-                  audioData: "", // Audio generated on-demand via TTS
-                  duration: 0,
-                  publishedAt: new Date().toISOString(),
-                  chapterNumber: chapter,
-                  bookAbbrev: bookInfo.abbrev.pt,
-                  fullText: fullText, // Store full text for TTS generation
-                };
-              })
-              .catch((err: any) => {
-                console.warn(`[Podcast] Failed to fetch ${bookInfo.abbrev.pt} ${j + 1}:`, err.message);
-                return {
-                  id: `ep-${bookInfo.abbrev.pt}-${j + 1}-${Date.now()}`,
-                  title: `${bookInfo.name} - Capítulo ${j + 1}`,
-                  description: `Leitura do capítulo ${j + 1} de ${bookInfo.name}`,
-                  audioData: "",
-                  duration: 0,
-                  publishedAt: new Date().toISOString(),
-                  chapterNumber: j + 1,
-                  bookAbbrev: bookInfo.abbrev.pt,
-                };
-              })
-          );
-        }
-        
-        const batchResults = await Promise.all(batch);
-        episodes.push(...batchResults);
-        
-        // Small delay between batches to be nice to the API
-        if (i + batchSize < bookInfo.chapters) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
+      for (let chapter = 1; chapter <= bookInfo.chapters; chapter++) {
+        episodes.push({
+          id: `ep-${bookInfo.abbrev.pt}-${chapter}-${Date.now()}`,
+          title: `${bookInfo.name} - Capítulo ${chapter}`,
+          description: `Leitura completa do capítulo ${chapter} de ${bookInfo.name}`,
+          audioData: "", // Audio will be generated on-demand when user plays
+          duration: 0, // Will be updated when audio is generated
+          publishedAt: new Date().toISOString(),
+          chapterNumber: chapter,
+          bookAbbrev: bookInfo.abbrev.pt,
+        });
       }
-      
-      // Sort episodes by chapter number
-      episodes.sort((a, b) => a.chapterNumber - b.chapterNumber);
       
       const podcastData = {
         title: title.trim().substring(0, 200),
@@ -878,7 +821,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalEpisodes: episodes.length,
       };
       
-      console.log('[Podcast] Auto-generated', episodes.length, 'episodes with real Bible text for', bookInfo.name);
+      console.log('[Podcast] Auto-generated', episodes.length, 'episodes for', bookInfo.name);
       
       const podcast = await storage.createPodcast(podcastData);
       
