@@ -186,6 +186,12 @@ export async function runMigrations() {
       CREATE INDEX IF NOT EXISTS idx_audio_cache 
       ON audio_cache(language, version, book, chapter, verse)
     `);
+
+    // Add missing category column to podcasts table
+    await db.execute(sql`
+      ALTER TABLE podcasts 
+      ADD COLUMN IF NOT EXISTS category VARCHAR(100)
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {
