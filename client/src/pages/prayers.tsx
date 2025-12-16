@@ -124,10 +124,13 @@ export default function Prayers() {
 
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isPlayingPreview, setIsPlayingPreview] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingIntervalRef = useRef<number | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const MAX_RECORDING_SECONDS = 300; // 5 minutes max
   const MAX_AUDIO_SIZE_MB = 5;
@@ -155,6 +158,14 @@ export default function Prayers() {
         handleStopRecording();
       }
       cleanupRecording();
+      // Reset audio states when dialog closes
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setAudioBlob(null);
+      setPreviewUrl(null);
+      setRecordingTime(0);
+      setIsPlayingPreview(false);
     }
   }, [isCreateDialogOpen]);
 
@@ -171,7 +182,7 @@ export default function Prayers() {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm;codecs=opus" });
         const sizeMB = audioBlob.size / (1024 * 1024);
         
         if (sizeMB > MAX_AUDIO_SIZE_MB) {
@@ -181,8 +192,15 @@ export default function Prayers() {
             variant: "destructive",
           });
           setAudioBlob(null);
+          setPreviewUrl(null);
         } else {
           setAudioBlob(audioBlob);
+          const url = URL.createObjectURL(audioBlob);
+          setPreviewUrl(url);
+          toast({
+            title: "Áudio gravado!",
+            description: "Ouça o preview antes de salvar.",
+          });
         }
         
         cleanupRecording();
@@ -359,7 +377,41 @@ export default function Prayers() {
                     {isRecording && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                        Gravando...
+                        <span>Gravando... {Math.floor(recordingTime / 60)}:{String(recordingTime % 60).padStart(2, '0')}</span>
+                    </div>
+                  )}
+                  
+                  {audioBlob && previewUrl && (
+                    <div className="space-y-3 p-4 bg-muted rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Preview da Gravação</span>
+                        <span className="text-xs text-muted-foreground">
+                          {Math.floor(recordingTime / 60)}:{String(recordingTime % 60).padStart(2, '0')}
+                        </span>
+                      </div>
+                      <audio 
+                        ref={previewAudioRef}
+                        controls 
+                        className="w-full h-8"
+                        src={previewUrl}
+                        onPlay={() => setIsPlayingPreview(true)}
+                        onPause={() => setIsPlayingPreview(false)}
+                        onEnded={() => setIsPlayingPreview(false)}
+                      />
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          setAudioBlob(null);
+                          setPreviewUrl(null);
+                          setRecordingTime(0);
+                        }}
+                      >
+                        <Mic className="h-3 w-3 mr-2" />
+                        Gravar Novamente
+                      </Button>
                     </div>
                   )}
                 </div>
