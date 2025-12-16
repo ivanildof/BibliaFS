@@ -728,18 +728,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { title, description, bibleBook, bibleChapter, category } = req.body;
       
-      if (!title) {
+      // Validate required fields
+      if (!title || typeof title !== 'string' || title.trim().length === 0) {
         return res.status(400).json({ error: "Título é obrigatório" });
       }
       
+      // Validate optional chapter number
+      let validChapter: number | undefined;
+      if (bibleChapter !== undefined && bibleChapter !== null && bibleChapter !== "") {
+        validChapter = parseInt(bibleChapter);
+        if (isNaN(validChapter) || validChapter < 1 || validChapter > 150) {
+          return res.status(400).json({ error: "Capítulo inválido" });
+        }
+      }
+      
       const podcast = await storage.createPodcast({
-        title,
-        description,
+        title: title.trim().substring(0, 200),
+        description: (description || "").substring(0, 1000),
         author: req.user.claims.username || "Usuário",
-        category: category || "Reflexões",
+        category: (category || "Reflexões").substring(0, 50),
         creatorId: userId,
-        bibleBook,
-        bibleChapter,
+        bibleBook: bibleBook ? bibleBook.substring(0, 100) : undefined,
+        bibleChapter: validChapter,
         language: "pt",
         isActive: true,
         accessLevel: "free",
@@ -759,6 +769,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { title, description, audioData, duration } = req.body;
       
+      // Validate required fields
+      if (!title || typeof title !== 'string' || title.trim().length === 0) {
+        return res.status(400).json({ error: "Título do episódio é obrigatório" });
+      }
+      
       // Verify ownership
       const podcast = await storage.getPodcast(req.params.id);
       if (!podcast) {
@@ -768,21 +783,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Você não tem permissão para editar este podcast" });
       }
       
-      // Check audio size (5MB limit for base64)
-      if (audioData && audioData.length > 7 * 1024 * 1024) {
+      // Check audio size (5MB limit for base64, which is ~7MB encoded)
+      if (audioData && typeof audioData === 'string' && audioData.length > 7 * 1024 * 1024) {
         return res.status(400).json({ error: "Áudio muito grande. Máximo 5MB." });
       }
       
+      // Validate duration (max 5 minutes = 300 seconds)
+      const validDuration = Math.min(Math.max(0, Number(duration) || 0), 300);
+      
       const newEpisode = {
         id: `ep-${Date.now()}`,
-        title: title || "Novo Episódio",
-        description: description || "",
+        title: title.trim().substring(0, 200),
+        description: (description || "").substring(0, 1000),
         audioData: audioData || "",
-        duration: duration || 0,
+        duration: validDuration,
         publishedAt: new Date().toISOString(),
       };
       
-      const episodes = [...(podcast.episodes || []), newEpisode];
+      // Safely merge episodes array
+      const existingEpisodes = Array.isArray(podcast.episodes) ? podcast.episodes : [];
+      const episodes = [...existingEpisodes, newEpisode];
       
       await storage.updatePodcast(req.params.id, {
         episodes,
