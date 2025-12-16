@@ -52,37 +52,41 @@ const premiumFeatures = [
 
 const testimonials = [
   {
-    name: "Maria Silva",
-    role: "Pastora",
-    content: "BíbliaFS transformou minha forma de estudar e ensinar a Bíblia. O assistente IA é incrível!",
-    avatar: "M"
+    name: "Pastora de São Paulo",
+    role: "Uso em sua comunidade",
+    content: "Os planos de leitura customizáveis e o modo offline transformaram como nossa comunidade estuda juntos.",
+    avatar: "📖"
   },
   {
-    name: "João Santos",
-    role: "Professor de Teologia",
-    content: "Nunca vi um app tão bem pensado para estudo bíblico. Recomendo para todos os meus alunos.",
-    avatar: "J"
+    name: "Professor Universitário",
+    role: "Estudo de Teologia",
+    content: "O assistente IA oferece perspectivas teológicas equilibradas para minhas aulas. Sempre lembro aos alunos de validar com as fontes originais.",
+    avatar: "🎓"
   },
   {
-    name: "Ana Costa",
-    role: "Líder de Grupo",
-    content: "Os planos de leitura e a comunidade tornaram nossos estudos muito mais engajadores.",
-    avatar: "A"
+    name: "Estudo em Grupo",
+    role: "Leitura Diária",
+    content: "Adoramos usar a comunidade para compartilhar notas. O app permite que cada um tenha sua própria interpretação das Escrituras.",
+    avatar: "👥"
   },
 ];
 
 const faqs = [
   {
     question: "BíbliaFS é realmente gratuito?",
-    answer: "Sim! Você pode começar totalmente grátis. Oferecemos um plano premium com recursos adicionais, mas o plano básico é completo e sem limitações de uso."
+    answer: "Sim! O plano básico é 100% gratuito para sempre, incluindo leitura offline, planos de leitura e comunidade. Oferecemos recursos premium opcionais (podcasts avançados, temas exclusivos, modo professor completo) para quem deseja expandir sua experiência."
   },
   {
-    question: "Preciso de internet para usar?",
-    answer: "Não! BíbliaFS funciona completamente offline. Baixe a Bíblia uma vez e estude em qualquer lugar, mesmo sem conexão."
+    question: "O que funciona offline?",
+    answer: "Leitura da Bíblia, planos de leitura, notas e destaques funcionam completamente offline. O assistente IA, podcasts e recursos de comunidade requerem conexão com a internet para funcionarem."
   },
   {
     question: "Como o assistente IA funciona?",
-    answer: "Nossa IA foi treinada em teologia cristã para fornecer respostas equilibradas e respeitosas. Ela ajuda você a entender melhor os versículos e oferece perspectivas teológicas."
+    answer: "Nossa IA foi treinada com base em tradições teológicas cristãs diversas (reformada, católica, pentecostal) para fornecer respostas equilibradas. Ela analisa o contexto bíblico para respostas mais precisas. Como qualquer IA, pode ocasionalmente gerar interpretações imprecisas—use sempre sua própria leitura das Escrituras como referência final. O assistente é uma ferramenta de estudo, não um substituto para sua interpretação pessoal ou orientação pastoral."
+  },
+  {
+    question: "Meus dados são privados?",
+    answer: "Sim! Seus dados pessoais, anotações e histórico de leitura são protegidos conforme nossa Política de Privacidade (link no rodapé). Nunca vendemos dados de usuários. Veja nossos Termos de Uso para mais detalhes."
   },
   {
     question: "Posso compartilhar estudos com meu grupo?",
@@ -292,10 +296,10 @@ export default function Landing() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Zap, title: "Assistente IA", desc: "Respostas teológicas em tempo real" },
+              { icon: Zap, title: "Assistente IA", desc: "Respostas teológicas (requer internet)" },
               { icon: Sparkles, title: "Temas Premium", desc: "4 temas exclusivos + personalizáveis" },
-              { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia sem internet" },
-              { icon: Shield, title: "100% Gratuito", desc: "Use grátis para sempre" },
+              { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia + planos sem internet" },
+              { icon: Shield, title: "Plano Básico Gratuito", desc: "Recursos essenciais para sempre" },
             ].map((benefit, idx) => (
               <div key={idx} className="p-6 rounded-lg bg-background/50 border border-border/50 hover-elevate">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
