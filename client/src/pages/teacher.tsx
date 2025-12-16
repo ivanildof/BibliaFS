@@ -254,21 +254,12 @@ export default function Teacher() {
     setIsAssistantLoading(true);
 
     try {
-      const response = await fetch("/api/teacher/ask-assistant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ question: assistantInput, context: "Aula bíblica" }),
-      });
-
-      if (!response.ok) throw new Error("Falha ao consultar assistente");
-
-      const data = await response.json();
+      const data = await apiRequest("POST", "/api/teacher/ask-assistant", { question: assistantInput, context: "Aula bíblica" });
       setAssistantMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erro",
-        description: "Não foi possível consultar o assistente IA",
+        description: error.message || "Não foi possível consultar o assistente IA",
         variant: "destructive",
       });
       setAssistantMessages(prev => prev.slice(0, -1));
@@ -292,16 +283,7 @@ export default function Teacher() {
 
     setIsGeneratingAI(true);
     try {
-      const response = await fetch("/api/teacher/generate-lesson-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ title, scriptureBase }),
-      });
-
-      if (!response.ok) throw new Error("Falha ao gerar conteúdo");
-
-      const data = await response.json();
+      const data = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase });
       
       if (data.description) form.setValue("description", data.description);
       if (data.objectives?.length) setObjectives(data.objectives);
@@ -311,10 +293,10 @@ export default function Teacher() {
         title: "Conteúdo gerado!",
         description: "A IA sugeriu objetivos e perguntas para sua aula",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erro ao gerar",
-        description: "Tente novamente ou preencha manualmente",
+        description: error.message || "Tente novamente ou preencha manualmente",
         variant: "destructive",
       });
     } finally {
