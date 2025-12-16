@@ -1,12 +1,13 @@
-// Bible Audio Service - Online/Offline Smart Playback with Backend API + IndexedDB fallback
+// Bible Audio Service - Online/Offline Smart Playback with CDN + Backend fallback
 
 // Define inline type to avoid circular dependency
 interface OfflineContextType {
   getOfflineAudio?: (bookCode: string, chapter: number, version: string) => Promise<ArrayBuffer | null>;
-  saveOfflineAudio?: (bookCode: string, chapter: number, version: string, audioData: ArrayBuffer) => Promise<void>;
 }
 
-// Use backend API for audio (generates via OpenAI TTS and caches)
+// Primary: CDN for pre-recorded audio
+// Fallback: Backend API for on-demand generation with OpenAI TTS
+const AUDIO_CDN_BASE = "https://cdn.bibliafs.com.br/bible-audio";
 const AUDIO_API_BASE = "/api/bible/audio";
 
 // Comprehensive book mapping: Portuguese + English names → abbreviations
@@ -100,8 +101,8 @@ export async function getAudioUrl(
   language: string = "pt"
 ): Promise<string> {
   const bookCode = getBookCode(book);
-  // Use backend API that generates and caches audio
-  return `${AUDIO_API_BASE}/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+  // Format: /bible-audio/{LANGUAGE}/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3
+  return `${AUDIO_CDN_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
 }
 
 export async function playBibleAudio(
@@ -113,7 +114,16 @@ export async function playBibleAudio(
   const bookCode = getBookCode(book);
 
   try {
-    // First: check offline cache (IndexedDB)
+    // Online: try CDN first
+    if (isOnline) {
+      const url = await getAudioUrl(book, chapter, version, language);
+      console.log(`[Audio] Trying CDN: ${url}`);
+      audioElement.src = url;
+      await audioElement.play();
+      return;
+    }
+
+    // Offline: check IndexedDB
     if (offline?.getOfflineAudio) {
       const cachedAudio = await offline.getOfflineAudio(bookCode, chapter, version);
       if (cachedAudio) {
@@ -126,47 +136,7 @@ export async function playBibleAudio(
       }
     }
 
-    // Online: fetch from backend API (which generates via OpenAI TTS and caches)
-    if (isOnline) {
-      const token = getAuthToken();
-      if (!token) {
-        throw new Error("Faça login para ouvir o áudio.");
-      }
-
-      const url = await getAudioUrl(book, chapter, version, language);
-      console.log(`[Audio] Fetching from backend: ${url}`);
-      
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erro ao carregar áudio: ${response.status}`);
-      }
-
-      const audioBlob = await response.blob();
-      const audioArrayBuffer = await audioBlob.arrayBuffer();
-      
-      // Save to offline cache for future use
-      if (offline?.saveOfflineAudio) {
-        try {
-          await offline.saveOfflineAudio(bookCode, chapter, version, audioArrayBuffer);
-          console.log(`[Audio] Saved to offline cache: ${book} ${chapter}`);
-        } catch (cacheErr) {
-          console.warn("[Audio] Failed to save to offline cache:", cacheErr);
-        }
-      }
-
-      const blobUrl = URL.createObjectURL(audioBlob);
-      audioElement.src = blobUrl;
-      await audioElement.play();
-      return;
-    }
-
-    throw new Error("Áudio não disponível. Conecte à internet ou baixe para uso offline.");
+    throw new Error("Áudio não disponível. Baixe para ouvir offline.");
   } catch (error) {
     console.error("Erro ao reproduzir áudio:", error);
     throw error;
@@ -180,44 +150,43 @@ export async function downloadChapterAudio(
   language: string = "pt",
   onProgress?: (progress: number) => void
 ): Promise<Blob> {
-  const token = getAuthToken();
-  if (!token) {
-    throw new Error("Faça login para baixar o áudio.");
-  }
-
   const url = await getAudioUrl(book, chapter, version, language);
   console.log(`[Audio] Downloading: ${url}`);
 
-  // Notify start
-  onProgress?.(5);
-
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-
+  const response = await fetch(url);
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `Falha ao baixar áudio: ${response.status}`);
+    throw new Error(`Falha ao baixar áudio: ${response.status}`);
   }
 
-  // Progress simulation since we can't stream with auth headers easily
-  onProgress?.(50);
+  const contentLength = Number(response.headers.get("content-length")) || 0;
+  const reader = response.body?.getReader();
 
-  const blob = await response.blob();
-  
-  onProgress?.(100);
-  console.log(`[Audio] Downloaded ${book} ${chapter}: ${blob.size} bytes`);
+  if (!reader) {
+    throw new Error("Não foi possível ler o stream de áudio");
+  }
 
-  return blob;
+  const chunks: Uint8Array[] = [];
+  let receivedLength = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    chunks.push(value);
+    receivedLength += value.length;
+
+    if (onProgress && contentLength) {
+      onProgress(Math.round((receivedLength / contentLength) * 100));
+    }
+  }
+
+  return new Blob(chunks, { type: "audio/mpeg" });
 }
 
 export async function downloadBookAudio(
   book: string,
   chapters: number,
   version: string = "nvi",
-  language: string = "pt",
   onProgress?: (progress: number) => void
 ): Promise<Map<number, Blob>> {
   const audioMap = new Map<number, Blob>();
@@ -225,7 +194,7 @@ export async function downloadBookAudio(
 
   for (let ch = 1; ch <= totalChapters; ch++) {
     try {
-      const audio = await downloadChapterAudio(book, ch, version, language);
+      const audio = await downloadChapterAudio(book, ch, version);
       audioMap.set(ch, audio);
       onProgress?.(Math.round((ch / totalChapters) * 100));
     } catch (error) {
