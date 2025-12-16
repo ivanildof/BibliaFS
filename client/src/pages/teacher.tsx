@@ -502,7 +502,7 @@ export default function Teacher() {
               
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="max-h-[60vh] overflow-y-auto px-1 space-y-4">
+                  <div className="max-h-[70vh] overflow-y-auto px-1 space-y-4">
                     <FormField
                       control={form.control}
                       name="title"
@@ -739,13 +739,13 @@ export default function Teacher() {
                           className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                         >
                           <div
-                            className={`max-w-xs px-4 py-2 rounded-lg ${
+                            className={`max-w-md px-4 py-3 rounded-lg ${
                               msg.role === "user"
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-background border"
                             }`}
                           >
-                            <p className="text-sm">{msg.content}</p>
+                            <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                           </div>
                         </div>
                       ))}
