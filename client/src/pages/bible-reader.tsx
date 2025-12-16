@@ -154,8 +154,10 @@ export default function BibleReader() {
   const saveAudioProgress = async (position: number, duration: number) => {
     if (!selectedBook) return;
     try {
-      await apiRequest("/api/audio/progress", {
+      fetch("/api/audio/progress", {
         method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           book: selectedBook,
           chapter: selectedChapter,
@@ -164,7 +166,7 @@ export default function BibleReader() {
           totalDuration: Math.floor(duration),
           completed: position >= duration - 5,
         }),
-      });
+      }).catch(console.error);
     } catch (error) {
       console.error("Erro ao salvar progresso:", error);
     }

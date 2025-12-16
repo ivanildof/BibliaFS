@@ -1,5 +1,4 @@
-// Bible Audio Service - Online/Offline Smart Playback
-import type { OfflineContextType } from "@/contexts/OfflineContext";
+// Bible Audio Service - Online/Offline Smart Playback with CDN/IndexedDB fallback
 
 const AUDIO_CDN_BASE = "https://cdn.bibliafs.com.br/bible-audio";
 const BOOK_CODES: { [key: string]: string } = {
