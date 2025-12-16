@@ -201,6 +201,7 @@ export default function Teacher() {
   const [assistantInput, setAssistantInput] = useState("");
   const [isAssistantLoading, setIsAssistantLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const objectivesRef = useRef<HTMLDivElement>(null);
 
   const { data: lessons = [], isLoading, error } = useQuery<Lesson[]>({
     queryKey: ["/api/teacher/lessons"],
@@ -288,6 +289,11 @@ export default function Teacher() {
       if (data.description) form.setValue("description", data.description);
       if (data.objectives?.length) setObjectives(data.objectives);
       if (data.questions?.length) setQuestions(data.questions);
+
+      // Scroll para mostrar conteúdo gerado
+      setTimeout(() => {
+        objectivesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
 
       toast({
         title: "Conteúdo gerado!",
@@ -500,7 +506,7 @@ export default function Teacher() {
                     </div>
 
                     {/* Objectives Section */}
-                    <div className="space-y-3 pt-4 border-t">
+                    <div ref={objectivesRef} className="space-y-3 pt-4 border-t">
                       <FormLabel className="flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4" />
                         Objetivos da Aula
