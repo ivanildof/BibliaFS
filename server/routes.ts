@@ -1108,25 +1108,33 @@ Forneça 3 objetivos de aprendizado claros e 4 perguntas para discussão que est
         return res.status(503).json({ error: "Serviço de IA indisponível" });
       }
 
-      const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica. Responda a pergunta do professor de forma clara, concisa e biblicamente relevante.
+      const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica e teologia. Responda de forma específica, aprofundada e com referências bíblicas quando apropriado.
 
 Contexto: ${context || "Educação bíblica cristã"}
-Pergunta: ${question}
+Pergunta do Professor: ${question}
 
-Forneça uma resposta prática e aplicável para uso em sala de aula.`;
+IMPORTANTE: 
+- Forneça uma resposta ESPECÍFICA e NÃO GENÉRICA
+- Use exemplos concretos e aplicáveis
+- Cite versículos bíblicos relevantes quando apropriado
+- Dê sugestões práticas para usar em sala de aula
+- Responda em português brasileiro`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const response = await openaiInstance.chat.completions.create({
         model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.7,
+        temperature: 0.8,
+        max_tokens: 1500,
       });
 
       const answer = response.choices[0]?.message?.content;
       if (!answer) {
+        console.error("Resposta vazia da IA para pergunta:", question);
         throw new Error("Resposta vazia da IA");
       }
 
+      console.log("Assistente respondeu:", { question: question.substring(0, 50), answer: answer.substring(0, 100) });
       res.json({ answer });
     } catch (error: any) {
       console.error("Erro no assistente IA:", error);

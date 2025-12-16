@@ -251,12 +251,15 @@ export default function Teacher() {
     if (!assistantInput.trim()) return;
 
     const userMessage = { role: "user" as const, content: assistantInput };
+    const questionToSend = assistantInput;
+    
     setAssistantMessages(prev => [...prev, userMessage]);
     setAssistantInput("");
     setIsAssistantLoading(true);
 
     try {
-      const data = await apiRequest("POST", "/api/teacher/ask-assistant", { question: assistantInput, context: "Aula bíblica" });
+      const data = await apiRequest("POST", "/api/teacher/ask-assistant", { question: questionToSend, context: "Aula bíblica" });
+      if (!data.answer) throw new Error("Resposta vazia do assistente");
       setAssistantMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
     } catch (error: any) {
       toast({
