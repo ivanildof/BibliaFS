@@ -119,9 +119,9 @@ export default function AIStudy() {
           </Card>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Chat Area */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2 order-2 lg:order-1">
             <Card className="h-[500px] md:h-[600px] flex flex-col">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -222,8 +222,8 @@ export default function AIStudy() {
             </Card>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
+          {/* Sidebar - Suggestions first on mobile */}
+          <div className="space-y-6 order-1 lg:order-2">
             {/* Suggested Questions */}
             <Card>
               <CardHeader>
@@ -235,12 +235,12 @@ export default function AIStudy() {
                   <Button
                     key={index}
                     variant="outline"
-                    className="w-full justify-start text-left h-auto py-3 px-4"
+                    className="w-full justify-start text-left h-auto py-3 px-4 whitespace-normal"
                     onClick={() => handleSuggestionClick(prompt)}
                     data-testid={`button-suggestion-${index}`}
                   >
-                    <BookOpen className="h-4 w-4 mr-2 shrink-0" />
-                    <span className="text-sm">{prompt}</span>
+                    <BookOpen className="h-4 w-4 mr-2 shrink-0 mt-0.5" />
+                    <span className="text-sm leading-tight">{prompt}</span>
                   </Button>
                 ))}
               </CardContent>
