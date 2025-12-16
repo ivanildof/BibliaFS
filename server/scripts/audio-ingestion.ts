@@ -1,18 +1,15 @@
 /**
  * Bible Audio Ingestion Script
- * Downloads audio from public domain sources and uploads to Supabase Storage
+ * Downloads audio from eBible.org (public domain) and uploads to Supabase Storage
  * 
- * Sources:
- * - PT: Almeida Revista e Corrigida (public domain)
- * - EN: World English Bible (public domain)
- * - ES: Reina Valera 1960 (public domain in most uses)
+ * Source: eBible.org - World English Bible (WEB) audio
+ * License: Public Domain - free to download, copy, and distribute
  * 
- * Usage: npx tsx server/scripts/audio-ingestion.ts [language] [startBook] [endBook]
+ * Usage: npx tsx server/scripts/audio-ingestion.ts [startBookIdx] [endBookIdx]
  */
 
 import { createClient } from "@supabase/supabase-js";
 import * as fs from "fs";
-import * as path from "path";
 
 // Load environment
 import "dotenv/config";
@@ -29,140 +26,118 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const BUCKET_NAME = "bible-audio";
 
-// Bible books with chapter counts
-const BIBLE_BOOKS = [
-  { abbrev: "gn", name: "Genesis", chapters: 50 },
-  { abbrev: "ex", name: "Exodus", chapters: 40 },
-  { abbrev: "lv", name: "Leviticus", chapters: 27 },
-  { abbrev: "nm", name: "Numbers", chapters: 36 },
-  { abbrev: "dt", name: "Deuteronomy", chapters: 34 },
-  { abbrev: "js", name: "Joshua", chapters: 24 },
-  { abbrev: "jz", name: "Judges", chapters: 21 },
-  { abbrev: "rt", name: "Ruth", chapters: 4 },
-  { abbrev: "1sm", name: "1Samuel", chapters: 31 },
-  { abbrev: "2sm", name: "2Samuel", chapters: 24 },
-  { abbrev: "1rs", name: "1Kings", chapters: 22 },
-  { abbrev: "2rs", name: "2Kings", chapters: 25 },
-  { abbrev: "1cr", name: "1Chronicles", chapters: 29 },
-  { abbrev: "2cr", name: "2Chronicles", chapters: 36 },
-  { abbrev: "ed", name: "Ezra", chapters: 10 },
-  { abbrev: "ne", name: "Nehemiah", chapters: 13 },
-  { abbrev: "et", name: "Esther", chapters: 10 },
-  { abbrev: "job", name: "Job", chapters: 42 },
-  { abbrev: "sl", name: "Psalms", chapters: 150 },
-  { abbrev: "pv", name: "Proverbs", chapters: 31 },
-  { abbrev: "ec", name: "Ecclesiastes", chapters: 12 },
-  { abbrev: "ct", name: "SongofSolomon", chapters: 8 },
-  { abbrev: "is", name: "Isaiah", chapters: 66 },
-  { abbrev: "jr", name: "Jeremiah", chapters: 52 },
-  { abbrev: "lm", name: "Lamentations", chapters: 5 },
-  { abbrev: "ez", name: "Ezekiel", chapters: 48 },
-  { abbrev: "dn", name: "Daniel", chapters: 12 },
-  { abbrev: "os", name: "Hosea", chapters: 14 },
-  { abbrev: "jl", name: "Joel", chapters: 3 },
-  { abbrev: "am", name: "Amos", chapters: 9 },
-  { abbrev: "ob", name: "Obadiah", chapters: 1 },
-  { abbrev: "jn", name: "Jonah", chapters: 4 },
-  { abbrev: "mq", name: "Micah", chapters: 7 },
-  { abbrev: "na", name: "Nahum", chapters: 3 },
-  { abbrev: "hc", name: "Habakkuk", chapters: 3 },
-  { abbrev: "sf", name: "Zephaniah", chapters: 3 },
-  { abbrev: "ag", name: "Haggai", chapters: 2 },
-  { abbrev: "zc", name: "Zechariah", chapters: 14 },
-  { abbrev: "ml", name: "Malachi", chapters: 4 },
-  { abbrev: "mt", name: "Matthew", chapters: 28 },
-  { abbrev: "mc", name: "Mark", chapters: 16 },
-  { abbrev: "lc", name: "Luke", chapters: 24 },
-  { abbrev: "jo", name: "John", chapters: 21 },
-  { abbrev: "at", name: "Acts", chapters: 28 },
-  { abbrev: "rm", name: "Romans", chapters: 16 },
-  { abbrev: "1co", name: "1Corinthians", chapters: 16 },
-  { abbrev: "2co", name: "2Corinthians", chapters: 13 },
-  { abbrev: "gl", name: "Galatians", chapters: 6 },
-  { abbrev: "ef", name: "Ephesians", chapters: 6 },
-  { abbrev: "fp", name: "Philippians", chapters: 4 },
-  { abbrev: "cl", name: "Colossians", chapters: 4 },
-  { abbrev: "1ts", name: "1Thessalonians", chapters: 5 },
-  { abbrev: "2ts", name: "2Thessalonians", chapters: 3 },
-  { abbrev: "1tm", name: "1Timothy", chapters: 6 },
-  { abbrev: "2tm", name: "2Timothy", chapters: 4 },
-  { abbrev: "tt", name: "Titus", chapters: 3 },
-  { abbrev: "fm", name: "Philemon", chapters: 1 },
-  { abbrev: "hb", name: "Hebrews", chapters: 13 },
-  { abbrev: "tg", name: "James", chapters: 5 },
-  { abbrev: "1pe", name: "1Peter", chapters: 5 },
-  { abbrev: "2pe", name: "2Peter", chapters: 3 },
-  { abbrev: "1jo", name: "1John", chapters: 5 },
-  { abbrev: "2jo", name: "2John", chapters: 1 },
-  { abbrev: "3jo", name: "3John", chapters: 1 },
-  { abbrev: "jd", name: "Jude", chapters: 1 },
-  { abbrev: "ap", name: "Revelation", chapters: 22 },
-];
-
-// Audio sources - using free public domain audio
-// Source: wordproject.org (public domain audio Bibles)
-const AUDIO_SOURCES: Record<string, { baseUrl: string; version: string; bookMapping: Record<string, string> }> = {
-  pt: {
-    baseUrl: "https://audio.wordproject.org/pt/drama",
-    version: "ACF",
-    bookMapping: {
-      gn: "01", ex: "02", lv: "03", nm: "04", dt: "05",
-      js: "06", jz: "07", rt: "08", "1sm": "09", "2sm": "10",
-      "1rs": "11", "2rs": "12", "1cr": "13", "2cr": "14",
-      ed: "15", ne: "16", et: "17", job: "18", sl: "19",
-      pv: "20", ec: "21", ct: "22", is: "23", jr: "24",
-      lm: "25", ez: "26", dn: "27", os: "28", jl: "29",
-      am: "30", ob: "31", jn: "32", mq: "33", na: "34",
-      hc: "35", sf: "36", ag: "37", zc: "38", ml: "39",
-      mt: "40", mc: "41", lc: "42", jo: "43", at: "44",
-      rm: "45", "1co": "46", "2co": "47", gl: "48", ef: "49",
-      fp: "50", cl: "51", "1ts": "52", "2ts": "53", "1tm": "54",
-      "2tm": "55", tt: "56", fm: "57", hb: "58", tg: "59",
-      "1pe": "60", "2pe": "61", "1jo": "62", "2jo": "63",
-      "3jo": "64", jd: "65", ap: "66"
-    }
-  },
-  en: {
-    baseUrl: "https://audio.wordproject.org/en/drama",
-    version: "KJV",
-    bookMapping: {
-      gn: "01", ex: "02", lv: "03", nm: "04", dt: "05",
-      js: "06", jz: "07", rt: "08", "1sm": "09", "2sm": "10",
-      "1rs": "11", "2rs": "12", "1cr": "13", "2cr": "14",
-      ed: "15", ne: "16", et: "17", job: "18", sl: "19",
-      pv: "20", ec: "21", ct: "22", is: "23", jr: "24",
-      lm: "25", ez: "26", dn: "27", os: "28", jl: "29",
-      am: "30", ob: "31", jn: "32", mq: "33", na: "34",
-      hc: "35", sf: "36", ag: "37", zc: "38", ml: "39",
-      mt: "40", mc: "41", lc: "42", jo: "43", at: "44",
-      rm: "45", "1co": "46", "2co": "47", gl: "48", ef: "49",
-      fp: "50", cl: "51", "1ts": "52", "2ts": "53", "1tm": "54",
-      "2tm": "55", tt: "56", fm: "57", hb: "58", tg: "59",
-      "1pe": "60", "2pe": "61", "1jo": "62", "2jo": "63",
-      "3jo": "64", jd: "65", ap: "66"
-    }
-  },
-  es: {
-    baseUrl: "https://audio.wordproject.org/es/drama",
-    version: "RV60",
-    bookMapping: {
-      gn: "01", ex: "02", lv: "03", nm: "04", dt: "05",
-      js: "06", jz: "07", rt: "08", "1sm": "09", "2sm": "10",
-      "1rs": "11", "2rs": "12", "1cr": "13", "2cr": "14",
-      ed: "15", ne: "16", et: "17", job: "18", sl: "19",
-      pv: "20", ec: "21", ct: "22", is: "23", jr: "24",
-      lm: "25", ez: "26", dn: "27", os: "28", jl: "29",
-      am: "30", ob: "31", jn: "32", mq: "33", na: "34",
-      hc: "35", sf: "36", ag: "37", zc: "38", ml: "39",
-      mt: "40", mc: "41", lc: "42", jo: "43", at: "44",
-      rm: "45", "1co": "46", "2co": "47", gl: "48", ef: "49",
-      fp: "50", cl: "51", "1ts": "52", "2ts": "53", "1tm": "54",
-      "2tm": "55", tt: "56", fm: "57", hb: "58", tg: "59",
-      "1pe": "60", "2pe": "61", "1jo": "62", "2jo": "63",
-      "3jo": "64", jd: "65", ap: "66"
-    }
-  }
+// Chapter number to English word mapping (for eBible.org URL format - uses underscores)
+const CHAPTER_WORDS: { [key: number]: string } = {
+  1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five",
+  6: "Six", 7: "Seven", 8: "Eight", 9: "Nine", 10: "Ten",
+  11: "Eleven", 12: "Twelve", 13: "Thirteen", 14: "Fourteen", 15: "Fifteen",
+  16: "Sixteen", 17: "Seventeen", 18: "Eighteen", 19: "Nineteen", 20: "Twenty",
+  21: "Twenty_One", 22: "Twenty_Two", 23: "Twenty_Three", 24: "Twenty_Four", 25: "Twenty_Five",
+  26: "Twenty_Six", 27: "Twenty_Seven", 28: "Twenty_Eight", 29: "Twenty_Nine", 30: "Thirty",
+  31: "Thirty_One", 32: "Thirty_Two", 33: "Thirty_Three", 34: "Thirty_Four", 35: "Thirty_Five",
+  36: "Thirty_Six", 37: "Thirty_Seven", 38: "Thirty_Eight", 39: "Thirty_Nine", 40: "Forty",
+  41: "Forty_One", 42: "Forty_Two", 43: "Forty_Three", 44: "Forty_Four", 45: "Forty_Five",
+  46: "Forty_Six", 47: "Forty_Seven", 48: "Forty_Eight", 49: "Forty_Nine", 50: "Fifty",
+  51: "Fifty_One", 52: "Fifty_Two", 53: "Fifty_Three", 54: "Fifty_Four", 55: "Fifty_Five",
+  56: "Fifty_Six", 57: "Fifty_Seven", 58: "Fifty_Eight", 59: "Fifty_Nine", 60: "Sixty",
+  61: "Sixty_One", 62: "Sixty_Two", 63: "Sixty_Three", 64: "Sixty_Four", 65: "Sixty_Five",
+  66: "Sixty_Six", 67: "Sixty_Seven", 68: "Sixty_Eight", 69: "Sixty_Nine", 70: "Seventy",
+  71: "Seventy_One", 72: "Seventy_Two", 73: "Seventy_Three", 74: "Seventy_Four", 75: "Seventy_Five",
+  76: "Seventy_Six", 77: "Seventy_Seven", 78: "Seventy_Eight", 79: "Seventy_Nine", 80: "Eighty",
+  81: "Eighty_One", 82: "Eighty_Two", 83: "Eighty_Three", 84: "Eighty_Four", 85: "Eighty_Five",
+  86: "Eighty_Six", 87: "Eighty_Seven", 88: "Eighty_Eight", 89: "Eighty_Nine", 90: "Ninety",
+  91: "Ninety_One", 92: "Ninety_Two", 93: "Ninety_Three", 94: "Ninety_Four", 95: "Ninety_Five",
+  96: "Ninety_Six", 97: "Ninety_Seven", 98: "Ninety_Eight", 99: "Ninety_Nine", 100: "One_Hundred",
+  101: "One_Hundred_One", 102: "One_Hundred_Two", 103: "One_Hundred_Three", 104: "One_Hundred_Four",
+  105: "One_Hundred_Five", 106: "One_Hundred_Six", 107: "One_Hundred_Seven", 108: "One_Hundred_Eight",
+  109: "One_Hundred_Nine", 110: "One_Hundred_Ten", 111: "One_Hundred_Eleven", 112: "One_Hundred_Twelve",
+  113: "One_Hundred_Thirteen", 114: "One_Hundred_Fourteen", 115: "One_Hundred_Fifteen",
+  116: "One_Hundred_Sixteen", 117: "One_Hundred_Seventeen", 118: "One_Hundred_Eighteen",
+  119: "One_Hundred_Nineteen", 120: "One_Hundred_Twenty", 121: "One_Hundred_Twenty_One",
+  122: "One_Hundred_Twenty_Two", 123: "One_Hundred_Twenty_Three", 124: "One_Hundred_Twenty_Four",
+  125: "One_Hundred_Twenty_Five", 126: "One_Hundred_Twenty_Six", 127: "One_Hundred_Twenty_Seven",
+  128: "One_Hundred_Twenty_Eight", 129: "One_Hundred_Twenty_Nine", 130: "One_Hundred_Thirty",
+  131: "One_Hundred_Thirty_One", 132: "One_Hundred_Thirty_Two", 133: "One_Hundred_Thirty_Three",
+  134: "One_Hundred_Thirty_Four", 135: "One_Hundred_Thirty_Five", 136: "One_Hundred_Thirty_Six",
+  137: "One_Hundred_Thirty_Seven", 138: "One_Hundred_Thirty_Eight", 139: "One_Hundred_Thirty_Nine",
+  140: "One_Hundred_Forty", 141: "One_Hundred_Forty_One", 142: "One_Hundred_Forty_Two",
+  143: "One_Hundred_Forty_Three", 144: "One_Hundred_Forty_Four", 145: "One_Hundred_Forty_Five",
+  146: "One_Hundred_Forty_Six", 147: "One_Hundred_Forty_Seven", 148: "One_Hundred_Forty_Eight",
+  149: "One_Hundred_Forty_Nine", 150: "One_Hundred_Fifty"
 };
+
+// Bible books with eBible.org URL structure
+// Format: https://ebible.org/eng-web/audio/{bookNum}_{bookName}/{chapterFile}.mp3
+const BIBLE_BOOKS = [
+  // Old Testament
+  { abbrev: "gn", name: "Genesis", urlName: "Genesis", bookNum: "01", chapters: 50 },
+  { abbrev: "ex", name: "Exodus", urlName: "Exodus", bookNum: "02", chapters: 40 },
+  { abbrev: "lv", name: "Leviticus", urlName: "Leviticus", bookNum: "03", chapters: 27 },
+  { abbrev: "nm", name: "Numbers", urlName: "Numbers", bookNum: "04", chapters: 36 },
+  { abbrev: "dt", name: "Deuteronomy", urlName: "Deuteronomy", bookNum: "05", chapters: 34 },
+  { abbrev: "js", name: "Joshua", urlName: "Joshua", bookNum: "06", chapters: 24 },
+  { abbrev: "jz", name: "Judges", urlName: "Judges", bookNum: "07", chapters: 21 },
+  { abbrev: "rt", name: "Ruth", urlName: "Ruth", bookNum: "08", chapters: 4 },
+  { abbrev: "1sm", name: "1 Samuel", urlName: "First_Samuel", bookNum: "09", chapters: 31 },
+  { abbrev: "2sm", name: "2 Samuel", urlName: "Second_Samuel", bookNum: "10", chapters: 24 },
+  { abbrev: "1rs", name: "1 Kings", urlName: "First_Kings", bookNum: "11", chapters: 22 },
+  { abbrev: "2rs", name: "2 Kings", urlName: "Second_Kings", bookNum: "12", chapters: 25 },
+  { abbrev: "1cr", name: "1 Chronicles", urlName: "First_Chronicles", bookNum: "13", chapters: 29 },
+  { abbrev: "2cr", name: "2 Chronicles", urlName: "Second_Chronicles", bookNum: "14", chapters: 36 },
+  { abbrev: "ed", name: "Ezra", urlName: "Ezra", bookNum: "15", chapters: 10 },
+  { abbrev: "ne", name: "Nehemiah", urlName: "Nehemiah", bookNum: "16", chapters: 13 },
+  { abbrev: "et", name: "Esther", urlName: "Esther", bookNum: "17", chapters: 10 },
+  { abbrev: "job", name: "Job", urlName: "Job", bookNum: "18", chapters: 42 },
+  { abbrev: "sl", name: "Psalms", urlName: "Psalms", bookNum: "19", chapters: 150 },
+  { abbrev: "pv", name: "Proverbs", urlName: "Proverbs", bookNum: "20", chapters: 31 },
+  { abbrev: "ec", name: "Ecclesiastes", urlName: "Ecclesiastes", bookNum: "21", chapters: 12 },
+  { abbrev: "ct", name: "Song of Solomon", urlName: "Song_of_Solomon", bookNum: "22", chapters: 8 },
+  { abbrev: "is", name: "Isaiah", urlName: "Isaiah", bookNum: "23", chapters: 66 },
+  { abbrev: "jr", name: "Jeremiah", urlName: "Jeremiah", bookNum: "24", chapters: 52 },
+  { abbrev: "lm", name: "Lamentations", urlName: "Lamentations", bookNum: "25", chapters: 5 },
+  { abbrev: "ez", name: "Ezekiel", urlName: "Ezekiel", bookNum: "26", chapters: 48 },
+  { abbrev: "dn", name: "Daniel", urlName: "Daniel", bookNum: "27", chapters: 12 },
+  { abbrev: "os", name: "Hosea", urlName: "Hosea", bookNum: "28", chapters: 14 },
+  { abbrev: "jl", name: "Joel", urlName: "Joel", bookNum: "29", chapters: 3 },
+  { abbrev: "am", name: "Amos", urlName: "Amos", bookNum: "30", chapters: 9 },
+  { abbrev: "ob", name: "Obadiah", urlName: "Obadiah", bookNum: "31", chapters: 1 },
+  { abbrev: "jn", name: "Jonah", urlName: "Jonah", bookNum: "32", chapters: 4 },
+  { abbrev: "mq", name: "Micah", urlName: "Micah", bookNum: "33", chapters: 7 },
+  { abbrev: "na", name: "Nahum", urlName: "Nahum", bookNum: "34", chapters: 3 },
+  { abbrev: "hc", name: "Habakkuk", urlName: "Habakkuk", bookNum: "35", chapters: 3 },
+  { abbrev: "sf", name: "Zephaniah", urlName: "Zephaniah", bookNum: "36", chapters: 3 },
+  { abbrev: "ag", name: "Haggai", urlName: "Haggai", bookNum: "37", chapters: 2 },
+  { abbrev: "zc", name: "Zechariah", urlName: "Zechariah", bookNum: "38", chapters: 14 },
+  { abbrev: "ml", name: "Malachi", urlName: "Malachi", bookNum: "39", chapters: 4 },
+  // New Testament
+  { abbrev: "mt", name: "Matthew", urlName: "Matthew", bookNum: "40", chapters: 28 },
+  { abbrev: "mc", name: "Mark", urlName: "Mark", bookNum: "41", chapters: 16 },
+  { abbrev: "lc", name: "Luke", urlName: "Luke", bookNum: "42", chapters: 24 },
+  { abbrev: "jo", name: "John", urlName: "John", bookNum: "43", chapters: 21 },
+  { abbrev: "at", name: "Acts", urlName: "Acts", bookNum: "44", chapters: 28 },
+  { abbrev: "rm", name: "Romans", urlName: "Romans", bookNum: "45", chapters: 16 },
+  { abbrev: "1co", name: "1 Corinthians", urlName: "First_Corinthians", bookNum: "46", chapters: 16 },
+  { abbrev: "2co", name: "2 Corinthians", urlName: "Second_Corinthians", bookNum: "47", chapters: 13 },
+  { abbrev: "gl", name: "Galatians", urlName: "Galatians", bookNum: "48", chapters: 6 },
+  { abbrev: "ef", name: "Ephesians", urlName: "Ephesians", bookNum: "49", chapters: 6 },
+  { abbrev: "fp", name: "Philippians", urlName: "Philippians", bookNum: "50", chapters: 4 },
+  { abbrev: "cl", name: "Colossians", urlName: "Colossians", bookNum: "51", chapters: 4 },
+  { abbrev: "1ts", name: "1 Thessalonians", urlName: "First_Thessalonians", bookNum: "52", chapters: 5 },
+  { abbrev: "2ts", name: "2 Thessalonians", urlName: "Second_Thessalonians", bookNum: "53", chapters: 3 },
+  { abbrev: "1tm", name: "1 Timothy", urlName: "First_Timothy", bookNum: "54", chapters: 6 },
+  { abbrev: "2tm", name: "2 Timothy", urlName: "Second_Timothy", bookNum: "55", chapters: 4 },
+  { abbrev: "tt", name: "Titus", urlName: "Titus", bookNum: "56", chapters: 3 },
+  { abbrev: "fm", name: "Philemon", urlName: "Philemon", bookNum: "57", chapters: 1 },
+  { abbrev: "hb", name: "Hebrews", urlName: "Hebrews", bookNum: "58", chapters: 13 },
+  { abbrev: "tg", name: "James", urlName: "James", bookNum: "59", chapters: 5 },
+  { abbrev: "1pe", name: "1 Peter", urlName: "First_Peter", bookNum: "60", chapters: 5 },
+  { abbrev: "2pe", name: "2 Peter", urlName: "Second_Peter", bookNum: "61", chapters: 3 },
+  { abbrev: "1jo", name: "1 John", urlName: "First_John", bookNum: "62", chapters: 5 },
+  { abbrev: "2jo", name: "2 John", urlName: "Second_John", bookNum: "63", chapters: 1 },
+  { abbrev: "3jo", name: "3 John", urlName: "Third_John", bookNum: "64", chapters: 1 },
+  { abbrev: "jd", name: "Jude", urlName: "Jude", bookNum: "65", chapters: 1 },
+  { abbrev: "ap", name: "Revelation", urlName: "Revelations", bookNum: "66", chapters: 22 },
+];
 
 // Tracking file for resume capability
 const PROGRESS_FILE = "audio-ingestion-progress.json";
@@ -218,6 +193,13 @@ async function ensureBucketExists() {
   }
 }
 
+function getEbibleAudioUrl(book: typeof BIBLE_BOOKS[0], chapter: number): string {
+  const chapterStr = chapter.toString().padStart(2, "0");
+  const chapterWord = CHAPTER_WORDS[chapter] || `${chapter}`;
+  // Format: https://ebible.org/eng-web/audio/01_Genesis/01_01_Genesis_Chapter_One.mp3
+  return `https://ebible.org/eng-web/audio/${book.bookNum}_${book.urlName}/${book.bookNum}_${chapterStr}_${book.urlName}_Chapter_${chapterWord}.mp3`;
+}
+
 async function downloadAudio(url: string): Promise<ArrayBuffer | null> {
   try {
     const response = await fetch(url, {
@@ -245,6 +227,7 @@ async function uploadToSupabase(
   chapter: number,
   audioData: ArrayBuffer
 ): Promise<boolean> {
+  // Store as: EN/WEB/gn/1.mp3
   const filePath = `${lang.toUpperCase()}/${version.toUpperCase()}/${bookAbbrev}/${chapter}.mp3`;
   
   try {
@@ -260,7 +243,7 @@ async function uploadToSupabase(
       return false;
     }
     
-    console.log(`[Upload] Success: ${filePath}`);
+    console.log(`[Upload] Success: ${filePath} (${(audioData.byteLength / 1024 / 1024).toFixed(2)} MB)`);
     return true;
   } catch (error) {
     console.error(`[Upload] Error: ${filePath} -`, error);
@@ -268,38 +251,15 @@ async function uploadToSupabase(
   }
 }
 
-function getAudioUrl(lang: string, bookAbbrev: string, chapter: number): string {
-  const source = AUDIO_SOURCES[lang];
-  if (!source) {
-    throw new Error(`No audio source configured for language: ${lang}`);
-  }
-  
-  const bookNum = source.bookMapping[bookAbbrev];
-  if (!bookNum) {
-    throw new Error(`No book mapping for: ${bookAbbrev}`);
-  }
-  
-  // Format: https://audio.wordproject.org/pt/drama/01/01.mp3
-  const chapterStr = chapter.toString().padStart(2, "0");
-  return `${source.baseUrl}/${bookNum}/${chapterStr}.mp3`;
-}
-
 async function processBook(
-  lang: string,
   book: typeof BIBLE_BOOKS[0],
   progress: ProgressData
 ): Promise<{ success: number; failed: number }> {
-  const source = AUDIO_SOURCES[lang];
-  if (!source) {
-    console.error(`No audio source for language: ${lang}`);
-    return { success: 0, failed: book.chapters };
-  }
-  
   let success = 0;
   let failed = 0;
   
   for (let ch = 1; ch <= book.chapters; ch++) {
-    const key = `${lang}/${book.abbrev}/${ch}`;
+    const key = `en/web/${book.abbrev}/${ch}`;
     
     if (progress.completed[key]) {
       console.log(`[Skip] Already completed: ${key}`);
@@ -307,8 +267,8 @@ async function processBook(
       continue;
     }
     
-    const url = getAudioUrl(lang, book.abbrev, ch);
-    console.log(`[Download] ${key} from ${url}`);
+    const url = getEbibleAudioUrl(book, ch);
+    console.log(`[Download] ${book.name} ${ch} from eBible.org`);
     
     const audioData = await downloadAudio(url);
     
@@ -316,12 +276,13 @@ async function processBook(
       progress.failed[key] = "Download failed";
       failed++;
       saveProgress(progress);
+      // Try alternative URL format for some books
       continue;
     }
     
     const uploaded = await uploadToSupabase(
-      lang,
-      source.version,
+      "EN",
+      "WEB",
       book.abbrev,
       ch,
       audioData
@@ -338,8 +299,8 @@ async function processBook(
     
     saveProgress(progress);
     
-    // Rate limiting - wait 500ms between requests
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Rate limiting - wait 300ms between requests
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
   
   return { success, failed };
@@ -347,22 +308,14 @@ async function processBook(
 
 async function main() {
   const args = process.argv.slice(2);
-  const lang = args[0] || "pt";
-  const startBookIdx = parseInt(args[1]) || 0;
-  const endBookIdx = parseInt(args[2]) || BIBLE_BOOKS.length;
+  const startBookIdx = parseInt(args[0]) || 0;
+  const endBookIdx = parseInt(args[1]) || BIBLE_BOOKS.length;
   
   console.log("=".repeat(60));
-  console.log("Bible Audio Ingestion Script");
+  console.log("Bible Audio Ingestion Script - eBible.org (World English Bible)");
   console.log("=".repeat(60));
-  console.log(`Language: ${lang}`);
   console.log(`Books: ${startBookIdx + 1} to ${endBookIdx} of ${BIBLE_BOOKS.length}`);
   console.log("=".repeat(60));
-  
-  if (!AUDIO_SOURCES[lang]) {
-    console.error(`Unsupported language: ${lang}`);
-    console.log("Supported languages:", Object.keys(AUDIO_SOURCES).join(", "));
-    process.exit(1);
-  }
   
   // Ensure bucket exists
   await ensureBucketExists();
@@ -378,7 +331,7 @@ async function main() {
   
   for (const book of books) {
     console.log(`\n[Processing] ${book.name} (${book.chapters} chapters)`);
-    const { success, failed } = await processBook(lang, book, progress);
+    const { success, failed } = await processBook(book, progress);
     totalSuccess += success;
     totalFailed += failed;
     console.log(`[${book.name}] Completed: ${success}/${book.chapters}, Failed: ${failed}`);
@@ -390,6 +343,9 @@ async function main() {
   console.log(`Total Success: ${totalSuccess}`);
   console.log(`Total Failed: ${totalFailed}`);
   console.log(`Progress saved to: ${PROGRESS_FILE}`);
+  
+  // Show Supabase Storage URL
+  console.log(`\nSupabase Storage URL: ${supabaseUrl}/storage/v1/object/public/${BUCKET_NAME}/`);
 }
 
 main().catch(console.error);
