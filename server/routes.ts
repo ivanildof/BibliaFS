@@ -1898,6 +1898,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/reading-plans/custom", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { version, book, startChapter, endChapter, verses, title } = req.body;
+
+      if (!book || !startChapter || !endChapter) {
+        return res.status(400).json({ error: "Livro, capítulo inicial e final são obrigatórios" });
+      }
+
+      // Generate schedule - one day per chapter
+      const chapters: number[] = [];
+      for (let i = parseInt(startChapter); i <= parseInt(endChapter); i++) {
+        chapters.push(i);
+      }
+
+      const schedule = chapters.map((chapter, index) => ({
+        day: index + 1,
+        readings: [{
+          book,
+          chapter,
+          verses: verses || undefined
+        }],
+        isCompleted: false
+      }));
+
+      const data = {
+        userId,
+        title: title || `${book} ${startChapter}-${endChapter}`,
+        description: `Leitura customizada: ${book} capítulos ${startChapter}-${endChapter}`,
+        totalDays: chapters.length,
+        currentDay: 1,
+        schedule,
+        isCompleted: false,
+        planType: "custom"
+      };
+
+      const plan = await storage.createReadingPlan(data);
+      res.json(plan);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   app.put("/api/reading-plans/:id/complete-day", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;

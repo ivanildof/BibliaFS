@@ -4,6 +4,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Calendar, 
   BookOpen, 
@@ -22,11 +26,33 @@ import { type ReadingPlan, type ReadingPlanTemplate } from "@shared/schema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getBookName } from "@/lib/i18n";
 
+const BIBLE_VERSIONS = ["nvi", "acf", "arc", "ra"];
+const BIBLE_BOOKS = [
+  "Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio", "Josué", "Juízes", "Rute",
+  "1 Samuel", "2 Samuel", "1 Reis", "2 Reis", "1 Crônicas", "2 Crônicas", "Esdras", "Neemias",
+  "Ester", "Jó", "Salmos", "Provérbios", "Eclesiastes", "Cantares", "Isaías", "Jeremias",
+  "Lamentações", "Ezequiel", "Daniel", "Oséias", "Joel", "Amós", "Obadias", "Jonas",
+  "Miquéias", "Naum", "Habacuque", "Sofonias", "Ageu", "Zacarias", "Malaquias",
+  "Mateus", "Marcos", "Lucas", "João", "Atos", "Romanos", "1 Coríntios", "2 Coríntios",
+  "Gálatas", "Efésios", "Filipenses", "Colossenses", "1 Tessalonicenses", "2 Tessalonicenses",
+  "1 Timóteo", "2 Timóteo", "Tito", "Filemom", "Hebreus", "Tiago", "1 Pedro", "2 Pedro",
+  "1 João", "2 João", "3 João", "Judas", "Apocalipse"
+];
+
 export default function ReadingPlans() {
   const { toast } = useToast();
   const { language, t } = useLanguage();
   const [isTemplatesDialogOpen, setIsTemplatesDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<ReadingPlanTemplate | null>(null);
+  
+  // Custom plan state
+  const [customVersion, setCustomVersion] = useState("nvi");
+  const [customBook, setCustomBook] = useState("");
+  const [customStartChapter, setCustomStartChapter] = useState("");
+  const [customEndChapter, setCustomEndChapter] = useState("");
+  const [customVerses, setCustomVerses] = useState("");
+  const [customTitle, setCustomTitle] = useState("");
+  const [activeTab, setActiveTab] = useState("templates");
 
   const { data: plans = [], isLoading: plansLoading } = useQuery<ReadingPlan[]>({
     queryKey: ["/api/reading-plans"],
@@ -49,6 +75,41 @@ export default function ReadingPlans() {
       toast({
         title: t.plans.dayCompleted,
         description: t.plans.dayCompleted,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t.common.error,
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createCustomPlanMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", "/api/reading-plans/custom", {
+        version: customVersion,
+        book: customBook,
+        startChapter: customStartChapter,
+        endChapter: customEndChapter,
+        verses: customVerses || undefined,
+        title: customTitle
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/reading-plans"] });
+      setIsTemplatesDialogOpen(false);
+      setCustomVersion("nvi");
+      setCustomBook("");
+      setCustomStartChapter("");
+      setCustomEndChapter("");
+      setCustomVerses("");
+      setCustomTitle("");
+      setActiveTab("templates");
+      toast({
+        title: "Plano criado!",
+        description: "Seu plano de leitura customizado foi criado com sucesso",
       });
     },
     onError: (error: Error) => {
@@ -124,12 +185,19 @@ export default function ReadingPlans() {
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{t.plans.selectTemplate}</DialogTitle>
+                <DialogTitle>Criar Plano de Leitura</DialogTitle>
                 <DialogDescription>
-                  {t.plans.selectTemplate}
+                  Escolha um modelo pré-definido ou crie um plano customizado
                 </DialogDescription>
               </DialogHeader>
-              
+
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="templates">Modelos</TabsTrigger>
+                  <TabsTrigger value="custom">Customizado</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="templates" className="space-y-4">
               {templatesLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -168,6 +236,92 @@ export default function ReadingPlans() {
                   ))}
                 </div>
               )}
+                </TabsContent>
+
+                <TabsContent value="custom" className="space-y-4">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="version">Versão</Label>
+                        <Select value={customVersion} onValueChange={setCustomVersion}>
+                          <SelectTrigger id="version" data-testid="select-version">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {BIBLE_VERSIONS.map(v => (
+                              <SelectItem key={v} value={v}>{v.toUpperCase()}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="book">Livro</Label>
+                        <Select value={customBook} onValueChange={setCustomBook}>
+                          <SelectTrigger id="book" data-testid="select-book">
+                            <SelectValue placeholder="Escolha um livro" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            {BIBLE_BOOKS.map(book => (
+                              <SelectItem key={book} value={book}>{book}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="start">Capítulo Inicial</Label>
+                        <Input 
+                          id="start" 
+                          type="number" 
+                          min="1" 
+                          value={customStartChapter}
+                          onChange={(e) => setCustomStartChapter(e.target.value)}
+                          placeholder="Ex: 1"
+                          data-testid="input-start-chapter"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="end">Capítulo Final</Label>
+                        <Input 
+                          id="end" 
+                          type="number" 
+                          min="1" 
+                          value={customEndChapter}
+                          onChange={(e) => setCustomEndChapter(e.target.value)}
+                          placeholder="Ex: 5"
+                          data-testid="input-end-chapter"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="verses">Versículos (opcional)</Label>
+                      <Input 
+                        id="verses" 
+                        value={customVerses}
+                        onChange={(e) => setCustomVerses(e.target.value)}
+                        placeholder="Ex: 1-10 ou deixe em branco para todos"
+                        data-testid="input-verses"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Título do Plano (opcional)</Label>
+                      <Input 
+                        id="title" 
+                        value={customTitle}
+                        onChange={(e) => setCustomTitle(e.target.value)}
+                        placeholder="Ex: Minha Leitura de Mateus"
+                        data-testid="input-plan-title"
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
               
               <DialogFooter>
                 <Button 
@@ -177,14 +331,25 @@ export default function ReadingPlans() {
                 >
                   {t.common.cancel}
                 </Button>
-                <Button 
-                  disabled={!selectedTemplate || createFromTemplateMutation.isPending}
-                  onClick={() => selectedTemplate && createFromTemplateMutation.mutate(selectedTemplate.id)}
-                  data-testid="button-start-plan"
-                >
-                  {createFromTemplateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                  {createFromTemplateMutation.isPending ? t.plans.starting : t.plans.startPlan}
-                </Button>
+                {activeTab === "templates" ? (
+                  <Button 
+                    disabled={!selectedTemplate || createFromTemplateMutation.isPending}
+                    onClick={() => selectedTemplate && createFromTemplateMutation.mutate(selectedTemplate.id)}
+                    data-testid="button-start-plan"
+                  >
+                    {createFromTemplateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    {createFromTemplateMutation.isPending ? t.plans.starting : t.plans.startPlan}
+                  </Button>
+                ) : (
+                  <Button
+                    disabled={!customBook || !customStartChapter || !customEndChapter || createCustomPlanMutation.isPending}
+                    onClick={() => createCustomPlanMutation.mutate()}
+                    data-testid="button-create-custom"
+                  >
+                    {createCustomPlanMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    {createCustomPlanMutation.isPending ? "Criando..." : "Criar Plano"}
+                  </Button>
+                )}
               </DialogFooter>
             </DialogContent>
           </Dialog>
