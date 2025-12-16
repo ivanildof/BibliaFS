@@ -1,5 +1,4 @@
 // Bible Audio Service - Online/Offline Smart Playback with CDN/IndexedDB fallback
-import { supabase } from "./supabase";
 
 const AUDIO_CDN_BASE = "https://cdn.bibliafs.com.br/bible-audio";
 const BOOK_CODES: { [key: string]: string } = {
@@ -90,40 +89,6 @@ export async function playBibleAudio(
   }
 }
 
-// Upload áudio para Supabase Storage
-async function uploadAudioToStorage(
-  book: string,
-  chapter: number,
-  version: string,
-  language: string,
-  audioBlob: Blob
-): Promise<string | null> {
-  try {
-    const fileName = `${language}/${version}/${book}/${chapter}.mp3`;
-    const { data, error } = await supabase.storage
-      .from("bible-audio")
-      .upload(fileName, audioBlob, {
-        contentType: "audio/mpeg",
-        upsert: true,
-      });
-
-    if (error) {
-      console.warn("[AudioService] Upload error:", error);
-      return null;
-    }
-
-    const { data: publicData } = supabase.storage
-      .from("bible-audio")
-      .getPublicUrl(fileName);
-
-    console.log("[AudioService] Áudio salvo em Supabase Storage:", publicData.publicUrl);
-    return publicData.publicUrl;
-  } catch (error) {
-    console.warn("[AudioService] Erro ao fazer upload:", error);
-    return null;
-  }
-}
-
 export async function downloadChapterAudio(
   book: string,
   chapter: number,
@@ -160,14 +125,7 @@ export async function downloadChapterAudio(
     }
   }
 
-  const audioBlob = new Blob(chunks, { type: "audio/mpeg" });
-
-  // Upload para Supabase Storage em background (não espera terminar)
-  uploadAudioToStorage(book, chapter, version, language, audioBlob).catch(
-    (err) => console.warn("[AudioService] Background upload error:", err)
-  );
-
-  return audioBlob;
+  return new Blob(chunks, { type: "audio/mpeg" });
 }
 
 export async function downloadBookAudio(
