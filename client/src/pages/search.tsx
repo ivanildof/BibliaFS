@@ -51,7 +51,7 @@ export default function Search() {
     }
   }, []);
 
-  // Search handler
+  // Search handler - calls optimized backend API
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) {
       setResults([]);
@@ -65,80 +65,26 @@ export default function Search() {
     setSearchHistory(newHistory);
     localStorage.setItem("bibleSearchHistory", JSON.stringify(newHistory));
 
-    // Map of book abbreviations
-    const bookMap: { [key: string]: string } = {
-      "gn": "Genesis", "ex": "Exodus", "lv": "Leviticus", "nm": "Numbers", "dt": "Deuteronomy",
-      "js": "Joshua", "jz": "Judges", "rt": "Ruth", "1sm": "1 Samuel", "2sm": "2 Samuel",
-      "1rs": "1 Kings", "2rs": "2 Kings", "1cr": "1 Chronicles", "2cr": "2 Chronicles",
-      "ed": "Ezra", "ne": "Nehemiah", "et": "Esther", "job": "Job", "sl": "Psalms", "pv": "Proverbs",
-      "ec": "Ecclesiastes", "ct": "Song of Solomon", "is": "Isaiah", "jr": "Jeremiah",
-      "lm": "Lamentations", "ez": "Ezekiel", "dn": "Daniel", "os": "Hosea", "jl": "Joel",
-      "am": "Amos", "ob": "Obadiah", "jn": "Jonah", "mq": "Micah", "na": "Nahum",
-      "hc": "Habakkuk", "sf": "Zephaniah", "ag": "Haggai", "zc": "Zechariah", "ml": "Malachi",
-      "mt": "Matthew", "mc": "Mark", "lc": "Luke", "jo": "John", "at": "Acts",
-      "rm": "Romans", "1co": "1 Corinthians", "2co": "2 Corinthians", "gl": "Galatians",
-      "ef": "Ephesians", "fp": "Philippians", "cl": "Colossians", "1ts": "1 Thessalonians",
-      "2ts": "2 Thessalonians", "1tm": "1 Timothy", "2tm": "2 Timothy", "tt": "Titus",
-      "fm": "Philemon", "hb": "Hebrews", "tg": "James", "1pe": "1 Peter", "2pe": "2 Peter",
-      "1jo": "1 John", "2jo": "2 John", "3jo": "3 John", "jd": "Jude", "ap": "Revelation"
-    };
-
-    const bookAbbrevs = Object.keys(bookMap);
-    const searchResults: SearchResult[] = [];
-    const lowerQuery = searchQuery.toLowerCase();
-
-    // Build list of URLs - search all 66 books, chapters 1-50
-    const urls: { url: string; book: string; chapter: number }[] = [];
-    for (const abbrev of bookAbbrevs) {
-      for (let ch = 1; ch <= 50; ch++) {
-        urls.push({
-          url: `/api/bible/multilang/pt/${selectedVersion}/${abbrev}/${ch}`,
-          book: bookMap[abbrev],
-          chapter: ch
-        });
-      }
-    }
-
-    // Fetch all in parallel with proper error handling
-    const fetches = urls.map(item =>
-      fetch(item.url, { credentials: "include" })
-        .then(r => r.ok ? r.json() : null)
-        .then(data => ({ data, ...item }))
-        .catch(() => null)
-    );
-
-    const results = await Promise.all(fetches);
-    
-    for (const result of results) {
-      if (!result?.data?.verses) continue;
+    try {
+      // Call optimized backend search endpoint
+      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}&version=${selectedVersion}`, {
+        credentials: "include"
+      });
       
-      for (let idx = 0; idx < result.data.verses.length; idx++) {
-        const verseText = result.data.verses[idx];
-        if (verseText && verseText.toLowerCase().includes(lowerQuery)) {
-          searchResults.push({
-            book: result.book,
-            chapter: result.chapter,
-            verse: idx + 1,
-            text: verseText.substring(0, 150),
-            version: selectedVersion,
-            abbrev: BOOK_ABBREV_MAP[result.book]
-          });
-        }
+      if (!response.ok) {
+        setResults([]);
+        setIsSearching(false);
+        return;
       }
+
+      const searchResults: SearchResult[] = await response.json();
+      setResults(searchResults || []);
+    } catch (error) {
+      console.error("[Search] Error:", error);
+      setResults([]);
+    } finally {
+      setIsSearching(false);
     }
-
-    // Remove duplicates and sort
-    const uniqueResults = Array.from(
-      new Map(
-        searchResults.map(r => [
-          `${r.book}-${r.chapter}-${r.verse}`,
-          r
-        ])
-      ).values()
-    ).slice(0, 100); // Limit to 100 results
-
-    setResults(uniqueResults);
-    setIsSearching(false);
   };
 
   const handleVersionChange = (version: string) => {
