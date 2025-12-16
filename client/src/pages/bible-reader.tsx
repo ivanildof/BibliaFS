@@ -124,7 +124,7 @@ export default function BibleReader() {
     setDownloadProgress(0);
 
     try {
-      const blob = await downloadChapterAudio(selectedBook, selectedChapter, version.toUpperCase(), (progress) => {
+      const blob = await downloadChapterAudio(selectedBook, selectedChapter, version.toUpperCase(), t.currentLanguage || "pt", (progress: number) => {
         setDownloadProgress(progress);
       });
 
