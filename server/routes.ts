@@ -758,6 +758,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { title, description, bibleBook, bibleChapter, category } = req.body;
       
+      console.log('[Podcast] Creating podcast:', { title, description, bibleBook, bibleChapter, category, userId });
+      
       // Validate required fields
       if (!title || typeof title !== 'string' || title.trim().length === 0) {
         return res.status(400).json({ error: "Título é obrigatório" });
@@ -772,20 +774,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      const podcast = await storage.createPodcast({
+      const podcastData = {
         title: title.trim().substring(0, 200),
         description: (description || "").substring(0, 1000),
         author: req.user.claims.username || "Usuário",
         category: (category || "Reflexões").substring(0, 50),
         creatorId: userId,
-        bibleBook: bibleBook ? bibleBook.substring(0, 100) : undefined,
-        bibleChapter: validChapter,
+        bibleBook: bibleBook ? bibleBook.substring(0, 100) : null,
+        bibleChapter: validChapter || null,
         language: "pt",
         isActive: true,
         accessLevel: "free",
         episodes: [],
         totalEpisodes: 0,
-      });
+      };
+      
+      console.log('[Podcast] Saving to database:', podcastData);
+      
+      const podcast = await storage.createPodcast(podcastData);
+      
+      console.log('[Podcast] Saved successfully:', podcast);
       
       res.json(podcast);
     } catch (error: any) {
