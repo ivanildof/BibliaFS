@@ -1290,6 +1290,53 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(communityPosts.createdAt))
       .limit(limit);
   }
+
+  // ============================================
+  // BIBLE AUDIO PROGRESS
+  // ============================================
+
+  async getAudioProgress(userId: string, book: string, chapter: number, version: string = "ARA"): Promise<any | undefined> {
+    const { audioProgress } = await import("@shared/schema");
+    const [progress] = await db
+      .select()
+      .from(audioProgress)
+      .where(and(
+        eq(audioProgress.userId, userId),
+        eq(audioProgress.book, book),
+        eq(audioProgress.chapter, chapter),
+        eq(audioProgress.version, version)
+      ));
+    return progress;
+  }
+
+  async upsertAudioProgress(userId: string, data: any): Promise<any> {
+    const { audioProgress } = await import("@shared/schema");
+    const existing = await this.getAudioProgress(userId, data.book, data.chapter, data.version);
+
+    if (existing) {
+      const [updated] = await db
+        .update(audioProgress)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(audioProgress.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(audioProgress)
+        .values({ ...data, userId })
+        .returning();
+      return created;
+    }
+  }
+
+  async getUserAudioProgress(userId: string): Promise<any[]> {
+    const { audioProgress } = await import("@shared/schema");
+    return await db
+      .select()
+      .from(audioProgress)
+      .where(eq(audioProgress.userId, userId))
+      .orderBy(desc(audioProgress.lastPlayedAt));
+  }
 }
 
 export const storage = new DatabaseStorage();

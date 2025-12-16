@@ -37,8 +37,11 @@ import {
   Volume2,
   VolumeX,
   Pause,
-  Play
+  Play,
+  DownloadCloud,
+  Check
 } from "lucide-react";
+import { getAudioUrl, downloadChapterAudio, formatTime } from "@/lib/audioService";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -105,9 +108,67 @@ export default function BibleReader() {
   const [audioMode, setAudioMode] = useState<'chapter' | 'book'>('chapter');
   const [bookPlaylist, setBookPlaylist] = useState<number[]>([]);
   const [currentPlaylistIndex, setCurrentPlaylistIndex] = useState(0);
+
+  // Audio download state
+  const [downloadingAudio, setDownloadingAudio] = useState(false);
+  const [audioDownloaded, setAudioDownloaded] = useState<Set<string>>(new Set());
+  const [downloadProgress, setDownloadProgress] = useState(0);
   
   // Use ref for synchronous access to audio element (prevents race conditions)
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
+
+  // Download chapter audio for offline playback
+  const downloadChapterAudioFile = async () => {
+    if (!selectedBook || downloadingAudio) return;
+    setDownloadingAudio(true);
+    setDownloadProgress(0);
+
+    try {
+      const blob = await downloadChapterAudio(selectedBook, selectedChapter, version.toUpperCase(), (progress) => {
+        setDownloadProgress(progress);
+      });
+
+      // Save to IndexedDB via offline context
+      const key = `${selectedBook}_${selectedChapter}_${version}`;
+      await downloadChapter(selectedBook, selectedChapter, version);
+      
+      setAudioDownloaded(prev => new Set(prev).add(key));
+      
+      toast({
+        title: "Áudio baixado!",
+        description: `${selectedBook} ${selectedChapter} disponível offline`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao baixar",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingAudio(false);
+      setDownloadProgress(0);
+    }
+  };
+
+  // Save audio progress automatically
+  const saveAudioProgress = async (position: number, duration: number) => {
+    if (!selectedBook) return;
+    try {
+      await apiRequest("/api/audio/progress", {
+        method: "POST",
+        body: JSON.stringify({
+          book: selectedBook,
+          chapter: selectedChapter,
+          version: version.toUpperCase(),
+          playbackPosition: Math.floor(position),
+          totalDuration: Math.floor(duration),
+          completed: position >= duration - 5,
+        }),
+      });
+    } catch (error) {
+      console.error("Erro ao salvar progresso:", error);
+    }
+  };
 
   // Unified audio controller - stops any playing audio (chapter or verse)
   const stopAllAudio = () => {

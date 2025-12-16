@@ -8,6 +8,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 16, 2025 - COMPLETE BIBLE AUDIO SYSTEM:**
+
+### Smart Online/Offline Audio Playback Architecture
+*   **✅ Audio Service Architecture**: Created `client/src/lib/audioService.ts` with intelligent CDN/offline fallback
+*   **✅ Book Code Mapping**: Universal book code system (GEN, EXO, LEV, etc.) for CDN URL consistency
+*   **✅ Smart Playback Logic**: Online tries CDN first, offline uses IndexedDB, automatic fallback on errors
+*   **✅ Download Management**: `downloadChapterAudio()` and `downloadBookAudio()` functions with progress tracking
+*   **✅ Database Schema**: New `audio_progress` table to track playback position and duration for sync
+*   **✅ API Routes**: `/api/audio/progress/*` endpoints for saving and loading audio playback state
+*   **✅ Storage Operations**: Audio progress CRUD operations in `server/storage.ts`
+*   **✅ Bible Reader Integration**: Download button in header with progress indicator and offline badge
+*   **✅ Auto-Save Progress**: Automatic saving of playback position to Supabase for cross-device sync
+*   **CDN Structure**: Ready for `/bible-audio/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3` (e.g., `/bible-audio/ARA/ACT/3.mp3`)
+*   **Error Handling**: User-friendly messages for offline unavailability, download failures, network errors
+
 **December 16, 2025 - COMPETITOR FEATURE IMPLEMENTATION:**
 
 ### 4 New Features Inspired by "O Verbo" App Analysis
@@ -89,6 +104,7 @@ Preferred communication style: Simple, everyday language.
 *   **Routing**: Wouter for lightweight client-side routing with lazy-loaded pages.
 *   **Performance**: Lazy loading of all 28 pages via React.lazy() for code splitting.
 *   **Responsive Design**: Mobile-first with `md:`, `lg:` breakpoints. All pages respect dark mode with explicit light/dark variants.
+*   **Audio System**: Smart online/offline playback with automatic CDN/IndexedDB fallback, progress tracking.
 
 ### Backend Architecture
 *   **Framework**: Express.js with TypeScript on Node.js.
@@ -97,8 +113,8 @@ Preferred communication style: Simple, everyday language.
 *   **Database Layer**: Drizzle ORM for type-safe queries, schema-first approach with Zod validation, centralized storage interface.
 
 ### Data Storage
-*   **Database**: PostgreSQL via Neon serverless.
-*   **Schema**: 30+ tables in `shared/schema.ts` including users, prayers, highlights, notes, reading_plans, community_posts, achievements.
+*   **Database**: PostgreSQL via Supabase.
+*   **Schema**: 30+ tables in `shared/schema.ts` including users, prayers, highlights, notes, reading_plans, community_posts, achievements, audio_progress.
 
 ### Key Features
 *   **AI-powered Commentary**: GPT-4o via OpenAI for theological questions with full chapter context
@@ -110,14 +126,17 @@ Preferred communication style: Simple, everyday language.
 *   **Community**: Verse-based posts, likes, trending topics
 *   **Dark Mode**: Full dark/light support with localStorage persistence across all pages
 *   **Offline Mode**: IndexedDB browser storage with automatic sync
+*   **Bible Audio**: Smart CDN streaming + offline playback with progress tracking
 *   **Verse Sharing**: Copy text or download as image via html-to-image
 *   **Highlights & Notes**: 6 colors + personal annotations, organized in /favorites
+*   **Study Groups**: Private groups with invite system and restricted feeds
+*   **Teaching Outlines**: Structured lesson blocks with multimedia support for teachers
 
 ## External Dependencies
 
 ### Core
 *   Replit OIDC, OpenID Client
-*   Neon PostgreSQL, Drizzle ORM
+*   Supabase PostgreSQL, Drizzle ORM
 *   Express.js, Node.js, TypeScript, Vite
 *   React, Wouter, TanStack Query
 *   shadcn/ui, Radix UI, Tailwind CSS
@@ -137,3 +156,11 @@ Preferred communication style: Simple, everyday language.
 *   **Page Transition**: ~500ms (target: ≤800ms) ✅
 *   **Query Cache**: 5min staleTime + 30min retention
 *   **Data Freshness**: Static data cached, dynamic data fresh
+*   **Audio System**: CDN streaming + offline fallback with automatic progress sync
+
+## Next Steps - Audio Implementation
+To complete the audio system, configure CDN storage:
+1. Upload Bible audio files to Supabase Storage or AWS S3 in format: `/bible-audio/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3`
+2. Ensure public access policy on audio files
+3. Update `AUDIO_CDN_BASE` in `client/src/lib/audioService.ts` with correct CDN URL
+4. Test download and offline playback with Bible Reader download button

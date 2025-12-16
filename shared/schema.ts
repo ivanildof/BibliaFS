@@ -1279,3 +1279,31 @@ export const podcastDownloads = pgTable("podcast_downloads", {
 export const insertPodcastDownloadSchema = createInsertSchema(podcastDownloads).omit({ id: true, createdAt: true });
 export type InsertPodcastDownload = z.infer<typeof insertPodcastDownloadSchema>;
 export type PodcastDownload = typeof podcastDownloads.$inferSelect;
+
+// ============================================
+// BIBLE AUDIO PROGRESS (for syncing playback)
+// ============================================
+
+export const audioProgress = pgTable("audio_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  book: varchar("book", { length: 50 }).notNull(),
+  chapter: integer("chapter").notNull(),
+  version: varchar("version", { length: 20 }).default("ARA"),
+  
+  playbackPosition: integer("playback_position").default(0), // in seconds
+  totalDuration: integer("total_duration").default(0), // in seconds
+  
+  lastPlayedAt: timestamp("last_played_at").defaultNow(),
+  completed: boolean("completed").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_audio_progress_user_book_chapter").on(table.userId, table.book, table.chapter),
+]);
+
+export const insertAudioProgressSchema = createInsertSchema(audioProgress).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAudioProgress = z.infer<typeof insertAudioProgressSchema>;
+export type AudioProgress = typeof audioProgress.$inferSelect;

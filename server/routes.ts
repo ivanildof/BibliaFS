@@ -3146,6 +3146,61 @@ Responda em português do Brasil.`
     }
   });
 
+  // ============================================
+  // BIBLE AUDIO PROGRESS API
+  // ============================================
+
+  // Get audio progress for a chapter
+  app.get("/api/audio/progress/:book/:chapter", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { book, chapter } = req.params;
+      const version = (req.query.version || "ARA") as string;
+
+      const progress = await storage.getAudioProgress(userId, book, parseInt(chapter), version);
+      res.json(progress || { playbackPosition: 0, totalDuration: 0, completed: false });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Save audio progress
+  app.post("/api/audio/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { book, chapter, version = "ARA", playbackPosition, totalDuration, completed } = req.body;
+
+      if (!book || !chapter) {
+        return res.status(400).json({ error: "Livro e capítulo são obrigatórios" });
+      }
+
+      const progress = await storage.upsertAudioProgress(userId, {
+        book,
+        chapter: parseInt(chapter),
+        version,
+        playbackPosition: parseInt(playbackPosition) || 0,
+        totalDuration: parseInt(totalDuration) || 0,
+        completed: !!completed,
+        lastPlayedAt: new Date(),
+      });
+
+      res.json(progress);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get all audio progress for user
+  app.get("/api/audio/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getUserAudioProgress(userId);
+      res.json(progress);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
