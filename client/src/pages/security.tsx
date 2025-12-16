@@ -94,7 +94,7 @@ export default function Security() {
   ];
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 bg-white dark:bg-slate-950">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center gap-4 mb-6">
           <Link href="/about" data-testid="link-back-security">

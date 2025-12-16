@@ -812,10 +812,10 @@ export default function BibleReader() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Top Header - Icons only */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-        <div className="flex items-center justify-between px-4 h-14 max-w-4xl mx-auto">
+        <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-1">
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>

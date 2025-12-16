@@ -8,6 +8,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 16, 2025**:
+*   **Critical Usability Fixes - Desktop/Layout**: 
+    - **R7 - Dark Mode Legal Pages**: Applied `bg-white dark:bg-slate-950` to all "Sobre" pages (Privacy, Terms, Security, Help) ensuring proper light/dark theme support with good text contrast
+    - **R8 - Theme Persistence**: Verified ThemeContext already saves theme to localStorage on every change, survives page reloads
+    - **R1 - Bible Reader Layout**: Fixed BibleReader to not overlap sidebar by adding `overflow-x-hidden` and `max-w-6xl mx-auto w-full` to header; adjusted container widths for desktop compatibility
+    - **R4 - AI Study Responsiveness**: Enhanced mobile responsiveness with `md:` breakpoints for grid layout (`md:grid-cols-3` with full-width mobile), adjusted card heights for mobile (`h-[500px] md:h-[600px]`), responsive padding (`p-4 md:p-6`), and gap sizing
+    - **R3 - Prayer Saving**: Verified orações save permanently via `/api/prayers` endpoint with proper database persistence and cache invalidation
+    - **R9 - Upgrade Button**: Confirmed pricing.tsx has fully functional `handleSubscribe()` for upgrade flow with Stripe integration
+*   **Donation Flow Simplification**: Unified custom amount handling to always use Stripe Checkout for consistency and reliability
+
 **December 14, 2025**:
 *   **Database Connection Fix**: Fixed critical database connection issue where `DATABASE_URL` contained an invalid secret token reference (`sb_secret_...`) instead of a valid PostgreSQL URL. Updated `server/db.ts` to prioritize Replit's internal envCache (which contains the real database URL), then falls back to environment variables only if they start with `postgresql://`. This ensures stable connection to Replit's built-in Neon PostgreSQL database.
 *   **Supabase Schema Migration**: Successfully migrated entire database schema (30+ tables) to Supabase PostgreSQL using Drizzle Kit. All tables created successfully on Supabase. `server/db.ts` configured to support both Supabase (for production) and Replit's internal database (for development). Currently running on Replit's stable Neon database in development; ready for production deployment on Supabase.
@@ -45,6 +55,7 @@ Preferred communication style: Simple, everyday language.
 *   **Internationalization (i18n)**: Custom Context API supports Portuguese, English, Dutch, and Spanish, with language preference persisted in localStorage.
 *   **Routing**: Wouter for lightweight client-side routing.
 *   **Key Design Decisions**: Focus on accessibility, customizability, clear separation of UI and page components, and path aliases.
+*   **Responsive Design**: Mobile-first approach with proper breakpoints (md:, lg:) for tablet and desktop. All pages now respect dark mode with explicit light/dark class variants.
 
 ### Backend Architecture
 *   **Framework**: Express.js with TypeScript running on Node.js.
@@ -59,15 +70,15 @@ Preferred communication style: Simple, everyday language.
 
 ### System Design Choices & Feature Specifications
 *   **AI-powered Theological Assistant**: GPT-4o integration via OpenAI API for theological queries, providing balanced responses across Christian traditions. Requires user's `OPENAI_API_KEY`. Also generates Bible audio narration using OpenAI TTS API.
-*   **Customizable Themes**: 5 presets and custom RGB options.
+*   **Customizable Themes**: 5 presets and custom RGB options with persistent localStorage sync.
 *   **Integrated Podcast Player**: Functionality to subscribe and play podcasts.
 *   **Teacher Mode**: Tools for creating and managing educational lessons.
 *   **Community Platform**: Full-featured community system with verse-based posts, likes, trending topics, and social engagement metrics.
 *   **Versículo do Dia (Daily Verse)**: Automated daily verse rotation with themed inspirational verses, gradient card UI, sharing capabilities (text copy & image download), and multilingual support.
 *   **Reading Plans & Gamification**: Predefined plans (7 to 365 days) with automatic scheduling, XP, progressive levels, daily streaks, and 18 automatic achievements.
-*   **Prayer Journal**: Complete prayer management with audio recording (MediaRecorder API), time counter, mark-as-answered, delete capability, and audio playback.
+*   **Prayer Journal**: Complete prayer management with audio recording (MediaRecorder API), time counter, mark-as-answered, delete capability, and audio playback. Data persists to database.
 *   **Verse Sharing**: Integrated sharing system allowing users to copy formatted verse text or download verse cards as images using `html-to-image`.
-*   **Bible Reader Redesign**: Mobile-first, minimalist layout with superscript verse numbering and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA), offline fallback for key passages, and OpenAI-powered audio narration (TTS).
+*   **Bible Reader Redesign**: Mobile-first, minimalist layout with superscript verse numbering and floating navigation controls. Supports multi-version reading (NVI, ACF, ARC, RA), offline fallback for key passages, and OpenAI-powered audio narration (TTS). Desktop-friendly with proper width constraints to respect sidebar.
 *   **Highlights, Notes, & Bookmarks**: Allows colored verse highlighting (6 colors) and note-taking. A `/favorites` page organizes bookmarks, highlights, and notes.
 *   **Mobile Navigation**: Implemented a bottom navigation bar with 5 main tabs for mobile devices.
 *   **Offline Mode**: Complete offline reading experience with IndexedDB browser storage, PostgreSQL backend tracking, API routes for sync, automatic online/offline detection, intelligent fallback loading, download/delete controls, and a dedicated `/offline` page.
