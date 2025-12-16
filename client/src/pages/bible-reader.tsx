@@ -1086,7 +1086,7 @@ export default function BibleReader() {
                   </TabsContent>
                   
                   <TabsContent value="version" className="mt-4">
-                    <div>
+                    <div className="max-w-xs">
                       <h3 className="text-sm font-medium mb-2">Versão da Bíblia</h3>
                       <div className="grid grid-cols-2 gap-2">
                         {VERSIONS.map(v => (
