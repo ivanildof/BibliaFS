@@ -995,8 +995,8 @@ export default function BibleReader() {
 
             <Sheet open={isChaptersOpen} onOpenChange={setIsChaptersOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" data-testid="button-version">
-                  {VERSIONS.find(v => v.value === version)?.label || "NVI"}
+                <Button variant="ghost" size="sm" data-testid="button-navigate">
+                  Navegar
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
