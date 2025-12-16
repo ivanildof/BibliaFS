@@ -1,29 +1,50 @@
-// Bible Audio Service - Online/Offline Smart Playback with CDN/IndexedDB fallback
+// Bible Audio Service - Online/Offline Smart Playback with Backend API + IndexedDB fallback
 
 // Define inline type to avoid circular dependency
 interface OfflineContextType {
   getOfflineAudio?: (bookCode: string, chapter: number, version: string) => Promise<ArrayBuffer | null>;
+  saveOfflineAudio?: (bookCode: string, chapter: number, version: string, audioData: ArrayBuffer) => Promise<void>;
 }
 
-const AUDIO_CDN_BASE = "https://cdn.bibliafs.com.br/bible-audio";
+// Use backend API for audio (generates via OpenAI TTS and caches)
+const AUDIO_API_BASE = "/api/bible/audio";
+
+// Comprehensive book mapping: Portuguese + English names → abbreviations
 const BOOK_CODES: { [key: string]: string } = {
-  "Genesis": "GEN", "Êxodo": "EXO", "Levítico": "LEV", "Números": "NUM",
-  "Deuteronômio": "DEU", "Josué": "JOS", "Juízes": "JZG", "Rute": "RUT",
-  "1 Samuel": "1SA", "2 Samuel": "2SA", "1 Reis": "1RE", "2 Reis": "2RE",
-  "1 Crônicas": "1CR", "2 Crônicas": "2CR", "Esdras": "EZR", "Neemias": "NEE",
-  "Ester": "EST", "Jó": "JOB", "Salmos": "PSA", "Provérbios": "PRO",
-  "Eclesiastes": "ECC", "Cantares": "CAN", "Isaías": "ISA", "Jeremias": "JER",
-  "Lamentações": "LAM", "Ezequiel": "EZE", "Daniel": "DAN", "Oseias": "OSE",
-  "Joel": "JOL", "Amós": "AMO", "Obadias": "OBA", "Jonas": "JON",
-  "Miqueias": "MIQ", "Naum": "NAM", "Habacuque": "HAB", "Sofonias": "SOF",
-  "Ageu": "HAG", "Zacarias": "ZAC", "Malaquias": "MAL", "Mateus": "MAT",
-  "Marcos": "MAR", "Lucas": "LUC", "João": "JOA", "Atos": "ACT",
-  "Romanos": "ROM", "1 Coríntios": "1CO", "2 Coríntios": "2CO", "Gálatas": "GAL",
-  "Efésios": "EFE", "Filipenses": "FIL", "Colossenses": "COL", "1 Tessalonicenses": "1TE",
-  "2 Tessalonicenses": "2TE", "1 Timóteo": "1TI", "2 Timóteo": "2TI", "Tito": "TIT",
-  "Filemom": "FIL", "Hebreus": "HEB", "Tiago": "TIA", "1 Pedro": "1PE",
-  "2 Pedro": "2PE", "1 João": "1JO", "2 João": "2JO", "3 João": "3JO",
-  "Judas": "JUD", "Apocalipse": "APO",
+  // Portuguese
+  "Gênesis": "gn", "Genesis": "gn", "Êxodo": "ex", "Exodus": "ex",
+  "Levítico": "lv", "Leviticus": "lv", "Números": "nm", "Numbers": "nm",
+  "Deuteronômio": "dt", "Deuteronomy": "dt", "Josué": "js", "Joshua": "js",
+  "Juízes": "jz", "Judges": "jz", "Rute": "rt", "Ruth": "rt",
+  "1 Samuel": "1sm", "1Samuel": "1sm", "2 Samuel": "2sm", "2Samuel": "2sm",
+  "1 Reis": "1rs", "1Kings": "1rs", "2 Reis": "2rs", "2Kings": "2rs",
+  "1 Crônicas": "1cr", "1Chronicles": "1cr", "2 Crônicas": "2cr", "2Chronicles": "2cr",
+  "Esdras": "ed", "Ezra": "ed", "Neemias": "ne", "Nehemiah": "ne",
+  "Ester": "et", "Esther": "et", "Jó": "job", "Job": "job",
+  "Salmos": "sl", "Psalms": "sl", "Provérbios": "pv", "Proverbs": "pv",
+  "Eclesiastes": "ec", "Ecclesiastes": "ec", "Cantares": "ct", "SongofSolomon": "ct",
+  "Isaías": "is", "Isaiah": "is", "Jeremias": "jr", "Jeremiah": "jr",
+  "Lamentações": "lm", "Lamentations": "lm", "Ezequiel": "ez", "Ezekiel": "ez",
+  "Daniel": "dn", "Oseias": "os", "Hosea": "os", "Joel": "jl",
+  "Amós": "am", "Amos": "am", "Obadias": "ob", "Obadiah": "ob",
+  "Jonas": "jn", "Jonah": "jn", "Miqueias": "mq", "Micah": "mq",
+  "Naum": "na", "Nahum": "na", "Habacuque": "hc", "Habakkuk": "hc",
+  "Sofonias": "sf", "Zephaniah": "sf", "Ageu": "ag", "Haggai": "ag",
+  "Zacarias": "zc", "Zechariah": "zc", "Malaquias": "ml", "Malachi": "ml",
+  "Mateus": "mt", "Matthew": "mt", "Marcos": "mc", "Mark": "mc",
+  "Lucas": "lc", "Luke": "lc", "João": "jo", "John": "jo", "Atos": "at", "Acts": "at",
+  "Romanos": "rm", "Romans": "rm", "1 Coríntios": "1co", "1Corinthians": "1co",
+  "2 Coríntios": "2co", "2Corinthians": "2co", "Gálatas": "gl", "Galatians": "gl",
+  "Efésios": "ef", "Ephesians": "ef", "Filipenses": "fp", "Philippians": "fp",
+  "Colossenses": "cl", "Colossians": "cl", "1 Tessalonicenses": "1ts",
+  "1Thessalonians": "1ts", "2 Tessalonicenses": "2ts", "2Thessalonians": "2ts",
+  "1 Timóteo": "1tm", "1Timothy": "1tm", "2 Timóteo": "2tm", "2Timothy": "2tm",
+  "Tito": "tt", "Titus": "tt", "Filemom": "fm", "Philemon": "fm",
+  "Hebreus": "hb", "Hebrews": "hb", "Tiago": "tg", "James": "tg",
+  "1 Pedro": "1pe", "1Peter": "1pe", "2 Pedro": "2pe", "2Peter": "2pe",
+  "1 João": "1jo", "1John": "1jo", "2 João": "2jo", "2John": "2jo",
+  "3 João": "3jo", "3John": "3jo", "Judas": "jd", "Jude": "jd",
+  "Apocalipse": "ap", "Revelation": "ap",
 };
 
 export interface AudioPlayOptions {
@@ -44,18 +65,43 @@ export interface AudioProgress {
 }
 
 function getBookCode(bookName: string): string {
-  return BOOK_CODES[bookName] || bookName.toUpperCase().substring(0, 3);
+  // Try exact match first
+  if (BOOK_CODES[bookName]) return BOOK_CODES[bookName];
+  
+  // Try case-insensitive match
+  for (const [key, value] of Object.entries(BOOK_CODES)) {
+    if (key.toLowerCase() === bookName.toLowerCase()) {
+      return value;
+    }
+  }
+  
+  // Fallback: use first 2 letters lowercase
+  return bookName.toLowerCase().substring(0, 2);
+}
+
+// Get auth token from localStorage (Supabase stores it there)
+function getAuthToken(): string | null {
+  try {
+    const supabaseKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (supabaseKey) {
+      const data = JSON.parse(localStorage.getItem(supabaseKey) || '{}');
+      return data?.access_token || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 export async function getAudioUrl(
   book: string,
   chapter: number,
-  version: string = "ARA",
+  version: string = "nvi",
   language: string = "pt"
 ): Promise<string> {
   const bookCode = getBookCode(book);
-  // Format: /bible-audio/{LANGUAGE}/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3
-  return `${AUDIO_CDN_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
+  // Use backend API that generates and caches audio
+  return `${AUDIO_API_BASE}/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
 }
 
 export async function playBibleAudio(
@@ -67,19 +113,12 @@ export async function playBibleAudio(
   const bookCode = getBookCode(book);
 
   try {
-    // Online: try CDN first
-    if (isOnline) {
-      const url = await getAudioUrl(book, chapter, version, language);
-      audioElement.src = url;
-      await audioElement.play();
-      return;
-    }
-
-    // Offline: check IndexedDB
-    if (offline) {
-      const audioData = await offline.getOfflineAudio?.(bookCode, chapter, version);
-      if (audioData) {
-        const blob = new Blob([audioData], { type: "audio/mpeg" });
+    // First: check offline cache (IndexedDB)
+    if (offline?.getOfflineAudio) {
+      const cachedAudio = await offline.getOfflineAudio(bookCode, chapter, version);
+      if (cachedAudio) {
+        console.log(`[Audio] Playing from offline cache: ${book} ${chapter}`);
+        const blob = new Blob([cachedAudio], { type: "audio/mpeg" });
         const blobUrl = URL.createObjectURL(blob);
         audioElement.src = blobUrl;
         await audioElement.play();
@@ -87,7 +126,47 @@ export async function playBibleAudio(
       }
     }
 
-    throw new Error("Áudio não disponível. Baixe para ouvir offline.");
+    // Online: fetch from backend API (which generates via OpenAI TTS and caches)
+    if (isOnline) {
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Faça login para ouvir o áudio.");
+      }
+
+      const url = await getAudioUrl(book, chapter, version, language);
+      console.log(`[Audio] Fetching from backend: ${url}`);
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro ao carregar áudio: ${response.status}`);
+      }
+
+      const audioBlob = await response.blob();
+      const audioArrayBuffer = await audioBlob.arrayBuffer();
+      
+      // Save to offline cache for future use
+      if (offline?.saveOfflineAudio) {
+        try {
+          await offline.saveOfflineAudio(bookCode, chapter, version, audioArrayBuffer);
+          console.log(`[Audio] Saved to offline cache: ${book} ${chapter}`);
+        } catch (cacheErr) {
+          console.warn("[Audio] Failed to save to offline cache:", cacheErr);
+        }
+      }
+
+      const blobUrl = URL.createObjectURL(audioBlob);
+      audioElement.src = blobUrl;
+      await audioElement.play();
+      return;
+    }
+
+    throw new Error("Áudio não disponível. Conecte à internet ou baixe para uso offline.");
   } catch (error) {
     console.error("Erro ao reproduzir áudio:", error);
     throw error;
@@ -97,46 +176,48 @@ export async function playBibleAudio(
 export async function downloadChapterAudio(
   book: string,
   chapter: number,
-  version: string = "ARA",
+  version: string = "nvi",
   language: string = "pt",
   onProgress?: (progress: number) => void
 ): Promise<Blob> {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("Faça login para baixar o áudio.");
+  }
+
   const url = await getAudioUrl(book, chapter, version, language);
+  console.log(`[Audio] Downloading: ${url}`);
 
-  const response = await fetch(url);
+  // Notify start
+  onProgress?.(5);
+
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
   if (!response.ok) {
-    throw new Error(`Falha ao baixar áudio: ${response.status}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Falha ao baixar áudio: ${response.status}`);
   }
 
-  const contentLength = Number(response.headers.get("content-length")) || 0;
-  const reader = response.body?.getReader();
+  // Progress simulation since we can't stream with auth headers easily
+  onProgress?.(50);
 
-  if (!reader) {
-    throw new Error("Não foi possível ler o stream de áudio");
-  }
+  const blob = await response.blob();
+  
+  onProgress?.(100);
+  console.log(`[Audio] Downloaded ${book} ${chapter}: ${blob.size} bytes`);
 
-  const chunks: Uint8Array[] = [];
-  let receivedLength = 0;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    chunks.push(value);
-    receivedLength += value.length;
-
-    if (onProgress && contentLength) {
-      onProgress(Math.round((receivedLength / contentLength) * 100));
-    }
-  }
-
-  return new Blob(chunks, { type: "audio/mpeg" });
+  return blob;
 }
 
 export async function downloadBookAudio(
   book: string,
   chapters: number,
-  version: string = "ARA",
+  version: string = "nvi",
+  language: string = "pt",
   onProgress?: (progress: number) => void
 ): Promise<Map<number, Blob>> {
   const audioMap = new Map<number, Blob>();
@@ -144,7 +225,7 @@ export async function downloadBookAudio(
 
   for (let ch = 1; ch <= totalChapters; ch++) {
     try {
-      const audio = await downloadChapterAudio(book, ch, version);
+      const audio = await downloadChapterAudio(book, ch, version, language);
       audioMap.set(ch, audio);
       onProgress?.(Math.round((ch / totalChapters) * 100));
     } catch (error) {
