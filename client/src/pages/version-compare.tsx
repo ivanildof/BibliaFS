@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useOffline } from "@/contexts/OfflineContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const BIBLE_BOOKS = [
+const BIBLE_BOOKS_PT = [
   "Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio",
   "Josué", "Juízes", "Rute", "1 Samuel", "2 Samuel",
   "1 Reis", "2 Reis", "1 Crônicas", "2 Crônicas", "Esdras",
@@ -33,6 +33,24 @@ const BIBLE_BOOKS = [
   "1 Pedro", "2 Pedro", "1 João", "2 João", "3 João",
   "Judas", "Apocalipse"
 ];
+
+// Map Portuguese names to SQLite abbreviations
+const bookNameToAbbrev: { [key: string]: string } = {
+  "Gênesis": "gn", "Êxodo": "ex", "Levítico": "lv", "Números": "nm", "Deuteronômio": "dt",
+  "Josué": "js", "Juízes": "jz", "Rute": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm",
+  "1 Reis": "1rs", "2 Reis": "2rs", "1 Crônicas": "1cr", "2 Crônicas": "2cr", "Esdras": "esd",
+  "Neemias": "ne", "Ester": "et", "Jó": "jó", "Salmos": "sl", "Provérbios": "pv",
+  "Eclesiastes": "ec", "Cantares": "ct", "Isaías": "is", "Jeremias": "jr", "Lamentações": "lm",
+  "Ezequiel": "ez", "Daniel": "dn", "Oséias": "os", "Joel": "jl", "Amós": "am",
+  "Obadias": "ob", "Jonas": "jn", "Miquéias": "mq", "Naum": "na", "Habacuque": "hc",
+  "Sofonias": "sf", "Ageu": "ag", "Zacarias": "zc", "Malaquias": "ml",
+  "Mateus": "mt", "Marcos": "mc", "Lucas": "lc", "João": "jo", "Atos": "at",
+  "Romanos": "rm", "1 Coríntios": "1co", "2 Coríntios": "2co", "Gálatas": "gl", "Efésios": "ef",
+  "Filipenses": "fp", "Colossenses": "cl", "1 Tessalonicenses": "1ts", "2 Tessalonicenses": "2ts", "1 Timóteo": "1tm",
+  "2 Timóteo": "2tm", "Tito": "tt", "Filemom": "fm", "Hebreus": "hb", "Tiago": "tg",
+  "1 Pedro": "1pd", "2 Pedro": "2pd", "1 João": "1jo", "2 João": "2jo", "3 João": "3jo",
+  "Judas": "jd", "Apocalipse": "ap"
+};
 
 const VERSIONS = [
   { id: "nvi", name: "NVI", fullName: "Nova Versão Internacional" },
@@ -74,7 +92,8 @@ export default function VersionCompare() {
 
     for (const versionId of selectedVersions) {
       try {
-        const chapterData = await getSqliteChapter(selectedBook, selectedChapter);
+        const abbrev = bookNameToAbbrev[selectedBook] || selectedBook.toLowerCase();
+        const chapterData = await getSqliteChapter(abbrev, selectedChapter);
         
         if (chapterData?.verses) {
           newData.push({
@@ -168,7 +187,7 @@ export default function VersionCompare() {
                     <SelectValue placeholder="Livro" />
                   </SelectTrigger>
                   <SelectContent>
-                    {BIBLE_BOOKS.map((book) => (
+                    {BIBLE_BOOKS_PT.map((book) => (
                       <SelectItem key={book} value={book}>
                         {book}
                       </SelectItem>
