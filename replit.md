@@ -13,8 +13,9 @@ Preferred communication style: Simple, everyday language.
 ### Profile Management Features (Completed)
 *   **✅ Edit User Name**: Dialog interface with input fields for first/last name, saves via `PATCH /api/user/profile`
 *   **✅ Cancel Subscription**: Destructive button with confirmation dialog, cancels via `POST /api/subscriptions/cancel`
-*   **✅ Supabase Database Priority**: Updated `server/db.ts` to use `SUPABASE_DATABASE_URL` first - all data now saves to Supabase, not Replit
-*   **Database Configuration**: Changed priority order: Supabase → Replit → Environment variable
+*   **✅ Supabase Database ONLY**: Updated `server/db.ts` to use only `SUPABASE_DATABASE_URL` with standard `pg` driver
+*   **Database Configuration**: Changed to node-postgres (`pg` package) instead of neon serverless for stable Supabase connection
+*   **Data Isolation**: All user data stored in Supabase with userId isolation, including offline sync via IndexedDB
 
 **December 16, 2025 - PRODUCTION FIX SESSION:**
 
