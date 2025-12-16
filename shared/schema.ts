@@ -1174,7 +1174,7 @@ export type BibleChapter = typeof bibleChapters.$inferSelect;
 export type BibleVerse = typeof bibleVerses.$inferSelect;
 export type CrossReference = typeof crossReferences.$inferSelect;
 
-// Group types
+// Group types and schemas
 export type GroupMember = typeof groupMembers.$inferSelect;
 export type PostReaction = typeof postReactions.$inferSelect;
 export type AchievementDefinition = typeof achievementDefinitions.$inferSelect;
@@ -1182,3 +1182,100 @@ export type AdditionalContent = typeof additionalContent.$inferSelect;
 export type ContentVerseReference = typeof contentVerseReferences.$inferSelect;
 export type ReadingPlanItem = typeof readingPlanItems.$inferSelect;
 export type ReadingHistoryEntry = typeof readingHistory.$inferSelect;
+
+// ============================================
+// STUDY GROUPS (Private Groups for Community)
+// ============================================
+
+export const insertGroupMemberSchema = createInsertSchema(groupMembers).omit({ id: true, joinedAt: true });
+export type InsertGroupMember = z.infer<typeof insertGroupMemberSchema>;
+
+// Group invitations
+export const groupInvites = pgTable("group_invites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  groupId: varchar("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  invitedEmail: varchar("invited_email", { length: 255 }),
+  inviteCode: varchar("invite_code", { length: 50 }).unique(),
+  invitedBy: varchar("invited_by").notNull().references(() => users.id),
+  status: varchar("status", { length: 20 }).default("pending"), // pending, accepted, rejected, expired
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertGroupInviteSchema = createInsertSchema(groupInvites).omit({ id: true, createdAt: true });
+export type InsertGroupInvite = z.infer<typeof insertGroupInviteSchema>;
+export type GroupInvite = typeof groupInvites.$inferSelect;
+
+// ============================================
+// TEACHING OUTLINES (Structured Lesson Blocks)
+// ============================================
+
+export const teachingOutlines = pgTable("teaching_outlines", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  teacherId: varchar("teacher_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  lessonId: varchar("lesson_id").references(() => lessons.id, { onDelete: "set null" }),
+  
+  title: text("title").notNull(),
+  description: text("description"),
+  
+  // Structured content blocks
+  blocks: jsonb("blocks").$type<Array<{
+    id: string;
+    type: "text" | "verse" | "question" | "note" | "heading" | "illustration";
+    content: string;
+    metadata?: {
+      book?: string;
+      chapter?: number;
+      verses?: string;
+      version?: string;
+      style?: "h1" | "h2" | "h3";
+    };
+  }>>().default([]),
+  
+  // Bible references
+  mainScripture: jsonb("main_scripture").$type<{
+    book: string;
+    chapter: number;
+    verses?: string;
+  }>(),
+  
+  // Categories and tags
+  category: varchar("category", { length: 50 }), // sermon, bible_study, devotional, teaching
+  tags: text("tags").array(),
+  
+  // Sharing and visibility
+  isPublic: boolean("is_public").default(false),
+  sharedWithGroups: text("shared_with_groups").array(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertTeachingOutlineSchema = createInsertSchema(teachingOutlines).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTeachingOutline = z.infer<typeof insertTeachingOutlineSchema>;
+export type TeachingOutline = typeof teachingOutlines.$inferSelect;
+
+// ============================================
+// OFFLINE PODCAST DOWNLOADS
+// ============================================
+
+export const podcastDownloads = pgTable("podcast_downloads", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  podcastId: varchar("podcast_id").notNull().references(() => podcasts.id, { onDelete: "cascade" }),
+  episodeId: varchar("episode_id").notNull(),
+  
+  downloadStatus: varchar("download_status", { length: 20 }).default("pending"), // pending, downloading, completed, failed
+  downloadProgress: integer("download_progress").default(0),
+  fileSize: integer("file_size"),
+  
+  downloadedAt: timestamp("downloaded_at"),
+  expiresAt: timestamp("expires_at"), // For auto-cleanup
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueUserPodcastEpisode: unique().on(table.userId, table.podcastId, table.episodeId),
+}));
+
+export const insertPodcastDownloadSchema = createInsertSchema(podcastDownloads).omit({ id: true, createdAt: true });
+export type InsertPodcastDownload = z.infer<typeof insertPodcastDownloadSchema>;
+export type PodcastDownload = typeof podcastDownloads.$inferSelect;

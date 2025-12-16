@@ -45,6 +45,8 @@ import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import NotFound from "@/pages/not-found";
+import Groups from "@/pages/groups";
+import VersionCompare from "@/pages/version-compare";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -87,6 +89,8 @@ function Router() {
           <Route path="/prayers" component={Prayers} />
           <Route path="/podcasts" component={Podcasts} />
           <Route path="/teacher" component={Teacher} />
+          <Route path="/groups" component={Groups} />
+          <Route path="/compare" component={VersionCompare} />
           <Route path="/community" component={Community} />
           <Route path="/configurações" component={Settings} />
           <Route path="/settings" component={Settings} />

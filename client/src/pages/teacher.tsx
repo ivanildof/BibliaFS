@@ -443,6 +443,9 @@ export default function Teacher() {
             <TabsTrigger value="lessons" data-testid="tab-lessons">
               Minhas Aulas ({lessons.length})
             </TabsTrigger>
+            <TabsTrigger value="outlines" data-testid="tab-outlines">
+              Esboços
+            </TabsTrigger>
             <TabsTrigger value="students" data-testid="tab-students">
               {t.teacherMode.students}
             </TabsTrigger>
@@ -550,6 +553,44 @@ export default function Teacher() {
                 )}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="outlines">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Esboços de Ensino</CardTitle>
+                    <CardDescription>Crie esboços estruturados para suas aulas</CardDescription>
+                  </div>
+                  <Button data-testid="button-create-outline">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Esboço
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mx-auto mb-4">
+                    <FileText className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Nenhum esboço criado</h3>
+                  <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                    Esboços permitem organizar aulas em blocos de texto, referências bíblicas e perguntas de reflexão. Ideal para preparar estudos bíblicos.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button data-testid="button-create-first-outline">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar Primeiro Esboço
+                    </Button>
+                    <Button variant="outline" data-testid="button-import-outline">
+                      <Download className="h-4 w-4 mr-2" />
+                      Importar Modelo
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="students">

@@ -8,6 +8,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**December 16, 2025 - COMPETITOR FEATURE IMPLEMENTATION:**
+
+### 4 New Features Inspired by "O Verbo" App Analysis
+*   **✅ Study Groups**: New `/groups` page for creating and joining Bible study groups with leader/member roles
+*   **✅ Teaching Outlines**: New "Esboços" tab in Teacher Mode for structured lesson block creation
+*   **✅ Version Comparison**: New `/compare` page for side-by-side Bible translation comparison (up to 3 versions)
+*   **✅ Podcast Offline Download**: New IndexedDB storage (`podcastStorage.ts`) for offline audio playback
+*   **New API Routes**: `/api/groups/*`, `/api/teacher/outlines/*`, `/api/bible/compare/*`
+*   **New DB Schema**: `studyGroups`, `studyGroupMembers`, `groupInvites`, `teachingOutlines` tables
+*   **Sidebar Navigation**: Added "Grupos de Estudo" and "Comparar Versões" links
+
 **December 16, 2025 - PODCAST AUTO-GENERATION:**
 
 ### Auto-Generated Bible Podcast Episodes

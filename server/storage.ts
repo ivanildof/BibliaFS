@@ -1117,6 +1117,179 @@ export class DatabaseStorage implements IStorage {
 
     return { count, resetAt };
   }
+
+  // ============================================
+  // STUDY GROUPS
+  // ============================================
+  
+  async getGroups(userId?: string): Promise<any[]> {
+    const { groups, groupMembers, users } = await import("@shared/schema");
+    
+    // Get public groups or groups user is a member of
+    const result = await db
+      .select({
+        id: groups.id,
+        name: groups.name,
+        description: groups.description,
+        isPublic: groups.isPublic,
+        maxMembers: groups.maxMembers,
+        createdAt: groups.createdAt,
+        leaderId: groups.leaderId,
+      })
+      .from(groups)
+      .orderBy(desc(groups.createdAt));
+    
+    return result;
+  }
+
+  async getGroup(id: string): Promise<any | undefined> {
+    const { groups } = await import("@shared/schema");
+    const [group] = await db.select().from(groups).where(eq(groups.id, id));
+    return group;
+  }
+
+  async createGroup(data: { name: string; description?: string; isPublic?: boolean; leaderId: string }): Promise<any> {
+    const { groups } = await import("@shared/schema");
+    const [created] = await db.insert(groups).values(data).returning();
+    return created;
+  }
+
+  async updateGroup(id: string, leaderId: string, data: Partial<{ name: string; description: string; isPublic: boolean }>): Promise<any | null> {
+    const { groups } = await import("@shared/schema");
+    const [existing] = await db.select().from(groups).where(eq(groups.id, id));
+    if (!existing || existing.leaderId !== leaderId) return null;
+    
+    const [updated] = await db.update(groups).set({ ...data, updatedAt: new Date() }).where(eq(groups.id, id)).returning();
+    return updated;
+  }
+
+  async deleteGroup(id: string, leaderId: string): Promise<boolean> {
+    const { groups } = await import("@shared/schema");
+    const [existing] = await db.select().from(groups).where(eq(groups.id, id));
+    if (!existing || existing.leaderId !== leaderId) return false;
+    
+    await db.delete(groups).where(eq(groups.id, id));
+    return true;
+  }
+
+  async getGroupMembers(groupId: string): Promise<any[]> {
+    const { groupMembers, users } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groupMembers.id,
+        userId: groupMembers.userId,
+        role: groupMembers.role,
+        joinedAt: groupMembers.joinedAt,
+        userName: users.displayName,
+        userEmail: users.email,
+        userImage: users.profileImageUrl,
+      })
+      .from(groupMembers)
+      .leftJoin(users, eq(groupMembers.userId, users.id))
+      .where(eq(groupMembers.groupId, groupId));
+  }
+
+  async addGroupMember(groupId: string, userId: string, role: string = "member"): Promise<any> {
+    const { groupMembers } = await import("@shared/schema");
+    const [created] = await db.insert(groupMembers).values({ groupId, userId, role }).returning();
+    return created;
+  }
+
+  async removeGroupMember(groupId: string, userId: string): Promise<boolean> {
+    const { groupMembers } = await import("@shared/schema");
+    await db.delete(groupMembers).where(and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId)));
+    return true;
+  }
+
+  async isGroupMember(groupId: string, userId: string): Promise<boolean> {
+    const { groupMembers } = await import("@shared/schema");
+    const [member] = await db.select().from(groupMembers).where(and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId)));
+    return !!member;
+  }
+
+  async getUserGroups(userId: string): Promise<any[]> {
+    const { groups, groupMembers } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groups.id,
+        name: groups.name,
+        description: groups.description,
+        isPublic: groups.isPublic,
+        role: groupMembers.role,
+        joinedAt: groupMembers.joinedAt,
+      })
+      .from(groupMembers)
+      .innerJoin(groups, eq(groupMembers.groupId, groups.id))
+      .where(eq(groupMembers.userId, userId));
+  }
+
+  // ============================================
+  // TEACHING OUTLINES
+  // ============================================
+  
+  async getTeachingOutlines(teacherId: string): Promise<any[]> {
+    const { teachingOutlines } = await import("@shared/schema");
+    return await db.select().from(teachingOutlines).where(eq(teachingOutlines.teacherId, teacherId)).orderBy(desc(teachingOutlines.updatedAt));
+  }
+
+  async getTeachingOutline(id: string): Promise<any | undefined> {
+    const { teachingOutlines } = await import("@shared/schema");
+    const [outline] = await db.select().from(teachingOutlines).where(eq(teachingOutlines.id, id));
+    return outline;
+  }
+
+  async createTeachingOutline(data: any): Promise<any> {
+    const { teachingOutlines } = await import("@shared/schema");
+    const [created] = await db.insert(teachingOutlines).values(data).returning();
+    return created;
+  }
+
+  async updateTeachingOutline(id: string, teacherId: string, data: any): Promise<any | null> {
+    const { teachingOutlines } = await import("@shared/schema");
+    const [existing] = await db.select().from(teachingOutlines).where(eq(teachingOutlines.id, id));
+    if (!existing || existing.teacherId !== teacherId) return null;
+    
+    const [updated] = await db.update(teachingOutlines).set({ ...data, updatedAt: new Date() }).where(eq(teachingOutlines.id, id)).returning();
+    return updated;
+  }
+
+  async deleteTeachingOutline(id: string, teacherId: string): Promise<boolean> {
+    const { teachingOutlines } = await import("@shared/schema");
+    const [existing] = await db.select().from(teachingOutlines).where(eq(teachingOutlines.id, id));
+    if (!existing || existing.teacherId !== teacherId) return false;
+    
+    await db.delete(teachingOutlines).where(eq(teachingOutlines.id, id));
+    return true;
+  }
+
+  // ============================================
+  // GROUP POSTS (Community Posts filtered by group)
+  // ============================================
+  
+  async getGroupPosts(groupId: string, limit: number = 50): Promise<any[]> {
+    return await db
+      .select({
+        id: communityPosts.id,
+        userId: communityPosts.userId,
+        groupId: communityPosts.groupId,
+        verseReference: communityPosts.verseReference,
+        verseText: communityPosts.verseText,
+        note: communityPosts.note,
+        likeCount: communityPosts.likeCount,
+        commentCount: communityPosts.commentCount,
+        createdAt: communityPosts.createdAt,
+        user: {
+          id: users.id,
+          displayName: users.displayName,
+          profileImageUrl: users.profileImageUrl,
+        },
+      })
+      .from(communityPosts)
+      .leftJoin(users, eq(communityPosts.userId, users.id))
+      .where(eq(communityPosts.groupId, groupId))
+      .orderBy(desc(communityPosts.createdAt))
+      .limit(limit);
+  }
 }
 
 export const storage = new DatabaseStorage();

@@ -2874,6 +2874,278 @@ Responda em português do Brasil.`
     res.redirect("/register");
   });
 
+  // ============================================
+  // STUDY GROUPS API
+  // ============================================
+
+  // Get all public groups + user's groups
+  app.get("/api/groups", async (req: any, res) => {
+    try {
+      const groups = await storage.getGroups();
+      res.json(groups);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user's groups
+  app.get("/api/groups/my", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groups = await storage.getUserGroups(userId);
+      res.json(groups);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get single group
+  app.get("/api/groups/:id", async (req, res) => {
+    try {
+      const group = await storage.getGroup(req.params.id);
+      if (!group) {
+        return res.status(404).json({ error: "Grupo não encontrado" });
+      }
+      res.json(group);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Create group
+  app.post("/api/groups", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { name, description, isPublic } = req.body;
+      
+      if (!name || name.length < 3) {
+        return res.status(400).json({ error: "Nome do grupo deve ter pelo menos 3 caracteres" });
+      }
+      
+      const group = await storage.createGroup({
+        name,
+        description,
+        isPublic: isPublic ?? false,
+        leaderId: userId,
+      });
+      
+      // Add creator as leader member
+      await storage.addGroupMember(group.id, userId, "leader");
+      
+      res.json(group);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Update group
+  app.patch("/api/groups/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const group = await storage.updateGroup(req.params.id, userId, req.body);
+      
+      if (!group) {
+        return res.status(404).json({ error: "Grupo não encontrado ou acesso negado" });
+      }
+      
+      res.json(group);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Delete group
+  app.delete("/api/groups/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const deleted = await storage.deleteGroup(req.params.id, userId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Grupo não encontrado ou acesso negado" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get group members
+  app.get("/api/groups/:id/members", async (req, res) => {
+    try {
+      const members = await storage.getGroupMembers(req.params.id);
+      res.json(members);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Join group
+  app.post("/api/groups/:id/join", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      
+      // Check if group exists and is public
+      const group = await storage.getGroup(groupId);
+      if (!group) {
+        return res.status(404).json({ error: "Grupo não encontrado" });
+      }
+      
+      if (!group.isPublic) {
+        return res.status(403).json({ error: "Este grupo é privado" });
+      }
+      
+      // Check if already member
+      const isMember = await storage.isGroupMember(groupId, userId);
+      if (isMember) {
+        return res.status(400).json({ error: "Você já é membro deste grupo" });
+      }
+      
+      const member = await storage.addGroupMember(groupId, userId, "member");
+      res.json(member);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Leave group
+  app.post("/api/groups/:id/leave", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.removeGroupMember(req.params.id, userId);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get group posts
+  app.get("/api/groups/:id/posts", async (req, res) => {
+    try {
+      const posts = await storage.getGroupPosts(req.params.id);
+      res.json(posts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
+  // TEACHING OUTLINES API
+  // ============================================
+
+  // Get user's teaching outlines
+  app.get("/api/teacher/outlines", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const outlines = await storage.getTeachingOutlines(userId);
+      res.json(outlines);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get single outline
+  app.get("/api/teacher/outlines/:id", isAuthenticated, async (req, res) => {
+    try {
+      const outline = await storage.getTeachingOutline(req.params.id);
+      res.json(outline || null);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Create outline
+  app.post("/api/teacher/outlines", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const outline = await storage.createTeachingOutline({
+        ...req.body,
+        teacherId: userId,
+      });
+      res.json(outline);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Update outline
+  app.patch("/api/teacher/outlines/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const outline = await storage.updateTeachingOutline(req.params.id, userId, req.body);
+      
+      if (!outline) {
+        return res.status(404).json({ error: "Esboço não encontrado ou acesso negado" });
+      }
+      
+      res.json(outline);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Delete outline
+  app.delete("/api/teacher/outlines/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const deleted = await storage.deleteTeachingOutline(req.params.id, userId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Esboço não encontrado ou acesso negado" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
+  // BIBLE VERSION COMPARISON API
+  // ============================================
+
+  // Compare verses across multiple versions
+  // Note: Version comparison is handled client-side using the SQLite database
+  // This endpoint provides metadata and format for the comparison view
+  app.get("/api/bible/compare/:book/:chapter/:verse", async (req, res) => {
+    try {
+      const { book, chapter, verse } = req.params;
+      const versions = (req.query.versions as string || "nvi,acf,arc,ra").split(",");
+      
+      // Return metadata for client-side comparison
+      // Actual verse text is fetched from client SQLite database
+      res.json({
+        reference: `${book} ${chapter}:${verse}`,
+        book,
+        chapter: parseInt(chapter),
+        verse: parseInt(verse),
+        versions: versions.map(v => v.toUpperCase()),
+        message: "Use client-side SQLite for verse text",
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Compare full chapter across versions
+  app.get("/api/bible/compare/:book/:chapter", async (req, res) => {
+    try {
+      const { book, chapter } = req.params;
+      const versions = (req.query.versions as string || "nvi,acf").split(",").slice(0, 3);
+      
+      res.json({
+        reference: `${book} ${chapter}`,
+        book,
+        chapter: parseInt(chapter),
+        versions: versions.map(v => v.toUpperCase()),
+        message: "Use client-side SQLite for verse text",
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

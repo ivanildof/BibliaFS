@@ -21,13 +21,17 @@ import {
   Loader2,
   Pencil,
   Trash2,
-  MoreVertical
+  MoreVertical,
+  Download,
+  Check,
+  WifiOff
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient, getAuthHeaders } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { podcastStorage } from "@/lib/offline/podcastStorage";
 import type { Podcast } from "@shared/schema";
 
 const BIBLE_BOOKS = [
@@ -81,6 +85,74 @@ export default function Podcasts() {
   const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
+
+  // Offline download state
+  const [downloadedEpisodes, setDownloadedEpisodes] = useState<Set<string>>(new Set());
+  const [downloadingEpisodes, setDownloadingEpisodes] = useState<Set<string>>(new Set());
+
+  // Load downloaded episodes on mount
+  useEffect(() => {
+    async function loadDownloaded() {
+      try {
+        const episodes = await podcastStorage.getAllEpisodes();
+        setDownloadedEpisodes(new Set(episodes.map(e => e.id)));
+      } catch (error) {
+        console.error("Error loading downloaded episodes:", error);
+      }
+    }
+    loadDownloaded();
+  }, []);
+
+  const downloadEpisode = async (episode: Episode, podcast: Podcast) => {
+    if (downloadingEpisodes.has(episode.id) || downloadedEpisodes.has(episode.id)) return;
+
+    setDownloadingEpisodes(prev => new Set(prev).add(episode.id));
+    
+    try {
+      // First, generate the audio if needed
+      const authHeaders = await getAuthHeaders();
+      const response = await fetch(`/api/bible/audio?book=${episode.bookAbbrev}&chapter=${episode.chapterNumber}`, {
+        headers: authHeaders,
+      });
+      
+      if (!response.ok) throw new Error("Failed to fetch audio");
+      
+      const data = await response.json();
+      const audioUrl = data.audioUrl;
+      
+      // Fetch the actual audio data
+      const audioResponse = await fetch(audioUrl);
+      const audioBlob = await audioResponse.blob();
+      
+      // Save to IndexedDB
+      await podcastStorage.saveEpisode({
+        id: episode.id,
+        podcastId: podcast.id,
+        title: episode.title,
+        audioData: audioBlob,
+        downloadedAt: Date.now(),
+        size: audioBlob.size,
+      });
+      
+      setDownloadedEpisodes(prev => new Set(prev).add(episode.id));
+      toast({
+        title: "Episódio baixado!",
+        description: `"${episode.title}" disponível offline`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao baixar",
+        description: error.message || "Tente novamente mais tarde",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingEpisodes(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(episode.id);
+        return newSet;
+      });
+    }
+  };
 
   const { data: podcasts = [] } = useQuery<Podcast[]>({
     queryKey: ["/api/podcasts"],
@@ -483,11 +555,39 @@ export default function Podcasts() {
                               >
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-medium truncate">{ep.title}</p>
-                                  <p className="text-xs text-muted-foreground">{formatTime(ep.duration)}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {formatTime(ep.duration)}
+                                    {downloadedEpisodes.has(ep.id) && (
+                                      <Badge variant="secondary" className="ml-2 text-xs">
+                                        <WifiOff className="h-2 w-2 mr-1" />
+                                        Offline
+                                      </Badge>
+                                    )}
+                                  </p>
                                 </div>
-                                <Button size="icon" variant="ghost" data-testid={`button-play-${ep.id}`}>
-                                  <Play className="h-4 w-4" />
-                                </Button>
+                                <div className="flex items-center gap-1">
+                                  <Button 
+                                    size="icon" 
+                                    variant="ghost"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      downloadEpisode(ep, podcast);
+                                    }}
+                                    disabled={downloadingEpisodes.has(ep.id) || downloadedEpisodes.has(ep.id)}
+                                    data-testid={`button-download-${ep.id}`}
+                                  >
+                                    {downloadingEpisodes.has(ep.id) ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : downloadedEpisodes.has(ep.id) ? (
+                                      <Check className="h-4 w-4 text-green-500" />
+                                    ) : (
+                                      <Download className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                  <Button size="icon" variant="ghost" data-testid={`button-play-${ep.id}`}>
+                                    <Play className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
                             ))}
                           </div>
