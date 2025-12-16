@@ -1047,6 +1047,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-powered lesson content generation
+  app.post("/api/teacher/generate-lesson-content", isAuthenticated, async (req: any, res) => {
+    try {
+      const { title, scriptureBase } = req.body;
+      
+      if (!title || !scriptureBase) {
+        return res.status(400).json({ error: "Título e texto-base são obrigatórios" });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(503).json({ error: "Serviço de IA indisponível" });
+      }
+
+      const prompt = `Você é um assistente especializado em educação bíblica. Com base no título e texto-base fornecidos, gere conteúdo para uma aula bíblica.
+
+Título da Aula: ${title}
+Texto-Base: ${scriptureBase}
+
+Responda em JSON com a seguinte estrutura:
+{
+  "description": "Uma descrição concisa da aula (2-3 frases)",
+  "objectives": ["Objetivo 1", "Objetivo 2", "Objetivo 3"],
+  "questions": ["Pergunta de discussão 1", "Pergunta de discussão 2", "Pergunta de discussão 3", "Pergunta de discussão 4"]
+}
+
+Forneça 3 objetivos de aprendizado claros e 4 perguntas para discussão que estimulem reflexão e aplicação prática. Todas as respostas devem estar em português do Brasil.`;
+
+      const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openaiInstance.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+        temperature: 0.7,
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error("Resposta vazia da IA");
+      }
+
+      const generated = JSON.parse(content);
+      res.json(generated);
+    } catch (error: any) {
+      console.error("Erro ao gerar conteúdo com IA:", error);
+      res.status(500).json({ error: "Falha ao gerar conteúdo" });
+    }
+  });
+
+  // AI Assistant for Teachers - Ask questions about teaching content
+  app.post("/api/teacher/ask-assistant", isAuthenticated, async (req: any, res) => {
+    try {
+      const { question, context } = req.body;
+      
+      if (!question) {
+        return res.status(400).json({ error: "Pergunta é obrigatória" });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(503).json({ error: "Serviço de IA indisponível" });
+      }
+
+      const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica. Responda a pergunta do professor de forma clara, concisa e biblicamente relevante.
+
+Contexto: ${context || "Educação bíblica cristã"}
+Pergunta: ${question}
+
+Forneça uma resposta prática e aplicável para uso em sala de aula.`;
+
+      const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openaiInstance.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+      });
+
+      const answer = response.choices[0]?.message?.content;
+      if (!answer) {
+        throw new Error("Resposta vazia da IA");
+      }
+
+      res.json({ answer });
+    } catch (error: any) {
+      console.error("Erro no assistente IA:", error);
+      res.status(500).json({ error: "Falha ao processar pergunta" });
+    }
+  });
+
   app.patch("/api/teacher/lessons/:id", isAuthenticated, async (req: any, res) => {
     try {
       const teacherId = req.user.claims.sub;

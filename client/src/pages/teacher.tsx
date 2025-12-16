@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +20,12 @@ import {
   CheckCircle2,
   Loader2,
   Clock,
-  Printer
+  Printer,
+  Sparkles,
+  Trash2,
+  HelpCircle,
+  Brain,
+  MessageSquare
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -170,11 +175,14 @@ const exportLessonToPDF = (lesson: Lesson) => {
   printWindow.document.close();
 };
 
-// Form schema - simplified for lesson creation
+// Form schema - complete lesson creation
 const formSchema = z.object({
   title: z.string().min(5, "O título deve ter pelo menos 5 caracteres"),
   description: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres"),
   scriptureBase: z.string().min(1, "Digite o texto-base"),
+  objectives: z.array(z.string()).optional(),
+  discussionQuestions: z.array(z.string()).optional(),
+  applicationPoints: z.array(z.string()).optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -183,6 +191,16 @@ export default function Teacher() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [objectives, setObjectives] = useState<string[]>([]);
+  const [newObjective, setNewObjective] = useState("");
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [currentTab, setCurrentTab] = useState<"lessons" | "assistant">("lessons");
+  const [assistantMessages, setAssistantMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [assistantInput, setAssistantInput] = useState("");
+  const [isAssistantLoading, setIsAssistantLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: lessons = [], isLoading, error } = useQuery<Lesson[]>({
     queryKey: ["/api/teacher/lessons"],
@@ -195,17 +213,135 @@ export default function Teacher() {
       title: "",
       description: "",
       scriptureBase: "",
+      objectives: [],
+      discussionQuestions: [],
+      applicationPoints: [],
     },
   });
 
+  const addObjective = () => {
+    if (newObjective.trim()) {
+      setObjectives([...objectives, newObjective.trim()]);
+      setNewObjective("");
+    }
+  };
+
+  const removeObjective = (index: number) => {
+    setObjectives(objectives.filter((_, i) => i !== index));
+  };
+
+  const addQuestion = () => {
+    if (newQuestion.trim()) {
+      setQuestions([...questions, newQuestion.trim()]);
+      setNewQuestion("");
+    }
+  };
+
+  const removeQuestion = (index: number) => {
+    setQuestions(questions.filter((_, i) => i !== index));
+  };
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [assistantMessages]);
+
+  const handleAssistantSubmit = async () => {
+    if (!assistantInput.trim()) return;
+
+    const userMessage = { role: "user" as const, content: assistantInput };
+    setAssistantMessages(prev => [...prev, userMessage]);
+    setAssistantInput("");
+    setIsAssistantLoading(true);
+
+    try {
+      const response = await fetch("/api/teacher/ask-assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ question: assistantInput, context: "Aula bíblica" }),
+      });
+
+      if (!response.ok) throw new Error("Falha ao consultar assistente");
+
+      const data = await response.json();
+      setAssistantMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível consultar o assistente IA",
+        variant: "destructive",
+      });
+      setAssistantMessages(prev => prev.slice(0, -1));
+    } finally {
+      setIsAssistantLoading(false);
+    }
+  };
+
+  const generateWithAI = async () => {
+    const title = form.getValues("title");
+    const scriptureBase = form.getValues("scriptureBase");
+    
+    if (!title || !scriptureBase) {
+      toast({
+        title: "Preencha os campos",
+        description: "Digite o título e texto-base para gerar conteúdo com IA",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGeneratingAI(true);
+    try {
+      const response = await fetch("/api/teacher/generate-lesson-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ title, scriptureBase }),
+      });
+
+      if (!response.ok) throw new Error("Falha ao gerar conteúdo");
+
+      const data = await response.json();
+      
+      if (data.description) form.setValue("description", data.description);
+      if (data.objectives?.length) setObjectives(data.objectives);
+      if (data.questions?.length) setQuestions(data.questions);
+
+      toast({
+        title: "Conteúdo gerado!",
+        description: "A IA sugeriu objetivos e perguntas para sua aula",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao gerar",
+        description: "Tente novamente ou preencha manualmente",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      return await apiRequest("POST", "/api/teacher/lessons", data);
+      const lessonData = {
+        ...data,
+        objectives,
+        questions: questions.map((q, i) => ({
+          id: `q-${i}`,
+          question: q,
+          options: [],
+          correctAnswer: -1,
+        })),
+      };
+      return await apiRequest("POST", "/api/teacher/lessons", lessonData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });
       setIsCreateDialogOpen(false);
       form.reset();
+      setObjectives([]);
+      setQuestions([]);
       toast({
         title: "Aula criada!",
         description: "Sua aula foi salva com sucesso.",
@@ -280,11 +416,12 @@ export default function Teacher() {
               {t.teacherMode.title}
             </h1>
             <p className="text-lg text-muted-foreground">
-              Crie e gerencie aulas bíblicas
+              Crie aulas, gerencie estudantes e converse com IA
             </p>
           </div>
           
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          {currentTab === "lessons" && (
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-lesson">
                 <Plus className="h-5 w-5 mr-2" />
@@ -355,6 +492,112 @@ export default function Teacher() {
                         </FormItem>
                       )}
                     />
+
+                    {/* AI Generation Button */}
+                    <div className="flex justify-center pt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={generateWithAI}
+                        disabled={isGeneratingAI}
+                        className="gap-2"
+                        data-testid="button-generate-ai"
+                      >
+                        {isGeneratingAI ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Gerando com IA...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4" />
+                            Gerar Conteúdo com IA
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Objectives Section */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <FormLabel className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Objetivos da Aula
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Ex: Compreender o amor incondicional do Pai"
+                          value={newObjective}
+                          onChange={(e) => setNewObjective(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addObjective())}
+                          data-testid="input-new-objective"
+                        />
+                        <Button type="button" onClick={addObjective} size="icon" variant="outline" data-testid="button-add-objective">
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {objectives.length > 0 && (
+                        <ul className="space-y-2">
+                          {objectives.map((obj, i) => (
+                            <li key={i} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+                              <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
+                              <span className="flex-1 text-sm">{obj}</span>
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => removeObjective(i)}
+                                className="h-6 w-6"
+                                data-testid={`button-remove-objective-${i}`}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    {/* Discussion Questions Section */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <FormLabel className="flex items-center gap-2">
+                        <HelpCircle className="h-4 w-4" />
+                        Perguntas para Discussão
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Ex: O que significa ser um filho pródigo hoje?"
+                          value={newQuestion}
+                          onChange={(e) => setNewQuestion(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addQuestion())}
+                          data-testid="input-new-question"
+                        />
+                        <Button type="button" onClick={addQuestion} size="icon" variant="outline" data-testid="button-add-question">
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {questions.length > 0 && (
+                        <ul className="space-y-2">
+                          {questions.map((q, i) => (
+                            <li key={i} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold flex-shrink-0">
+                                {i + 1}
+                              </span>
+                              <span className="flex-1 text-sm">{q}</span>
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => removeQuestion(i)}
+                                className="h-6 w-6"
+                                data-testid={`button-remove-question-${i}`}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   </div>
                   
                   <DialogFooter>
@@ -385,10 +628,106 @@ export default function Teacher() {
               </Form>
             </DialogContent>
           </Dialog>
+          )}
         </div>
 
+        {/* Tabs */}
+        <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as "lessons" | "assistant")} className="mb-8">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="lessons" data-testid="tab-lessons">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Aulas
+            </TabsTrigger>
+            <TabsTrigger value="assistant" data-testid="tab-assistant">
+              <Brain className="h-4 w-4 mr-2" />
+              Assistente IA
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {/* Assistant Tab */}
+        {currentTab === "assistant" && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-orange-500" />
+                Assistente Pedagógico IA
+              </CardTitle>
+              <CardDescription>
+                Faça perguntas sobre conteúdo bíblico, métodos de ensino e planejamento de aulas
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Chat Area */}
+                <div className="border rounded-lg p-4 h-96 overflow-y-auto bg-muted/30 space-y-3">
+                  {assistantMessages.length === 0 ? (
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                      <p className="text-center">
+                        Comece perguntando algo sobre educação bíblica, pedagogia ou conteúdo...
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      {assistantMessages.map((msg, i) => (
+                        <div
+                          key={i}
+                          className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                        >
+                          <div
+                            className={`max-w-xs px-4 py-2 rounded-lg ${
+                              msg.role === "user"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-background border"
+                            }`}
+                          >
+                            <p className="text-sm">{msg.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {isAssistantLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-background border px-4 py-2 rounded-lg">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          </div>
+                        </div>
+                      )}
+                      <div ref={messagesEndRef} />
+                    </>
+                  )}
+                </div>
+
+                {/* Input Area */}
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Faça uma pergunta..."
+                    value={assistantInput}
+                    onChange={(e) => setAssistantInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleAssistantSubmit()}
+                    disabled={isAssistantLoading}
+                    data-testid="input-assistant-question"
+                  />
+                  <Button
+                    onClick={handleAssistantSubmit}
+                    disabled={isAssistantLoading || !assistantInput.trim()}
+                    size="icon"
+                    data-testid="button-send-question"
+                  >
+                    {isAssistantLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <MessageSquare className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        {currentTab === "lessons" && (
+          <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total de Aulas</CardTitle>
@@ -437,24 +776,10 @@ export default function Teacher() {
             </CardContent>
           </Card>
         </div>
+        )}
 
-        <Tabs defaultValue="lessons" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="lessons" data-testid="tab-lessons">
-              Minhas Aulas ({lessons.length})
-            </TabsTrigger>
-            <TabsTrigger value="outlines" data-testid="tab-outlines">
-              Esboços
-            </TabsTrigger>
-            <TabsTrigger value="students" data-testid="tab-students">
-              {t.teacherMode.students}
-            </TabsTrigger>
-            <TabsTrigger value="calendar" data-testid="tab-calendar">
-              Calendário
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="lessons">
+        {/* Lessons List */}
+        {currentTab === "lessons" && (
             {lessons.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -555,7 +880,17 @@ export default function Teacher() {
             )}
           </TabsContent>
 
-          <TabsContent value="outlines">
+        )}
+        </>
+      </div>
+    </div>
+  );
+}
+
+/* Old Tabs Content Sections - Hidden */
+const _OldTabContent = () => (
+  <Tabs defaultValue="lessons" className="space-y-6">
+    <TabsContent value="outlines">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">

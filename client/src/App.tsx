@@ -22,7 +22,6 @@ import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import BibleReader from "@/pages/bible-reader";
 import Favorites from "@/pages/favorites";
-import AIStudy from "@/pages/ai-study";
 import ReadingPlans from "@/pages/reading-plans";
 import Progress from "@/pages/progress";
 import Prayers from "@/pages/prayers";
@@ -46,7 +45,6 @@ import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import NotFound from "@/pages/not-found";
 import Groups from "@/pages/groups";
-import VersionCompare from "@/pages/version-compare";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -83,14 +81,12 @@ function Router() {
           <Route path="/bible" component={BibleReader} />
           <Route path="/bible-reader" component={BibleReader} />
           <Route path="/favorites" component={Favorites} />
-          <Route path="/ai-study" component={AIStudy} />
           <Route path="/plans" component={ReadingPlans} />
           <Route path="/progress" component={Progress} />
           <Route path="/prayers" component={Prayers} />
           <Route path="/podcasts" component={Podcasts} />
           <Route path="/teacher" component={Teacher} />
           <Route path="/groups" component={Groups} />
-          <Route path="/compare" component={VersionCompare} />
           <Route path="/community" component={Community} />
           <Route path="/configurações" component={Settings} />
           <Route path="/settings" component={Settings} />
