@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,9 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileImageUpload } from "@/components/ProfileImageUpload";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -16,6 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { 
   User,
   BookOpen,
@@ -39,8 +43,11 @@ import {
   FileText as FileTextIcon,
   Shield,
   Mail,
-  LogOut
+  LogOut,
+  Edit,
+  AlertTriangle
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -80,7 +87,11 @@ const levelInfo = {
 export default function Profile() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("plans");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editFirstName, setEditFirstName] = useState(user?.firstName || "");
+  const [editLastName, setEditLastName] = useState(user?.lastName || "");
   
   // Fetch user data
   const { data: readingPlans = [] } = useQuery<ReadingPlan[]>({
@@ -111,6 +122,37 @@ export default function Profile() {
   const { data: achievements = [] } = useQuery<AchievementType[]>({
     queryKey: ["/api/achievements/user"],
     enabled: !!user,
+  });
+
+  const updateNameMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("PATCH", "/api/user/profile", {
+        firstName: editFirstName,
+        lastName: editLastName,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      setEditDialogOpen(false);
+      toast({ title: "Sucesso!", description: "Nome atualizado com sucesso" });
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Não foi possível atualizar o nome", variant: "destructive" });
+    },
+  });
+
+  const cancelSubscriptionMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", "/api/subscriptions/cancel", {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/status"] });
+      toast({ title: "Sucesso!", description: "Assinatura cancelada com sucesso" });
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Não foi possível cancelar a assinatura", variant: "destructive" });
+    },
   });
 
   if (!user) return null;
@@ -217,6 +259,49 @@ export default function Profile() {
                   <h1 className="font-display text-3xl font-bold" data-testid="text-profile-name">
                     {user.firstName} {user.lastName}
                   </h1>
+                  <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button size="icon" variant="ghost" data-testid="button-edit-name">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Editar Nome</DialogTitle>
+                        <DialogDescription>Altere seu primeiro e último nome</DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="first-name">Primeiro Nome</Label>
+                          <Input 
+                            id="first-name"
+                            value={editFirstName}
+                            onChange={(e) => setEditFirstName(e.target.value)}
+                            data-testid="input-first-name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="last-name">Último Nome</Label>
+                          <Input 
+                            id="last-name"
+                            value={editLastName}
+                            onChange={(e) => setEditLastName(e.target.value)}
+                            data-testid="input-last-name"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
+                        <Button 
+                          onClick={() => updateNameMutation.mutate()}
+                          disabled={updateNameMutation.isPending}
+                          data-testid="button-save-name"
+                        >
+                          {updateNameMutation.isPending ? "Salvando..." : "Salvar"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                   {user.isTeacher && (
                     <Badge className="bg-orange-500/10 text-orange-700 border-orange-200">
                       Professor
@@ -227,6 +312,13 @@ export default function Profile() {
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mb-4">{user.email}</p>
+                {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
+                  <div className="mb-4 p-3 bg-primary/5 rounded-lg">
+                    <p className="text-sm">
+                      Plano: <span className="font-semibold">{user.subscriptionPlan === 'monthly' ? 'Premium Mensal' : user.subscriptionPlan === 'yearly' ? 'Premium Anual' : 'Premium Plus'}</span>
+                    </p>
+                  </div>
+                )}
                 
                 {/* Quick Stats */}
                 <div className="flex flex-wrap gap-4 md:gap-6">
@@ -272,6 +364,37 @@ export default function Profile() {
                   <Share2 className="h-4 w-4 mr-2" />
                   Compartilhar
                 </Button>
+                {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" data-testid="button-cancel-subscription">
+                        <AlertTriangle className="h-4 w-4 mr-2" />
+                        Cancelar Plano
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Cancelar Assinatura?</DialogTitle>
+                        <DialogDescription>
+                          Tem certeza que deseja cancelar sua assinatura? Você perderá todos os benefícios premium.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" data-testid="button-cancel-dialog">
+                          Voltar
+                        </Button>
+                        <Button 
+                          variant="destructive"
+                          onClick={() => cancelSubscriptionMutation.mutate()}
+                          disabled={cancelSubscriptionMutation.isPending}
+                          data-testid="button-confirm-cancel"
+                        >
+                          {cancelSubscriptionMutation.isPending ? "Cancelando..." : "Sim, Cancelar"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                )}
                 <Link href="/configurações">
                   <Button variant="outline" data-testid="button-settings">
                     <Settings className="h-4 w-4" />

@@ -722,6 +722,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user profile (name)
+  app.patch("/api/user/profile", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName } = req.body;
+
+      if (!firstName || !lastName) {
+        return res.status(400).json({ error: "Primeiro e último nomes são obrigatórios" });
+      }
+
+      if (firstName.length > 50 || lastName.length > 50) {
+        return res.status(400).json({ error: "Nomes muito longos" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      const updated = await storage.upsertUser({
+        ...user,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+      });
+
+      res.json({ success: true, user: updated });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Create user podcast
   app.post("/api/podcasts", isAuthenticated, async (req: any, res) => {
     try {
@@ -2139,6 +2170,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ url: session.url });
     } catch (error: any) {
       console.error("Erro ao criar portal session:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/subscriptions/cancel", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!stripe) {
+        return res.status(503).json({ error: "Sistema de pagamentos não configurado" });
+      }
+
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+
+      if (!user?.stripeSubscriptionId) {
+        return res.status(400).json({ error: "Você não possui uma assinatura ativa" });
+      }
+
+      await stripe.subscriptions.cancel(user.stripeSubscriptionId);
+      await storage.updateUserSubscription(userId, {
+        subscriptionPlan: 'free',
+        stripeSubscriptionId: null,
+      });
+
+      res.json({ success: true, message: "Assinatura cancelada com sucesso" });
+    } catch (error: any) {
+      console.error("Erro ao cancelar assinatura:", error);
       res.status(500).json({ error: error.message });
     }
   });
