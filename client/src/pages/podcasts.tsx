@@ -73,10 +73,7 @@ export default function Podcasts() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newPodcastTitle, setNewPodcastTitle] = useState("");
   const [newPodcastDescription, setNewPodcastDescription] = useState("");
-  const [newPodcastVersion, setNewPodcastVersion] = useState("nvi");
   const [newPodcastBook, setNewPodcastBook] = useState("");
-  const [newPodcastChapters, setNewPodcastChapters] = useState("");
-  const [newPodcastVerses, setNewPodcastVerses] = useState("");
 
   // Edit/Delete podcast state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -118,7 +115,7 @@ export default function Podcasts() {
   });
 
   const createPodcastMutation = useMutation({
-    mutationFn: async (data: { title: string; description: string; bibleBook?: string; bibleVersion?: string; chapters?: string; verses?: string }) => {
+    mutationFn: async (data: { title: string; description: string; bibleBook?: string; bibleChapter?: number }) => {
       return apiRequest("POST", "/api/podcasts", data);
     },
     onSuccess: () => {
@@ -193,10 +190,7 @@ export default function Podcasts() {
   const resetCreateForm = () => {
     setNewPodcastTitle("");
     setNewPodcastDescription("");
-    setNewPodcastVersion("nvi");
     setNewPodcastBook("");
-    setNewPodcastChapters("");
-    setNewPodcastVerses("");
   };
 
   // Audio player controls
@@ -340,9 +334,6 @@ export default function Podcasts() {
       title,
       description: newPodcastDescription,
       bibleBook: newPodcastBook,
-      bibleVersion: newPodcastVersion,
-      chapters: newPodcastChapters,
-      verses: newPodcastVerses,
     });
   };
 
@@ -368,28 +359,14 @@ export default function Podcasts() {
                 Criar Podcast
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-96 overflow-y-auto">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Criar Novo Podcast</DialogTitle>
                 <DialogDescription>
-                  Escolha a versão, livro da Bíblia e capítulos/versículos específicos. O sistema gerará automaticamente os episódios com áudio narrado.
+                  Escolha um livro da Bíblia e o sistema gerará automaticamente os episódios para cada capítulo com áudio narrado.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="version">Versão da Bíblia *</Label>
-                  <Select value={newPodcastVersion} onValueChange={setNewPodcastVersion}>
-                    <SelectTrigger id="version" data-testid="select-bible-version">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="nvi">NVI - Nova Versão Internacional</SelectItem>
-                      <SelectItem value="acf">ACF - Almeida Corrigida Fiel</SelectItem>
-                      <SelectItem value="arc">ARC - Almeida Revisada Clássica</SelectItem>
-                      <SelectItem value="ra">RA - Almeida Revisada</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
                 <div className="space-y-2">
                   <Label>Livro da Bíblia *</Label>
                   <Select value={newPodcastBook} onValueChange={setNewPodcastBook}>
@@ -402,26 +379,6 @@ export default function Podcasts() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="chapters">Capítulos (ex: 1-3 ou 1,2,5)</Label>
-                  <Input 
-                    id="chapters"
-                    placeholder="Deixe em branco para todos os capítulos"
-                    value={newPodcastChapters}
-                    onChange={(e) => setNewPodcastChapters(e.target.value)}
-                    data-testid="input-chapters"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="verses">Versículos específicos (ex: 1:1-5 ou 2:3)</Label>
-                  <Input 
-                    id="verses"
-                    placeholder="Deixe em branco para todos os versículos"
-                    value={newPodcastVerses}
-                    onChange={(e) => setNewPodcastVerses(e.target.value)}
-                    data-testid="input-verses"
-                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="podcast-title">Título do Podcast</Label>
