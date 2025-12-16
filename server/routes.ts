@@ -1072,17 +1072,26 @@ Duração: ${duration} minutos
 
 Adapte o conteúdo para a duração especificada:
 - Gere ${numObjectives} objetivos de aprendizado (quanto maior a duração, mais profundidade)
-- Gere ${numQuestions} perguntas para discussão (para aulas mais longas, adicione perguntas mais complexas e com tempo para reflexão profunda)
+- Gere ${numQuestions} perguntas para discussão COM RESPOSTAS/GABARITO (para aulas mais longas, adicione perguntas mais complexas e com tempo para reflexão profunda)
 - Se a aula tiver mais de 60 minutos, inclua pontos de aplicação prática adicional
 
 Responda em JSON com a seguinte estrutura:
 {
   "description": "Uma descrição concisa da aula proporcional à duração (2-4 frases)",
   "objectives": ["Objetivo 1", "Objetivo 2", ...],
-  "questions": ["Pergunta 1", "Pergunta 2", ...]
+  "questions": [
+    {"question": "Pergunta 1", "answer": "Resposta/gabarito 1 (2-3 frases com fundamentação bíblica)"},
+    {"question": "Pergunta 2", "answer": "Resposta/gabarito 2"},
+    ...
+  ]
 }
 
-IMPORTANTE: Calibre a profundidade e quantidade de conteúdo com base no tempo disponível. Aulas curtas devem ser concretas e focadas. Aulas longas podem ser mais teóricas e exploratórias. Todas as respostas devem estar em português do Brasil.`;
+IMPORTANTE: 
+- Calibre a profundidade e quantidade de conteúdo com base no tempo disponível
+- Aulas curtas devem ser concretas e focadas
+- Aulas longas podem ser mais teóricas e exploratórias
+- TODAS as respostas devem ser em português do Brasil
+- As respostas do gabarito devem ser concisas mas completas, com referências bíblicas quando apropriado`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const response = await openaiInstance.chat.completions.create({

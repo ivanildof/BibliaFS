@@ -194,8 +194,10 @@ export default function Teacher() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [objectives, setObjectives] = useState<string[]>([]);
   const [newObjective, setNewObjective] = useState("");
-  const [questions, setQuestions] = useState<string[]>([]);
+  const [questions, setQuestions] = useState<Array<{question: string; answer: string}>>([]);
   const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
+  const [expandedAnswerIndex, setExpandedAnswerIndex] = useState<number | null>(null);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [currentTab, setCurrentTab] = useState<"lessons" | "assistant">("lessons");
   const [assistantMessages, setAssistantMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
@@ -236,8 +238,9 @@ export default function Teacher() {
 
   const addQuestion = () => {
     if (newQuestion.trim()) {
-      setQuestions([...questions, newQuestion.trim()]);
+      setQuestions([...questions, { question: newQuestion.trim(), answer: newAnswer.trim() || "Resposta será preenchida aqui" }]);
       setNewQuestion("");
+      setNewAnswer("");
     }
   };
 
@@ -304,7 +307,13 @@ export default function Teacher() {
       
       if (data.description) form.setValue("description", data.description);
       if (data.objectives?.length) setObjectives(data.objectives);
-      if (data.questions?.length) setQuestions(data.questions);
+      if (data.questions?.length) {
+        // Convert questions to {question, answer} format if needed
+        const formattedQuestions = data.questions.map((q: any) => 
+          typeof q === 'string' ? { question: q, answer: "" } : q
+        );
+        setQuestions(formattedQuestions);
+      }
 
       // Scroll para mostrar conteúdo gerado
       setTimeout(() => {
@@ -333,7 +342,8 @@ export default function Teacher() {
         objectives,
         questions: questions.map((q, i) => ({
           id: `q-${i}`,
-          question: q,
+          question: typeof q === 'string' ? q : q.question,
+          answer: typeof q === 'string' ? "" : q.answer,
           options: [],
           correctAnswer: -1,
         })),
@@ -376,7 +386,8 @@ export default function Teacher() {
         objectives,
         questions: questions.map((q, i) => ({
           id: `q-${i}`,
-          question: q,
+          question: typeof q === 'string' ? q : q.question,
+          answer: typeof q === 'string' ? "" : q.answer,
           options: [],
           correctAnswer: -1,
         })),
@@ -423,7 +434,11 @@ export default function Teacher() {
       scriptureBase,
     });
     setObjectives(lesson.objectives || []);
-    setQuestions((lesson.questions || []).map(q => typeof q === 'string' ? q : q.question));
+    setQuestions((lesson.questions || []).map((q: any) => {
+      if (typeof q === 'string') return { question: q, answer: "" };
+      if (q.question) return { question: q.question, answer: q.answer || "" };
+      return { question: "", answer: "" };
+    }));
     setEditingLessonId(lesson.id);
     setIsCreateDialogOpen(true);
   };
@@ -667,38 +682,64 @@ export default function Teacher() {
                     <div className="space-y-3 pt-4 border-t">
                       <FormLabel className="flex items-center gap-2">
                         <HelpCircle className="h-4 w-4" />
-                        Perguntas para Discussão
+                        Perguntas para Discussão com Gabarito
                       </FormLabel>
-                      <div className="flex gap-2">
+                      <div className="space-y-2">
                         <Input
                           placeholder="Ex: O que significa ser um filho pródigo hoje?"
                           value={newQuestion}
                           onChange={(e) => setNewQuestion(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addQuestion())}
                           data-testid="input-new-question"
                         />
-                        <Button type="button" onClick={addQuestion} size="icon" variant="outline" data-testid="button-add-question">
+                        <Textarea
+                          placeholder="Resposta/Gabarito (2-3 frases com fundamentação bíblica)"
+                          value={newAnswer}
+                          onChange={(e) => setNewAnswer(e.target.value)}
+                          className="min-h-20"
+                          data-testid="textarea-new-answer"
+                        />
+                        <Button type="button" onClick={addQuestion} className="w-full gap-2" data-testid="button-add-question">
                           <Plus className="h-4 w-4" />
+                          Adicionar Pergunta e Resposta
                         </Button>
                       </div>
                       {questions.length > 0 && (
                         <ul className="space-y-2">
                           {questions.map((q, i) => (
-                            <li key={i} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
-                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold flex-shrink-0">
-                                {i + 1}
-                              </span>
-                              <span className="flex-1 text-sm">{q}</span>
-                              <Button
-                                type="button"
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => removeQuestion(i)}
-                                className="h-6 w-6"
-                                data-testid={`button-remove-question-${i}`}
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
+                            <li key={i} className="p-3 bg-muted rounded-lg space-y-2">
+                              <div className="flex items-start gap-2">
+                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold flex-shrink-0 mt-0.5">
+                                  {i + 1}
+                                </span>
+                                <div className="flex-1 space-y-1">
+                                  <p className="text-sm font-medium">{q.question}</p>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setExpandedAnswerIndex(expandedAnswerIndex === i ? null : i)}
+                                    className="text-xs h-6"
+                                    data-testid={`button-toggle-answer-${i}`}
+                                  >
+                                    {expandedAnswerIndex === i ? "Ocultar Resposta" : "Ver Resposta"}
+                                  </Button>
+                                  {expandedAnswerIndex === i && (
+                                    <div className="p-2 bg-background rounded text-sm mt-2 border-l-2 border-primary">
+                                      {q.answer}
+                                    </div>
+                                  )}
+                                </div>
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => removeQuestion(i)}
+                                  className="h-6 w-6 flex-shrink-0"
+                                  data-testid={`button-remove-question-${i}`}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
                             </li>
                           ))}
                         </ul>
