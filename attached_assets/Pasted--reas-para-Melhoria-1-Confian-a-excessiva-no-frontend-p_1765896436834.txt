@@ -1,0 +1,70 @@
+Áreas para Melhoria
+1. Confiança excessiva no frontend para fornecer user_id
+❌ Problema: Se o frontend envia user_id, um usuário malicioso pode alterar para outro ID.
+✅ Solução: O user_id deve vir da sessão autenticada no backend (ex: via JWT ou Supabase Auth).
+Supabase já fornece isso nativamente com Row Level Security (RLS) — você não precisa passar user_id nas queries se configurar RLS corretamente.
+2. Falta de Row Level Security (RLS) no Supabase
+Supabase tem suporte nativo a RLS. Com RLS, você pode bloquear no banco qualquer acesso não autorizado, mesmo que o frontend tente burlar.
+
+Exemplo:
+
+-- Ativar RLS
+ALTER TABLE prayers ENABLE ROW LEVEL SECURITY;
+
+-- Política: usuário só vê suas próprias orações
+CREATE POLICY "User can manage own prayers"
+ON prayers FOR ALL
+USING (auth.uid() = user_id);
+
+Isso é mais seguro do que confiar apenas na lógica da aplicação.
+3. Edição de perfil: verificar se o token é válido
+Você menciona “Backend verifica: Este é realmente o usuário logado?” — ótimo!
+Mas certifique-se de que isso usa o JWT do Supabase (via Authorization: Bearer <token>) e não um campo enviado pelo usuário.
+4. Offline/Online: cuidado com conflitos de dados
+Se o usuário edita uma oração offline e depois sincroniza, como resolvem conflitos?
+Considere usar timestamps de modificação (updated_at) ou CRDTs/versionamento para evitar perda de dados.
+5. Escalabilidade de leitura da Bíblia
+Armazenar a Bíblia inteira no IndexedDB é aceitável, mas certifique-se de:
+Comprimir os dados
+Usar lazy-loading (carregar só os livros/capítulos usados)
+Atualizar versões da Bíblia com cuidado (hash de versão?)
+📄 PRD Simplificado: Sistema de Dados com Isolamento por Usuário
+Objetivo
+Garantir que cada usuário acesse, edite e sincronize apenas seus próprios dados, com suporte offline seguro e escalável.
+
+Requisitos Funcionais
+Isolamento de dados
+Cada usuário só pode ver/editar suas orações, notas, planos e podcasts.
+Nenhum dado de outro usuário deve ser acessível, mesmo por engenharia reversa.
+Autenticação e Autorização
+Usar Supabase Auth com JWT.
+Todas as operações no banco devem ser protegidas por Row Level Security (RLS).
+O user_id nunca deve ser fornecido pelo cliente em operações críticas.
+Sincronização Online/Offline
+Dados do usuário (orações, notas, etc.) devem ser:
+Armazenados localmente (IndexedDB) quando offline
+Sincronizados com Supabase quando online
+Resilientes a conflitos (usar updated_at para merge)
+Armazenamento Local
+localStorage: só para preferências leves (tema, idioma)
+IndexedDB: para dados pesados (Bíblia, orações offline)
+Dados locais não devem substituir dados do servidor sem validação
+Edição de Perfil
+Endpoint PATCH /api/user/profile deve:
+Validar o JWT
+Extrair user_id do token
+Atualizar apenas os campos permitidos (firstName, lastName, etc.)
+Requisitos Não Funcionais
+Segurança: Nenhum dado vazado por falha de implementação.
+Performance: Leitura offline instantânea da Bíblia.
+Confiabilidade: Dados não devem ser perdidos em falhas de rede.
+Manutenibilidade: Uso de RLS reduz complexidade do backend.
+Métricas de Sucesso
+0 incidentes de vazamento de dados entre usuários
+99% das operações offline sincronizadas com sucesso
+Tempo de carregamento da Bíblia offline < 200ms
+✅ Próximos Passos
+Ative RLS em todas as tabelas de usuário no Supabase.
+Remova qualquer uso de user_id vindo do frontend em operações sensíveis.
+Implemente uma camada de sincronização offline com detecção de conflitos.
+Teste com usuários maliciosos: tente forjar requisições com user_id de outro.
