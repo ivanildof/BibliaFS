@@ -26,6 +26,31 @@ import {
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
 import { runMigrations } from "./migrations";
+import { fetchBibleChapter } from "./multilingual-bible-apis";
+
+// Map Portuguese book names to abbreviations
+const BOOK_NAME_TO_ABBREV: Record<string, string> = {
+  'Gênesis': 'gn', 'Êxodo': 'ex', 'Levítico': 'lv', 'Números': 'nm', 'Deuteronômio': 'dt',
+  'Josué': 'js', 'Juízes': 'jz', 'Rute': 'rt', '1 Samuel': '1sm', '2 Samuel': '2sm',
+  '1 Reis': '1rs', '2 Reis': '2rs', '1 Crônicas': '1cr', '2 Crônicas': '2cr',
+  'Esdras': 'ed', 'Neemias': 'ne', 'Ester': 'et', 'Jó': 'job', 'Salmos': 'sl',
+  'Provérbios': 'pv', 'Eclesiastes': 'ec', 'Cânticos': 'ct', 'Isaías': 'is',
+  'Jeremias': 'jr', 'Lamentações': 'lm', 'Ezequiel': 'ez', 'Daniel': 'dn',
+  'Oséias': 'os', 'Joel': 'jl', 'Amós': 'am', 'Obadias': 'ob', 'Jonas': 'jn',
+  'Miquéias': 'mq', 'Naum': 'na', 'Habacuque': 'hc', 'Sofonias': 'sf',
+  'Ageu': 'ag', 'Zacarias': 'zc', 'Malaquias': 'ml',
+  'Mateus': 'mt', 'Marcos': 'mc', 'Lucas': 'lc', 'João': 'jo', 'Atos': 'at',
+  'Romanos': 'rm', '1 Coríntios': '1co', '2 Coríntios': '2co', 'Gálatas': 'gl',
+  'Efésios': 'ef', 'Filipenses': 'fp', 'Colossenses': 'cl',
+  '1 Tessalonicenses': '1ts', '2 Tessalonicenses': '2ts',
+  '1 Timóteo': '1tm', '2 Timóteo': '2tm', 'Tito': 'tt', 'Filemom': 'fm',
+  'Hebreus': 'hb', 'Tiago': 'tg', '1 Pedro': '1pe', '2 Pedro': '2pe',
+  '1 João': '1jo', '2 João': '2jo', '3 João': '3jo', 'Judas': 'jd', 'Apocalipse': 'ap',
+};
+
+function getBookAbbreviation(bookName: string): string {
+  return BOOK_NAME_TO_ABBREV[bookName] || bookName.toLowerCase().substring(0, 2);
+}
 import {
   initPushTables,
   getVapidPublicKey,
@@ -1314,8 +1339,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`[Audio] Generating ${language} audio for ${book} ${chapter} (${textLength} chars) - User: ${userId}`);
 
-      // Function to split text into chunks respecting sentence boundaries
-      function splitTextIntoChunks(text: string, maxChars: number): string[] {
+      // Split text into chunks respecting sentence boundaries
+      const splitTextIntoChunks = (text: string, maxChars: number): string[] => {
         if (text.length <= maxChars) return [text];
         
         const chunks: string[] = [];
@@ -1341,7 +1366,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         return chunks.length > 0 ? chunks : [text.substring(0, maxChars)];
-      }
+      };
 
       const textChunks = splitTextIntoChunks(fullText, MAX_TTS_CHARS);
       console.log(`[Audio] Text split into ${textChunks.length} chunks`);
@@ -2232,11 +2257,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const oneDay = 1000 * 60 * 60 * 24;
       const dayOfYear = Math.floor(diff / oneDay);
 
-      let verse = await storage.getDailyVerse(dayOfYear);
+      let verseData = await storage.getDailyVerse(dayOfYear);
       
       // If no verse found for today, return a default inspirational verse
-      if (!verse) {
-        verse = {
+      if (!verseData) {
+        verseData = {
           id: 'default',
           dayOfYear,
           book: 'João',
@@ -2248,7 +2273,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }
 
-      res.json(verse);
+      // Fetch the actual verse text from Bible API
+      let text = "";
+      let reference = `${verseData.book} ${verseData.chapter}:${verseData.verse}`;
+      
+      try {
+        const bookAbbrev = getBookAbbreviation(verseData.book);
+        const chapterData = await fetchBibleChapter('pt', verseData.version, bookAbbrev, verseData.chapter);
+        if (chapterData?.verses) {
+          const verseObj = chapterData.verses.find((v: any) => v.number === verseData!.verse);
+          if (verseObj) {
+            text = verseObj.text;
+          }
+        }
+      } catch (fetchErr) {
+        console.warn("[DailyVerse] Could not fetch verse text:", fetchErr);
+        // Fallback text for João 3:16
+        if (verseData.book === 'João' && verseData.chapter === 3 && verseData.verse === 16) {
+          text = "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.";
+        }
+      }
+
+      res.json({
+        id: verseData.id,
+        dayOfYear: verseData.dayOfYear,
+        book: verseData.book,
+        chapter: verseData.chapter,
+        verseNumber: verseData.verse,
+        version: verseData.version,
+        text,
+        reference,
+        theme: verseData.theme,
+      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
