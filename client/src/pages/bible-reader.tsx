@@ -139,7 +139,7 @@ export default function BibleReader() {
     
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const authHeaders = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -147,7 +147,7 @@ export default function BibleReader() {
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
-        headers: authHeaders,
+        headers,
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -332,7 +332,7 @@ export default function BibleReader() {
     
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const authHeaders = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -340,7 +340,7 @@ export default function BibleReader() {
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
-        headers: authHeaders,
+        headers,
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -1259,14 +1259,14 @@ export default function BibleReader() {
                             
                             try {
                               const { data: { session } } = await supabase.auth.getSession();
-                              const authHeaders = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+                              const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
                               
                               const controller = new AbortController();
                               const timeoutId = setTimeout(() => controller.abort(), 30000);
                               
                               const response = await fetch(url, { 
                                 credentials: 'include',
-                                headers: authHeaders,
+                                headers,
                                 signal: controller.signal,
                               });
                               clearTimeout(timeoutId);
