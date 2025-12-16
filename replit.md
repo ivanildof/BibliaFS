@@ -64,12 +64,18 @@ BíbliaFS is a premium, personalized, and intelligent Bible study application th
 - Book names translate based on UI language
 - Fallback mapping to SQLite abbreviations
 
-### 3. Modo Professor (Teacher Mode) ✅
+### 3. Modo Professor (Teacher Mode) ✅ - CONSOLIDADO COM IA
 - **Route**: `/teacher`
-- **Aulas Tab**: Create and manage Bible lessons
-- **Esboços Tab**: Structured teaching outlines with blocks (text, verses, questions)
-- **Export**: Download as PDF with format button
-- **Database**: `lessons` and `teaching_outlines` tables in Supabase
+- **Abas Principais**:
+  - **Aulas**: Criar e gerenciar aulas bíblicas com geração de conteúdo por IA
+  - **Assistente IA**: Chat integrado para tirar dúvidas pedagógicas e teológicas
+- **Funcionalidades**:
+  - Criação de aulas com título, descrição, texto-base
+  - Geração automática de objetivos e perguntas por IA
+  - Assistente pedagógico para consultas em tempo real
+  - Export para PDF
+- **NOTA**: "Estudar com IA" foi consolidado aqui - não existe mais como página separada
+- **Database**: `lessons` e `teaching_outlines` tables em Supabase
 
 ### 4. Versículo do Dia (Daily Verse) 
 - **Component**: `<DailyVerse />` in Home page

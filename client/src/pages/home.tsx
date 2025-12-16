@@ -69,7 +69,7 @@ export default function Home() {
   };
 
   const quickActions = [
-    { icon: Brain, label: "Perguntar à IA", href: "/ai-study", color: "bg-purple-500" },
+    { icon: Brain, label: "Modo Professor", href: "/teacher", color: "bg-purple-500" },
     { icon: MessageSquare, label: "Nova Oração", href: "/prayers", color: "bg-blue-500" },
     { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", color: "bg-green-500" },
     { icon: Users, label: "Comunidade", href: "/community", color: "bg-orange-500" },
