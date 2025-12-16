@@ -727,7 +727,12 @@ export class DatabaseStorage implements IStorage {
 
   // Podcasts
   async getPodcasts(): Promise<Podcast[]> {
-    return await db.select().from(podcasts).orderBy(desc(podcasts.subscriberCount));
+    try {
+      return await db.select().from(podcasts).orderBy(desc(podcasts.subscriberCount));
+    } catch (error) {
+      console.error("[Podcasts] Error fetching podcasts:", error);
+      return [];
+    }
   }
 
   async getPodcast(id: string): Promise<Podcast | undefined> {

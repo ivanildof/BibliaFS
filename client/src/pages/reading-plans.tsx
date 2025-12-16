@@ -146,7 +146,7 @@ export default function ReadingPlans() {
                       data-testid={`card-template-${template.id}`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-lg">{template.name}</CardTitle>
+                        <CardTitle className="text-lg truncate">{template.name}</CardTitle>
                         <CardDescription className="text-sm">
                           {template.description}
                         </CardDescription>

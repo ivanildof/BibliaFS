@@ -467,7 +467,7 @@ export default function Prayers() {
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <CardTitle className="mb-2">{prayer.title}</CardTitle>
+                          <CardTitle className="mb-2 truncate">{prayer.title}</CardTitle>
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
