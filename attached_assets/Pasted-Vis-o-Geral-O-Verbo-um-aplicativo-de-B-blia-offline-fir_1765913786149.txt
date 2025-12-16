@@ -1,0 +1,230 @@
+Visão Geral
+O Verbo é um aplicativo de Bíblia offline-first que combina leitura, estudo, ensino e comunidade espiritual em uma única experiência integrada. Prioriza funcionalidade offline robusta, sincronização segura com a nuvem (via Supabase) e recursos que apoiam tanto o crescimento pessoal quanto o discipulado em grupo.
+
+2. Objetivos do Produto
+Permitir leitura e estudo bíblico sem depender de conexão constante com a internet.
+Oferecer ferramentas para professores e líderes prepararem e compartilhem lições.
+Incentivar o engajamento contínuo com planos de leitura e acompanhamento de progresso.
+Fomentar uma comunidade saudável de apoio espiritual (oração, estudo, encorajamento).
+Tornar o conteúdo bíblico acessível também em formato de áudio (podcasts e leituras faladas).
+3. Recursos Principais
+3.1. Seu Progresso
+Planos de leitura personalizáveis (diários, temáticos, por livro).
+Acompanhamento visual (% concluído, dias consecutivos, estatísticas mensais).
+Sincronização offline-first: todo progresso salvo localmente → sincronizado com Supabase quando online.
+Notificações suaves para lembrar leitura diária (opcional).
+Dados no Supabase: user_progress, reading_plans, user_plan_assignments.
+
+3.2. Comunidade
+Feed espiritual: postagens de versículos, reflexões, pedidos de oração.
+Grupos privados ou públicos: para estudo bíblico em pequenos grupos.
+Reações e comentários (com moderação básica).
+Integração com progresso: opção de compartilhar conquistas (ex.: “Terminei o livro de Atos!”).
+Requer internet ativa.
+Dados no Supabase: posts, groups, group_members, prayer_requests.
+
+3.3. Modo Professor
+Acesso a recursos avançados:
+Comentários de estudiosos (ex.: Matthew Henry, Bíblia de Estudo Thompson).
+Mapas, linhas do tempo, glossário teológico.
+Comparação entre versões (ex.: ARA, NVI, Almeida Revista e Corrigida).
+Ferramentas de preparação:
+Criação de esboços com blocos de texto, versículos e anotações.
+Exportação em PDF ou compartilhamento via link.
+Salvamento local + backup em nuvem (offine-first com sync).
+Dados no Supabase: teaching_notes, user_resources, version_comparisons.
+
+3.4. Podcast
+Catálogo de áudios:
+Leitura dramatizada da Bíblia (por livro/capítulo).
+Devocionais diários.
+Séries temáticas (ex.: “Mulheres da Bíblia”, “Graça e Lei”).
+Download offline: todos os episódios podem ser salvos para ouvir sem internet.
+Player integrado com velocidade ajustável, sleep timer e bookmark.
+Áudios hospedados em CDN (ex.: Cloudflare R2).
+Metadados no Supabase: podcast_episodes, categories, user_playback_status.
+
+4. Requisitos Técnicos
+Plataformas: iOS, Android (React Native ou Flutter).
+Offline-first: Dados críticos (progresso, notas, podcasts baixados) armazenados localmente (SQLite, WatermelonDB ou similar).
+Backend: Supabase (Auth, Realtime, Storage, Postgres).
+Autenticação: Email/senha + OAuth (Google, Apple).
+Privacidade: Nenhum dado espiritual sensível compartilhado com terceiros. Opção de conta anônima com sync limitado.
+5. Métricas de Sucesso (KPIs)
+Métrica
+Objetivo (3 meses)
+Retenção diária (DAU/MAU)
+> 35%
+% de usuários com plano ativo
+> 50%
+Média de tempo de uso por sessão
+> 8 minutos
+Taxa de download de podcasts
+> 20% dos ouvintes
+Criação de notas no Modo Professor
+> 15% dos usuários ativos
+6. Próximos Passos
+Validação de UX com líderes de células e professores de EBD.
+MVP com: Leitura Bíblica + Progresso + Podcast (offline-first).
+Fase 2: Comunidade + Modo Professor.
+Integração contínua com Supabase para sync confiável.
+Se desejar, posso gerar também:
+
+Diagramas de entidade-relacionamento (Postgres/Supabase)
+Fluxos de usuário (user flows)
+Wireframes de alta fidelidade
+Especificação técnica para sync offline-first com Supabase
+Deseja avançar em alguma dessas direções?
+
+sim
+
+
+Qwen3-Max
+4:33 PM
+Ótimo! Vamos avançar com dois artefatos complementares essenciais ao PRD que você aprovou:
+
+Diagrama de Entidade-Relacionamento (ERD) simplificado para o banco de dados no Supabase
+Estratégia técnica de sincronização offline-first com Supabase (incluindo conflito de dados e sync automático)
+1. Diagrama ERD – Supabase (PostgreSQL)
+Abaixo está a estrutura relacional principal das tabelas. Todas as tabelas possuem id UUID (gerado por gen_random_uuid() ou cliente) e created_at/updated_at.
+
+sql
+-- Usuários (gerenciado pelo Supabase Auth, mas com perfil expandido)
+profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  full_name TEXT,
+  avatar_url TEXT,
+  is_teacher BOOLEAN DEFAULT false
+)
+
+-- Planos de leitura
+reading_plans (
+  id UUID PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  version TEXT NOT NULL, -- ex: "ARA"
+  total_days INT,
+  is_public BOOLEAN DEFAULT true
+)
+
+-- Progresso do usuário em planos
+user_plan_progress (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id),
+  plan_id UUID REFERENCES reading_plans(id),
+  current_day INT DEFAULT 1,
+  completed_days INT[] DEFAULT '{}',
+  last_synced_at TIMESTAMPTZ,
+  -- offline-first: este registro pode existir localmente antes de ser enviado
+)
+
+-- Posts da comunidade
+posts (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id),
+  content TEXT,
+  verse_ref TEXT, -- ex: "João 3:16"
+  type TEXT CHECK (type IN ('reflection', 'prayer_request', 'verse')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+)
+
+-- Grupos da comunidade
+groups (
+  id UUID PRIMARY KEY,
+  name TEXT NOT NULL,
+  is_public BOOLEAN DEFAULT false,
+  owner_id UUID REFERENCES profiles(id)
+)
+
+group_members (
+  group_id UUID REFERENCES groups(id),
+  user_id UUID REFERENCES profiles(id),
+  PRIMARY KEY (group_id, user_id)
+)
+
+-- Modo Professor: anotações e esboços
+teaching_notes (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id),
+  title TEXT,
+  content TEXT, -- formato: markdown ou JSON blocks
+  bible_refs TEXT[], -- ex: ["Romanos 8", "Gálatas 5"]
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  -- offline-first: pode ser criado offline e sincronizado depois
+)
+
+-- Podcasts
+podcast_episodes (
+  id UUID PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  audio_url TEXT NOT NULL, -- CDN (ex: R2)
+  duration_seconds INT,
+  category TEXT,
+  bible_book TEXT,
+  published_at TIMESTAMPTZ
+)
+
+-- Progresso de reprodução (offline sync)
+user_podcast_playback (
+  user_id UUID REFERENCES profiles(id),
+  episode_id UUID REFERENCES podcast_episodes(id),
+  playback_position_seconds INT DEFAULT 0,
+  completed BOOLEAN DEFAULT false,
+  last_played_at TIMESTAMPTZ,
+  PRIMARY KEY (user_id, episode_id)
+)
+
+Estratégia de Sincronização Offline-First com Supabase
+Princípios
+Escrita local primeiro: todas as ações (ler, anotar, postar, ouvir) são salvas imediatamente no armazenamento local (ex: SQLite, WatermelonDB, ou MMKV).
+Sync em segundo plano: quando o dispositivo detecta conexão estável, dispara sincronização com Supabase.
+Conflitos resolvidos por timestamp + merge inteligente: o lado do cliente envia updated_at; o servidor aceita se for mais recente.
+Fluxo de Sincronização
+mermaid
+Supabase
+App
+Supabase (Cloud)
+App (Local DB)
+User
+Supabase
+App
+Supabase (Cloud)
+App (Local DB)
+User
+loop
+[Conexão detectada]
+Cria nota no “Modo Professor”
+Salva localmente (status = “pending_sync”)
+Agenda sync (imediato se online, ou no próximo launch)
+POST /teaching_notes (com updated_at)
+Valida RLS + aplica merge se conflito
+201 Created ou 200 Updated
+Marca registro como “synced”
+Tratamento de Conflitos
+Cenário: usuário edita a mesma nota em dois dispositivos offline.
+Solução:
+O Supabase aceita a versão com updated_at mais recente.
+O app não sobrescreve silenciosamente: se detectar que o servidor tem uma versão mais nova durante o sync, notifica o usuário:
+“Detectamos uma versão mais recente no seu outro dispositivo. Gostaria de mesclar ou manter esta?”
+
+Dados que NÃO precisam de sync imediato
+Progresso de leitura
+Anotações pessoais
+Posição de podcast
+Dados que exigem conexão ativa
+Postagens na comunidade
+Criação de grupos
+Compartilhamento de esboços
+Próximos passos sugeridos
+✅ Fase 1 (MVP em 6 semanas):
+
+Implementar reading_plans + user_plan_progress + player de áudio offline
+Configurar RLS no Supabase para profiles e user_plan_progress
+Usar Supabase Realtime apenas para notificações de sync (não para dados sensíveis)
+✅ Ferramentas recomendadas:
+
+Mobile: React Native + WatermelonDB (offline-first ORM)
+Sync Engine: Supabase postgrest + custom sync queue (com exponential backoff)
+Storage: Supabase Storage para avatares; Cloudflare R2 para áudios (menor custo)
