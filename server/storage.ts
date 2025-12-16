@@ -688,11 +688,28 @@ export class DatabaseStorage implements IStorage {
 
   // Bookmarks
   async getBookmarks(userId: string): Promise<Bookmark[]> {
-    return await db
-      .select()
-      .from(bookmarks)
-      .where(eq(bookmarks.userId, userId))
-      .orderBy(desc(bookmarks.createdAt));
+    try {
+      return await db
+        .select({
+          id: bookmarks.id,
+          userId: bookmarks.userId,
+          book: bookmarks.book,
+          chapter: bookmarks.chapter,
+          verse: bookmarks.verse,
+          verseText: bookmarks.verseText,
+          version: bookmarks.version,
+          title: bookmarks.title,
+          note: bookmarks.note,
+          tags: bookmarks.tags,
+          createdAt: bookmarks.createdAt,
+        })
+        .from(bookmarks)
+        .where(eq(bookmarks.userId, userId))
+        .orderBy(desc(bookmarks.createdAt)) as Bookmark[];
+    } catch (error) {
+      console.error("[Storage] Error fetching bookmarks:", error);
+      return [];
+    }
   }
 
   async createBookmark(bookmark: InsertBookmark): Promise<Bookmark> {

@@ -1,5 +1,10 @@
 // Bible Audio Service - Online/Offline Smart Playback with CDN/IndexedDB fallback
 
+// Define inline type to avoid circular dependency
+interface OfflineContextType {
+  getOfflineAudio?: (bookCode: string, chapter: number, version: string) => Promise<ArrayBuffer | null>;
+}
+
 const AUDIO_CDN_BASE = "https://cdn.bibliafs.com.br/bible-audio";
 const BOOK_CODES: { [key: string]: string } = {
   "Genesis": "GEN", "Êxodo": "EXO", "Levítico": "LEV", "Números": "NUM",
