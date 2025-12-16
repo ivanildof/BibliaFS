@@ -1,0 +1,81 @@
+Product Requirements Document (PRD)
+Título: Correção de Bugs Críticos e Melhoria da Experiência do Usuário
+Data: 16 de dezembro de 2025
+Produto: Aplicativo Web/Móvel (não especificado – genérico)
+Autor: [Seu Nome / Equipe de Produto]
+
+1. Objetivo
+Resolver problemas críticos de usabilidade, desempenho e funcionalidade que estão impactando negativamente a experiência do usuário, mesmo após correções parciais (ex: modo escuro). O foco é entregar um produto estável, responsivo, funcional e que responda corretamente às interações do usuário — especialmente em funcionalidades centrais, como a seleção de versão da Bíblia.
+
+2. Problemas Atuais (Pain Points)
+ID
+Problema
+Impacto
+Status
+P1
+Respostas genéricas da IA: o sistema não responde de forma contextual ou direta às perguntas dos usuários.
+Alta frustração; baixa utilidade do recurso de IA.
+Não resolvido
+P2
+Nomes em imagens estouram o container: elementos de texto (ex: nomes) ultrapassam os limites visuais dos cards ou containers.
+Quebra de layout; má apresentação visual.
+Não resolvido
+P3
+Flickering ao mudar de página: transição entre páginas causa "piscar" (flash) e exibição momentânea de tela branca.
+Sensação de instabilidade; percepção de lentidão ou bug.
+Não resolvido
+P4
+Áudio inoperante: nenhuma funcionalidade de áudio (ex: reprodução, feedback sonoro) está funcionando.
+Perda total de recurso multimídia; acessibilidade comprometida.
+Não resolvido
+P5
+Correção parcial do modo escuro: apenas o modo escuro foi ajustado; demais funcionalidades regrediram ou permanecem quebradas.
+Falsa sensação de progresso; problemas críticos ignorados.
+Parcialmente resolvido
+P6
+Seleção de versão da Bíblia não funciona: ao escolher uma versão (ex: NVI,ACF,ARC,RA), a mudança não é aplicada ou gera erro.
+Funcionalidade central indisponível; impacto direto no uso principal do produto.
+Não resolvido
+3. Requisitos Funcionais
+3.1. IA Contextual e Precisa
+A IA deve analisar o contexto completo da pergunta do usuário.
+Respostas não devem ser genéricas, evasivas ou desconectadas da intenção do usuário.
+Implementar logs de requisições/respostas para validação de qualidade.
+3.2. Layout Responsivo e Contido
+Todo texto dentro de containers (especialmente em imagens ou cards) deve estar contido, com truncamento (...) ou quebra de linha adequada.
+Testes em múltiplos tamanhos de tela (mobile, tablet, desktop).
+3.3. Transições Suaves entre Páginas
+Eliminar tela branca durante navegação.
+Implementar loading skeleton ou transição com fade para melhor percepção de fluidez.
+Garantir pré-carregamento de assets críticos (se aplicável).
+3.4. Funcionalidade de Áudio
+Verificar permissões de áudio no navegador/dispositivo.
+Garantir que todos os elementos de áudio (ex: botões de play, notificações sonoras) estejam vinculados corretamente às funções.
+Testar em diferentes navegadores e dispositivos.
+3.5. Seleção Funcional de Versão da Bíblia
+O usuário deve conseguir selecionar uma versão da Bíblia e ver imediatamente o conteúdo atualizado.
+A seleção deve persistir durante a sessão (e, idealmente, entre sessões).
+Validar integridade dos dados da versão selecionada (ex: não carregar textos de outra versão por engano).
+Exibir feedback visual claro (ex: nome da versão atual no header).
+4. Requisitos Não Funcionais
+Performance: tempo de transição entre páginas ≤ 300ms após carregamento inicial.
+Acessibilidade: suporte a leitores de tela e navegação por teclado.
+Compatibilidade: funcionamento consistente em Chrome, Firefox, Safari e principais dispositivos móveis.
+Confiabilidade: funcionalidades centrais (como troca de versão da Bíblia) devem ter cobertura de teste ≥ 95%.
+5. Métricas de Sucesso
+Redução de 90% nos relatos de "respostas genéricas" em 2 semanas após deploy.
+Zero ocorrências de estouro de texto em containers (validado por testes automatizados).
+Eliminação do flickering (validado por Lighthouse / testes manuais).
+100% dos elementos de áudio funcionando em ambiente de QA.
+100% dos usuários conseguem trocar e utilizar diferentes versões da Bíblia sem falhas.
+6. Próximos Passos
+Priorizar correções na sprint atual, com destaque para P6 (versão da Bíblia) por ser funcionalidade central.
+Realizar teste A/B com nova versão da IA.
+Validar layout com equipe de design.
+Deploy em ambiente de staging para testes de regressão completos.
+Aprovações:
+
+Product Owner
+Engenharia
+QA
+Design
