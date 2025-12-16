@@ -455,9 +455,20 @@ export default function Podcasts() {
                       </div>
                       <CardHeader>
                         <CardTitle className="truncate">{podcast.title}</CardTitle>
-                        <CardDescription className="truncate">
-                          {episodes.length} episódios • {podcast.category || 'Geral'}
+                        <CardDescription className="line-clamp-2">
+                          {podcast.description || 'Sem descrição'}
                         </CardDescription>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                          <span>{episodes.length} episódios</span>
+                          <span>•</span>
+                          <span>{podcast.category || 'Geral'}</span>
+                          {podcast.bibleBook && (
+                            <>
+                              <span>•</span>
+                              <span>{podcast.bibleBook}{podcast.bibleChapter ? ` ${podcast.bibleChapter}` : ''}</span>
+                            </>
+                          )}
+                        </div>
                       </CardHeader>
                       <CardContent>
                         {episodes.length > 0 && (
@@ -578,12 +589,22 @@ export default function Podcasts() {
                   return (
                     <Card key={podcast.id}>
                       <CardHeader className="flex flex-row items-start justify-between gap-4">
-                        <div>
+                        <div className="flex-1">
                           <CardTitle>{podcast.title}</CardTitle>
-                          <CardDescription>
-                            {podcast.bibleBook && `${podcast.bibleBook}${podcast.bibleChapter ? ` ${podcast.bibleChapter}` : ''} • `}
-                            {episodes.length} episódios
-                          </CardDescription>
+                          {podcast.description && (
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                              {podcast.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                            {podcast.bibleBook && (
+                              <span>{podcast.bibleBook}{podcast.bibleChapter ? ` ${podcast.bibleChapter}` : ''}</span>
+                            )}
+                            {podcast.bibleBook && <span>•</span>}
+                            <span>{episodes.length} episódios</span>
+                            <span>•</span>
+                            <span>{podcast.category || 'Reflexões'}</span>
+                          </div>
                         </div>
                         <Button 
                           variant="outline"
