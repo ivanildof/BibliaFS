@@ -38,7 +38,7 @@ export default function Home() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{ communityPosts: string | number }>({
     queryKey: ["/api/stats/dashboard"],
     enabled: isAuthenticated,
   });
@@ -167,11 +167,11 @@ export default function Home() {
                 <div className="flex items-center justify-between text-sm mb-2">
                   <span className="text-muted-foreground">Progresso do Plano</span>
                   <span className="font-medium">
-                    {Math.round((currentPlan.currentDay / (currentPlan.schedule?.length || 1)) * 100)}%
+                    {Math.round(((currentPlan.currentDay || 1) / (currentPlan.schedule?.length || 1)) * 100)}%
                   </span>
                 </div>
                 <Progress 
-                  value={(currentPlan.currentDay / (currentPlan.schedule?.length || 1)) * 100} 
+                  value={((currentPlan.currentDay || 1) / (currentPlan.schedule?.length || 1)) * 100} 
                   className="h-2"
                 />
               </div>
