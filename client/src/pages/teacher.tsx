@@ -200,6 +200,7 @@ export default function Teacher() {
   const [assistantMessages, setAssistantMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [assistantInput, setAssistantInput] = useState("");
   const [isAssistantLoading, setIsAssistantLoading] = useState(false);
+  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const objectivesRef = useRef<HTMLDivElement>(null);
 
@@ -345,7 +346,78 @@ export default function Teacher() {
   });
 
   const onSubmit = (data: FormData) => {
-    createMutation.mutate(data);
+    if (editingLessonId) {
+      updateMutation.mutate(data);
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const lessonData = {
+        ...data,
+        objectives,
+        questions: questions.map((q, i) => ({
+          id: `q-${i}`,
+          question: q,
+          options: [],
+          correctAnswer: -1,
+        })),
+      };
+      return await apiRequest("PATCH", `/api/teacher/lessons/${editingLessonId}`, lessonData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });
+      setEditingLessonId(null);
+      setIsCreateDialogOpen(false);
+      form.reset();
+      setObjectives([]);
+      setQuestions([]);
+      toast({ title: "Aula atualizada!", description: "Alterações salvas com sucesso." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (lessonId: string) => {
+      return await apiRequest("DELETE", `/api/teacher/lessons/${lessonId}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });
+      toast({ title: "Aula deletada!", description: "A aula foi removida com sucesso." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Erro ao deletar", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const handleEditLesson = (lesson: Lesson) => {
+    form.reset({
+      title: lesson.title,
+      description: lesson.description || "",
+      scriptureBase: lesson.scriptureReferences?.[0] || "",
+    });
+    setObjectives(lesson.objectives || []);
+    setQuestions((lesson.questions || []).map(q => typeof q === 'string' ? q : q.question));
+    setEditingLessonId(lesson.id);
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleDeleteLesson = (lessonId: string) => {
+    if (confirm("Tem certeza que deseja deletar esta aula?")) {
+      deleteMutation.mutate(lessonId);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setIsCreateDialogOpen(false);
+    setEditingLessonId(null);
+    form.reset();
+    setObjectives([]);
+    setQuestions([]);
   };
 
   const publishedLessons = lessons.filter(l => l.isPublished);
@@ -371,7 +443,8 @@ export default function Teacher() {
   if (error) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto p-6 text-center">
+          <p className="text-destructive">Erro ao carregar aulas</p>
           <Card className="border-destructive">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
@@ -409,7 +482,7 @@ export default function Teacher() {
           </div>
           
           {currentTab === "lessons" && (
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <Dialog open={isCreateDialogOpen} onOpenChange={(open) => !open && handleCloseDialog()}>
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-lesson">
                 <Plus className="h-5 w-5 mr-2" />
@@ -418,7 +491,7 @@ export default function Teacher() {
             </DialogTrigger>
             <DialogContent className="max-w-3xl">
               <DialogHeader>
-                <DialogTitle>Criar Nova Aula</DialogTitle>
+                <DialogTitle>{editingLessonId ? "Editar Aula" : "Criar Nova Aula"}</DialogTitle>
                 <DialogDescription>
                   Monte uma aula completa com objetivos, perguntas e recursos
                 </DialogDescription>
@@ -592,23 +665,23 @@ export default function Teacher() {
                     <Button 
                       type="button" 
                       variant="outline" 
-                      onClick={() => setIsCreateDialogOpen(false)}
+                      onClick={handleCloseDialog}
                       data-testid="button-cancel-lesson"
                     >
                       Cancelar
                     </Button>
                     <Button 
                       type="submit" 
-                      disabled={createMutation.isPending}
+                      disabled={createMutation.isPending || updateMutation.isPending}
                       data-testid="button-save-lesson"
                     >
-                      {createMutation.isPending ? (
+                      {(createMutation.isPending || updateMutation.isPending) ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                           Salvando...
                         </>
                       ) : (
-                        "Salvar Aula"
+                        editingLessonId ? "Atualizar Aula" : "Salvar Aula"
                       )}
                     </Button>
                   </DialogFooter>
@@ -835,6 +908,23 @@ export default function Teacher() {
                               <Download className="h-4 w-4 mr-2" />
                               PDF
                             </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleEditLesson(lesson)}
+                              data-testid={`button-edit-lesson-${lesson.id}`}
+                            >
+                              Editar
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleDeleteLesson(lesson.id)}
+                              className="text-destructive"
+                              data-testid={`button-delete-lesson-${lesson.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </CardFooter>
                         </Card>
                       ))}
@@ -845,7 +935,7 @@ export default function Teacher() {
                 {/* Draft Lessons */}
                 {draftLessons.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-lg mb-4">Rascunhos</h3>
+                    <h3 className="font-semibold text-lg mb-4">Rascunhos ({draftLessons.length})</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       {draftLessons.map((lesson) => (
                         <Card key={lesson.id} className="border-dashed">
@@ -855,9 +945,23 @@ export default function Teacher() {
                               <Badge variant="secondary">Rascunho</Badge>
                             </div>
                           </CardHeader>
-                          <CardFooter>
-                            <Button variant="outline" className="w-full">
+                          <CardFooter className="gap-2">
+                            <Button 
+                              variant="outline" 
+                              className="flex-1"
+                              onClick={() => handleEditLesson(lesson)}
+                              data-testid={`button-edit-draft-${lesson.id}`}
+                            >
                               Continuar Editando
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleDeleteLesson(lesson.id)}
+                              className="text-destructive"
+                              data-testid={`button-delete-draft-${lesson.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </CardFooter>
                         </Card>
