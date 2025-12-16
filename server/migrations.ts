@@ -192,6 +192,25 @@ export async function runMigrations() {
       ALTER TABLE podcasts 
       ADD COLUMN IF NOT EXISTS category VARCHAR(100)
     `);
+
+    // Seed podcast data
+    await db.execute(sql`
+      INSERT INTO podcasts (id, title, description, author, category, language, image_url, rss_url, total_episodes, is_active, access_level, created_at, updated_at) 
+      SELECT 'pod-1', 'Seara News', 'Notícias e comentários cristãos semanais', 'Seara News Team', 'Notícias', 'pt', 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400&h=400&fit=crop', 'https://example.com/seara-news', 156, true, 'free', NOW(), NOW()
+      WHERE NOT EXISTS (SELECT 1 FROM podcasts WHERE id = 'pod-1')
+    `);
+
+    await db.execute(sql`
+      INSERT INTO podcasts (id, title, description, author, category, language, image_url, rss_url, total_episodes, is_active, access_level, created_at, updated_at) 
+      SELECT 'pod-2', 'Palavra de Deus', 'Reflexões diárias sobre a Palavra de Deus', 'Pastor João', 'Estudos', 'pt', 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=400&fit=crop', 'https://example.com/palavra-de-deus', 89, true, 'free', NOW(), NOW()
+      WHERE NOT EXISTS (SELECT 1 FROM podcasts WHERE id = 'pod-2')
+    `);
+
+    await db.execute(sql`
+      INSERT INTO podcasts (id, title, description, author, category, language, image_url, rss_url, total_episodes, is_active, access_level, created_at, updated_at) 
+      SELECT 'pod-3', 'Estudos Bíblicos', 'Análise profunda de passagens e contexto histórico', 'Dra. Maria Silva', 'Teologia', 'pt', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop', 'https://example.com/estudos-biblicos', 124, true, 'free', NOW(), NOW()
+      WHERE NOT EXISTS (SELECT 1 FROM podcasts WHERE id = 'pod-3')
+    `);
     
     console.log("Migrations completed successfully!");
   } catch (error) {

@@ -18,13 +18,16 @@ import {
   Calendar,
   Plus
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Podcast } from "@shared/schema";
 
 export default function Podcasts() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(75);
+  const { toast } = useToast();
 
   const { data: podcasts = [] } = useQuery<Podcast[]>({
     queryKey: ["/api/podcasts"],
@@ -32,6 +35,26 @@ export default function Podcasts() {
 
   const { data: subscriptions = [] } = useQuery<any[]>({
     queryKey: ["/api/podcasts/subscriptions"],
+  });
+
+  const subscribeMutation = useMutation({
+    mutationFn: async (podcastId: string) => {
+      return apiRequest("POST", "/api/podcasts/subscribe", { podcastId });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/subscriptions"] });
+      toast({ title: "Inscrito!", description: "Você se inscreveu no podcast" });
+    },
+  });
+
+  const unsubscribeMutation = useMutation({
+    mutationFn: async (podcastId: string) => {
+      return apiRequest("DELETE", `/api/podcasts/subscribe/${podcastId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/subscriptions"] });
+      toast({ title: "Desinscrito", description: "Você se desinscreveu do podcast" });
+    },
   });
 
   // Sample featured podcast
@@ -131,29 +154,40 @@ export default function Podcasts() {
             <section>
               <h2 className="font-display text-2xl font-bold mb-4">Podcasts Populares</h2>
               <div className="grid md:grid-cols-3 gap-6">
-                {[
-                  { name: "Seara News", subs: "12.5k", episodes: 156 },
-                  { name: "Palavra de Deus", subs: "8.2k", episodes: 89 },
-                  { name: "Estudos Bíblicos", subs: "6.8k", episodes: 124 },
-                ].map((podcast, index) => (
-                  <Card key={index} className="hover-elevate" data-testid={`card-podcast-${index}`}>
-                    <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                      <Headphones className="h-16 w-16 text-primary" />
-                    </div>
-                    <CardHeader>
-                      <CardTitle>{podcast.name}</CardTitle>
-                      <CardDescription>
-                        {podcast.subs} inscritos • {podcast.episodes} episódios
-                      </CardDescription>
-                    </CardHeader>
-                    <CardFooter>
-                      <Button variant="outline" className="w-full" data-testid={`button-subscribe-${index}`}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Inscrever-se
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+                {podcasts.map((podcast: any, index: number) => {
+                  const isSubscribed = subscriptions.some((s: any) => s.podcastId === podcast.id);
+                  return (
+                    <Card key={podcast.id} className="hover-elevate" data-testid={`card-podcast-${index}`}>
+                      <div className="h-48 bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: podcast.imageUrl ? `url(${podcast.imageUrl})` : undefined }}>
+                        {!podcast.imageUrl && <Headphones className="h-16 w-16 text-primary" />}
+                      </div>
+                      <CardHeader>
+                        <CardTitle>{podcast.title}</CardTitle>
+                        <CardDescription>
+                          {podcast.totalEpisodes || 0} episódios • {podcast.category || 'Geral'}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardFooter>
+                        <Button 
+                          variant={isSubscribed ? "default" : "outline"} 
+                          className="w-full" 
+                          data-testid={`button-subscribe-${index}`}
+                          onClick={() => {
+                            if (isSubscribed) {
+                              unsubscribeMutation.mutate(podcast.id);
+                            } else {
+                              subscribeMutation.mutate(podcast.id);
+                            }
+                          }}
+                          disabled={subscribeMutation.isPending || unsubscribeMutation.isPending}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          {isSubscribed ? "Inscrito" : "Inscrever-se"}
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  );
+                })}
               </div>
             </section>
           </TabsContent>
