@@ -535,11 +535,16 @@ export const podcasts = pgTable("podcasts", {
   isActive: boolean("is_active").default(true),
   accessLevel: varchar("access_level", { length: 20 }).default("free"),
   
+  // Creator info for user-generated podcasts
+  creatorId: varchar("creator_id").references(() => users.id, { onDelete: "set null" }),
+  bibleBook: varchar("bible_book", { length: 100 }),
+  bibleChapter: integer("bible_chapter"),
+  
   episodes: jsonb("episodes").$type<Array<{
     id: string;
     title: string;
     description: string;
-    audioUrl: string;
+    audioData: string; // base64 encoded audio
     duration: number;
     publishedAt: string;
   }>>(),

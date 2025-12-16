@@ -133,6 +133,8 @@ export interface IStorage {
   getPodcasts(): Promise<Podcast[]>;
   getPodcast(id: string): Promise<Podcast | undefined>;
   createPodcast(podcast: InsertPodcast): Promise<Podcast>;
+  updatePodcast(id: string, data: Partial<Podcast>): Promise<Podcast | null>;
+  getUserPodcasts(userId: string): Promise<Podcast[]>;
   getUserPodcastSubscriptions(userId: string): Promise<(PodcastSubscription & { podcast: Podcast })[]>;
   subscribeToPodcast(subscription: InsertPodcastSubscription): Promise<PodcastSubscription>;
   unsubscribeFromPodcast(userId: string, podcastId: string): Promise<void>;
@@ -743,6 +745,23 @@ export class DatabaseStorage implements IStorage {
   async createPodcast(podcastData: InsertPodcast): Promise<Podcast> {
     const [podcast] = await db.insert(podcasts).values(podcastData).returning();
     return podcast;
+  }
+
+  async updatePodcast(id: string, data: Partial<Podcast>): Promise<Podcast | null> {
+    const [podcast] = await db
+      .update(podcasts)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(podcasts.id, id))
+      .returning();
+    return podcast || null;
+  }
+
+  async getUserPodcasts(userId: string): Promise<Podcast[]> {
+    return await db
+      .select()
+      .from(podcasts)
+      .where(eq(podcasts.creatorId, userId))
+      .orderBy(desc(podcasts.createdAt));
   }
 
   async getUserPodcastSubscriptions(userId: string): Promise<(PodcastSubscription & { podcast: Podcast })[]> {

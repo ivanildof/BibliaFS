@@ -722,6 +722,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create user podcast
+  app.post("/api/podcasts", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { title, description, bibleBook, bibleChapter, category } = req.body;
+      
+      if (!title) {
+        return res.status(400).json({ error: "Título é obrigatório" });
+      }
+      
+      const podcast = await storage.createPodcast({
+        title,
+        description,
+        author: req.user.claims.username || "Usuário",
+        category: category || "Reflexões",
+        creatorId: userId,
+        bibleBook,
+        bibleChapter,
+        language: "pt",
+        isActive: true,
+        accessLevel: "free",
+        episodes: [],
+        totalEpisodes: 0,
+      });
+      
+      res.json(podcast);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Add episode to podcast
+  app.post("/api/podcasts/:id/episodes", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { title, description, audioData, duration } = req.body;
+      
+      // Verify ownership
+      const podcast = await storage.getPodcast(req.params.id);
+      if (!podcast) {
+        return res.status(404).json({ error: "Podcast não encontrado" });
+      }
+      if (podcast.creatorId !== userId) {
+        return res.status(403).json({ error: "Você não tem permissão para editar este podcast" });
+      }
+      
+      // Check audio size (5MB limit for base64)
+      if (audioData && audioData.length > 7 * 1024 * 1024) {
+        return res.status(400).json({ error: "Áudio muito grande. Máximo 5MB." });
+      }
+      
+      const newEpisode = {
+        id: `ep-${Date.now()}`,
+        title: title || "Novo Episódio",
+        description: description || "",
+        audioData: audioData || "",
+        duration: duration || 0,
+        publishedAt: new Date().toISOString(),
+      };
+      
+      const episodes = [...(podcast.episodes || []), newEpisode];
+      
+      await storage.updatePodcast(req.params.id, {
+        episodes,
+        totalEpisodes: episodes.length,
+      });
+      
+      res.json(newEpisode);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user's own podcasts
+  app.get("/api/podcasts/my", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const podcasts = await storage.getUserPodcasts(userId);
+      res.json(podcasts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get single podcast with episodes
+  app.get("/api/podcasts/:id", async (req, res) => {
+    try {
+      const podcast = await storage.getPodcast(req.params.id);
+      if (!podcast) {
+        return res.status(404).json({ error: "Podcast não encontrado" });
+      }
+      res.json(podcast);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Teacher/Lessons Routes
   app.get("/api/teacher/lessons", isAuthenticated, async (req: any, res) => {
     try {
