@@ -1050,7 +1050,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI-powered lesson content generation
   app.post("/api/teacher/generate-lesson-content", isAuthenticated, async (req: any, res) => {
     try {
-      const { title, scriptureBase } = req.body;
+      const { title, scriptureBase, duration = 50 } = req.body;
       
       if (!title || !scriptureBase) {
         return res.status(400).json({ error: "Título e texto-base são obrigatórios" });
@@ -1060,19 +1060,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(503).json({ error: "Serviço de IA indisponível" });
       }
 
-      const prompt = `Você é um assistente especializado em educação bíblica. Com base no título e texto-base fornecidos, gere conteúdo para uma aula bíblica.
+      // Calcular quantidade de conteúdo baseado em duração
+      const numObjectives = duration <= 30 ? 2 : duration <= 60 ? 4 : 6;
+      const numQuestions = duration <= 30 ? 2 : duration <= 60 ? 5 : 8;
+
+      const prompt = `Você é um assistente especializado em educação bíblica. Gere conteúdo para uma aula bíblica de ${duration} minutos.
 
 Título da Aula: ${title}
 Texto-Base: ${scriptureBase}
+Duração: ${duration} minutos
+
+Adapte o conteúdo para a duração especificada:
+- Gere ${numObjectives} objetivos de aprendizado (quanto maior a duração, mais profundidade)
+- Gere ${numQuestions} perguntas para discussão (para aulas mais longas, adicione perguntas mais complexas e com tempo para reflexão profunda)
+- Se a aula tiver mais de 60 minutos, inclua pontos de aplicação prática adicional
 
 Responda em JSON com a seguinte estrutura:
 {
-  "description": "Uma descrição concisa da aula (2-3 frases)",
-  "objectives": ["Objetivo 1", "Objetivo 2", "Objetivo 3"],
-  "questions": ["Pergunta de discussão 1", "Pergunta de discussão 2", "Pergunta de discussão 3", "Pergunta de discussão 4"]
+  "description": "Uma descrição concisa da aula proporcional à duração (2-4 frases)",
+  "objectives": ["Objetivo 1", "Objetivo 2", ...],
+  "questions": ["Pergunta 1", "Pergunta 2", ...]
 }
 
-Forneça 3 objetivos de aprendizado claros e 4 perguntas para discussão que estimulem reflexão e aplicação prática. Todas as respostas devem estar em português do Brasil.`;
+IMPORTANTE: Calibre a profundidade e quantidade de conteúdo com base no tempo disponível. Aulas curtas devem ser concretas e focadas. Aulas longas podem ser mais teóricas e exploratórias. Todas as respostas devem estar em português do Brasil.`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const response = await openaiInstance.chat.completions.create({

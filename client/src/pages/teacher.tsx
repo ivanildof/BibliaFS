@@ -180,6 +180,7 @@ const formSchema = z.object({
   title: z.string().min(5, "O título deve ter pelo menos 5 caracteres"),
   description: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres"),
   scriptureBase: z.string().min(1, "Digite o texto-base"),
+  duration: z.number().min(15, "Mínimo 15 minutos").max(300, "Máximo 300 minutos").optional(),
   objectives: z.array(z.string()).optional(),
   discussionQuestions: z.array(z.string()).optional(),
   applicationPoints: z.array(z.string()).optional(),
@@ -215,6 +216,7 @@ export default function Teacher() {
       title: "",
       description: "",
       scriptureBase: "",
+      duration: 50,
       objectives: [],
       discussionQuestions: [],
       applicationPoints: [],
@@ -284,6 +286,7 @@ export default function Teacher() {
   const generateWithAI = async () => {
     const title = form.getValues("title");
     const scriptureBase = form.getValues("scriptureBase");
+    const duration = form.getValues("duration") || 50;
     
     if (!title || !scriptureBase) {
       toast({
@@ -296,7 +299,7 @@ export default function Teacher() {
 
     setIsGeneratingAI(true);
     try {
-      const res = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase });
+      const res = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase, duration });
       const data = await res.json();
       
       if (data.description) form.setValue("description", data.description);
@@ -565,6 +568,30 @@ export default function Teacher() {
                               placeholder="Ex: Lucas 15:11-32"
                               data-testid="input-scripture-base"
                               {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="duration"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            Duração da Aula (minutos)
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number"
+                              placeholder="Ex: 50"
+                              data-testid="input-lesson-duration"
+                              {...field}
+                              onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                              value={field.value || 50}
                             />
                           </FormControl>
                           <FormMessage />
