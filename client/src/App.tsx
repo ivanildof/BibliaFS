@@ -45,6 +45,7 @@ import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import NotFound from "@/pages/not-found";
 import Groups from "@/pages/groups";
+import Search from "@/pages/search";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -78,6 +79,8 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/search" component={Search} />
+          <Route path="/buscar" component={Search} />
           <Route path="/bible" component={BibleReader} />
           <Route path="/bible-reader" component={BibleReader} />
           <Route path="/favorites" component={Favorites} />
