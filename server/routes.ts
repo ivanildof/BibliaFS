@@ -741,8 +741,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
 
-      const updated = await storage.upsertUser({
-        ...user,
+      const updated = await storage.updateUserTheme(userId, {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
       });

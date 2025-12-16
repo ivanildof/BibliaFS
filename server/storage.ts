@@ -249,7 +249,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUserTheme(userId: string, data: { selectedTheme?: string; customTheme?: any }): Promise<User> {
+  async updateUserTheme(userId: string, data: { selectedTheme?: string; customTheme?: any; firstName?: string; lastName?: string }): Promise<User> {
     const [user] = await db
       .update(users)
       .set({ ...data, updatedAt: new Date() })
