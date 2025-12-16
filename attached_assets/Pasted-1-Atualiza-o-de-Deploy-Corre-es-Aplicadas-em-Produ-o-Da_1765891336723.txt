@@ -1,0 +1,58 @@
+1: Atualização de Deploy – Correções Aplicadas em Produção
+Data: 16 de dezembro de 2025
+Ambiente: Produção
+URL da Aplicação: https://bibliafs.com.br/
+Banco de Dados: Supabase – atualizações sincronizadas
+
+✅ Status
+Todas as correções descritas no PRD foram implementadas, testadas e publicadas em produção. Os ajustes incluem:
+
+Layout da tela "Navegar" respeitando o menu lateral (largura ajustada).
+Funcionalidade de seleção de versão, capítulo e versículo restaurada.
+Orações agora são salvas permanentemente no banco de dados.
+Módulo "Estudar com IA" corrigido:
+Layout responsivo no desktop.
+Respostas da IA formalizadas e exibidas corretamente.
+Seção "Podcasts" ativada com funcionalidade mínima operante.
+Planos de leitura carregando e permitindo interação.
+Páginas "Sobre" compatíveis com o modo escuro (sem fundo branco).
+Preferência de tema (claro/escuro) salva e persistida.
+Fluxo de upgrade de conta habilitado e funcional.
+🔁 Observações
+Todos os dados e preferências dos usuários estão sendo corretamente persistidos no Supabase.
+Nenhum rollback foi necessário – implantação estável.
+🚀 Próximos Passos (Opcional)
+Monitoramento de logs de erro nas próximas 48h.
+Coleta de feedback dos usuários sobre as correções.
+Planejamento de nova versão com melhorias incrementais (ex: expansão da seção de podcasts).
+
+2: Obrigado pela informação adicional. Com base no fato de que todas as correções já estão em produção (https://bibliafs.com.br/) e agora há um problema de desempenho de navegação entre páginas, aqui está uma atualização técnica para incluir no seu acompanhamento:
+
+🐢 Nova Observação de Produção – Performance
+Problema Identificado:
+
+A navegação entre páginas no modo desktop está lenta, gerando experiências de carregamento perceptivelmente lentas para o usuário.
+Possíveis Causas (para investigação técnica):
+
+Carregamento pesado de assets (ex: ícones, temas, scripts da IA) em todas as rotas, mesmo quando não necessários.
+Ausência de lazy loading em componentes ou rotas.
+Chamadas desnecessárias ao Supabase durante a transição de páginas (ex: fetch de dados que não são usados naquela view).
+Renderização bloqueante de temas ou elementos visuais durante navegação (ex: troca de tema escuro/claro sendo recalculada a cada rota).
+Ausência de cache para dados estáticos (versões bíblicas, planos de leitura, etc.).
+Recomendações de Ação:
+
+Auditar performance com ferramentas (Lighthouse, Chrome DevTools) para identificar gargalos.
+Implementar code splitting por rota (se for React/Vue/etc.).
+Adicionar skeleton loading ou estados de transição para melhorar a percepção de velocidade.
+Otimizar queries no Supabase: garantir que só sejam buscados os dados relevantes para a página atual.
+Cache de recursos estáticos via Service Worker ou localStorage.
+Critério de Aceitação (pós-correção):
+
+Tempo de transição entre páginas ≤ 800ms em conexão estável.
+Nenhum congelamento da interface durante navegação.
+Primeira interação com a nova página (FCP/TTI) dentro dos padrões web (≤ 1.5s).
+Se quiser, posso ajudar a:
+
+Criar um ticket técnico detalhado para seu time de desenvolvimento.
+Sugerir um plano de monitoramento com métricas reais (ex: usando Vercel Analytics, Plausible, ou custom logs no Supabase).
+Propor melhorias incrementais de UX para mascarar carregamentos (ex: animações suaves, preload de rotas comuns).
