@@ -134,6 +134,7 @@ export interface IStorage {
   getPodcast(id: string): Promise<Podcast | undefined>;
   createPodcast(podcast: InsertPodcast): Promise<Podcast>;
   updatePodcast(id: string, data: Partial<Podcast>): Promise<Podcast | null>;
+  deletePodcast(id: string): Promise<void>;
   getUserPodcasts(userId: string): Promise<Podcast[]>;
   getUserPodcastSubscriptions(userId: string): Promise<(PodcastSubscription & { podcast: Podcast })[]>;
   subscribeToPodcast(subscription: InsertPodcastSubscription): Promise<PodcastSubscription>;
@@ -754,6 +755,13 @@ export class DatabaseStorage implements IStorage {
       .where(eq(podcasts.id, id))
       .returning();
     return podcast || null;
+  }
+
+  async deletePodcast(id: string): Promise<void> {
+    // First delete subscriptions
+    await db.delete(podcastSubscriptions).where(eq(podcastSubscriptions.podcastId, id));
+    // Then delete the podcast
+    await db.delete(podcasts).where(eq(podcasts.id, id));
   }
 
   async getUserPodcasts(userId: string): Promise<Podcast[]> {

@@ -834,6 +834,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update podcast (title/description)
+  app.patch("/api/podcasts/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { title, description } = req.body;
+      
+      const podcast = await storage.getPodcast(req.params.id);
+      if (!podcast) {
+        return res.status(404).json({ error: "Podcast não encontrado" });
+      }
+      if (podcast.creatorId !== userId) {
+        return res.status(403).json({ error: "Você não tem permissão para editar este podcast" });
+      }
+      
+      const updates: any = {};
+      if (title && typeof title === 'string') {
+        updates.title = title.trim().substring(0, 200);
+      }
+      if (description !== undefined) {
+        updates.description = (description || "").substring(0, 1000);
+      }
+      
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ error: "Nenhum campo para atualizar" });
+      }
+      
+      await storage.updatePodcast(req.params.id, updates);
+      const updated = await storage.getPodcast(req.params.id);
+      
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Delete podcast
+  app.delete("/api/podcasts/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      const podcast = await storage.getPodcast(req.params.id);
+      if (!podcast) {
+        return res.status(404).json({ error: "Podcast não encontrado" });
+      }
+      if (podcast.creatorId !== userId) {
+        return res.status(403).json({ error: "Você não tem permissão para excluir este podcast" });
+      }
+      
+      await storage.deletePodcast(req.params.id);
+      
+      res.json({ success: true, message: "Podcast excluído com sucesso" });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Add episode to podcast
   app.post("/api/podcasts/:id/episodes", isAuthenticated, async (req: any, res) => {
     try {

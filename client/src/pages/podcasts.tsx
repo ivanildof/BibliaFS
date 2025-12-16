@@ -18,10 +18,15 @@ import {
   SkipForward,
   Volume2,
   Plus,
-  Loader2
+  Loader2,
+  Pencil,
+  Trash2,
+  MoreVertical
 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getAuthHeaders } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Podcast } from "@shared/schema";
 
@@ -70,6 +75,13 @@ export default function Podcasts() {
   const [newPodcastDescription, setNewPodcastDescription] = useState("");
   const [newPodcastBook, setNewPodcastBook] = useState("");
 
+  // Edit/Delete podcast state
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+
   const { data: podcasts = [] } = useQuery<Podcast[]>({
     queryKey: ["/api/podcasts"],
   });
@@ -117,6 +129,63 @@ export default function Podcasts() {
       toast({ title: "Erro", description: "Não foi possível criar o podcast", variant: "destructive" });
     },
   });
+
+  const updatePodcastMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: { title?: string; description?: string } }) => {
+      return apiRequest("PATCH", `/api/podcasts/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
+      toast({ title: "Podcast atualizado!", description: "As alterações foram salvas" });
+      setEditDialogOpen(false);
+      setSelectedPodcast(null);
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Não foi possível atualizar o podcast", variant: "destructive" });
+    },
+  });
+
+  const deletePodcastMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest("DELETE", `/api/podcasts/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
+      toast({ title: "Podcast excluído", description: "O podcast foi removido" });
+      setDeleteDialogOpen(false);
+      setSelectedPodcast(null);
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Não foi possível excluir o podcast", variant: "destructive" });
+    },
+  });
+
+  const openEditDialog = (podcast: Podcast) => {
+    setSelectedPodcast(podcast);
+    setEditTitle(podcast.title);
+    setEditDescription(podcast.description || "");
+    setEditDialogOpen(true);
+  };
+
+  const openDeleteDialog = (podcast: Podcast) => {
+    setSelectedPodcast(podcast);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleUpdatePodcast = () => {
+    if (!selectedPodcast || !editTitle.trim()) return;
+    updatePodcastMutation.mutate({
+      id: selectedPodcast.id,
+      data: { title: editTitle.trim(), description: editDescription.trim() },
+    });
+  };
+
+  const handleDeletePodcast = () => {
+    if (!selectedPodcast) return;
+    deletePodcastMutation.mutate(selectedPodcast.id);
+  };
 
   const resetCreateForm = () => {
     setNewPodcastTitle("");
@@ -175,9 +244,13 @@ export default function Podcasts() {
       });
       
       try {
+        const authHeaders = await getAuthHeaders();
         const response = await fetch(
           `/api/bible/audio/pt/nvi/${episode.bookAbbrev}/${episode.chapterNumber}`,
-          { credentials: 'include' }
+          { 
+            credentials: 'include',
+            headers: authHeaders
+          }
         );
         
         if (response.ok) {
@@ -518,12 +591,37 @@ export default function Podcasts() {
                   return (
                     <Card key={podcast.id}>
                       <CardHeader>
-                        <CardTitle>{podcast.title}</CardTitle>
-                        {podcast.description && (
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {podcast.description}
-                          </p>
-                        )}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <CardTitle className="truncate">{podcast.title}</CardTitle>
+                            {podcast.description && (
+                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                {podcast.description}
+                              </p>
+                            )}
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="icon" variant="ghost" data-testid={`button-podcast-menu-${podcast.id}`}>
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEditDialog(podcast)} data-testid="menu-edit-podcast">
+                                <Pencil className="h-4 w-4 mr-2" />
+                                Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => openDeleteDialog(podcast)} 
+                                className="text-destructive focus:text-destructive"
+                                data-testid="menu-delete-podcast"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Excluir
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                           {podcast.bibleBook && (
                             <Badge variant="secondary">{podcast.bibleBook}</Badge>
@@ -571,6 +669,72 @@ export default function Podcasts() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Edit Podcast Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Podcast</DialogTitle>
+            <DialogDescription>
+              Altere o título ou a descrição do seu podcast
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-title">Título</Label>
+              <Input 
+                id="edit-title" 
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                data-testid="input-edit-title"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-description">Descrição</Label>
+              <Textarea 
+                id="edit-description" 
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                data-testid="input-edit-description"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleUpdatePodcast}
+              disabled={updatePodcastMutation.isPending || !editTitle.trim()}
+              data-testid="button-save-edit"
+            >
+              {updatePodcastMutation.isPending ? "Salvando..." : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir podcast?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir "{selectedPodcast?.title}"? Esta ação não pode ser desfeita e todos os episódios serão removidos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeletePodcast}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="button-confirm-delete"
+            >
+              {deletePodcastMutation.isPending ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Fixed Player Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t z-50">
