@@ -255,29 +255,29 @@ export default function Landing() {
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url(${heroImage})`,
+            backgroundImage: `linear-gradient(135deg, rgba(107,33,240,0.85) 0%, rgba(67,56,202,0.75) 50%, rgba(255,190,11,0.4) 100%), url(${heroImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
         
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <Badge className="mb-6 bg-primary/20 text-white border-white/30 backdrop-blur-md px-4 py-2" data-testid="badge-version">
-            🚀 A Revolução do Estudo Bíblico
+          <Badge className="mb-6 bg-amber-400/90 text-purple-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
+            A Revolução do Estudo Bíblico
           </Badge>
           
-          <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6" data-testid="text-hero-title">
-            Estude a Bíblia com Inteligência Artificial
+          <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
+            Estude a Bíblia com <span className="text-amber-300">Inteligência Artificial</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
             Descubra novos insights teológicos, estude offline e tenha um assistente IA que responde suas dúvidas sobre as escrituras sagradas.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg"
-              className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground border-0 shadow-lg"
+              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
               onClick={() => window.location.href = "/api/register"}
               data-testid="button-start-free"
             >
@@ -288,7 +288,7 @@ export default function Landing() {
             <Button 
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 rounded-full bg-white/10 backdrop-blur-md border-2 border-white/50 text-white hover:bg-white/20"
+              className="text-lg px-10 py-6 rounded-full bg-white/15 backdrop-blur-lg border-2 border-white/60 text-white hover:bg-white/25 hover:border-white/80 shadow-lg"
               onClick={() => {
                 document.getElementById("recursos")?.scrollIntoView({ behavior: "smooth" });
               }}
@@ -301,10 +301,10 @@ export default function Landing() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-background to-muted/20">
+      <section className="py-24 px-6 bg-gradient-to-b from-purple-50 via-background to-amber-50/30 dark:from-purple-950/30 dark:via-background dark:to-amber-950/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Por que Escolher BíbliaFS?</h2>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Por que Escolher <span className="gradient-text">BíbliaFS</span>?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               A plataforma mais completa e inteligente para estudo bíblico
             </p>
@@ -312,14 +312,14 @@ export default function Landing() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Zap, title: "Assistente IA", desc: "Respostas teológicas (requer internet)" },
-              { icon: Sparkles, title: "Temas Premium", desc: "4 temas exclusivos + personalizáveis" },
-              { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia + planos sem internet" },
-              { icon: Shield, title: "Plano Básico Gratuito", desc: "Recursos essenciais para sempre" },
+              { icon: Zap, title: "Assistente IA", desc: "Respostas teológicas (requer internet)", color: "from-purple-500 to-purple-600" },
+              { icon: Sparkles, title: "Temas Premium", desc: "4 temas exclusivos + personalizáveis", color: "from-amber-400 to-amber-500" },
+              { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia + planos sem internet", color: "from-indigo-500 to-purple-500" },
+              { icon: Shield, title: "Plano Básico Gratuito", desc: "Recursos essenciais para sempre", color: "from-orange-400 to-amber-500" },
             ].map((benefit, idx) => (
-              <div key={idx} className="p-6 rounded-lg bg-background/50 border border-border/50 hover-elevate">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
-                  <benefit.icon className="h-6 w-6 text-primary" />
+              <div key={idx} className="p-6 rounded-2xl bg-white/80 dark:bg-card/80 border border-purple-200/50 dark:border-purple-800/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${benefit.color} mb-4 shadow-lg`}>
+                  <benefit.icon className="h-7 w-7 text-white" />
                 </div>
                 <h3 className="font-bold text-lg mb-2">{benefit.title}</h3>
                 <p className="text-sm text-muted-foreground">{benefit.desc}</p>
@@ -330,11 +330,11 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section id="recursos" className="py-24 px-6 bg-background">
+      <section id="recursos" className="py-24 px-6 bg-gradient-to-b from-background via-purple-50/20 to-background dark:from-background dark:via-purple-950/20 dark:to-background">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Recursos Poderosos Para Seu Estudo
+              Recursos <span className="gradient-text">Poderosos</span> Para Seu Estudo
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Tudo que você precisa para uma experiência de estudo bíblico transformadora
@@ -343,11 +343,11 @@ export default function Landing() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="hover-elevate border-border/50" data-testid={`card-feature-${index}`}>
+              <Card key={index} className="premium-card border-purple-200/50 dark:border-purple-800/30 bg-white/90 dark:bg-card/90" data-testid={`card-feature-${index}`}>
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-2">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-accent/20">
-                      <feature.icon className="h-6 w-6 text-primary" />
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
+                      <feature.icon className="h-7 w-7 text-white" />
                     </div>
                   </div>
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -491,10 +491,11 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-24 px-6 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Comece Seu Estudo Bíblico Hoje
+            Comece Seu Estudo Bíblico <span className="text-amber-300">Hoje</span>
           </h2>
           <p className="text-xl mb-8 opacity-90">
             Totalmente gratuito. Sem cartão de crédito. Sem compromisso.
@@ -503,7 +504,7 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg"
-              className="text-lg px-8 py-6 rounded-full bg-white text-primary hover:bg-white/90 shadow-lg font-bold"
+              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-purple-900 hover:from-amber-300 hover:to-amber-400 shadow-xl font-bold glow-gold"
               onClick={() => window.location.href = "/api/register"}
               data-testid="button-cta-start"
             >
@@ -515,13 +516,13 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-muted/50 border-t">
+      <footer className="py-12 px-6 bg-gradient-to-b from-purple-50 to-white dark:from-purple-950/50 dark:to-background border-t border-purple-200/50 dark:border-purple-800/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                  <Book className="h-6 w-6 text-primary-foreground" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
+                  <Book className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <h3 className="font-display font-bold">BíbliaFS</h3>
