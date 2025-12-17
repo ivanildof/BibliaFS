@@ -1204,17 +1204,18 @@ export default function BibleReader() {
                       <h3 className="text-sm font-medium mb-2">Versão da Bíblia</h3>
                       <div className="grid grid-cols-2 gap-2">
                         {VERSIONS.map(v => (
-                          <Button
-                            key={v.value}
-                            variant={version === v.value ? "default" : "outline"}
-                            onClick={() => {
-                              console.log(`[Version] Changing from ${version} to ${v.value}`);
-                              setVersion(v.value);
-                              setIsBooksOpen(false);
-                            }}
-                          >
-                            {v.label}
-                          </Button>
+                          <SheetClose asChild key={v.value}>
+                            <Button
+                              variant={version === v.value ? "default" : "outline"}
+                              onClick={() => {
+                                console.log(`[Version] Changing from ${version} to ${v.value}`);
+                                setVersion(v.value);
+                              }}
+                              data-testid={`button-version-${v.value}`}
+                            >
+                              {v.label}
+                            </Button>
+                          </SheetClose>
                         ))}
                       </div>
                     </div>
