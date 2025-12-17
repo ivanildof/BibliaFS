@@ -69,18 +69,18 @@ export default function Home() {
   };
 
   const quickActions = [
-    { icon: Brain, label: "Modo Professor", href: "/teacher", color: "bg-purple-500" },
-    { icon: MessageSquare, label: "Nova Oração", href: "/prayers", color: "bg-blue-500" },
-    { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", color: "bg-green-500" },
-    { icon: Users, label: "Comunidade", href: "/community", color: "bg-orange-500" },
+    { icon: Brain, label: "Modo Professor", href: "/teacher", color: "bg-gradient-to-br from-purple-500 to-indigo-600" },
+    { icon: MessageSquare, label: "Nova Oração", href: "/prayers", color: "bg-gradient-to-br from-blue-500 to-purple-500" },
+    { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", color: "bg-gradient-to-br from-emerald-500 to-teal-500" },
+    { icon: Users, label: "Comunidade", href: "/community", color: "bg-gradient-to-br from-amber-400 to-orange-500" },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/50 via-background to-amber-50/30 dark:from-purple-950/30 dark:via-background dark:to-amber-950/20">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Welcome Header */}
         <div className="space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight" data-testid="text-welcome">
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold gradient-text leading-tight" data-testid="text-welcome">
             Bem-vindo, {user?.firstName || "estudante"}!
           </h1>
           <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
@@ -93,15 +93,15 @@ export default function Home() {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <Card className="hover-elevate bg-gradient-to-br from-white/50 to-white/30 dark:from-slate-800/50 dark:to-slate-900/30 backdrop-blur-sm border-white/40 dark:border-slate-700/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="premium-card bg-white/90 dark:bg-card/90 border-purple-200/50 dark:border-purple-800/30">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
               <CardTitle className="text-sm font-medium">Sequência de Leitura</CardTitle>
-              <div className="p-2 rounded-lg bg-primary/10">
-                <TrendingUp className="h-4 w-4 text-primary" />
+              <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
+                <TrendingUp className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent" data-testid="text-reading-streak">
+              <div className="text-2xl sm:text-3xl font-bold gradient-text" data-testid="text-reading-streak">
                 {readingStreak} dias
               </div>
               <p className="text-xs text-muted-foreground mt-2">
@@ -110,15 +110,15 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover-elevate bg-gradient-to-br from-white/50 to-white/30 dark:from-slate-800/50 dark:to-slate-900/30 backdrop-blur-sm border-white/40 dark:border-slate-700/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="premium-card bg-white/90 dark:bg-card/90 border-purple-200/50 dark:border-purple-800/30">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
               <CardTitle className="text-sm font-medium">Nível Espiritual</CardTitle>
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Award className="h-4 w-4 text-accent" />
+              <div className="p-2 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 shadow-lg">
+                <Award className="h-4 w-4 text-purple-900" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold" data-testid="text-level">
+              <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="text-level">
                 {levelLabels[level]}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
@@ -127,15 +127,15 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover-elevate bg-gradient-to-br from-white/50 to-white/30 dark:from-slate-800/50 dark:to-slate-900/30 backdrop-blur-sm border-white/40 dark:border-slate-700/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="premium-card bg-white/90 dark:bg-card/90 border-purple-200/50 dark:border-purple-800/30">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
               <CardTitle className="text-sm font-medium">Atividade Comunitária</CardTitle>
-              <div className="p-2 rounded-lg bg-green-500/10">
-                <Users className="h-4 w-4 text-green-500" />
+              <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
+                <Users className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold" data-testid="text-community-count">
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-community-count">
                 {stats?.communityPosts || 0}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
@@ -188,14 +188,14 @@ export default function Home() {
 
         {/* Quick Actions */}
         <div className="space-y-4">
-          <h2 className="font-display text-2xl font-bold">Ações Rápidas</h2>
+          <h2 className="font-display text-2xl font-bold">Ações <span className="gradient-text">Rápidas</span></h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
-                <Card className="hover-elevate active-elevate-2 cursor-pointer" data-testid={`card-quick-action-${index}`}>
+                <Card className="cursor-pointer border-purple-200/50 dark:border-purple-800/30 bg-white/90 dark:bg-card/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1" data-testid={`card-quick-action-${index}`}>
                   <CardContent className="pt-6">
                     <div className="flex flex-col items-center text-center space-y-3">
-                      <div className={`${action.color} p-4 rounded-full`}>
+                      <div className={`${action.color} p-4 rounded-xl shadow-lg`}>
                         <action.icon className="h-6 w-6 text-white" />
                       </div>
                       <p className="font-medium">{action.label}</p>
@@ -208,18 +208,20 @@ export default function Home() {
         </div>
 
         {/* Recent Activity */}
-        <Card className="bg-gradient-to-r from-white/60 to-white/40 dark:from-slate-800/60 dark:to-slate-900/40 backdrop-blur-sm">
+        <Card className="premium-card bg-white/90 dark:bg-card/90 border-purple-200/50 dark:border-purple-800/30">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <Sparkles className="h-5 w-5 text-primary" />
+              <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
               Atividade Recente
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 sm:space-y-4">
             <div className="space-y-4">
               <div className="flex items-start gap-3 text-sm">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                  <BookOpen className="h-4 w-4 text-primary" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md">
+                  <BookOpen className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">Você leu Salmos 23</p>
@@ -228,8 +230,8 @@ export default function Home() {
               </div>
               
               <div className="flex items-start gap-3 text-sm">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10">
-                  <MessageSquare className="h-4 w-4 text-green-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-md">
+                  <MessageSquare className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">Nova oração registrada</p>
@@ -238,8 +240,8 @@ export default function Home() {
               </div>
               
               <div className="flex items-start gap-3 text-sm">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500/10">
-                  <Users className="h-4 w-4 text-orange-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-md">
+                  <Users className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">Você publicou na comunidade</p>
