@@ -245,80 +245,8 @@ export default function BibleReader() {
     setIsLoadingAudio(true);
     
     try {
-      // First: Try Supabase Storage (pre-downloaded files)
-      const audioUrl = await getAudioUrl(selectedBook, chapter, version, t.currentLanguage || "pt");
-      console.log(`[Audio] Trying Supabase: ${audioUrl}`);
-      
-      toast({
-        title: audioMode === 'book' ? `Tocando Capítulo ${chapter}...` : "Carregando áudio...",
-        description: "Do Supabase Storage",
-      });
-      
-      try {
-        const supabaseResponse = await fetch(audioUrl, { signal: AbortSignal.timeout(10000) });
-        
-        if (supabaseResponse.ok) {
-          const blob = await supabaseResponse.blob();
-          const blobUrl = URL.createObjectURL(blob);
-          const audio = new Audio(blobUrl);
-          audioElementRef.current = audio;
-          
-          audio.onloadeddata = () => {
-            setIsLoadingAudio(false);
-            audio.play().then(() => {
-              setIsPlayingAudio(true);
-              setAudioUrl(blobUrl);
-              setPlayingVerseNumber(null);
-              toast({
-                title: audioMode === 'book' ? `Tocando Capítulo ${chapter}` : "Áudio do capítulo iniciado",
-                description: audioMode === 'book' ? `${bookPlaylist.length - currentPlaylistIndex} capítulos restantes` : "Você pode continuar navegando enquanto ouve",
-              });
-            }).catch(error => {
-              setIsLoadingAudio(false);
-              stopAllAudio();
-              URL.revokeObjectURL(blobUrl);
-              console.error("Audio playback error:", error);
-              toast({
-                title: "Erro ao reproduzir áudio",
-                description: "Tente novamente",
-                variant: "destructive",
-              });
-            });
-          };
-          
-          audio.onended = () => {
-            URL.revokeObjectURL(blobUrl);
-            if (audioMode === 'book' && currentPlaylistIndex < bookPlaylist.length - 1) {
-              const nextIndex = currentPlaylistIndex + 1;
-              setCurrentPlaylistIndex(nextIndex);
-              playChapterAudio(bookPlaylist[nextIndex]);
-            } else {
-              setIsPlayingAudio(false);
-              setPlayingVerseNumber(null);
-              setBookPlaylist([]);
-              setCurrentPlaylistIndex(0);
-              setAudioMode('chapter');
-            }
-          };
-          
-          audio.onerror = () => {
-            setIsLoadingAudio(false);
-            stopAllAudio();
-            URL.revokeObjectURL(blobUrl);
-            toast({
-              title: "Erro ao carregar áudio",
-              description: "Verifique sua conexão e tente novamente",
-              variant: "destructive",
-            });
-          };
-          return;
-        }
-      } catch (supabaseError) {
-        console.log("[Audio] Supabase file not available, trying OpenAI fallback...");
-      }
-      
-      // Fallback: Generate via OpenAI if Supabase file not found
-      const backendUrl = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${chapter}`;
+      // Generate audio via OpenAI TTS (always works)
+      const backendUrl = `/api/bible/audio/${t.currentLanguage || 'pt'}/${version}/${selectedBook}/${chapter}`;
       
       toast({
         title: audioMode === 'book' ? `Gerando áudio - Capítulo ${chapter}...` : "Gerando áudio do capítulo...",
@@ -332,7 +260,7 @@ export default function BibleReader() {
         method: "GET",
         credentials: "include",
         headers,
-        signal: AbortSignal.timeout(60000),
+        signal: AbortSignal.timeout(120000),
       });
       
       if (!response.ok) {

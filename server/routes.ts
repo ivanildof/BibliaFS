@@ -2413,7 +2413,8 @@ IMPORTANTE:
   app.get("/api/daily-verse", async (req, res) => {
     try {
       // Calculate day of year (1-365) based on user's timezone
-      const timezone = req.query.timezone || 'America/Sao_Paulo'; // Default to Brazil timezone
+      const timezoneParam = req.query.timezone;
+      const timezone = typeof timezoneParam === 'string' ? timezoneParam : 'America/Sao_Paulo';
       const formatter = new Intl.DateTimeFormat('en-US', { 
         timeZone: timezone, 
         year: 'numeric', 
