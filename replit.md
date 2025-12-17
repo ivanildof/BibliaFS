@@ -1,9 +1,20 @@
 # BíbliaFS v2.0
 
 ## Overview
-BíbliaFS is a premium, personalized, and intelligent Bible study application that enhances traditional scripture reading with modern AI-powered theological assistance.
+BíbliaFS é uma premium, personalized, e intelligent Bible study application que enhances traditional scripture reading com modern AI-powered theological assistance.
 
 ## QUICK REFERENCE - RESPOSTAS ÀS PERGUNTAS DO USUÁRIO
+
+### ❓ "Grupos de Estudo - como usar?"
+- **Localização**: Menu lateral → "Grupos de Estudo" OU `/groups`
+- **Funcionalidades**: 
+  - Criar grupos (público/privado)
+  - Chat em tempo real entre membros
+  - Gerenciar membros (líder/moderador/membro)
+  - Convidar por email ou telefone
+  - Códigos de convite para compartilhar
+- **Database**: Todas as informações salvas no Supabase PostgreSQL
+- **Status**: ✅ 100% Funcional e testado
 
 ### ❓ "Áudio - onde está sendo armazenado?"
 - **Localização**: Supabase Storage - bucket `bible-audio`
@@ -60,10 +71,39 @@ BíbliaFS is a premium, personalized, and intelligent Bible study application th
 3. **Offline Bible Text**: IndexedDB (`biblia-plus-offline`)
 4. **Audio Progress**: Supabase `audio_progress` table
 5. **Downloaded Audio**: IndexedDB (compressed)
+6. **Groups & Messages**: Supabase `groups`, `group_members`, `group_messages` tables
+7. **Invites**: Supabase `group_invites` table
 
 ## Key Features Implemented
 
-### 1. Bible Audio System ✅ (INFRASTRUCTURE COMPLETE)
+### 1. Grupos de Estudo (Study Groups) ✅ NOVO!
+- **Rota**: `/groups`
+- **Funcionalidades Completas**:
+  - ✅ Criar grupos (público/privado)
+  - ✅ Chat em tempo real dentro dos grupos
+  - ✅ Listar e gerenciar membros
+  - ✅ Sistema de papéis (Líder/Moderador/Membro)
+  - ✅ Convidar por email ou telefone
+  - ✅ Gerar códigos de convite para compartilhar
+  - ✅ Aceitar convites usando código
+  - ✅ Todas as informações salvas no Supabase
+- **Database Tables**:
+  - `groups` - Informações do grupo
+  - `group_members` - Membros e seus papéis
+  - `group_messages` - Histórico de mensagens
+  - `group_invites` - Convites pendentes/aceitos
+- **APIs**: 
+  - `GET /api/groups` - Listar todos os grupos
+  - `GET /api/groups/my` - Meus grupos
+  - `POST /api/groups` - Criar grupo
+  - `POST /api/groups/:id/join` - Entrar no grupo
+  - `POST /api/groups/:id/messages` - Enviar mensagem
+  - `GET /api/groups/:id/messages` - Recuperar mensagens
+  - `POST /api/groups/:id/invites` - Criar convite
+  - `GET /api/groups/:id/invites` - Listar convites
+  - `POST /api/invites/accept` - Aceitar convite por código
+
+### 2. Bible Audio System ✅ (INFRASTRUCTURE COMPLETE)
 - **Streaming Source**: Supabase Storage (public bucket)
 - **Formats**: MP3 (high quality)
 - **Architecture**:
@@ -76,13 +116,13 @@ BíbliaFS is a premium, personalized, and intelligent Bible study application th
   - ❌ Download sources blocked (URLs need validation)
   - ⏳ Waiting for correct public audio sources
 
-### 2. Comparar Versões (Version Comparison) ✅
+### 3. Comparar Versões (Version Comparison) ✅
 - Side-by-side comparison (up to 3 versions)
 - Multilingual support: Portuguese, English, Dutch, Spanish
 - Book names translate based on UI language
 - Fallback mapping to SQLite abbreviations
 
-### 3. Modo Professor (Teacher Mode) ✅
+### 4. Modo Professor (Teacher Mode) ✅
 - **Route**: `/teacher`
 - **Funcionalidades**:
   - Criação de aulas com título, descrição, texto-base, **duração**
@@ -94,11 +134,11 @@ BíbliaFS is a premium, personalized, and intelligent Bible study application th
   - 31-60 min: 4 objetivos, 5 perguntas
   - 61+ min: 6 objetivos, 8 perguntas
 
-### 4. Versículo do Dia (Daily Verse) ✅
+### 5. Versículo do Dia (Daily Verse) ✅
 - **Component**: `<DailyVerse />` in Home page
 - **API**: `GET /api/daily-verse`
 
-### 5. Search - REMOVED ❌
+### 6. Search - REMOVED ❌
 - Removed from UI (Dec 16): Too slow, 198+ API calls per search
 - Kept APIs for future optimization
 
@@ -145,6 +185,20 @@ bible-audio/
 - **Page Transition**: ~500ms
 - **Query Cache**: 5min staleTime + 30min retention
 - **Offline**: IndexedDB with gzip compression (60% space saving)
+- **Group Messages**: Real-time polling every 5 seconds (refetchInterval: 5000)
+
+## Recent Completed Features (Dec 17, 2025)
+
+### ✅ Study Groups System
+- Group creation with public/private settings
+- Real-time chat messaging within groups
+- Member management with role-based access (Leader, Moderator, Member)
+- Email and phone-based invitation system
+- Shareable invite codes
+- Join group with invite code
+- Complete persistence in Supabase PostgreSQL
+- Database migrations executed successfully
+- All APIs tested and working
 
 ## Next Priority Tasks
 
@@ -163,7 +217,26 @@ bible-audio/
    - Test offline download + playback
    - Verify progress tracking to database
 
-4. **Additional Features** (after audio works)
+4. **Groups: Advanced Features** (optional)
+   - User search in invite dialog (autocomplete)
+   - Push notifications for group invites/messages
+   - Rich text messaging with formatting
+   - Message reactions/emojis
+   - Pin important messages
+   - Group announcements
+
+5. **Additional Features** (after audio works)
    - Add more languages (Spanish, Dutch)
    - Optimize storage/compression
    - Community features & gamification
+
+## Completed in This Session
+1. ✅ Group messaging system with chat history
+2. ✅ Member management UI with roles
+3. ✅ Email/phone invitation system
+4. ✅ Invite code generation and sharing
+5. ✅ Join group by invite code
+6. ✅ Database migrations for all tables
+7. ✅ Complete API endpoints
+8. ✅ Form type naming fix for browser compatibility
+9. ✅ All data persisting in Supabase
