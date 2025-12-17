@@ -50,11 +50,9 @@ export function AppSidebar() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Close sidebar on mobile when route changes
+  // Close sidebar when route changes
   useEffect(() => {
-    if (isMobileRef.current) {
-      setOpen(false);
-    }
+    setOpen(false);
   }, [location, setOpen]);
 
   const menuItems = [
