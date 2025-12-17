@@ -31,20 +31,31 @@ import {
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function AppSidebar() {
   const [location] = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { setOpen } = useSidebar();
+  const { setOpen, open } = useSidebar();
+  const isMobileRef = useRef(false);
+
+  useEffect(() => {
+    // Check if mobile on mount and on window resize
+    const checkMobile = () => {
+      isMobileRef.current = window.innerWidth < 768;
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
-    if (window.innerWidth < 768) {
+    if (isMobileRef.current && open) {
       setOpen(false);
     }
-  }, [location, setOpen]);
+  }, [location, open, setOpen]);
 
   const menuItems = [
     { title: t.nav.home, url: "/", icon: Home },
@@ -56,9 +67,9 @@ export function AppSidebar() {
   ];
 
   const studyItems = [
-    { title: "Comparar Versões", url: "/compare", icon: Columns },
+    { title: t.nav.compareVersions, url: "/compare", icon: Columns },
     { title: t.nav.discover, url: "/community", icon: Users },
-    { title: "Grupos de Estudo", url: "/groups", icon: UsersRound },
+    { title: t.nav.studyGroups, url: "/groups", icon: UsersRound },
     { title: t.nav.podcasts, url: "/podcasts", icon: Headphones },
   ];
 

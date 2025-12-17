@@ -25,6 +25,8 @@ export interface Translations {
     podcasts: string;
     teacherMode: string;
     settings: string;
+    compareVersions: string;
+    studyGroups: string;
   };
   sections: {
     mainMenu: string;
@@ -322,6 +324,8 @@ export const translations: Record<Language, Translations> = {
       podcasts: 'Podcasts',
       teacherMode: 'Modo Professor',
       settings: 'Configurações',
+      compareVersions: 'Comparar Versões',
+      studyGroups: 'Grupos de Estudo',
     },
     sections: {
       mainMenu: 'Menu Principal',
@@ -634,6 +638,8 @@ export const translations: Record<Language, Translations> = {
       podcasts: 'Podcasts',
       teacherMode: 'Teacher Mode',
       settings: 'Settings',
+      compareVersions: 'Compare Versions',
+      studyGroups: 'Study Groups',
     },
     sections: {
       mainMenu: 'Main Menu',
@@ -946,6 +952,8 @@ export const translations: Record<Language, Translations> = {
       podcasts: 'Podcasts',
       teacherMode: 'Leermodus',
       settings: 'Instellingen',
+      compareVersions: 'Versies Vergelijken',
+      studyGroups: 'Studiegroepen',
     },
     sections: {
       mainMenu: 'Hoofdmenu',
@@ -1258,6 +1266,8 @@ export const translations: Record<Language, Translations> = {
       podcasts: 'Podcasts',
       teacherMode: 'Modo Profesor',
       settings: 'Configuración',
+      compareVersions: 'Comparar Versiones',
+      studyGroups: 'Grupos de Estudio',
     },
     sections: {
       mainMenu: 'Menú Principal',
