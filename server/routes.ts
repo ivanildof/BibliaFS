@@ -3278,6 +3278,192 @@ Responda em português do Brasil.`
   });
 
   // ============================================
+  // GROUP MESSAGES (Discussion/Chat)
+  // ============================================
+
+  // Get group messages
+  app.get("/api/groups/:id/messages", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      
+      // Check if user is member
+      const isMember = await storage.isGroupMember(groupId, userId);
+      if (!isMember) {
+        return res.status(403).json({ error: "Você precisa ser membro do grupo para ver as mensagens" });
+      }
+      
+      const messages = await storage.getGroupMessages(groupId);
+      res.json(messages);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Send message to group
+  app.post("/api/groups/:id/messages", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      const { content, verseReference, verseText, messageType } = req.body;
+      
+      // Check if user is member
+      const isMember = await storage.isGroupMember(groupId, userId);
+      if (!isMember) {
+        return res.status(403).json({ error: "Você precisa ser membro do grupo para enviar mensagens" });
+      }
+      
+      if (!content || content.trim().length === 0) {
+        return res.status(400).json({ error: "Mensagem não pode estar vazia" });
+      }
+      
+      const message = await storage.createGroupMessage({
+        groupId,
+        userId,
+        content: content.trim(),
+        verseReference,
+        verseText,
+        messageType: messageType || "text",
+      });
+      
+      res.json(message);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Delete message
+  app.delete("/api/groups/:groupId/messages/:messageId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const deleted = await storage.deleteGroupMessage(req.params.messageId, userId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Mensagem não encontrada ou acesso negado" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
+  // GROUP INVITES
+  // ============================================
+
+  // Create invite
+  app.post("/api/groups/:id/invites", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      const { email, phone } = req.body;
+      
+      // Check if user is leader or moderator
+      const group = await storage.getGroup(groupId);
+      if (!group) {
+        return res.status(404).json({ error: "Grupo não encontrado" });
+      }
+      
+      const members = await storage.getGroupMembers(groupId);
+      const userMember = members.find(m => m.userId === userId);
+      if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
+        return res.status(403).json({ error: "Apenas líderes e moderadores podem convidar" });
+      }
+      
+      if (!email && !phone) {
+        return res.status(400).json({ error: "Email ou telefone é obrigatório" });
+      }
+      
+      const invite = await storage.createGroupInvite({
+        groupId,
+        invitedBy: userId,
+        invitedEmail: email || null,
+        invitedPhone: phone || null,
+      });
+      
+      res.json(invite);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get group invites
+  app.get("/api/groups/:id/invites", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      
+      // Check if user is leader or moderator
+      const members = await storage.getGroupMembers(groupId);
+      const userMember = members.find(m => m.userId === userId);
+      if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
+        return res.status(403).json({ error: "Acesso negado" });
+      }
+      
+      const invites = await storage.getGroupInvites(groupId);
+      res.json(invites);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get my pending invites
+  app.get("/api/invites/pending", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.email) {
+        return res.json([]);
+      }
+      
+      const invites = await storage.getPendingInvitesForEmail(user.email);
+      res.json(invites);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Accept invite by code
+  app.post("/api/invites/accept", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { code } = req.body;
+      
+      if (!code) {
+        return res.status(400).json({ error: "Código do convite é obrigatório" });
+      }
+      
+      const result = await storage.acceptInvite(code.toUpperCase(), userId);
+      
+      if (!result.success) {
+        return res.status(400).json({ error: result.error });
+      }
+      
+      res.json({ success: true, groupId: result.groupId });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Search users by email
+  app.get("/api/users/search", isAuthenticated, async (req: any, res) => {
+    try {
+      const { email } = req.query;
+      
+      if (!email || typeof email !== "string" || email.length < 3) {
+        return res.json([]);
+      }
+      
+      const users = await storage.searchUsersByEmail(email);
+      res.json(users);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
   // TEACHING OUTLINES API
   // ============================================
 

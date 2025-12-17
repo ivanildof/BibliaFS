@@ -226,6 +226,43 @@ export async function runMigrations() {
       WHERE NOT EXISTS (SELECT 1 FROM podcasts WHERE id = 'pod-3')
     `);
     
+    // Create group_invites table for group invitations
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS group_invites (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        group_id VARCHAR NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+        invited_email VARCHAR(255),
+        invited_phone VARCHAR(20),
+        invite_code VARCHAR(50) UNIQUE,
+        invited_by VARCHAR NOT NULL REFERENCES users(id),
+        status VARCHAR(20) DEFAULT 'pending',
+        expires_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create group_messages table for group discussions
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS group_messages (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        group_id VARCHAR NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+        user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        reply_to_id VARCHAR,
+        verse_reference TEXT,
+        verse_text TEXT,
+        message_type VARCHAR(20) DEFAULT 'text',
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create index for faster message lookups
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_group_messages_group 
+      ON group_messages(group_id, created_at DESC)
+    `);
+
     console.log("Migrations completed successfully!");
   } catch (error) {
     console.error("Migration error:", error);

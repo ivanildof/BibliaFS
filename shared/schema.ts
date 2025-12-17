@@ -1195,6 +1195,7 @@ export const groupInvites = pgTable("group_invites", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   groupId: varchar("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
   invitedEmail: varchar("invited_email", { length: 255 }),
+  invitedPhone: varchar("invited_phone", { length: 20 }),
   inviteCode: varchar("invite_code", { length: 50 }).unique(),
   invitedBy: varchar("invited_by").notNull().references(() => users.id),
   status: varchar("status", { length: 20 }).default("pending"), // pending, accepted, rejected, expired
@@ -1205,6 +1206,33 @@ export const groupInvites = pgTable("group_invites", {
 export const insertGroupInviteSchema = createInsertSchema(groupInvites).omit({ id: true, createdAt: true });
 export type InsertGroupInvite = z.infer<typeof insertGroupInviteSchema>;
 export type GroupInvite = typeof groupInvites.$inferSelect;
+
+// Group messages (chat/discussion)
+export const groupMessages = pgTable("group_messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  groupId: varchar("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  replyToId: varchar("reply_to_id"),
+  
+  // Optional verse reference
+  verseReference: text("verse_reference"),
+  verseText: text("verse_text"),
+  
+  // Message type
+  messageType: varchar("message_type", { length: 20 }).default("text"), // text, verse, prayer, lesson
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertGroupMessageSchema = createInsertSchema(groupMessages)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    content: z.string().min(1, "Mensagem não pode estar vazia").max(2000, "Mensagem muito longa"),
+  });
+export type InsertGroupMessage = z.infer<typeof insertGroupMessageSchema>;
+export type GroupMessage = typeof groupMessages.$inferSelect;
 
 // ============================================
 // TEACHING OUTLINES (Structured Lesson Blocks)

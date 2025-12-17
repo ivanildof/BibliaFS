@@ -1354,6 +1354,153 @@ export class DatabaseStorage implements IStorage {
       .where(eq(audioProgress.userId, userId))
       .orderBy(desc(audioProgress.lastPlayedAt));
   }
+
+  // ============================================
+  // GROUP MESSAGES (Discussion/Chat)
+  // ============================================
+  
+  async getGroupMessages(groupId: string, limit: number = 100): Promise<any[]> {
+    const { groupMessages } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groupMessages.id,
+        groupId: groupMessages.groupId,
+        userId: groupMessages.userId,
+        content: groupMessages.content,
+        replyToId: groupMessages.replyToId,
+        verseReference: groupMessages.verseReference,
+        verseText: groupMessages.verseText,
+        messageType: groupMessages.messageType,
+        createdAt: groupMessages.createdAt,
+        user: {
+          id: users.id,
+          displayName: users.displayName,
+          profileImageUrl: users.profileImageUrl,
+        },
+      })
+      .from(groupMessages)
+      .leftJoin(users, eq(groupMessages.userId, users.id))
+      .where(eq(groupMessages.groupId, groupId))
+      .orderBy(desc(groupMessages.createdAt))
+      .limit(limit);
+  }
+
+  async createGroupMessage(data: any): Promise<any> {
+    const { groupMessages } = await import("@shared/schema");
+    const [created] = await db.insert(groupMessages).values(data).returning();
+    return created;
+  }
+
+  async deleteGroupMessage(id: string, userId: string): Promise<boolean> {
+    const { groupMessages } = await import("@shared/schema");
+    const [existing] = await db.select().from(groupMessages).where(eq(groupMessages.id, id));
+    if (!existing || existing.userId !== userId) return false;
+    
+    await db.delete(groupMessages).where(eq(groupMessages.id, id));
+    return true;
+  }
+
+  // ============================================
+  // GROUP INVITES
+  // ============================================
+  
+  async createGroupInvite(data: any): Promise<any> {
+    const { groupInvites } = await import("@shared/schema");
+    const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
+    
+    const [created] = await db.insert(groupInvites).values({
+      ...data,
+      inviteCode,
+      expiresAt,
+    }).returning();
+    return created;
+  }
+
+  async getGroupInvites(groupId: string): Promise<any[]> {
+    const { groupInvites } = await import("@shared/schema");
+    return await db
+      .select()
+      .from(groupInvites)
+      .where(eq(groupInvites.groupId, groupId))
+      .orderBy(desc(groupInvites.createdAt));
+  }
+
+  async getInviteByCode(code: string): Promise<any | undefined> {
+    const { groupInvites } = await import("@shared/schema");
+    const [invite] = await db.select().from(groupInvites).where(eq(groupInvites.inviteCode, code));
+    return invite;
+  }
+
+  async getPendingInvitesForEmail(email: string): Promise<any[]> {
+    const { groupInvites, groups } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groupInvites.id,
+        groupId: groupInvites.groupId,
+        inviteCode: groupInvites.inviteCode,
+        status: groupInvites.status,
+        expiresAt: groupInvites.expiresAt,
+        createdAt: groupInvites.createdAt,
+        group: {
+          id: groups.id,
+          name: groups.name,
+          description: groups.description,
+        },
+      })
+      .from(groupInvites)
+      .leftJoin(groups, eq(groupInvites.groupId, groups.id))
+      .where(and(
+        eq(groupInvites.invitedEmail, email),
+        eq(groupInvites.status, "pending")
+      ));
+  }
+
+  async acceptInvite(inviteCode: string, userId: string): Promise<{ success: boolean; groupId?: string; error?: string }> {
+    const { groupInvites, groups } = await import("@shared/schema");
+    const invite = await this.getInviteByCode(inviteCode);
+    
+    if (!invite) {
+      return { success: false, error: "Convite não encontrado" };
+    }
+    
+    if (invite.status !== "pending") {
+      return { success: false, error: "Convite já foi usado ou expirou" };
+    }
+    
+    if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
+      await db.update(groupInvites).set({ status: "expired" }).where(eq(groupInvites.id, invite.id));
+      return { success: false, error: "Convite expirado" };
+    }
+    
+    // Check if already member
+    const isMember = await this.isGroupMember(invite.groupId, userId);
+    if (isMember) {
+      return { success: false, error: "Você já é membro deste grupo" };
+    }
+    
+    // Add as member
+    await this.addGroupMember(invite.groupId, userId, "member");
+    
+    // Update invite status
+    await db.update(groupInvites).set({ status: "accepted" }).where(eq(groupInvites.id, invite.id));
+    
+    return { success: true, groupId: invite.groupId };
+  }
+
+  async searchUsersByEmail(email: string): Promise<any[]> {
+    return await db
+      .select({
+        id: users.id,
+        email: users.email,
+        displayName: users.displayName,
+        profileImageUrl: users.profileImageUrl,
+      })
+      .from(users)
+      .where(sql`LOWER(${users.email}) LIKE ${`%${email.toLowerCase()}%`}`)
+      .limit(10);
+  }
 }
 
 export const storage = new DatabaseStorage();
