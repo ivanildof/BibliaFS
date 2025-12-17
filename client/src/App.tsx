@@ -45,6 +45,7 @@ import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import NotFound from "@/pages/not-found";
 import Groups from "@/pages/groups";
+import VersionCompare from "@/pages/version-compare";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -80,6 +81,8 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/bible" component={BibleReader} />
           <Route path="/bible-reader" component={BibleReader} />
+          <Route path="/compare" component={VersionCompare} />
+          <Route path="/comparar" component={VersionCompare} />
           <Route path="/favorites" component={Favorites} />
           <Route path="/plans" component={ReadingPlans} />
           <Route path="/progress" component={Progress} />
