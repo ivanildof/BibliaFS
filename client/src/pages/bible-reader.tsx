@@ -199,29 +199,97 @@ export default function BibleReader() {
   const playChapterAudio = async (chapter: number) => {
     if (!selectedBook) return;
     
-    const url = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${chapter}`;
-    
     setIsLoadingAudio(true);
     
-    toast({
-      title: audioMode === 'book' ? `Gerando áudio - Capítulo ${chapter}...` : "Gerando áudio do capítulo...",
-      description: "Isso pode levar 20-40 segundos. Aguarde!",
-    });
-    
     try {
+      // First: Try Supabase Storage (pre-downloaded files)
+      const audioUrl = await getAudioUrl(selectedBook, chapter, version, t.currentLanguage || "pt");
+      console.log(`[Audio] Trying Supabase: ${audioUrl}`);
+      
+      toast({
+        title: audioMode === 'book' ? `Tocando Capítulo ${chapter}...` : "Carregando áudio...",
+        description: "Do Supabase Storage",
+      });
+      
+      const supabaseResponse = await fetch(audioUrl, { signal: AbortSignal.timeout(15000) });
+      
+      if (supabaseResponse.ok) {
+        const blob = await supabaseResponse.blob();
+        const blobUrl = URL.createObjectURL(blob);
+      
+      const audio = new Audio(blobUrl);
+      audioElementRef.current = audio;
+      
+      audio.onloadeddata = () => {
+        setIsLoadingAudio(false);
+        audio.play().then(() => {
+          setIsPlayingAudio(true);
+          setAudioUrl(blobUrl);
+          setPlayingVerseNumber(null);
+          
+          toast({
+            title: audioMode === 'book' ? `Tocando Capítulo ${chapter}` : "Áudio do capítulo iniciado",
+            description: audioMode === 'book' ? `${bookPlaylist.length - currentPlaylistIndex} capítulos restantes` : "Você pode continuar navegando enquanto ouve",
+          });
+        }).catch(error => {
+          setIsLoadingAudio(false);
+          stopAllAudio();
+          URL.revokeObjectURL(blobUrl);
+          console.error("Audio playback error:", error);
+          toast({
+            title: "Erro ao reproduzir áudio",
+            description: "Tente novamente",
+            variant: "destructive",
+          });
+        });
+      };
+      
+      audio.onended = () => {
+        URL.revokeObjectURL(blobUrl);
+        if (audioMode === 'book' && currentPlaylistIndex < bookPlaylist.length - 1) {
+          const nextIndex = currentPlaylistIndex + 1;
+          setCurrentPlaylistIndex(nextIndex);
+          playChapterAudio(bookPlaylist[nextIndex]);
+        } else {
+          setIsPlayingAudio(false);
+          setPlayingVerseNumber(null);
+          setBookPlaylist([]);
+          setCurrentPlaylistIndex(0);
+          setAudioMode('chapter');
+        }
+      };
+      
+      audio.onerror = () => {
+        setIsLoadingAudio(false);
+        stopAllAudio();
+        URL.revokeObjectURL(blobUrl);
+        toast({
+          title: "Erro ao carregar áudio",
+          description: "Verifique sua conexão e tente novamente",
+          variant: "destructive",
+        });
+      };
+        return;
+      }
+      
+      // Fallback: Generate via OpenAI if Supabase file not found
+      console.log("[Audio] Supabase not available, generating via OpenAI...");
+      const backendUrl = `/api/bible/audio/${t.currentLanguage}/${version}/${selectedBook}/${chapter}`;
+      
+      toast({
+        title: audioMode === 'book' ? `Gerando áudio - Capítulo ${chapter}...` : "Gerando áudio do capítulo...",
+        description: "Isso pode levar 20-40 segundos. Aguarde!",
+      });
+      
       const { data: { session } } = await supabase.auth.getSession();
       const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
       
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000);
-      
-      const response = await fetch(url, {
+      const response = await fetch(backendUrl, {
         method: "GET",
         credentials: "include",
         headers,
-        signal: controller.signal,
+        signal: AbortSignal.timeout(60000),
       });
-      clearTimeout(timeoutId);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
