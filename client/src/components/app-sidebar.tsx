@@ -33,27 +33,29 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useRef } from "react";
 
-function SidebarLink({ href, children }: { href: string; children: React.ReactNode }) {
-  const { setOpen } = useSidebar();
-  return (
-    <Link href={href} onClick={() => {
-      setTimeout(() => setOpen(false), 0);
-    }}>
-      {children}
-    </Link>
-  );
-}
-
 export function AppSidebar() {
   const [location] = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { setOpen } = useSidebar();
+  const { setOpen, open } = useSidebar();
+  const isMobileRef = useRef(false);
 
-  // Close sidebar when route changes
   useEffect(() => {
-    setOpen(false);
-  }, [location, setOpen]);
+    // Check if mobile on mount and on window resize
+    const checkMobile = () => {
+      isMobileRef.current = window.innerWidth < 768;
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Close sidebar on mobile when route changes
+  useEffect(() => {
+    if (isMobileRef.current && open) {
+      setOpen(false);
+    }
+  }, [location, open, setOpen]);
 
   const menuItems = [
     { title: t.nav.home, url: "/", icon: Home },
@@ -97,10 +99,10 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1) || 'home'}`}>
-                    <SidebarLink href={item.url}>
+                    <Link href={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </SidebarLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -115,10 +117,10 @@ export function AppSidebar() {
               {studyItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1)}`}>
-                    <SidebarLink href={item.url}>
+                    <Link href={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </SidebarLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -133,10 +135,10 @@ export function AppSidebar() {
               {teacherItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1)}`}>
-                    <SidebarLink href={item.url}>
+                    <Link href={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </SidebarLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -149,18 +151,18 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/configurações"} data-testid="link-sidebar-settings">
-                  <SidebarLink href="/configurações">
+                  <Link href="/configurações">
                     <Settings className="h-4 w-4" />
                     <span>{t.nav.settings}</span>
-                  </SidebarLink>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/about"} data-testid="link-sidebar-about">
-                  <SidebarLink href="/about">
+                  <Link href="/about">
                     <Info className="h-4 w-4" />
                     <span>{t.sections.about}</span>
-                  </SidebarLink>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
