@@ -31,31 +31,20 @@ import {
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export function AppSidebar() {
   const [location] = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { setOpen, open } = useSidebar();
-  const isMobileRef = useRef(false);
-
-  useEffect(() => {
-    // Check if mobile on mount and on window resize
-    const checkMobile = () => {
-      isMobileRef.current = window.innerWidth < 768;
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const { setOpenMobile, isMobile } = useSidebar();
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
-    if (isMobileRef.current) {
-      setOpen(false);
+    if (isMobile) {
+      setOpenMobile(false);
     }
-  }, [location, setOpen]);
+  }, [location, isMobile, setOpenMobile]);
 
   const menuItems = [
     { title: t.nav.home, url: "/", icon: Home },
