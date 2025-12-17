@@ -31,6 +31,7 @@ import {
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect } from "react";
 
 export function AppSidebar() {
   const [location] = useLocation();
@@ -38,12 +39,12 @@ export function AppSidebar() {
   const { t } = useLanguage();
   const { setOpen } = useSidebar();
 
-  const handleNavClick = () => {
-    // Close sidebar on mobile when a link is clicked
+  // Close sidebar on mobile when route changes
+  useEffect(() => {
     if (window.innerWidth < 768) {
       setOpen(false);
     }
-  };
+  }, [location, setOpen]);
 
   const menuItems = [
     { title: t.nav.home, url: "/", icon: Home },
@@ -87,7 +88,7 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1) || 'home'}`}>
-                    <Link href={item.url} onClick={handleNavClick}>
+                    <Link href={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </Link>
@@ -105,7 +106,7 @@ export function AppSidebar() {
               {studyItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1)}`}>
-                    <Link href={item.url} onClick={handleNavClick}>
+                    <Link href={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </Link>
@@ -123,7 +124,7 @@ export function AppSidebar() {
               {teacherItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1)}`}>
-                    <Link href={item.url} onClick={handleNavClick}>
+                    <Link href={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </Link>
@@ -139,7 +140,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/configurações"} data-testid="link-sidebar-settings">
-                  <Link href="/configurações" onClick={handleNavClick}>
+                  <Link href="/configurações">
                     <Settings className="h-4 w-4" />
                     <span>{t.nav.settings}</span>
                   </Link>
@@ -147,7 +148,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/about"} data-testid="link-sidebar-about">
-                  <Link href="/about" onClick={handleNavClick}>
+                  <Link href="/about">
                     <Info className="h-4 w-4" />
                     <span>{t.sections.about}</span>
                   </Link>
