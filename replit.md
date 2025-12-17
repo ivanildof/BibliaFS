@@ -255,7 +255,7 @@ bible-audio/
    - Optimize storage/compression
    - Community features & gamification
 
-## Completed in This Session
+## Completed in This Session (Dec 17, 2025)
 1. ✅ Group messaging system with chat history
 2. ✅ Member management UI with roles
 3. ✅ Email/phone invitation system
@@ -265,3 +265,7 @@ bible-audio/
 7. ✅ Complete API endpoints
 8. ✅ Form type naming fix for browser compatibility
 9. ✅ All data persisting in Supabase
+10. ✅ Stripe Payment Integration - All 8 Price IDs configured (3 subscriptions + 5 donations)
+11. ✅ Bible Navigation Persistence - Version, book, chapter saved to localStorage
+12. ✅ AI Assistant renamed: "Assistente Pedagógico IA" → "Assistente IA Teológico"
+13. ✅ AI Context Expansion - Now analyzes entire chapter instead of ±2 verses (fixes issue where AI couldn't find biblical references like "adivinhação")

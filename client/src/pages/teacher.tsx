@@ -873,7 +873,7 @@ export default function Teacher() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-orange-500" />
-                Assistente Pedagógico IA
+                Assistente IA Teológico
               </CardTitle>
               <CardDescription>
                 Faça perguntas sobre conteúdo bíblico, métodos de ensino e planejamento de aulas

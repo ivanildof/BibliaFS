@@ -1596,8 +1596,8 @@ IMPORTANTE:
     const systemPrompt = systemPrompts[commentaryType] || systemPrompts.exegese;
 
     // Build context with surrounding verses for better analysis
+    // Include all verses in chapter for comprehensive context
     const surroundingVerses = chapterData.verses
-      .filter((v: any) => Math.abs(v.number - verse) <= 2)
       .map((v: any) => `${v.number}. ${v.text}`)
       .join('\n');
 
