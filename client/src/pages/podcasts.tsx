@@ -413,7 +413,7 @@ export default function Podcasts() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-48">
       <audio ref={audioRef} className="hidden" />
       
       <div className="max-w-7xl mx-auto p-6">
