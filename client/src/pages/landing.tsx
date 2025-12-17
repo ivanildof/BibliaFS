@@ -7,6 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { 
   Book, 
   Brain, 
@@ -469,18 +475,18 @@ export default function Landing() {
             </p>
           </div>
           
-          <div className="space-y-6">
+          <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
-              <Card key={index} className="border-border/50 hover-elevate" data-testid={`faq-item-${index}`}>
-                <CardHeader>
-                  <h3 className="font-bold text-lg">{faq.question}</h3>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
-                </CardContent>
-              </Card>
+              <AccordionItem key={index} value={`faq-${index}`} className="border rounded-lg border-border/50 px-4" data-testid={`faq-item-${index}`}>
+                <AccordionTrigger className="font-bold text-lg hover:no-underline py-4">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-relaxed pb-4">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </div>
       </section>
 
