@@ -247,6 +247,7 @@ export default function BibleReader() {
     try {
       // Generate audio via OpenAI TTS (always works)
       const backendUrl = `/api/bible/audio/${t.currentLanguage || 'pt'}/${version}/${selectedBook}/${chapter}`;
+      console.log('[DEBUG] Playing audio from:', backendUrl);
       
       toast({
         title: audioMode === 'book' ? `Gerando áudio - Capítulo ${chapter}...` : "Gerando áudio do capítulo...",
@@ -255,6 +256,7 @@ export default function BibleReader() {
       
       const { data: { session } } = await supabase.auth.getSession();
       const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      console.log('[DEBUG] Has auth token:', !!session?.access_token);
       
       const response = await fetch(backendUrl, {
         method: "GET",
@@ -263,12 +265,16 @@ export default function BibleReader() {
         signal: AbortSignal.timeout(120000),
       });
       
+      console.log('[DEBUG] Response status:', response.status, 'Content-Type:', response.headers.get('content-type'));
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('[DEBUG] API Error:', errorData);
         throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
       }
       if (!response.headers.get('content-type')?.includes('audio')) {
         const errorData = await response.json();
+        console.error('[DEBUG] Wrong content type - got:', errorData);
         throw new Error(errorData.error || errorData.message || "Falha ao gerar áudio");
       }
       const blob = await response.blob();
