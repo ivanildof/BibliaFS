@@ -274,8 +274,8 @@ export default function Pricing() {
       {/* Plans Grid */}
       <section className="px-4 pb-12 md:pb-16">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {plans.map((plan) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {plans.filter(plan => plan.id !== 'free').map((plan) => {
               const buttonConfig = getButtonConfig(plan);
               const isCurrentPlan = plan.id === currentPlan;
               const IconComponent = plan.icon;
