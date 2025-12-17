@@ -73,37 +73,48 @@ export async function fetchPortugueseBible(version: string, book: string, chapte
   
   const githubVersion = versionMap[version] || 'pt_nvi';
   
-  if (!portugueseBibleCache[githubVersion]) {
-    const url = `https://raw.githubusercontent.com/thiagobodruk/bible/master/json/${githubVersion}.json`;
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error(`Portuguese Bible API error: ${response.status}`);
+  try {
+    if (!portugueseBibleCache[githubVersion]) {
+      const url = `https://raw.githubusercontent.com/thiagobodruk/bible/master/json/${githubVersion}.json`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Portuguese Bible API error: ${response.status}`);
+      }
+      
+      portugueseBibleCache[githubVersion] = await response.json();
     }
     
-    portugueseBibleCache[githubVersion] = await response.json();
+    const bibleData = portugueseBibleCache[githubVersion];
+    const bookData = bibleData.find((b: any) => b.abbrev.toLowerCase() === book.toLowerCase());
+    
+    if (!bookData || !bookData.chapters[chapter - 1]) {
+      throw new Error(`Chapter not found: ${book} ${chapter}`);
+    }
+    
+    const verses = bookData.chapters[chapter - 1];
+    
+    return {
+      book: { 
+        name: bookData.name || book, 
+        abbrev: book 
+      },
+      chapter: { number: chapter },
+      verses: verses.map((text: string, index: number) => ({
+        number: index + 1,
+        text: text.trim(),
+      })),
+    };
+  } catch (error) {
+    console.warn(`[Portuguese Bible] Fallback triggered for ${book} ${chapter}:`, error);
+    // Import and use fallback
+    const { getFallbackChapter } = await import('./bible-chapters-fallback');
+    const fallback = getFallbackChapter(version, book, chapter);
+    if (fallback) {
+      return fallback;
+    }
+    throw error;
   }
-  
-  const bibleData = portugueseBibleCache[githubVersion];
-  const bookData = bibleData.find((b: any) => b.abbrev.toLowerCase() === book.toLowerCase());
-  
-  if (!bookData || !bookData.chapters[chapter - 1]) {
-    throw new Error(`Chapter not found: ${book} ${chapter}`);
-  }
-  
-  const verses = bookData.chapters[chapter - 1];
-  
-  return {
-    book: { 
-      name: bookData.name || book, 
-      abbrev: book 
-    },
-    chapter: { number: chapter },
-    verses: verses.map((text: string, index: number) => ({
-      number: index + 1,
-      text: text.trim(),
-    })),
-  };
 }
 
 // Fetch English Bible (wldeh/bible-api via CDN)

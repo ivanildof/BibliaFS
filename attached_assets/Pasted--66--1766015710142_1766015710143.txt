@@ -1,0 +1,135 @@
+(66) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+injected.js:214  GET https://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/api/bible/multilang/pt/acf/at/1 503 (Service Unavailable)
+apply @ injected.js:214
+queryFn @ bible-reader.tsx:580
+fetchFn @ @tanstack_react-query.js?v=680597f7:840
+run @ @tanstack_react-query.js?v=680597f7:494
+start @ @tanstack_react-query.js?v=680597f7:536
+fetch @ @tanstack_react-query.js?v=680597f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=680597f7:2211
+setOptions @ @tanstack_react-query.js?v=680597f7:1955
+(anonymous) @ @tanstack_react-query.js?v=680597f7:3032
+commitHookEffectListMount @ chunk-276SZO74.js?v=680597f7:16915
+commitPassiveMountOnFiber @ chunk-276SZO74.js?v=680597f7:18156
+commitPassiveMountEffects_complete @ chunk-276SZO74.js?v=680597f7:18129
+commitPassiveMountEffects_begin @ chunk-276SZO74.js?v=680597f7:18119
+commitPassiveMountEffects @ chunk-276SZO74.js?v=680597f7:18109
+flushPassiveEffectsImpl @ chunk-276SZO74.js?v=680597f7:19490
+flushPassiveEffects @ chunk-276SZO74.js?v=680597f7:19447
+commitRootImpl @ chunk-276SZO74.js?v=680597f7:19416
+commitRoot @ chunk-276SZO74.js?v=680597f7:19277
+performSyncWorkOnRoot @ chunk-276SZO74.js?v=680597f7:18895
+flushSyncCallbacks @ chunk-276SZO74.js?v=680597f7:9119
+(anonymous) @ chunk-276SZO74.js?v=680597f7:18627Understand this error
+injected.js:214  GET https://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/api/bible/multilang/pt/acf/at/1 503 (Service Unavailable)
+apply @ injected.js:214
+queryFn @ bible-reader.tsx:580
+fetchFn @ @tanstack_react-query.js?v=680597f7:840
+run @ @tanstack_react-query.js?v=680597f7:494
+(anonymous) @ @tanstack_react-query.js?v=680597f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=680597f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=680597f7:498
+start @ @tanstack_react-query.js?v=680597f7:536
+fetch @ @tanstack_react-query.js?v=680597f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=680597f7:2211
+setOptions @ @tanstack_react-query.js?v=680597f7:1955
+(anonymous) @ @tanstack_react-query.js?v=680597f7:3032
+commitHookEffectListMount @ chunk-276SZO74.js?v=680597f7:16915
+commitPassiveMountOnFiber @ chunk-276SZO74.js?v=680597f7:18156
+commitPassiveMountEffects_complete @ chunk-276SZO74.js?v=680597f7:18129
+commitPassiveMountEffects_begin @ chunk-276SZO74.js?v=680597f7:18119
+commitPassiveMountEffects @ chunk-276SZO74.js?v=680597f7:18109
+flushPassiveEffectsImpl @ chunk-276SZO74.js?v=680597f7:19490
+flushPassiveEffects @ chunk-276SZO74.js?v=680597f7:19447
+commitRootImpl @ chunk-276SZO74.js?v=680597f7:19416
+commitRoot @ chunk-276SZO74.js?v=680597f7:19277
+performSyncWorkOnRoot @ chunk-276SZO74.js?v=680597f7:18895
+flushSyncCallbacks @ chunk-276SZO74.js?v=680597f7:9119
+(anonymous) @ chunk-276SZO74.js?v=680597f7:18627Understand this error
+injected.js:214  GET https://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/api/bible/multilang/pt/acf/at/1 503 (Service Unavailable)
+apply @ injected.js:214
+queryFn @ bible-reader.tsx:580
+fetchFn @ @tanstack_react-query.js?v=680597f7:840
+run @ @tanstack_react-query.js?v=680597f7:494
+(anonymous) @ @tanstack_react-query.js?v=680597f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=680597f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=680597f7:498
+(anonymous) @ @tanstack_react-query.js?v=680597f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=680597f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=680597f7:498
+start @ @tanstack_react-query.js?v=680597f7:536
+fetch @ @tanstack_react-query.js?v=680597f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=680597f7:2211
+setOptions @ @tanstack_react-query.js?v=680597f7:1955
+(anonymous) @ @tanstack_react-query.js?v=680597f7:3032
+commitHookEffectListMount @ chunk-276SZO74.js?v=680597f7:16915
+commitPassiveMountOnFiber @ chunk-276SZO74.js?v=680597f7:18156
+commitPassiveMountEffects_complete @ chunk-276SZO74.js?v=680597f7:18129
+commitPassiveMountEffects_begin @ chunk-276SZO74.js?v=680597f7:18119
+commitPassiveMountEffects @ chunk-276SZO74.js?v=680597f7:18109
+flushPassiveEffectsImpl @ chunk-276SZO74.js?v=680597f7:19490
+flushPassiveEffects @ chunk-276SZO74.js?v=680597f7:19447
+commitRootImpl @ chunk-276SZO74.js?v=680597f7:19416
+commitRoot @ chunk-276SZO74.js?v=680597f7:19277
+performSyncWorkOnRoot @ chunk-276SZO74.js?v=680597f7:18895
+flushSyncCallbacks @ chunk-276SZO74.js?v=680597f7:9119
+(anonymous) @ chunk-276SZO74.js?v=680597f7:18627Understand this error
+injected.js:37 [Chapter Error] Failed to load at chapter 1: Error: API error
+    at queryFn (bible-reader.tsx:582:17)
+(anonymous) @ injected.js:37
+(anonymous) @ bible-reader.tsx:757
+commitHookEffectListMount @ chunk-276SZO74.js?v=680597f7:16915
+commitPassiveMountOnFiber @ chunk-276SZO74.js?v=680597f7:18156
+commitPassiveMountEffects_complete @ chunk-276SZO74.js?v=680597f7:18129
+commitPassiveMountEffects_begin @ chunk-276SZO74.js?v=680597f7:18119
+commitPassiveMountEffects @ chunk-276SZO74.js?v=680597f7:18109
+flushPassiveEffectsImpl @ chunk-276SZO74.js?v=680597f7:19490
+flushPassiveEffects @ chunk-276SZO74.js?v=680597f7:19447
+commitRootImpl @ chunk-276SZO74.js?v=680597f7:19416
+commitRoot @ chunk-276SZO74.js?v=680597f7:19277
+performSyncWorkOnRoot @ chunk-276SZO74.js?v=680597f7:18895
+flushSyncCallbacks @ chunk-276SZO74.js?v=680597f7:9119
+(anonymous) @ chunk-276SZO74.js?v=680597f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=680597f7:555
+flush @ @tanstack_react-query.js?v=680597f7:569
+batch @ @tanstack_react-query.js?v=680597f7:587
+dispatch_fn @ @tanstack_react-query.js?v=680597f7:996
+onError @ @tanstack_react-query.js?v=680597f7:861
+reject @ @tanstack_react-query.js?v=680597f7:465
+(anonymous) @ @tanstack_react-query.js?v=680597f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=680597f7:498
+(anonymous) @ @tanstack_react-query.js?v=680597f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=680597f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=680597f7:498
+(anonymous) @ @tanstack_react-query.js?v=680597f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=680597f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=680597f7:498
+start @ @tanstack_react-query.js?v=680597f7:536
+fetch @ @tanstack_react-query.js?v=680597f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=680597f7:2211
+setOptions @ @tanstack_react-query.js?v=680597f7:1955
+(anonymous) @ @tanstack_react-query.js?v=680597f7:3032
+commitHookEffectListMount @ chunk-276SZO74.js?v=680597f7:16915
+commitPassiveMountOnFiber @ chunk-276SZO74.js?v=680597f7:18156
+commitPassiveMountEffects_complete @ chunk-276SZO74.js?v=680597f7:18129
+commitPassiveMountEffects_begin @ chunk-276SZO74.js?v=680597f7:18119
+commitPassiveMountEffects @ chunk-276SZO74.js?v=680597f7:18109
+flushPassiveEffectsImpl @ chunk-276SZO74.js?v=680597f7:19490
+flushPassiveEffects @ chunk-276SZO74.js?v=680597f7:19447
+commitRootImpl @ chunk-276SZO74.js?v=680597f7:19416
+commitRoot @ chunk-276SZO74.js?v=680597f7:19277
+performSyncWorkOnRoot @ chunk-276SZO74.js?v=680597f7:18895
+flushSyncCallbacks @ chunk-276SZO74.js?v=680597f7:9119
+(anonymous) @ chunk-276SZO74.js?v=680597f7:18627Understand this error

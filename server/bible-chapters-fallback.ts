@@ -47,6 +47,38 @@ export const BIBLE_CHAPTERS_FALLBACK: Record<string, any> = {
       { number: 5, text: "Preparas um banquete para mim à vista dos meus inimigos. Tu me honras, ungindo a minha cabeça com óleo e fazendo transbordar o meu cálice." },
       { number: 6, text: "Sei que a bondade e a fidelidade me acompanharão todos os dias da minha vida, e voltarei à casa do Senhor enquanto eu viver." },
     ]
+  },
+  "acf-at-1": {
+    book: { abbrev: { pt: "at" }, name: "Atos" },
+    chapter: { number: 1, verses: 26 },
+    verses: [
+      { number: 1, text: "Fiz o primeiro tratado, ó Teófilo, acerca de tudo que Jesus começou, não só a fazer, mas a ensinar," },
+      { number: 2, text: "Até ao dia em que, havendo dado mandamentos pelo Espírito Santo aos apóstolos que escolhera, foi recebido em cima." },
+      { number: 3, text: "Aos quais também, depois de ter padecido, se apresentou vivo, com muitas provas infalíveis, sendo visto por eles durante quarenta dias, e falando do que respeita ao reino de Deus." },
+      { number: 4, text: "E, estando com eles, determinou-lhes que não se afastassem de Jerusalém, mas que esperassem pela promessa do Pai, que, disse ele, de mim ouvistes." },
+      { number: 5, text: "Porque João, na verdade, batizou com água, mas vós sereis batizados com o Espírito Santo, não muitos dias depois." },
+      { number: 6, text: "Então os que se haviam reunido lhe perguntaram, dizendo: Senhor, restaurarás tu neste tempo o reino a Israel?" },
+      { number: 7, text: "E disse-lhes: Não vos pertence saber os tempos ou as épocas que o Pai estabeleceu pelo seu poder;" },
+      { number: 8, text: "Mas recebereis a virtude do Espírito Santo, que há de vir sobre vós; e ser-me-eis testemunhas, tanto em Jerusalém como em toda a Judéia, e Samaria, e até aos confins da terra." },
+      { number: 9, text: "E, dito isto, foi elevado às alturas, à vista deles, e uma nuvem o recebeu, ocultando-o a seus olhos." },
+      { number: 10, text: "E estando com os olhos fitos no céu, enquanto ele subia, eis que junto deles se puseram dois varões em vestes brancas;" },
+      { number: 11, text: "Os quais lhes disseram: Varões galileus, por que estais olhando para o céu? Este Jesus, que dentre vós foi recebido em cima no céu, há de vir assim como para o céu o vistes ir." },
+      { number: 12, text: "Então voltaram para Jerusalém, do monte chamado das Oliveiras, que está perto de Jerusalém, à distância de um sábado." },
+      { number: 13, text: "E, quando entraram, subiram ao cenáculo, onde habitavam Pedro e Tiago, João e André, Filipe e Tomé, Bartolomeu e Mateus, Tiago, filho de Alfeu, Simão o Zelote e Judas, filho de Tiago." },
+      { number: 14, text: "Todos estes perseveravam unânimes em oração e súplica, com as mulheres, e com Maria, mãe de Jesus, e com seus irmãos." },
+      { number: 15, text: "E naqueles dias, levantou-se Pedro no meio dos irmãos (e havia ali uma multidão de pessoas, quase cento e vinte), e disse:" },
+      { number: 16, text: "Homens irmãos, convinha que se cumprisse a Escritura, que o Espírito Santo predisse pela boca de Davi, acerca de Judas, que foi o guia dos que prenderam Jesus;" },
+      { number: 17, text: "Porque ele era contado conosco, e tinha sorte neste ministério." },
+      { number: 18, text: "Ora, este adquiriu um campo com a recompensa da iniqüidade; e, caindo de cabeça para baixo, arrebentou pelo meio, e todas as suas entranhas se derramaram." },
+      { number: 19, text: "E isto foi notório a todos os moradores de Jerusalém; pelo que aquele campo se chamou em sua própria língua Acéldama, isto é, Campo de Sangue." },
+      { number: 20, text: "Porque no livro dos Salmos está escrito: Fique deserta a sua habitação, E não haja quem nela habite; E: Tome outro o seu bispado." },
+      { number: 21, text: "Convém, pois, que de entre os homens que conviveram conosco todo o tempo em que o Senhor Jesus entrou e saiu dentre nós," },
+      { number: 22, text: "Começando desde o batismo de João até ao dia em que de entre nós foi recebido em cima, um deles se faça testemunha conosco da sua ressurreição." },
+      { number: 23, text: "E apresentaram dois: José, chamado Barsabás, sobrenome Justo, e Matias." },
+      { number: 24, text: "E, orando, disseram: Tu, Senhor, que conheces os corações de todos, mostra qual destes dois elegeste," },
+      { number: 25, text: "Para que tome parte neste ministério e apostolado, do qual Judas se apartou para ir ao seu próprio lugar." },
+      { number: 26, text: "E lançaram sortes sobre eles, e a sorte caiu sobre Matias, e foi contado com os onze apóstolos." },
+    ]
   }
 };
 
