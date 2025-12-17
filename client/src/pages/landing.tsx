@@ -228,6 +228,16 @@ export default function Landing() {
                     Perguntas
                   </a>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a 
+                    href="/api/login" 
+                    className="cursor-pointer flex items-center text-primary font-medium"
+                    data-testid="link-login-mobile"
+                  >
+                    <LogIn className="h-4 w-4 mr-2" />
+                    Entrar
+                  </a>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
