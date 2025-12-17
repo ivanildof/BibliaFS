@@ -99,8 +99,8 @@ function getAuthToken(): string | null {
 export async function getAudioUrl(
   book: string,
   chapter: number,
-  version: string = "WEB",
-  language: string = "EN"
+  version: string = "ARC",
+  language: string = "PT"
 ): Promise<string> {
   const bookCode = getBookCode(book);
   if (!AUDIO_STORAGE_BASE) {
@@ -116,7 +116,7 @@ export async function getAudioUrl(
 export async function playBibleAudio(
   options: AudioPlayOptions,
   audioElement: HTMLAudioElement,
-  language: string = "EN"
+  language: string = "PT"
 ): Promise<void> {
   const { book, chapter, version, offline, isOnline } = options;
   const bookCode = getBookCode(book);
@@ -154,8 +154,8 @@ export async function playBibleAudio(
 export async function downloadChapterAudio(
   book: string,
   chapter: number,
-  version: string = "WEB",
-  language: string = "EN",
+  version: string = "ARC",
+  language: string = "PT",
   onProgress?: (progress: number) => void
 ): Promise<Blob> {
   const url = await getAudioUrl(book, chapter, version, language);
@@ -194,8 +194,8 @@ export async function downloadChapterAudio(
 export async function downloadBookAudio(
   book: string,
   chapters: number,
-  version: string = "WEB",
-  language: string = "EN",
+  version: string = "ARC",
+  language: string = "PT",
   onProgress?: (progress: number) => void
 ): Promise<Map<number, Blob>> {
   const audioMap = new Map<number, Blob>();
