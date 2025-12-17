@@ -728,6 +728,7 @@ export default function BibleReader() {
   // Set initial book
   useEffect(() => {
     const booksArray = Array.isArray(books) ? books : [];
+    console.log(`[Books] Loaded ${booksArray.length} books:`, booksArray.map(b => ({ name: b.name, abbrev: b.abbrev.pt, chapters: b.chapters })));
     if (booksArray.length > 0 && !selectedBook) {
       setSelectedBook(booksArray[0].abbrev.pt);
     }
@@ -753,13 +754,14 @@ export default function BibleReader() {
 
   useEffect(() => {
     if (chapterError) {
+      console.error(`[Chapter Error] Failed to load ${selectedBook} chapter ${selectedChapter}:`, chapterError);
       toast({
         title: t.bible.errorLoadingChapter,
         description: t.common.tryAgainLater,
         variant: "destructive",
       });
     }
-  }, [chapterError, toast, t]);
+  }, [chapterError, toast, t, selectedBook, selectedChapter]);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -1181,6 +1183,7 @@ export default function BibleReader() {
                                   variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
                                   className="justify-start"
                                   onClick={() => {
+                                    console.log(`[Book Click] Selected: ${book.name} (${book.abbrev.pt}) - ${book.chapters} chapters`);
                                     setSelectedBook(book.abbrev.pt);
                                     setSelectedChapter(1);
                                   }}
@@ -1205,7 +1208,9 @@ export default function BibleReader() {
                             key={v.value}
                             variant={version === v.value ? "default" : "outline"}
                             onClick={() => {
+                              console.log(`[Version] Changing from ${version} to ${v.value}`);
                               setVersion(v.value);
+                              setIsBooksOpen(false);
                             }}
                           >
                             {v.label}
