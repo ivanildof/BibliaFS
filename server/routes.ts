@@ -173,6 +173,37 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve bible.db in production (static file serving workaround)
+  // In development, Vite middleware serves from client/public
+  // In production, we need to serve from dist/public explicitly
+  const path = await import("path");
+  const fs = await import("fs");
+  const { fileURLToPath } = await import("url");
+  
+  // Get directory name in ES modules (no __dirname in ES modules)
+  const currentDir = path.dirname(fileURLToPath(import.meta.url));
+  
+  app.get("/bible.db", (req, res) => {
+    // Try multiple locations for the bible.db file
+    const possiblePaths = [
+      path.resolve(process.cwd(), "dist/public/bible.db"),
+      path.resolve(process.cwd(), "client/public/bible.db"),
+      path.resolve(currentDir, "../dist/public/bible.db"),
+      path.resolve(currentDir, "../client/public/bible.db"),
+    ];
+    
+    for (const filePath of possiblePaths) {
+      if (fs.existsSync(filePath)) {
+        res.setHeader("Content-Type", "application/octet-stream");
+        res.setHeader("Cache-Control", "public, max-age=86400"); // 24h cache
+        return res.sendFile(filePath);
+      }
+    }
+    
+    console.warn("[bible.db] File not found in any location:", possiblePaths);
+    res.status(404).json({ error: "bible.db not found" });
+  });
+
   // Run database migrations
   await runMigrations();
   

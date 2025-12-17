@@ -189,23 +189,43 @@ export default function VersionCompare() {
   const [isLoading, setIsLoading] = useState(false);
   const [maxChapter, setMaxChapter] = useState(21);
 
+  // Fallback: fetch from API when SQLite is not available
+  const fetchChapterFromAPI = async (versionId: string, abbrev: string, chapter: number) => {
+    try {
+      const response = await fetch(`/api/bible/${versionId}/${abbrev}/${chapter}`);
+      if (!response.ok) throw new Error("API fetch failed");
+      return await response.json();
+    } catch (err) {
+      console.warn(`[VersionCompare] API fallback failed for ${versionId}/${abbrev}/${chapter}`);
+      return null;
+    }
+  };
+
   const fetchChapterData = async () => {
-    if (!sqliteReady) return;
-    
     setIsLoading(true);
     const newData: VersionData[] = [];
 
     for (const versionId of selectedVersions) {
       try {
         const abbrev = bookMapping[selectedBook] || selectedBook.toLowerCase();
-        const chapterData = await getSqliteChapter(abbrev, selectedChapter);
+        let chapterData = null;
+        
+        // Try SQLite first if available
+        if (sqliteReady) {
+          chapterData = await getSqliteChapter(abbrev, selectedChapter);
+        }
+        
+        // Fallback to API if SQLite not ready or didn't return data
+        if (!chapterData?.verses) {
+          chapterData = await fetchChapterFromAPI(versionId, abbrev, selectedChapter);
+        }
         
         if (chapterData?.verses) {
           newData.push({
             versionId,
             versionName: VERSIONS.find(v => v.id === versionId)?.name || versionId.toUpperCase(),
             verses: chapterData.verses.map((v: any, i: number) => ({
-              number: v.verse || i + 1,
+              number: v.verse || v.number || i + 1,
               text: typeof v === 'string' ? v : v.text || ""
             })),
             isLoading: false,
@@ -235,9 +255,8 @@ export default function VersionCompare() {
   };
 
   useEffect(() => {
-    if (sqliteReady) {
-      fetchChapterData();
-    }
+    // Fetch data immediately - fallback to API if SQLite not ready
+    fetchChapterData();
   }, [selectedBook, selectedChapter, selectedVersions, sqliteReady, language]);
 
   // Update selected book when language changes
