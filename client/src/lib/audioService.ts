@@ -135,11 +135,28 @@ export async function playBibleAudio(
       }
     }
 
-    // Online: stream from Supabase Storage
+    // Online: Use backend API (has server-side cache + OpenAI TTS fallback)
     if (isOnline) {
-      const url = await getAudioUrl(book, chapter, version, language);
-      console.log(`[Audio] Streaming from Supabase: ${url}`);
-      audioElement.src = url;
+      const apiUrl = `/api/bible/audio/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+      console.log(`[Audio] Streaming via API: ${apiUrl}`);
+      
+      const token = getAuthToken();
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        credentials: "include",
+        headers,
+        signal: AbortSignal.timeout(120000),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Falha ao carregar áudio: ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      audioElement.src = blobUrl;
       await audioElement.play();
       return;
     }
@@ -158,10 +175,22 @@ export async function downloadChapterAudio(
   language: string = "PT",
   onProgress?: (progress: number) => void
 ): Promise<Blob> {
-  const url = await getAudioUrl(book, chapter, version, language);
-  console.log(`[Audio] Downloading: ${url}`);
+  const bookCode = getBookCode(book);
+  
+  // Use OpenAI TTS API endpoint (Supabase Storage is empty)
+  const apiUrl = `/api/bible/audio/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+  console.log(`[Audio] Downloading via TTS API: ${apiUrl}`);
+  
+  const token = getAuthToken();
+  const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
-  const response = await fetch(url);
+  const response = await fetch(apiUrl, {
+    method: "GET",
+    credentials: "include",
+    headers,
+    signal: AbortSignal.timeout(120000),
+  });
+  
   if (!response.ok) {
     throw new Error(`Falha ao baixar áudio: ${response.status}`);
   }
@@ -170,7 +199,9 @@ export async function downloadChapterAudio(
   const reader = response.body?.getReader();
 
   if (!reader) {
-    throw new Error("Não foi possível ler o stream de áudio");
+    const blob = await response.blob();
+    onProgress?.(100);
+    return blob;
   }
 
   const chunks: Uint8Array[] = [];

@@ -17,13 +17,12 @@ BíbliaFS é uma premium, personalized, e intelligent Bible study application qu
 - **Status**: ✅ 100% Funcional e testado
 
 ### ❓ "Áudio - onde está sendo armazenado?"
-- **Localização**: Supabase Storage - bucket `bible-audio`
-- **Estrutura**: `{LANG}/{VERSION}/{BOOK_CODE}/{CHAPTER}.mp3`
-- **Status**: 
-  - EN (English): Scripts criados, URL eBible.org não testado ⏳
-  - PT (Portuguese): Bible.com URLs retornam 404 ❌
-- **Acesso**: Streaming direto do Supabase Storage URL
-- **Offline**: Salvo em IndexedDB após download
+- **Fonte**: OpenAI TTS API (gerado sob demanda)
+- **Cache**: PostgreSQL `audio_cache` tabela (cache permanente)
+- **Primeira requisição**: 20-40 segundos (gera via OpenAI TTS)
+- **Requisições seguintes**: Instantâneo (do cache do banco)
+- **Status**: ✅ Funcionando via OpenAI TTS + cache servidor
+- **API**: `GET /api/bible/audio/{lang}/{version}/{book}/{chapter}`
 
 ### ❓ "Versículo do Dia nunca aparece"
 - **Onde está**: Página inicial (Home) - componente `<DailyVerse />` 
@@ -35,19 +34,19 @@ BíbliaFS é uma premium, personalized, e intelligent Bible study application qu
 - **Rota**: `/teacher`
 - **O que faz**: Criar/gerenciar aulas com AI, gerar esboços estruturados, exportar PDF
 
-### ❓ "Áudio - por que não funciona?"
-**STATUS ATUAL (Dec 16, 2025):**
-- ❌ Bible.com PT/ARC URLs: Retornam HTTP 404 (formato inválido)
-- ⏳ eBible.org EN/WEB URLs: Scripts criados mas nunca testados
-- ✅ Sistema de áudio no código: Totalmente implementado
-- ✅ Supabase Storage bucket: Criado e pronto
-- ⏳ Próximas etapas: Encontrar URLs corretas de fontes públicas
+### ❓ "Áudio - como funciona?"
+**STATUS ATUAL (Dec 17, 2025):**
+- ✅ OpenAI TTS API: Gera áudio de alta qualidade
+- ✅ Cache servidor: Áudio salvo em PostgreSQL (audioCache table)
+- ✅ Primeira requisição: 20-40s, requisições seguintes instantâneas
+- ✅ Suporte a capítulos longos: Divide texto em chunks de 4000 chars
+- ⏳ Áudio offline: Planejado para futura implementação
 
-**Solução:**
-1. Testar eBible.org URLs manualmente no browser
-2. Encontrar API correta para Bible.com audio ou alternativa
-3. Popular Supabase Storage com arquivos reais
-4. Depois: Teste de reprodução e download offline
+**Fluxo atual:**
+1. Usuário clica em "Ouvir capítulo"
+2. Backend verifica cache no banco de dados
+3. Se cache existe → retorna áudio instantaneamente
+4. Se não existe → gera via OpenAI TTS → salva no cache → retorna
 
 ## System Architecture
 
@@ -67,12 +66,11 @@ BíbliaFS é uma premium, personalized, e intelligent Bible study application qu
 
 ### Data Storage Locations
 1. **User Data**: Supabase PostgreSQL
-2. **Bible Audio**: Supabase Storage (`bible-audio` bucket)
+2. **Bible Audio Cache**: PostgreSQL `audio_cache` table (server-side cache)
 3. **Offline Bible Text**: IndexedDB (`biblia-plus-offline`)
 4. **Audio Progress**: Supabase `audio_progress` table
-5. **Downloaded Audio**: IndexedDB (compressed)
-6. **Groups & Messages**: Supabase `groups`, `group_members`, `group_messages` tables
-7. **Invites**: Supabase `group_invites` table
+5. **Groups & Messages**: Supabase `groups`, `group_members`, `group_messages` tables
+6. **Invites**: Supabase `group_invites` table
 
 ## Key Features Implemented
 

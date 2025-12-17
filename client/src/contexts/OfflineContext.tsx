@@ -116,15 +116,12 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
 
       // Sync with backend
       try {
-        await apiRequest("/api/offline/content", {
-          method: "POST",
-          body: JSON.stringify({
-            book,
-            chapter,
-            version,
-            size,
-            verseCount,
-          }),
+        await apiRequest("POST", "/api/offline/content", {
+          book,
+          chapter,
+          version,
+          size,
+          verseCount,
         });
       } catch (backendError) {
         console.error("Failed to sync with backend:", backendError);
