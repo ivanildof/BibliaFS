@@ -3165,10 +3165,22 @@ Responda em português do Brasil.`
       });
       
       // Add creator as leader member
-      await storage.addGroupMember(group.id, userId, "leader");
+      try {
+        await storage.addGroupMember(group.id, userId, "leader");
+        console.log(`[Groups] User ${userId} added as leader to group ${group.id}`);
+      } catch (memberError) {
+        console.error(`[Groups] Error adding member: ${memberError}`);
+        throw new Error("Falha ao adicionar criador ao grupo");
+      }
       
-      res.json(group);
+      // Return group with member info
+      res.json({
+        ...group,
+        role: "leader",
+        joinedAt: new Date().toISOString()
+      });
     } catch (error: any) {
+      console.error(`[Groups] Create error: ${error.message}`);
       res.status(500).json({ error: error.message });
     }
   });
