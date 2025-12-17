@@ -67,15 +67,15 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-6 border-b">
+    <Sidebar className="border-r-0">
+      <SidebarHeader className="p-6 border-b border-sidebar-border/30">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
-            <Book className="h-7 w-7 text-primary-foreground" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 shadow-lg glow-gold">
+            <Book className="h-7 w-7 text-purple-900" />
           </div>
           <div>
-            <h2 className="font-display text-xl font-bold text-foreground">{t.common.appName}</h2>
-            <p className="text-xs text-muted-foreground">{t.sections.premiumStudy}</p>
+            <h2 className="font-display text-xl font-bold text-sidebar-foreground">{t.common.appName}</h2>
+            <p className="text-xs text-sidebar-foreground/70">{t.sections.premiumStudy}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -159,14 +159,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t">
-        <div className="text-center text-xs text-muted-foreground">
+      <SidebarFooter className="p-4 border-t border-sidebar-border/30">
+        <div className="text-center text-xs text-sidebar-foreground/60">
           © 2026 - BíbliaFS. Todos os direitos reservados. Desenvolvido por |{" "}
           <a 
             href="https://fabrisite.com.br/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-primary hover:underline"
+            className="text-amber-400 hover:text-amber-300 hover:underline transition-colors"
             data-testid="link-fabrisite-sidebar"
           >
             FabriSite
