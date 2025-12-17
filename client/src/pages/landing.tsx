@@ -159,28 +159,28 @@ export default function Landing() {
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-features"
             >
-              Recursos
+              {t.landing.nav_resources}
             </a>
             <a 
               href="#temas" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-themes"
             >
-              Temas
+              {t.landing.nav_themes}
             </a>
             <a 
               href="#testemunhos" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-testimonials"
             >
-              Testemunhos
+              {t.landing.nav_testimonials}
             </a>
             <a 
               href="#faq" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               data-testid="link-faq"
             >
-              Perguntas
+              {t.landing.nav_faq}
             </a>
           </nav>
 
@@ -213,25 +213,25 @@ export default function Landing() {
                 <DropdownMenuItem asChild>
                   <a href="#recursos" className="cursor-pointer flex items-center">
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Recursos
+                    {t.landing.nav_resources}
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <a href="#temas" className="cursor-pointer flex items-center">
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Temas
+                    {t.landing.nav_themes}
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <a href="#testemunhos" className="cursor-pointer flex items-center">
                     <Star className="h-4 w-4 mr-2" />
-                    Testemunhos
+                    {t.landing.nav_testimonials}
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <a href="#faq" className="cursor-pointer flex items-center">
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Perguntas
+                    {t.landing.nav_faq}
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

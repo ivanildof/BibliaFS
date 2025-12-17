@@ -206,6 +206,16 @@ export interface Translations {
     footer_contact: string;
     footer_support: string;
     newGeneration: string;
+    nav_resources: string;
+    nav_themes: string;
+    nav_testimonials: string;
+    nav_faq: string;
+    powerful_resources: string;
+    incredible_themes: string;
+    premium_content: string;
+    faq_title: string;
+    what_users_say: string;
+    transform_study: string;
     features: {
       aiTitle: string;
       aiDesc: string;
