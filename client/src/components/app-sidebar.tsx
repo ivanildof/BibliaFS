@@ -52,10 +52,10 @@ export function AppSidebar() {
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
-    if (isMobileRef.current && open) {
+    if (isMobileRef.current) {
       setOpen(false);
     }
-  }, [location, open, setOpen]);
+  }, [location, setOpen]);
 
   const menuItems = [
     { title: t.nav.home, url: "/", icon: Home },

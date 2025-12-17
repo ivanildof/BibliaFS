@@ -272,3 +272,4 @@ bible-audio/
 14. ✅ Group Study Buttons Mobile Responsive - TabsList now uses flex-wrap and gap for mobile responsiveness
 15. ✅ Daily Verse Timezone-Aware - Updated `/api/daily-verse` to accept timezone query param for user's local day calculation (default: America/Sao_Paulo)
 16. ✅ Version Compare Production Fix - Added Express route to serve bible.db from dist/public in production + API fallback when SQLite unavailable
+17. ✅ Sidebar Auto-Close on Navigation - Fixed sidebar closing behavior on mobile when selecting a page from menu
