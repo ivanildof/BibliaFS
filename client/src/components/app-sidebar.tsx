@@ -67,15 +67,15 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar className="border-r-0">
-      <SidebarHeader className="p-6 border-b border-sidebar-border/30">
+    <Sidebar className="border-r border-sidebar-border">
+      <SidebarHeader className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 shadow-lg glow-gold">
-            <Book className="h-7 w-7 text-purple-900" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 shadow-lg">
+            <Book className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h2 className="font-display text-xl font-bold text-sidebar-foreground">{t.common.appName}</h2>
-            <p className="text-xs text-sidebar-foreground/70">{t.sections.premiumStudy}</p>
+            <h2 className="font-display text-xl font-bold text-gray-800 dark:text-gray-100">{t.common.appName}</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t.sections.premiumStudy}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -159,14 +159,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-sidebar-border/30">
-        <div className="text-center text-xs text-sidebar-foreground/60">
+      <SidebarFooter className="p-4 border-t border-sidebar-border">
+        <div className="text-center text-xs text-gray-500 dark:text-gray-400">
           © 2026 - BíbliaFS. Todos os direitos reservados. Desenvolvido por |{" "}
           <a 
             href="https://fabrisite.com.br/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-amber-400 hover:text-amber-300 hover:underline transition-colors"
+            className="text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 hover:underline transition-colors"
             data-testid="link-fabrisite-sidebar"
           >
             FabriSite
