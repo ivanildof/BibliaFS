@@ -27,7 +27,13 @@ import {
   Phone,
   Copy,
   Check,
-  ArrowLeft
+  ArrowLeft,
+  Sparkles,
+  GraduationCap,
+  Star,
+  CheckCircle2,
+  AlertCircle,
+  FileText
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -55,9 +61,25 @@ const messageSchema = z.object({
   content: z.string().min(1, "Mensagem não pode estar vazia").max(2000),
 });
 
+const discussionSchema = z.object({
+  title: z.string().min(3, "Título deve ter pelo menos 3 caracteres").max(200),
+  description: z.string().max(500).optional(),
+  question: z.string().max(500).optional(),
+  verseReference: z.string().max(100).optional(),
+  verseText: z.string().max(1000).optional(),
+  useAI: z.boolean().default(true),
+});
+
+const answerSchema = z.object({
+  content: z.string().min(10, "Resposta deve ter pelo menos 10 caracteres").max(2000),
+  verseReference: z.string().max(100).optional(),
+});
+
 type GroupFormData = z.infer<typeof formSchema>;
 type InviteFormData = z.infer<typeof inviteSchema>;
 type MessageFormData = z.infer<typeof messageSchema>;
+type DiscussionFormData = z.infer<typeof discussionSchema>;
+type AnswerFormData = z.infer<typeof answerSchema>;
 
 interface Group {
   id: string;
@@ -108,17 +130,60 @@ interface GroupInvite {
   createdAt: string;
 }
 
+interface GroupDiscussion {
+  id: string;
+  groupId: string;
+  createdById: string;
+  title: string;
+  description?: string;
+  question: string;
+  verseReference?: string;
+  verseText?: string;
+  aiSynthesis?: string;
+  synthesizedAt?: string;
+  status: string;
+  allowAnonymous: boolean;
+  deadline?: string;
+  createdAt: string;
+  creator?: {
+    id: string;
+    displayName?: string;
+    profileImageUrl?: string;
+  };
+  answers?: GroupAnswer[];
+}
+
+interface GroupAnswer {
+  id: string;
+  discussionId: string;
+  userId: string;
+  content: string;
+  verseReference?: string;
+  reviewStatus: string;
+  reviewComment?: string;
+  isAnonymous: boolean;
+  createdAt: string;
+  user?: {
+    id: string;
+    displayName?: string;
+    profileImageUrl?: string;
+  };
+}
+
 export default function Groups() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [activeTab, setActiveTab] = useState<"chat" | "members" | "invites">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "members" | "invites" | "discussions">("chat");
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isJoinByCodeDialogOpen, setIsJoinByCodeDialogOpen] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [isDiscussionDialogOpen, setIsDiscussionDialogOpen] = useState(false);
+  const [selectedDiscussion, setSelectedDiscussion] = useState<GroupDiscussion | null>(null);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
 
   const { data: allGroups = [], isLoading: loadingAll } = useQuery<Group[]>({
     queryKey: ["/api/groups"],
@@ -146,6 +211,17 @@ export default function Groups() {
     enabled: !!selectedGroup && (selectedGroup.role === "leader" || selectedGroup.role === "moderator"),
   });
 
+  const { data: groupDiscussions = [], isLoading: loadingDiscussions } = useQuery<GroupDiscussion[]>({
+    queryKey: ["/api/groups", selectedGroup?.id, "discussions"],
+    enabled: !!selectedGroup,
+  });
+
+  const { data: discussionDetails } = useQuery<GroupDiscussion>({
+    queryKey: ["/api/discussions", selectedDiscussion?.id],
+    enabled: !!selectedDiscussion,
+    refetchInterval: 10000,
+  });
+
   const form = useForm<GroupFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -167,6 +243,26 @@ export default function Groups() {
     resolver: zodResolver(messageSchema),
     defaultValues: {
       content: "",
+    },
+  });
+
+  const discussionForm = useForm<DiscussionFormData>({
+    resolver: zodResolver(discussionSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      question: "",
+      verseReference: "",
+      verseText: "",
+      useAI: true,
+    },
+  });
+
+  const answerForm = useForm<AnswerFormData>({
+    resolver: zodResolver(answerSchema),
+    defaultValues: {
+      content: "",
+      verseReference: "",
     },
   });
 
@@ -317,6 +413,93 @@ export default function Groups() {
     },
   });
 
+  const createDiscussionMutation = useMutation({
+    mutationFn: async (data: DiscussionFormData): Promise<GroupDiscussion> => {
+      const res = await apiRequest("POST", `/api/groups/${selectedGroup?.id}/discussions`, data);
+      return res.json();
+    },
+    onSuccess: (discussion: GroupDiscussion) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "discussions"] });
+      discussionForm.reset();
+      setIsDiscussionDialogOpen(false);
+      toast({
+        title: "Discussão criada!",
+        description: discussion.question ? "Pergunta gerada com sucesso" : "Discussão iniciada",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao criar discussão",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const submitAnswerMutation = useMutation({
+    mutationFn: async (data: AnswerFormData) => {
+      return await apiRequest("POST", `/api/discussions/${selectedDiscussion?.id}/answers`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/discussions", selectedDiscussion?.id] });
+      answerForm.reset();
+      toast({
+        title: "Resposta enviada!",
+        description: "Sua resposta foi registrada.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao enviar resposta",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const synthesizeMutation = useMutation({
+    mutationFn: async (discussionId: string) => {
+      setIsSynthesizing(true);
+      const res = await apiRequest("POST", `/api/discussions/${discussionId}/synthesize`, {});
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/discussions", selectedDiscussion?.id] });
+      setIsSynthesizing(false);
+      toast({
+        title: "Síntese gerada!",
+        description: "A IA analisou todas as respostas.",
+      });
+    },
+    onError: (error: Error) => {
+      setIsSynthesizing(false);
+      toast({
+        title: "Erro ao sintetizar",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const reviewAnswerMutation = useMutation({
+    mutationFn: async ({ answerId, status, comment }: { answerId: string; status: string; comment?: string }) => {
+      return await apiRequest("PATCH", `/api/answers/${answerId}/review`, { status, comment });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/discussions", selectedDiscussion?.id] });
+      toast({
+        title: "Avaliação salva!",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao avaliar",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: GroupFormData) => {
     createMutation.mutate(data);
   };
@@ -409,6 +592,10 @@ export default function Groups() {
                       Convites
                     </TabsTrigger>
                   )}
+                  <TabsTrigger value="discussions" data-testid="tab-discussions">
+                    <GraduationCap className="h-4 w-4 mr-2" />
+                    Estudos ({groupDiscussions.length})
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="chat" className="space-y-4">
@@ -662,6 +849,454 @@ export default function Groups() {
                     </div>
                   </TabsContent>
                 )}
+
+                <TabsContent value="discussions" className="space-y-4">
+                  {selectedDiscussion ? (
+                    // Discussion Detail View
+                    <div className="space-y-4">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setSelectedDiscussion(null)}
+                        data-testid="button-back-discussions"
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Voltar às discussões
+                      </Button>
+
+                      <Card>
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <CardTitle className="text-lg">{discussionDetails?.title || selectedDiscussion.title}</CardTitle>
+                              <CardDescription>{discussionDetails?.description || selectedDiscussion.description}</CardDescription>
+                            </div>
+                            <Badge variant={discussionDetails?.status === "open" ? "default" : discussionDetails?.status === "synthesized" ? "secondary" : "outline"}>
+                              {discussionDetails?.status === "open" ? "Aberta" : discussionDetails?.status === "synthesized" ? "Sintetizada" : "Encerrada"}
+                            </Badge>
+                          </div>
+                          {discussionDetails?.verseReference && (
+                            <div className="mt-2 p-3 bg-muted rounded-lg">
+                              <p className="text-sm font-medium flex items-center gap-1">
+                                <BookOpen className="h-4 w-4" />
+                                {discussionDetails.verseReference}
+                              </p>
+                              {discussionDetails.verseText && (
+                                <p className="text-sm text-muted-foreground mt-1 italic">"{discussionDetails.verseText}"</p>
+                              )}
+                            </div>
+                          )}
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+                            <p className="font-medium flex items-center gap-2 mb-2">
+                              <Sparkles className="h-4 w-4 text-primary" />
+                              Pergunta para Reflexão
+                            </p>
+                            <p className="text-lg">{discussionDetails?.question || selectedDiscussion.question}</p>
+                          </div>
+
+                          {/* Answer Form */}
+                          {discussionDetails?.status === "open" && (
+                            <Form {...answerForm}>
+                              <form onSubmit={answerForm.handleSubmit((data) => submitAnswerMutation.mutate(data))} className="space-y-3">
+                                <FormField
+                                  control={answerForm.control}
+                                  name="content"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Sua Resposta</FormLabel>
+                                      <FormControl>
+                                        <Textarea 
+                                          placeholder="Compartilhe sua reflexão..." 
+                                          rows={4}
+                                          data-testid="input-answer"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={answerForm.control}
+                                  name="verseReference"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Referência Bíblica (opcional)</FormLabel>
+                                      <FormControl>
+                                        <Input 
+                                          placeholder="Ex: João 3:16" 
+                                          data-testid="input-answer-verse"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                                <Button 
+                                  type="submit" 
+                                  disabled={submitAnswerMutation.isPending}
+                                  data-testid="button-submit-answer"
+                                >
+                                  {submitAnswerMutation.isPending ? (
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  ) : (
+                                    <Send className="h-4 w-4 mr-2" />
+                                  )}
+                                  Enviar Resposta
+                                </Button>
+                              </form>
+                            </Form>
+                          )}
+
+                          {/* Answers List */}
+                          <Separator />
+                          <div className="space-y-3">
+                            <h4 className="font-medium flex items-center gap-2">
+                              <MessageCircle className="h-4 w-4" />
+                              Respostas ({discussionDetails?.answers?.length || 0})
+                            </h4>
+                            
+                            {discussionDetails?.answers?.length === 0 ? (
+                              <div className="text-center py-6 text-muted-foreground">
+                                <MessageCircle className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                                <p>Nenhuma resposta ainda</p>
+                                <p className="text-sm">Seja o primeiro a compartilhar!</p>
+                              </div>
+                            ) : (
+                              <div className="space-y-3">
+                                {discussionDetails?.answers?.map((answer) => (
+                                  <Card key={answer.id} className="p-4">
+                                    <div className="flex items-start gap-3">
+                                      <Avatar className="h-8 w-8">
+                                        <AvatarImage src={answer.isAnonymous ? "" : (answer.user?.profileImageUrl || "")} />
+                                        <AvatarFallback>
+                                          {answer.isAnonymous ? "?" : (answer.user?.displayName?.charAt(0) || "U")}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="font-medium text-sm">
+                                            {answer.isAnonymous ? "Anônimo" : (answer.user?.displayName || "Membro")}
+                                          </span>
+                                          <span className="text-xs text-muted-foreground">
+                                            {formatDistanceToNow(new Date(answer.createdAt), { addSuffix: true, locale: ptBR })}
+                                          </span>
+                                          {answer.reviewStatus === "excellent" && (
+                                            <Badge variant="default" className="text-xs">
+                                              <Star className="h-3 w-3 mr-1" />
+                                              Excelente
+                                            </Badge>
+                                          )}
+                                          {answer.reviewStatus === "approved" && (
+                                            <Badge variant="secondary" className="text-xs">
+                                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                                              Aprovada
+                                            </Badge>
+                                          )}
+                                          {answer.reviewStatus === "needs_review" && (
+                                            <Badge variant="outline" className="text-xs">
+                                              <AlertCircle className="h-3 w-3 mr-1" />
+                                              Revisar
+                                            </Badge>
+                                          )}
+                                        </div>
+                                        <p className="text-sm">{answer.content}</p>
+                                        {answer.verseReference && (
+                                          <p className="text-xs text-primary mt-1 flex items-center gap-1">
+                                            <BookOpen className="h-3 w-3" />
+                                            {answer.verseReference}
+                                          </p>
+                                        )}
+                                        {answer.reviewComment && (
+                                          <p className="text-xs text-muted-foreground mt-2 italic bg-muted p-2 rounded">
+                                            Comentário do líder: {answer.reviewComment}
+                                          </p>
+                                        )}
+                                        
+                                        {/* Leader Review Actions */}
+                                        {isLeaderOrMod && answer.reviewStatus === "pending" && (
+                                          <div className="flex gap-2 mt-2">
+                                            <Button 
+                                              size="sm" 
+                                              variant="outline"
+                                              onClick={() => reviewAnswerMutation.mutate({ answerId: answer.id, status: "excellent" })}
+                                              data-testid={`button-review-excellent-${answer.id}`}
+                                            >
+                                              <Star className="h-3 w-3 mr-1" />
+                                              Excelente
+                                            </Button>
+                                            <Button 
+                                              size="sm" 
+                                              variant="outline"
+                                              onClick={() => reviewAnswerMutation.mutate({ answerId: answer.id, status: "approved" })}
+                                              data-testid={`button-review-approve-${answer.id}`}
+                                            >
+                                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                                              Aprovar
+                                            </Button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </Card>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* AI Synthesis */}
+                          {discussionDetails?.aiSynthesis && (
+                            <>
+                              <Separator />
+                              <div className="space-y-3">
+                                <h4 className="font-medium flex items-center gap-2">
+                                  <Sparkles className="h-4 w-4 text-primary" />
+                                  Síntese da IA
+                                </h4>
+                                <div className="prose prose-sm max-w-none p-4 bg-muted/50 rounded-lg">
+                                  <div className="whitespace-pre-wrap">{discussionDetails.aiSynthesis}</div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Leader Actions */}
+                          {isLeaderOrMod && discussionDetails?.status === "open" && (discussionDetails?.answers?.length || 0) >= 1 && (
+                            <div className="flex gap-2 pt-4">
+                              <Button 
+                                onClick={() => synthesizeMutation.mutate(selectedDiscussion.id)}
+                                disabled={isSynthesizing}
+                                data-testid="button-synthesize"
+                              >
+                                {isSynthesizing ? (
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                ) : (
+                                  <Sparkles className="h-4 w-4 mr-2" />
+                                )}
+                                Gerar Síntese com IA
+                              </Button>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ) : (
+                    // Discussions List View
+                    <div className="space-y-4">
+                      {isLeaderOrMod && (
+                        <div className="flex justify-end">
+                          <Dialog open={isDiscussionDialogOpen} onOpenChange={setIsDiscussionDialogOpen}>
+                            <DialogTrigger asChild>
+                              <Button data-testid="button-new-discussion">
+                                <Plus className="h-4 w-4 mr-2" />
+                                Nova Discussão
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-lg">
+                              <DialogHeader>
+                                <DialogTitle>Criar Discussão Estruturada</DialogTitle>
+                                <DialogDescription>
+                                  A IA vai gerar uma pergunta reflexiva baseada no tema e versículo
+                                </DialogDescription>
+                              </DialogHeader>
+                              <Form {...discussionForm}>
+                                <form onSubmit={discussionForm.handleSubmit((data) => createDiscussionMutation.mutate(data))} className="space-y-4">
+                                  <FormField
+                                    control={discussionForm.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Tema da Discussão</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            placeholder="Ex: A importância da oração" 
+                                            data-testid="input-discussion-title"
+                                            {...field}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={discussionForm.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Descrição (opcional)</FormLabel>
+                                        <FormControl>
+                                          <Textarea 
+                                            placeholder="Breve contexto para a discussão..."
+                                            rows={2}
+                                            data-testid="input-discussion-description"
+                                            {...field}
+                                          />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={discussionForm.control}
+                                    name="verseReference"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Referência Bíblica</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            placeholder="Ex: Mateus 6:5-15" 
+                                            data-testid="input-discussion-verse"
+                                            {...field}
+                                          />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={discussionForm.control}
+                                    name="verseText"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Texto do Versículo (opcional)</FormLabel>
+                                        <FormControl>
+                                          <Textarea 
+                                            placeholder="Cole aqui o texto do versículo..."
+                                            rows={3}
+                                            data-testid="input-discussion-verse-text"
+                                            {...field}
+                                          />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={discussionForm.control}
+                                    name="useAI"
+                                    render={({ field }) => (
+                                      <FormItem className="flex items-center gap-3 space-y-0 p-3 bg-muted rounded-lg">
+                                        <FormControl>
+                                          <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            data-testid="switch-use-ai"
+                                          />
+                                        </FormControl>
+                                        <div className="flex-1">
+                                          <FormLabel className="flex items-center gap-2 cursor-pointer">
+                                            <Sparkles className="h-4 w-4 text-primary" />
+                                            Gerar pergunta com IA
+                                          </FormLabel>
+                                          <p className="text-xs text-muted-foreground">
+                                            A IA criará uma pergunta reflexiva baseada no tema
+                                          </p>
+                                        </div>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  {!discussionForm.watch("useAI") && (
+                                    <FormField
+                                      control={discussionForm.control}
+                                      name="question"
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel>Sua Pergunta</FormLabel>
+                                          <FormControl>
+                                            <Textarea 
+                                              placeholder="Digite a pergunta para discussão..."
+                                              rows={2}
+                                              data-testid="input-discussion-question"
+                                              {...field}
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  )}
+                                  <DialogFooter>
+                                    <Button 
+                                      type="submit" 
+                                      disabled={createDiscussionMutation.isPending}
+                                      data-testid="button-create-discussion"
+                                    >
+                                      {createDiscussionMutation.isPending ? (
+                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                      ) : (
+                                        <Sparkles className="h-4 w-4 mr-2" />
+                                      )}
+                                      Criar Discussão
+                                    </Button>
+                                  </DialogFooter>
+                                </form>
+                              </Form>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      )}
+
+                      {loadingDiscussions ? (
+                        <div className="flex items-center justify-center py-12">
+                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : groupDiscussions.length === 0 ? (
+                        <div className="text-center py-12 text-muted-foreground">
+                          <GraduationCap className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                          <p className="text-lg">Nenhuma discussão ainda</p>
+                          <p className="text-sm">
+                            {isLeaderOrMod 
+                              ? "Crie uma discussão estruturada com IA" 
+                              : "O líder do grupo pode criar discussões"}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {groupDiscussions.map((discussion) => (
+                            <Card 
+                              key={discussion.id} 
+                              className="cursor-pointer hover-elevate"
+                              onClick={() => setSelectedDiscussion(discussion)}
+                              data-testid={`discussion-${discussion.id}`}
+                            >
+                              <CardHeader className="pb-2">
+                                <div className="flex items-start justify-between gap-2">
+                                  <CardTitle className="text-base">{discussion.title}</CardTitle>
+                                  <Badge variant={discussion.status === "open" ? "default" : discussion.status === "synthesized" ? "secondary" : "outline"}>
+                                    {discussion.status === "open" ? "Aberta" : discussion.status === "synthesized" ? "Sintetizada" : "Encerrada"}
+                                  </Badge>
+                                </div>
+                                {discussion.verseReference && (
+                                  <p className="text-sm text-primary flex items-center gap-1">
+                                    <BookOpen className="h-3 w-3" />
+                                    {discussion.verseReference}
+                                  </p>
+                                )}
+                              </CardHeader>
+                              <CardContent className="pt-0">
+                                <p className="text-sm text-muted-foreground line-clamp-2">{discussion.question}</p>
+                                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <MessageCircle className="h-3 w-3" />
+                                    {discussion.answers?.length || 0} respostas
+                                  </span>
+                                  <span>
+                                    {formatDistanceToNow(new Date(discussion.createdAt), { addSuffix: true, locale: ptBR })}
+                                  </span>
+                                  {discussion.aiSynthesis && (
+                                    <span className="flex items-center gap-1 text-primary">
+                                      <Sparkles className="h-3 w-3" />
+                                      Síntese disponível
+                                    </span>
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </TabsContent>
               </Tabs>
             </CardContent>
 

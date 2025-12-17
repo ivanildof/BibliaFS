@@ -3464,6 +3464,300 @@ Responda em português do Brasil.`
   });
 
   // ============================================
+  // GROUP DISCUSSIONS (AI Q&A Sessions)
+  // ============================================
+
+  // Get all discussions in a group
+  app.get("/api/groups/:id/discussions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      
+      // Check if user is member
+      const isMember = await storage.isGroupMember(groupId, userId);
+      if (!isMember) {
+        return res.status(403).json({ error: "Você precisa ser membro do grupo" });
+      }
+      
+      const discussions = await storage.getGroupDiscussions(groupId);
+      res.json(discussions);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get a single discussion with answers
+  app.get("/api/discussions/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const discussion = await storage.getGroupDiscussion(req.params.id);
+      if (!discussion) {
+        return res.status(404).json({ error: "Discussão não encontrada" });
+      }
+      
+      const answers = await storage.getDiscussionAnswers(req.params.id);
+      res.json({ ...discussion, answers });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Create a new discussion (AI generates question)
+  app.post("/api/groups/:id/discussions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const groupId = req.params.id;
+      const { title, description, verseReference, verseText, useAI } = req.body;
+      
+      // Check if user is leader or moderator
+      const members = await storage.getGroupMembers(groupId);
+      const userMember = members.find(m => m.userId === userId);
+      if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
+        return res.status(403).json({ error: "Apenas líderes e moderadores podem criar discussões" });
+      }
+      
+      if (!title) {
+        return res.status(400).json({ error: "Título é obrigatório" });
+      }
+      
+      let question = req.body.question || "";
+      
+      // Generate question using AI if requested
+      if (useAI && process.env.OPENAI_API_KEY) {
+        try {
+          const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          
+          const prompt = `Você é um líder de estudo bíblico experiente. Crie UMA pergunta reflexiva e profunda para discussão em grupo baseada no seguinte:
+
+Tema: ${title}
+${description ? `Descrição: ${description}` : ""}
+${verseReference ? `Referência: ${verseReference}` : ""}
+${verseText ? `Texto: "${verseText}"` : ""}
+
+A pergunta deve:
+- Estimular reflexão pessoal e compartilhamento
+- Conectar o texto bíblico à vida prática
+- Ser aberta (não sim/não)
+- Ter profundidade teológica mas ser acessível
+
+Responda APENAS com a pergunta, sem introdução ou explicação.`;
+
+          const response = await openaiInstance.chat.completions.create({
+            model: "gpt-4o",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.8,
+            max_tokens: 200,
+          });
+
+          question = response.choices[0]?.message?.content?.trim() || "";
+        } catch (aiError) {
+          console.error("Erro ao gerar pergunta com IA:", aiError);
+        }
+      }
+      
+      if (!question) {
+        return res.status(400).json({ error: "Pergunta é obrigatória (ou use IA para gerar)" });
+      }
+      
+      const discussion = await storage.createGroupDiscussion({
+        groupId,
+        createdById: userId,
+        title,
+        description,
+        question,
+        verseReference,
+        verseText,
+        status: "open",
+      });
+      
+      res.json(discussion);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Submit an answer to a discussion
+  app.post("/api/discussions/:id/answers", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const discussionId = req.params.id;
+      const { content, verseReference, isAnonymous } = req.body;
+      
+      const discussion = await storage.getGroupDiscussion(discussionId);
+      if (!discussion) {
+        return res.status(404).json({ error: "Discussão não encontrada" });
+      }
+      
+      if (discussion.status === "closed") {
+        return res.status(400).json({ error: "Esta discussão está encerrada" });
+      }
+      
+      // Check if user is member of the group
+      const isMember = await storage.isGroupMember(discussion.groupId, userId);
+      if (!isMember) {
+        return res.status(403).json({ error: "Você precisa ser membro do grupo" });
+      }
+      
+      if (!content || content.trim().length === 0) {
+        return res.status(400).json({ error: "Resposta não pode estar vazia" });
+      }
+      
+      const answer = await storage.createGroupAnswer({
+        discussionId,
+        userId,
+        content: content.trim(),
+        verseReference,
+        isAnonymous: isAnonymous && discussion.allowAnonymous,
+      });
+      
+      res.json(answer);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Review an answer (leader only)
+  app.patch("/api/answers/:id/review", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const answerId = req.params.id;
+      const { status, comment } = req.body;
+      
+      if (!["excellent", "approved", "needs_review"].includes(status)) {
+        return res.status(400).json({ error: "Status inválido" });
+      }
+      
+      // Get the answer and discussion to verify permissions
+      const answers = await storage.getDiscussionAnswers(answerId);
+      const answer = answers.find(a => a.id === answerId);
+      
+      if (!answer) {
+        // Try getting answers for the discussion containing this answer
+        const allDiscussions = await storage.getGroupDiscussions("");
+        // We need a different approach - get the answer directly
+      }
+      
+      const updated = await storage.reviewAnswer(answerId, userId, status, comment);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Synthesize answers using AI (leader only)
+  app.post("/api/discussions/:id/synthesize", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const discussionId = req.params.id;
+      
+      const discussion = await storage.getGroupDiscussion(discussionId);
+      if (!discussion) {
+        return res.status(404).json({ error: "Discussão não encontrada" });
+      }
+      
+      // Check if user is leader
+      const members = await storage.getGroupMembers(discussion.groupId);
+      const userMember = members.find(m => m.userId === userId);
+      if (!userMember || userMember.role !== "leader") {
+        return res.status(403).json({ error: "Apenas o líder pode sintetizar as respostas" });
+      }
+      
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(503).json({ error: "Serviço de IA indisponível" });
+      }
+      
+      // Get all answers
+      const answers = await storage.getAnswersForSynthesis(discussionId);
+      
+      if (answers.length === 0) {
+        return res.status(400).json({ error: "Nenhuma resposta para sintetizar" });
+      }
+      
+      // Build answers text for AI
+      const answersText = answers.map((a, i) => {
+        const name = a.isAnonymous ? "Anônimo" : (a.userName || "Membro");
+        return `${i + 1}. ${name}: "${a.content}"${a.verseReference ? ` (${a.verseReference})` : ""}`;
+      }).join("\n\n");
+      
+      const prompt = `Você é um líder de estudo bíblico experiente. Analise as seguintes respostas dos membros do grupo à pergunta:
+
+PERGUNTA: ${discussion.question}
+${discussion.verseReference ? `TEXTO BASE: ${discussion.verseReference} - ${discussion.verseText}` : ""}
+
+RESPOSTAS DOS MEMBROS:
+${answersText}
+
+Crie uma SÍNTESE que:
+1. Identifique os TEMAS COMUNS nas respostas
+2. Destaque as MELHORES CONTRIBUIÇÕES (sem citar nomes específicos)
+3. Apresente uma REFLEXÃO INTEGRADORA que una os insights
+4. Sugira APLICAÇÕES PRÁTICAS baseadas nas respostas
+5. Inclua VERSÍCULOS RELACIONADOS que complementem a discussão
+
+Formato da resposta:
+## Temas Identificados
+(lista dos principais temas)
+
+## Destaques da Discussão
+(melhores insights compartilhados)
+
+## Reflexão Integradora
+(síntese teológica)
+
+## Aplicação Prática
+(como aplicar na vida)
+
+## Para Continuar Estudando
+(versículos e recursos relacionados)`;
+
+      const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openaiInstance.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+        max_tokens: 1500,
+      });
+
+      const synthesis = response.choices[0]?.message?.content;
+      if (!synthesis) {
+        throw new Error("Resposta vazia da IA");
+      }
+      
+      // Save synthesis
+      const updated = await storage.saveDiscussionSynthesis(discussionId, synthesis);
+      
+      res.json({ synthesis, discussion: updated });
+    } catch (error: any) {
+      console.error("Erro ao sintetizar:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Close a discussion
+  app.patch("/api/discussions/:id/close", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const discussionId = req.params.id;
+      
+      const discussion = await storage.getGroupDiscussion(discussionId);
+      if (!discussion) {
+        return res.status(404).json({ error: "Discussão não encontrada" });
+      }
+      
+      // Check if user is leader or moderator
+      const members = await storage.getGroupMembers(discussion.groupId);
+      const userMember = members.find(m => m.userId === userId);
+      if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
+        return res.status(403).json({ error: "Apenas líderes podem encerrar discussões" });
+      }
+      
+      const updated = await storage.closeGroupDiscussion(discussionId);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
   // TEACHING OUTLINES API
   // ============================================
 

@@ -263,6 +263,56 @@ export async function runMigrations() {
       ON group_messages(group_id, created_at DESC)
     `);
 
+    // Create group_discussions table for AI-structured Q&A sessions
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS group_discussions (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        group_id VARCHAR NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+        created_by_id VARCHAR NOT NULL REFERENCES users(id),
+        title TEXT NOT NULL,
+        description TEXT,
+        question TEXT NOT NULL,
+        verse_reference TEXT,
+        verse_text TEXT,
+        ai_synthesis TEXT,
+        synthesized_at TIMESTAMP,
+        status VARCHAR(20) DEFAULT 'open',
+        allow_anonymous BOOLEAN DEFAULT false,
+        deadline TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create group_answers table for member responses
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS group_answers (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        discussion_id VARCHAR NOT NULL REFERENCES group_discussions(id) ON DELETE CASCADE,
+        user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        verse_reference TEXT,
+        review_status VARCHAR(20) DEFAULT 'pending',
+        review_comment TEXT,
+        reviewed_by_id VARCHAR REFERENCES users(id),
+        reviewed_at TIMESTAMP,
+        is_anonymous BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create indexes for faster lookups
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_group_discussions_group 
+      ON group_discussions(group_id, created_at DESC)
+    `);
+
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_group_answers_discussion 
+      ON group_answers(discussion_id, created_at DESC)
+    `);
+
     console.log("Migrations completed successfully!");
   } catch (error) {
     console.error("Migration error:", error);

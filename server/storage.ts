@@ -1501,6 +1501,174 @@ export class DatabaseStorage implements IStorage {
       .where(sql`LOWER(${users.email}) LIKE ${`%${email.toLowerCase()}%`}`)
       .limit(10);
   }
+
+  // ============================================
+  // GROUP DISCUSSIONS (AI Q&A Sessions)
+  // ============================================
+  
+  async createGroupDiscussion(data: any): Promise<any> {
+    const { groupDiscussions } = await import("@shared/schema");
+    const [created] = await db.insert(groupDiscussions).values(data).returning();
+    return created;
+  }
+
+  async getGroupDiscussions(groupId: string): Promise<any[]> {
+    const { groupDiscussions } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groupDiscussions.id,
+        groupId: groupDiscussions.groupId,
+        createdById: groupDiscussions.createdById,
+        title: groupDiscussions.title,
+        description: groupDiscussions.description,
+        question: groupDiscussions.question,
+        verseReference: groupDiscussions.verseReference,
+        verseText: groupDiscussions.verseText,
+        aiSynthesis: groupDiscussions.aiSynthesis,
+        synthesizedAt: groupDiscussions.synthesizedAt,
+        status: groupDiscussions.status,
+        allowAnonymous: groupDiscussions.allowAnonymous,
+        deadline: groupDiscussions.deadline,
+        createdAt: groupDiscussions.createdAt,
+        creator: {
+          id: users.id,
+          displayName: users.displayName,
+          profileImageUrl: users.profileImageUrl,
+        },
+      })
+      .from(groupDiscussions)
+      .leftJoin(users, eq(groupDiscussions.createdById, users.id))
+      .where(eq(groupDiscussions.groupId, groupId))
+      .orderBy(desc(groupDiscussions.createdAt));
+  }
+
+  async getGroupDiscussion(id: string): Promise<any | undefined> {
+    const { groupDiscussions } = await import("@shared/schema");
+    const [discussion] = await db
+      .select({
+        id: groupDiscussions.id,
+        groupId: groupDiscussions.groupId,
+        createdById: groupDiscussions.createdById,
+        title: groupDiscussions.title,
+        description: groupDiscussions.description,
+        question: groupDiscussions.question,
+        verseReference: groupDiscussions.verseReference,
+        verseText: groupDiscussions.verseText,
+        aiSynthesis: groupDiscussions.aiSynthesis,
+        synthesizedAt: groupDiscussions.synthesizedAt,
+        status: groupDiscussions.status,
+        allowAnonymous: groupDiscussions.allowAnonymous,
+        deadline: groupDiscussions.deadline,
+        createdAt: groupDiscussions.createdAt,
+        creator: {
+          id: users.id,
+          displayName: users.displayName,
+          profileImageUrl: users.profileImageUrl,
+        },
+      })
+      .from(groupDiscussions)
+      .leftJoin(users, eq(groupDiscussions.createdById, users.id))
+      .where(eq(groupDiscussions.id, id));
+    return discussion;
+  }
+
+  async updateGroupDiscussion(id: string, data: Partial<any>): Promise<any> {
+    const { groupDiscussions } = await import("@shared/schema");
+    const [updated] = await db
+      .update(groupDiscussions)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(groupDiscussions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async closeGroupDiscussion(id: string): Promise<any> {
+    return this.updateGroupDiscussion(id, { status: "closed" });
+  }
+
+  // ============================================
+  // GROUP ANSWERS (Member Responses)
+  // ============================================
+  
+  async createGroupAnswer(data: any): Promise<any> {
+    const { groupAnswers } = await import("@shared/schema");
+    const [created] = await db.insert(groupAnswers).values(data).returning();
+    return created;
+  }
+
+  async getDiscussionAnswers(discussionId: string): Promise<any[]> {
+    const { groupAnswers } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groupAnswers.id,
+        discussionId: groupAnswers.discussionId,
+        userId: groupAnswers.userId,
+        content: groupAnswers.content,
+        verseReference: groupAnswers.verseReference,
+        reviewStatus: groupAnswers.reviewStatus,
+        reviewComment: groupAnswers.reviewComment,
+        reviewedById: groupAnswers.reviewedById,
+        reviewedAt: groupAnswers.reviewedAt,
+        isAnonymous: groupAnswers.isAnonymous,
+        createdAt: groupAnswers.createdAt,
+        user: {
+          id: users.id,
+          displayName: users.displayName,
+          profileImageUrl: users.profileImageUrl,
+        },
+      })
+      .from(groupAnswers)
+      .leftJoin(users, eq(groupAnswers.userId, users.id))
+      .where(eq(groupAnswers.discussionId, discussionId))
+      .orderBy(desc(groupAnswers.createdAt));
+  }
+
+  async reviewAnswer(answerId: string, reviewerId: string, status: string, comment?: string): Promise<any> {
+    const { groupAnswers } = await import("@shared/schema");
+    const [updated] = await db
+      .update(groupAnswers)
+      .set({
+        reviewStatus: status,
+        reviewComment: comment || null,
+        reviewedById: reviewerId,
+        reviewedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(groupAnswers.id, answerId))
+      .returning();
+    return updated;
+  }
+
+  async getAnswersForSynthesis(discussionId: string): Promise<any[]> {
+    const { groupAnswers } = await import("@shared/schema");
+    return await db
+      .select({
+        id: groupAnswers.id,
+        content: groupAnswers.content,
+        verseReference: groupAnswers.verseReference,
+        reviewStatus: groupAnswers.reviewStatus,
+        isAnonymous: groupAnswers.isAnonymous,
+        userName: users.displayName,
+      })
+      .from(groupAnswers)
+      .leftJoin(users, eq(groupAnswers.userId, users.id))
+      .where(eq(groupAnswers.discussionId, discussionId));
+  }
+
+  async saveDiscussionSynthesis(discussionId: string, synthesis: string): Promise<any> {
+    const { groupDiscussions } = await import("@shared/schema");
+    const [updated] = await db
+      .update(groupDiscussions)
+      .set({
+        aiSynthesis: synthesis,
+        synthesizedAt: new Date(),
+        status: "synthesized",
+        updatedAt: new Date(),
+      })
+      .where(eq(groupDiscussions.id, discussionId))
+      .returning();
+    return updated;
+  }
 }
 
 export const storage = new DatabaseStorage();
