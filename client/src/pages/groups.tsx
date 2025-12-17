@@ -55,7 +55,7 @@ const messageSchema = z.object({
   content: z.string().min(1, "Mensagem não pode estar vazia").max(2000),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type GroupFormData = z.infer<typeof formSchema>;
 type InviteFormData = z.infer<typeof inviteSchema>;
 type MessageFormData = z.infer<typeof messageSchema>;
 
@@ -146,7 +146,7 @@ export default function Groups() {
     enabled: !!selectedGroup && (selectedGroup.role === "leader" || selectedGroup.role === "moderator"),
   });
 
-  const form = useForm<FormData>({
+  const form = useForm<GroupFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -171,7 +171,7 @@ export default function Groups() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: FormData): Promise<Group> => {
+    mutationFn: async (data: GroupFormData): Promise<Group> => {
       const res = await apiRequest("POST", "/api/groups", data);
       return res.json();
     },
@@ -317,7 +317,7 @@ export default function Groups() {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: GroupFormData) => {
     createMutation.mutate(data);
   };
 
