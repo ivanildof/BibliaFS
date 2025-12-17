@@ -839,7 +839,8 @@ export default function Podcasts() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Fixed Player Bar */}
+      {/* Fixed Player Bar - Only show when episode is selected */}
+      {currentEpisode && (
       <div className="fixed bottom-16 md:bottom-0 left-12 md:left-64 right-0 bg-card border-t z-[60]">
         <div className="max-w-7xl mx-auto p-2 md:p-4">
           <div className="flex items-center gap-4">
@@ -909,6 +910,7 @@ export default function Podcasts() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
