@@ -269,3 +269,5 @@ bible-audio/
 11. ✅ Bible Navigation Persistence - Version, book, chapter saved to localStorage
 12. ✅ AI Assistant renamed: "Assistente Pedagógico IA" → "Assistente IA Teológico"
 13. ✅ AI Context Expansion - Now analyzes entire chapter instead of ±2 verses (fixes issue where AI couldn't find biblical references like "adivinhação")
+14. ✅ Group Study Buttons Mobile Responsive - TabsList now uses flex-wrap and gap for mobile responsiveness
+15. ✅ Daily Verse Timezone-Aware - Updated `/api/daily-verse` to accept timezone query param for user's local day calculation (default: America/Sao_Paulo)

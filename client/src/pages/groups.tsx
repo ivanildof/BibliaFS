@@ -577,7 +577,7 @@ export default function Groups() {
 
             <CardContent>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="w-full justify-start mb-4">
+                <TabsList className="w-full justify-start mb-4 flex-wrap gap-1 h-auto">
                   <TabsTrigger value="chat" data-testid="tab-chat">
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Discussão
