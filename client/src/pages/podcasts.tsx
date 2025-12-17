@@ -413,7 +413,7 @@ export default function Podcasts() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-32">
       <audio ref={audioRef} className="hidden" />
       
       <div className="max-w-7xl mx-auto p-6">
@@ -840,7 +840,7 @@ export default function Podcasts() {
       </AlertDialog>
 
       {/* Fixed Player Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card border-t z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-card border-t z-50">
         <div className="max-w-7xl mx-auto p-2 md:p-4">
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
