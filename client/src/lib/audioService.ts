@@ -8,7 +8,9 @@ interface OfflineContextType {
 // Supabase Storage URL for Bible audio files
 // Format: {SUPABASE_URL}/storage/v1/object/public/bible-audio/{LANG}/{VERSION}/{BOOK}/{CHAPTER}.mp3
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
-const AUDIO_STORAGE_BASE = `${SUPABASE_URL}/storage/v1/object/public/bible-audio`;
+const AUDIO_STORAGE_BASE = SUPABASE_URL 
+  ? `${SUPABASE_URL}/storage/v1/object/public/bible-audio`
+  : "";
 
 // Comprehensive book mapping: Portuguese + English names → abbreviations
 const BOOK_CODES: { [key: string]: string } = {
@@ -101,8 +103,14 @@ export async function getAudioUrl(
   language: string = "EN"
 ): Promise<string> {
   const bookCode = getBookCode(book);
+  if (!AUDIO_STORAGE_BASE) {
+    console.error("[Audio] Supabase URL not configured");
+    throw new Error("Audio storage not configured");
+  }
   // Format: {SUPABASE}/storage/v1/object/public/bible-audio/{LANG}/{VERSION}/{BOOK}/{CHAPTER}.mp3
-  return `${AUDIO_STORAGE_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
+  const url = `${AUDIO_STORAGE_BASE}/${language.toUpperCase()}/${version.toUpperCase()}/${bookCode}/${chapter}.mp3`;
+  console.log(`[Audio] Generated URL: ${url}`);
+  return url;
 }
 
 export async function playBibleAudio(
