@@ -206,8 +206,24 @@ bible-audio/
   - Mensal: price_1SeNkrLxcUHgdisLFHU2eKzg
   - Anual: price_1SeNlfLxcUHgdisLeMyIChFe
   - Premium Plus: price_1SeNmJLxcUHgdisLkccnbgRz
+- **Donation Price IDs** (5 options):
+  - R$10: price_1SeNqGLxcUHgdisLpnn6dGao
+  - R$25: price_1SeNqmLxcUHgdisLmTqHjs8n
+  - R$50: price_1SeNr1LxcUHgdisLQEMCCt4g
+  - R$100: price_1SeNtXLxcUHgdisLNKkCYznF
+  - Custom (user defined): price_1SekHFLxcUHgdisLfdTPwyRO
 - **Status**: ✅ Checkout working, subscriptions saving to Supabase
 - **Test Result**: Successfully processed payment and updated database
+
+### ✅ Bible Navigation Persistence (Fixed Dec 17, 2025)
+- **Problem**: User's selected version, book, and chapter were resetting on page reload
+- **Solution**: Implemented localStorage persistence for Bible reader state
+  - Saves `bible_version` (e.g., "nvi", "acf", "arc", "ra")
+  - Saves `bible_book` (e.g., "jo" for John)
+  - Saves `bible_chapter` (numeric value)
+- **Behavior**: On page load, restores last selected version/book/chapter, or defaults to John 1 if first visit
+- **File**: `/client/src/pages/bible-reader.tsx`
+- **Status**: ✅ Navigation state persists across sessions
 
 ## Next Priority Tasks
 

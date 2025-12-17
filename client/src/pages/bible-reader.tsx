@@ -92,10 +92,53 @@ export default function BibleReader() {
   const queryVerse = urlParams.get("verse");
   const queryVersion = urlParams.get("version");
   
-  const [version, setVersion] = useState(queryVersion || "nvi");
-  const [selectedBook, setSelectedBook] = useState<string | null>(queryBook);
-  const [selectedChapter, setSelectedChapter] = useState(queryChapter ? parseInt(queryChapter) : 1);
+  // Initialize from URL params or localStorage
+  const [version, setVersion] = useState(() => {
+    if (queryVersion) return queryVersion;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bible_version');
+      return saved || "nvi";
+    }
+    return "nvi";
+  });
+  
+  const [selectedBook, setSelectedBook] = useState<string | null>(() => {
+    if (queryBook) return queryBook;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bible_book');
+      return saved || "jo";
+    }
+    return "jo";
+  });
+  
+  const [selectedChapter, setSelectedChapter] = useState(() => {
+    if (queryChapter) return parseInt(queryChapter);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bible_chapter');
+      return saved ? parseInt(saved) : 1;
+    }
+    return 1;
+  });
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Save version, book, and chapter to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bible_version', version);
+    }
+  }, [version]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && selectedBook) {
+      localStorage.setItem('bible_book', selectedBook);
+    }
+  }, [selectedBook]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bible_chapter', selectedChapter.toString());
+    }
+  }, [selectedChapter]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isBooksOpen, setIsBooksOpen] = useState(false);
   const [matchedBooks, setMatchedBooks] = useState<BibleBook[]>([]);
