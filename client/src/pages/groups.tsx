@@ -98,15 +98,35 @@ export default function Groups() {
     mutationFn: async (data: FormData) => {
       return await apiRequest("POST", "/api/groups", data);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+    onSuccess: (newGroup: Group) => {
+      // Add new group to cache immediately
+      queryClient.setQueryData(["/api/groups"], (oldData: Group[] = []) => [
+        newGroup,
+        ...oldData,
+      ]);
+      
+      // Add to my groups with role info
+      queryClient.setQueryData(["/api/groups/my"], (oldData: Group[] = []) => [
+        {
+          ...newGroup,
+          role: newGroup.role || "leader",
+          joinedAt: newGroup.joinedAt || new Date().toISOString(),
+        },
+        ...oldData,
+      ]);
+      
       setIsCreateDialogOpen(false);
       form.reset();
       toast({
         title: "Grupo criado!",
         description: "Seu grupo de estudo foi criado com sucesso.",
       });
+      
+      // Then refetch to sync with server
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      }, 500);
     },
     onError: (error: Error) => {
       toast({
