@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Book, Loader2, Mail, CheckCircle } from "lucide-react";
+import { Book, Loader2, Mail, ArrowLeft, RefreshCw, Edit2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 
@@ -17,6 +17,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [email, setEmail] = useState(props.email || "");
+  const [code, setCode] = useState("");
   const [timeLeft, setTimeLeft] = useState(120);
   const [canResend, setCanResend] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -45,6 +46,44 @@ export default function EmailVerification(props: EmailVerificationProps) {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // Verifica código OTP
+  const verifyMutation = useMutation({
+    mutationFn: async () => {
+      if (code.length !== 6) {
+        throw new Error("Digite um código de 6 dígitos");
+      }
+
+      const { error, data } = await supabase.auth.verifyOtp({
+        email: email,
+        token: code,
+        type: "signup",
+      });
+
+      if (error) {
+        throw new Error(error.message || "Código inválido");
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Email verificado!",
+        description: "Bem-vindo à BíbliaFS!",
+      });
+      // Aguarda um momento e redireciona
+      setTimeout(() => setLocation("/"), 1500);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Código inválido",
+        description: error.message || "Tente novamente",
+        variant: "destructive",
+      });
+      setCode("");
+    },
+  });
+
+  // Reenvio de código
   const resendMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.auth.resend({
@@ -53,26 +92,28 @@ export default function EmailVerification(props: EmailVerificationProps) {
       });
 
       if (error) {
-        throw new Error(error.message || "Erro ao reenviar email");
+        throw new Error(error.message || "Erro ao reenviar código");
       }
     },
     onSuccess: () => {
       toast({
-        title: "Email reenviado!",
+        title: "Código reenviado!",
         description: "Verifique sua caixa de entrada e spam.",
       });
       setTimeLeft(120);
       setCanResend(false);
+      setCode("");
     },
     onError: (error: any) => {
       toast({
         title: "Erro ao reenviar",
-        description: error.message || "Não foi possível reenviar o email",
+        description: error.message || "Tente novamente mais tarde",
         variant: "destructive",
       });
     },
   });
 
+  // Atualizar email
   const updateEmailMutation = useMutation({
     mutationFn: async () => {
       if (!newEmail || newEmail === email) {
@@ -80,6 +121,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
       }
       setEmail(newEmail);
       setIsEditing(false);
+      setCode("");
 
       const { error } = await supabase.auth.resend({
         type: "signup",
@@ -93,7 +135,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
     onSuccess: () => {
       toast({
         title: "Email atualizado!",
-        description: "Novo email de verificação foi enviado.",
+        description: "Novo código foi enviado.",
       });
       setTimeLeft(120);
       setCanResend(false);
@@ -107,100 +149,139 @@ export default function EmailVerification(props: EmailVerificationProps) {
     },
   });
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-            <Mail className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Verifique seu email</CardTitle>
-          <CardDescription>
-            Enviamos um link de confirmação para o email abaixo
-          </CardDescription>
-        </CardHeader>
+  if (isEditing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center space-y-4">
+            <CardTitle className="text-2xl font-bold">Corrigir E-mail</CardTitle>
+            <CardDescription>Digite um novo email para receber o código</CardDescription>
+          </CardHeader>
 
-        <CardContent className="space-y-6">
-          {!isEditing ? (
-            <div className="p-4 bg-muted rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-1">Email cadastrado:</p>
-              <p className="text-lg font-semibold text-foreground break-all">{email}</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Digite um novo email:</p>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-foreground">Novo Email</label>
               <Input
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="novo@email.com"
                 data-testid="input-new-email"
+                className="mt-2"
               />
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setNewEmail(email);
-                  }}
-                  data-testid="button-cancel-email"
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  className="flex-1"
-                  onClick={() => updateEmailMutation.mutate()}
-                  disabled={updateEmailMutation.isPending}
-                  data-testid="button-confirm-email"
-                >
-                  {updateEmailMutation.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Atualizar
-                </Button>
-              </div>
             </div>
-          )}
+          </CardContent>
 
-          <div className="p-4 bg-muted rounded-lg space-y-2">
-            <div className="flex items-start gap-2 text-sm">
-              <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-              <span className="text-muted-foreground">
-                Clique no link no email para confirmar sua conta
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
+          <CardFooter className="gap-3 flex-col">
             <Button
-              onClick={() => resendMutation.mutate()}
-              disabled={!canResend || resendMutation.isPending}
               className="w-full"
-              data-testid="button-resend-email"
+              onClick={() => updateEmailMutation.mutate()}
+              disabled={updateEmailMutation.isPending}
+              data-testid="button-confirm-email"
             >
-              {resendMutation.isPending ? (
+              {updateEmailMutation.isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
-              {canResend ? "Reenviar email" : `Reenviar em ${formatTime(timeLeft)}`}
+              Atualizar Email
             </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setIsEditing(false);
+                setNewEmail(email);
+              }}
+              data-testid="button-cancel-email"
+            >
+              Cancelar
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
-            {!isEditing && (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setIsEditing(true)}
-                data-testid="button-change-email"
-              >
-                Corrigir email
-              </Button>
-            )}
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center space-y-4">
+          {/* Ícone de email em círculo roxo/azul */}
+          <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-full flex items-center justify-center border border-primary/30">
+            <Mail className="w-10 h-10 text-primary" />
+          </div>
+
+          <CardTitle className="text-2xl font-bold">Verifique seu Email</CardTitle>
+
+          <CardDescription className="text-base">
+            Enviamos um código de 6 dígitos para{" "}
+            <span className="font-semibold text-primary break-all">{email}</span>
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-6">
+          {/* Campo de código */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Código de Verificação</label>
+            <Input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={code}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                setCode(value);
+              }}
+              placeholder="000000"
+              data-testid="input-verification-code"
+              className="text-center text-2xl font-bold tracking-widest"
+            />
+            <p className="text-xs text-muted-foreground text-center">Digite o código de 6 dígitos</p>
+          </div>
+
+          {/* Botão Verificar */}
+          <Button
+            onClick={() => verifyMutation.mutate()}
+            disabled={verifyMutation.isPending || code.length !== 6}
+            className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-white font-semibold"
+            data-testid="button-verify-code"
+          >
+            {verifyMutation.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : null}
+            Verificar Email
+          </Button>
+
+          {/* Reenvio de código */}
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              onClick={() => resendMutation.mutate()}
+              disabled={!canResend || resendMutation.isPending}
+              className="text-primary hover:text-primary/80"
+              data-testid="button-resend-code"
+            >
+              <RefreshCw className="mr-1 h-4 w-4" />
+              {canResend ? "Não recebeu o código? Reenviar" : `Reenviar em ${formatTime(timeLeft)}`}
+            </Button>
+          </div>
+
+          {/* Corrigir email */}
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              onClick={() => setIsEditing(true)}
+              className="text-muted-foreground hover:text-foreground"
+              data-testid="button-change-email"
+            >
+              <Edit2 className="mr-1 h-4 w-4" />
+              Corrigir E-Mail
+            </Button>
           </div>
         </CardContent>
 
-        <CardFooter className="text-center text-sm text-muted-foreground">
+        <CardFooter className="text-center text-xs text-muted-foreground">
           <p className="w-full">
-            Não recebeu? Verifique sua pasta de spam ou tente reenviar.
+            ✏️ Verifique sua caixa de spam se não encontrar o email.
           </p>
         </CardFooter>
       </Card>
