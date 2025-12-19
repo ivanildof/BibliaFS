@@ -44,6 +44,20 @@ export const churches = pgTable("churches", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Email OTP table for registration verification
+export const emailOtp = pgTable(
+  "email_otp",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    email: varchar("email", { length: 255 }).notNull(),
+    code: varchar("code", { length: 6 }).notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    verified: boolean("verified").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => [index("IDX_email_otp_email").on(table.email)]
+);
+
 // Users table
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

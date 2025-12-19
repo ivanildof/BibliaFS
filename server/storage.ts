@@ -61,6 +61,7 @@ import {
   donations,
   type InsertDonation,
   type Donation,
+  emailOtp,
 } from "@shared/schema";
 
 import { db } from "./db";
@@ -181,6 +182,12 @@ export interface IStorage {
   
   // Stats
   getDashboardStats(userId: string): Promise<{ communityPosts: number }>;
+  
+  // Email OTP
+  createOTP(data: { email: string; code: string; expiresAt: Date }): Promise<any>;
+  getOTPByEmail(email: string): Promise<any | undefined>;
+  deleteOTPByEmail(email: string): Promise<void>;
+  verifyOTP(email: string, code: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1669,6 +1676,61 @@ export class DatabaseStorage implements IStorage {
       .where(eq(groupDiscussions.id, discussionId))
       .returning();
     return updated;
+  }
+
+  // ============================================
+  // EMAIL OTP OPERATIONS
+  // ============================================
+  async createOTP(data: { email: string; code: string; expiresAt: Date }): Promise<any> {
+    const [otp] = await db
+      .insert(emailOtp)
+      .values({
+        email: data.email,
+        code: data.code,
+        expiresAt: data.expiresAt,
+        verified: false,
+        createdAt: new Date(),
+      })
+      .returning();
+    return otp;
+  }
+
+  async getOTPByEmail(email: string): Promise<any | undefined> {
+    const [otp] = await db
+      .select()
+      .from(emailOtp)
+      .where(eq(emailOtp.email, email))
+      .orderBy(desc(emailOtp.createdAt))
+      .limit(1);
+    return otp;
+  }
+
+  async deleteOTPByEmail(email: string): Promise<void> {
+    await db.delete(emailOtp).where(eq(emailOtp.email, email));
+  }
+
+  async verifyOTP(email: string, code: string): Promise<boolean> {
+    const [otp] = await db
+      .select()
+      .from(emailOtp)
+      .where(eq(emailOtp.email, email))
+      .orderBy(desc(emailOtp.createdAt))
+      .limit(1);
+
+    if (!otp) return false;
+    if (new Date() > otp.expiresAt) {
+      await db.delete(emailOtp).where(eq(emailOtp.email, email));
+      return false;
+    }
+    if (otp.code !== code) return false;
+
+    // Mark as verified
+    await db
+      .update(emailOtp)
+      .set({ verified: true })
+      .where(eq(emailOtp.id, otp.id));
+
+    return true;
   }
 }
 

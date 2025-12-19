@@ -65,6 +65,11 @@ export default function Register() {
         throw new Error(result.message || "Erro ao criar conta");
       }
       
+      // In development, show code in console
+      if (result.code) {
+        console.log("[DEV] Código OTP:", result.code);
+      }
+      
       return result;
     },
     onSuccess: (data) => {

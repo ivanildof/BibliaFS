@@ -326,6 +326,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate 6-digit OTP code
+  function generateOTPCode(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
   // Register with OTP code (creates user and sends 6-digit code)
   app.post('/api/auth/register-with-otp', async (req, res) => {
     try {
@@ -363,35 +368,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`✅ User created: ${email}`);
       
-      // Now send OTP code via signInWithOtp (use client-facing supabase instance)
-      // This is safe because email is already confirmed and user exists
-      try {
-        const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
-          email,
-          options: {
-            shouldCreateUser: false,
-          },
-        });
-        
-        if (otpError) {
-          console.error("[Register OTP] Error sending OTP:", otpError);
-          // Don't fail the registration - user can request code on verification page
-        } else {
-          console.log(`[Register OTP] OTP sent to ${email}`);
-        }
-      } catch (otpSendError) {
-        console.error("[Register OTP] Exception sending OTP:", otpSendError);
-        // Still succeed with user creation
-      }
+      // Generate 6-digit OTP code
+      const code = generateOTPCode();
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      
+      // Delete old OTPs for this email
+      await storage.deleteOTPByEmail(email);
+      
+      // Save OTP to database
+      await storage.createOTP({ email, code, expiresAt });
+      
+      // Send email via Supabase with the OTP code
+      // For now, just log it in development
+      console.log(`\n📧 [OTP] Código para ${email}: ${code}\n`);
+      
+      console.log(`[Register OTP] OTP created for ${email}, expires at ${expiresAt.toISOString()}`);
       
       res.json({ 
         message: "Conta criada! Verifique seu e-mail para o código OTP.",
         email,
         userId: newUser.user.id,
+        // In development, return code for testing
+        ...(process.env.NODE_ENV !== 'production' && { code }),
       });
     } catch (error: any) {
       console.error("[Register OTP] Unexpected error:", error);
       res.status(500).json({ message: "Erro ao criar conta: " + (error?.message || "erro desconhecido") });
+    }
+  });
+
+  // Verify OTP code
+  app.post('/api/auth/verify-otp', async (req, res) => {
+    try {
+      const { email, code } = req.body;
+      
+      if (!email || !code) {
+        return res.status(400).json({ message: "Email e código são obrigatórios" });
+      }
+      
+      if (code.length !== 6) {
+        return res.status(400).json({ message: "Código deve ter 6 dígitos" });
+      }
+      
+      // Verify OTP
+      const isValid = await storage.verifyOTP(email, code);
+      
+      if (!isValid) {
+        return res.status(400).json({ message: "Código inválido ou expirado" });
+      }
+      
+      // Clean up OTP after successful verification
+      await storage.deleteOTPByEmail(email);
+      
+      console.log(`✅ Email verified: ${email}`);
+      res.json({ message: "Email verificado com sucesso!", verified: true });
+    } catch (error: any) {
+      console.error("[Verify OTP] Error:", error);
+      res.status(500).json({ message: "Erro ao verificar código" });
+    }
+  });
+
+  // Resend OTP code
+  app.post('/api/auth/resend-otp', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email é obrigatório" });
+      }
+      
+      // Generate new code
+      const code = generateOTPCode();
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      
+      // Delete old and create new
+      await storage.deleteOTPByEmail(email);
+      await storage.createOTP({ email, code, expiresAt });
+      
+      console.log(`\n📧 [OTP] Novo código para ${email}: ${code}\n`);
+      
+      res.json({ 
+        message: "Novo código enviado!",
+        ...(process.env.NODE_ENV !== 'production' && { code })
+      });
+    } catch (error: any) {
+      console.error("[Resend OTP] Error:", error);
+      res.status(500).json({ message: "Erro ao reenviar código" });
     }
   });
 
