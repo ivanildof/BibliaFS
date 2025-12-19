@@ -326,6 +326,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Register with OTP code (creates user and sends 6-digit code)
+  app.post('/api/auth/register-with-otp', async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email e senha são obrigatórios" });
+      }
+      
+      // Check if user already exists
+      const existingUser = await supabaseAdmin.auth.admin.getUserByEmail(email);
+      if (existingUser.data?.user) {
+        return res.status(400).json({ message: "Este e-mail já está em uso." });
+      }
+      
+      // Create user with confirmed email (so they don't get signup link)
+      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true, // Confirm email immediately to avoid signup link
+        user_metadata: {
+          first_name: firstName,
+          last_name: lastName,
+        },
+      });
+      
+      if (createError || !newUser?.user) {
+        console.error("[Register OTP] Error creating user:", createError);
+        return res.status(400).json({ message: createError?.message || "Erro ao criar conta" });
+      }
+      
+      console.log(`✅ User created: ${email}`);
+      
+      // Now send OTP code via signInWithOtp
+      const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+        },
+      });
+      
+      if (otpError) {
+        console.error("[Register OTP] Error sending OTP:", otpError);
+        // Don't fail - user can request code on verification page
+      } else {
+        console.log(`[Register OTP] OTP sent to ${email}`);
+      }
+      
+      res.json({ 
+        message: "Conta criada! Verifique seu e-mail para o código OTP.",
+        email,
+        userId: newUser.user.id,
+      });
+    } catch (error: any) {
+      console.error("[Register OTP] Error:", error);
+      res.status(500).json({ message: "Erro ao criar conta" });
+    }
+  });
+
   // Debug: Create confirmed user (ONLY available in development)
   app.post('/api/auth/debug/create-confirmed-user', async (req, res) => {
     // SECURITY: Block in production

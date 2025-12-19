@@ -47,64 +47,40 @@ export default function Register() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterFormData) => {
-      const { data: authData, error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-          },
-        },
+      // Create account via backend (which creates user and sends OTP)
+      const response = await fetch("/api/auth/register-with-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        }),
       });
       
-      if (error) {
-        if (error.message.includes("already registered")) {
-          throw new Error("Este e-mail já está em uso.");
-        }
-        throw new Error(error.message);
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || "Erro ao criar conta");
       }
       
-      return authData;
+      return result;
     },
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       
-      if (data.user && !data.session) {
-        const email = data.user.email || form.getValues("email");
-        
-        // Store email in session storage to pass to verification page
-        sessionStorage.setItem("verificationEmail", email);
-        
-        // Send OTP code via Supabase native OTP
-        try {
-          const { data: otpData, error } = await supabase.auth.signInWithOtp({
-            email,
-            options: {
-              shouldCreateUser: false,
-            },
-          });
-          
-          if (error) {
-            console.error("Erro ao enviar OTP:", error.message);
-          }
-        } catch (error) {
-          console.error("Erro ao enviar OTP:", error);
-        }
-        
-        toast({
-          title: "Conta criada!",
-          description: "Verifique seu e-mail para confirmar a conta.",
-        });
-        
-        setLocation("/email-verification");
-      } else {
-        toast({
-          title: "Conta criada!",
-          description: "Bem-vindo à BíbliaFS!",
-        });
-        setLocation("/");
-      }
+      const email = data.email;
+      
+      // Store email in session storage to pass to verification page
+      sessionStorage.setItem("verificationEmail", email);
+      
+      toast({
+        title: "Conta criada!",
+        description: "Verifique seu e-mail para confirmar a conta.",
+      });
+      
+      setLocation("/email-verification");
     },
     onError: (error: any) => {
       toast({
