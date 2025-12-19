@@ -335,12 +335,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email e senha são obrigatórios" });
       }
       
-      // Check if user already exists
-      const existingUser = await supabaseAdmin.auth.admin.getUserByEmail(email);
-      if (existingUser.data?.user) {
-        return res.status(400).json({ message: "Este e-mail já está em uso." });
-      }
-      
       // Create user with confirmed email (so they don't get signup link)
       const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email,
@@ -354,24 +348,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (createError || !newUser?.user) {
         console.error("[Register OTP] Error creating user:", createError);
-        return res.status(400).json({ message: createError?.message || "Erro ao criar conta" });
+        
+        // Check for specific error messages
+        const errorMessage = createError?.message || "Erro ao criar conta";
+        if (errorMessage.includes("already exists")) {
+          return res.status(400).json({ message: "Este e-mail já está em uso." });
+        }
+        if (errorMessage.includes("password")) {
+          return res.status(400).json({ message: "A senha deve ter pelo menos 6 caracteres." });
+        }
+        
+        return res.status(400).json({ message: errorMessage });
       }
       
       console.log(`✅ User created: ${email}`);
       
-      // Now send OTP code via signInWithOtp
-      const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: false,
-        },
-      });
-      
-      if (otpError) {
-        console.error("[Register OTP] Error sending OTP:", otpError);
-        // Don't fail - user can request code on verification page
-      } else {
-        console.log(`[Register OTP] OTP sent to ${email}`);
+      // Now send OTP code via signInWithOtp (use client-facing supabase instance)
+      // This is safe because email is already confirmed and user exists
+      try {
+        const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: false,
+          },
+        });
+        
+        if (otpError) {
+          console.error("[Register OTP] Error sending OTP:", otpError);
+          // Don't fail the registration - user can request code on verification page
+        } else {
+          console.log(`[Register OTP] OTP sent to ${email}`);
+        }
+      } catch (otpSendError) {
+        console.error("[Register OTP] Exception sending OTP:", otpSendError);
+        // Still succeed with user creation
       }
       
       res.json({ 
@@ -380,8 +390,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: newUser.user.id,
       });
     } catch (error: any) {
-      console.error("[Register OTP] Error:", error);
-      res.status(500).json({ message: "Erro ao criar conta" });
+      console.error("[Register OTP] Unexpected error:", error);
+      res.status(500).json({ message: "Erro ao criar conta: " + (error?.message || "erro desconhecido") });
     }
   });
 
