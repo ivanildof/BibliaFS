@@ -1,0 +1,199 @@
+OBJETIVO
+Criar uma tela que:
+
+Informe ao usuário que um e-mail de verificação foi enviado.
+Mostre o e-mail usado.
+Permita corrigi-lo (se necessário).
+Tenha um timer de reenvio (ex: 2 minutos).
+Permita reenviar o e-mail de confirmação chamando a API do Supabase.
+🔧 PASSO 1: Ativar Verificação de E-mail no Supabase
+No painel do Supabase:
+
+Acesse Authentication > Templates
+Edite o template de "Confirm signup"
+Certifique-se de que o e-mail de confirmação está habilitado
+(Opcional) Personalize o link – ele redirecionará para seu app (ex: precifiq://verify?token=...)
+Supabase envia automaticamente o e-mail de verificação quando você chama signUp() com email_confirm: true nas configurações do projeto.
+
+🔧 PASSO 2: Estrutura Frontend (ex: Flutter no Replit)
+Você não precisa reinventar o sistema de verificação – basta criar uma tela de status pós-cadastro.
+
+Aqui está um exemplo completo e funcional usando Flutter + Supabase:
+
+📦 Dependências (pubspec.yaml)
+yaml
+
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^2.5.0
+
+ Código da Tela (email_verification_screen.dart)
+dart
+
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
+
+class EmailVerificationScreen extends StatefulWidget {
+  final String email;
+
+  const EmailVerificationScreen({super.key, required this.email});
+
+  @override
+  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+}
+
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+  late Timer _timer;
+  int _seconds = 120;
+  bool _canResend = false;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_seconds > 0) {
+        setState(() {
+          _seconds--;
+        });
+      } else {
+        _timer.cancel();
+        setState(() {
+          _canResend = true;
+        });
+      }
+    });
+  }
+
+  Future<void> _resendVerificationEmail() async {
+    if (!_canResend) return;
+
+    try {
+      // Reenvia o e-mail de confirmação via Supabase
+      await Supabase.instance.client.auth.resend(
+        type: const EmailResendType.signup(),
+        email: widget.email,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('E-mail reenviado com sucesso!')),
+      );
+
+      // Reinicia o timer
+      setState(() {
+        _canResend = false;
+        _seconds = 120;
+      });
+      startTimer();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao reenviar: $e')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String timeText = '${_seconds ~/ 60}:${_seconds % 60}'.padLeft(2, '0');
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Verifique seu e-mail')),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Enviamos um e-mail para:',
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              widget.email,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              'Clique no link no e-mail para confirmar seu cadastro.',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 40),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    // Navegar para tela de login/corrigir e-mail
+                    Navigator.of(context).pop(); // ou push nova rota
+                  },
+                  child: const Text('Corrigir e-mail'),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: _canResend ? _resendVerificationEmail : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD69B4F),
+                  ),
+                  child: _canResend
+                      ? const Text('Reenviar e-mail')
+                      : Text('Reenviar em $timeText'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Como usar após o cadastro
+Quando o usuário se cadastra, chame:
+
+dart
+
+final response = await supabase.auth.signUp(
+  email: emailController.text.trim(),
+  password: passwordController.text,
+);
+
+if (response.error == null) {
+  // Navegue para a tela de verificação
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => EmailVerificationScreen(email: emailController.text),
+    ),
+  );
+}
+
+Supabase envia automaticamente o e-mail de verificação se a opção estiver ativada nas configurações do projeto.
+
+📱 Deep Linking (opcional, mas recomendado)
+Para que o link do e-mail abra seu app:
+
+No Supabase: Auth > URL Configuration
+Defina o "Redirect URL" como: precifiq://login (ou seu scheme personalizado)
+No seu app (Flutter), configure deep links com uni_links ou flutter_deep_linking
+Ao abrir o app pelo link, verifique o token e confirme com:
+
+dart
+await Supabase.instance.client.auth.getSessionFromUrl(url);
+
+ Vantagens dessa abordagem
+Usa Supabase Auth nativamente (confiável e seguro)
+Não armazena estado sensível no frontend
+Funciona bem com offline-first: o usuário pode ver a tela mesmo sem internet; o reenvio requer conexão
+Fácil de integrar com Replit (frontend + chamadas HTTP para Supabase)
+
+quando envia o email com codigo de verificaçao, nao pode ter o nome replt nem no link e nem na mensagem

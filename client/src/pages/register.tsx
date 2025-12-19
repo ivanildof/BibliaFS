@@ -75,7 +75,9 @@ export default function Register() {
           title: "Conta criada!",
           description: "Verifique seu e-mail para confirmar a conta.",
         });
-        setLocation("/login");
+        // Store email in session storage to pass to verification page
+        sessionStorage.setItem("verificationEmail", data.user.email || form.getValues("email"));
+        setLocation("/email-verification");
       } else {
         toast({
           title: "Conta criada!",
