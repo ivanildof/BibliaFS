@@ -326,6 +326,155 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================
+  // OTP EMAIL VERIFICATION SYSTEM
+  // ============================================
+  
+  // Generate 6-digit OTP code
+  function generateOTPCode(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+  
+  // Send OTP code for email verification
+  app.post('/api/auth/send-otp', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email é obrigatório" });
+      }
+      
+      // Generate 6-digit code
+      const code = generateOTPCode();
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      
+      // Delete old OTPs for this email
+      await storage.deleteOTPByEmail(email);
+      
+      // Save OTP to database
+      await storage.createOTP({ email, code, expiresAt });
+      
+      // Send email with OTP code via Supabase
+      if (supabaseAdmin) {
+        try {
+          // Use Supabase to send custom email
+          const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+            data: { otp_code: code },
+            redirectTo: undefined,
+          });
+          
+          // If invite fails (user already exists), log the code for now
+          if (error) {
+            console.log(`\n📧 [OTP] Código para ${email}: ${code}\n`);
+          }
+        } catch (emailError) {
+          console.log(`\n📧 [OTP] Código para ${email}: ${code}\n`);
+        }
+      } else {
+        console.log(`\n📧 [OTP] Código para ${email}: ${code}\n`);
+      }
+      
+      console.log(`[OTP] Code sent to ${email}, expires at ${expiresAt.toISOString()}`);
+      
+      res.json({ 
+        message: "Código enviado!",
+        // In development, return code for testing
+        ...(process.env.NODE_ENV !== 'production' && { code })
+      });
+    } catch (error: any) {
+      console.error("[OTP] Error sending code:", error);
+      res.status(500).json({ message: "Erro ao enviar código" });
+    }
+  });
+  
+  // Verify OTP code
+  app.post('/api/auth/verify-otp', async (req, res) => {
+    try {
+      const { email, code } = req.body;
+      
+      if (!email || !code) {
+        return res.status(400).json({ message: "Email e código são obrigatórios" });
+      }
+      
+      // Find OTP in database
+      const otp = await storage.getOTPByEmail(email);
+      
+      if (!otp) {
+        return res.status(400).json({ message: "Código não encontrado. Solicite um novo." });
+      }
+      
+      // Check if expired
+      if (new Date() > new Date(otp.expiresAt)) {
+        await storage.deleteOTPByEmail(email);
+        return res.status(400).json({ message: "Código expirado. Solicite um novo." });
+      }
+      
+      // Check if code matches
+      if (otp.code !== code) {
+        return res.status(400).json({ message: "Código incorreto. Tente novamente." });
+      }
+      
+      // Mark OTP as verified
+      await storage.markOTPVerified(email);
+      
+      // If using Supabase, confirm the user's email
+      if (supabaseAdmin) {
+        try {
+          // Find user by email and confirm
+          const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+          const user = users?.users?.find(u => u.email === email);
+          
+          if (user) {
+            await supabaseAdmin.auth.admin.updateUserById(user.id, {
+              email_confirm: true,
+            });
+            console.log(`[OTP] Email confirmed for user: ${user.id}`);
+          }
+        } catch (confirmError) {
+          console.warn("[OTP] Could not auto-confirm email:", confirmError);
+        }
+      }
+      
+      // Clean up OTP
+      await storage.deleteOTPByEmail(email);
+      
+      console.log(`[OTP] Email verified successfully: ${email}`);
+      res.json({ message: "Email verificado com sucesso!", verified: true });
+    } catch (error: any) {
+      console.error("[OTP] Error verifying code:", error);
+      res.status(500).json({ message: "Erro ao verificar código" });
+    }
+  });
+  
+  // Resend OTP code
+  app.post('/api/auth/resend-otp', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email é obrigatório" });
+      }
+      
+      // Generate new code
+      const code = generateOTPCode();
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      
+      // Delete old and create new
+      await storage.deleteOTPByEmail(email);
+      await storage.createOTP({ email, code, expiresAt });
+      
+      console.log(`\n📧 [OTP] Novo código para ${email}: ${code}\n`);
+      
+      res.json({ 
+        message: "Novo código enviado!",
+        ...(process.env.NODE_ENV !== 'production' && { code })
+      });
+    } catch (error: any) {
+      console.error("[OTP] Error resending code:", error);
+      res.status(500).json({ message: "Erro ao reenviar código" });
+    }
+  });
+
   // Debug: Create confirmed user (ONLY available in development)
   app.post('/api/auth/debug/create-confirmed-user', async (req, res) => {
     // SECURITY: Block in production

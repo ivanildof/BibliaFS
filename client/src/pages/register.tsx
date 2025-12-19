@@ -67,16 +67,38 @@ export default function Register() {
       
       return authData;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       
       if (data.user && !data.session) {
+        const email = data.user.email || form.getValues("email");
+        
+        // Store email in session storage to pass to verification page
+        sessionStorage.setItem("verificationEmail", email);
+        
+        // Send OTP code via custom backend
+        try {
+          const response = await fetch("/api/auth/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          
+          const otpData = await response.json();
+          
+          // In development, log the code for testing
+          if (otpData.code) {
+            console.log("[DEV] Código OTP:", otpData.code);
+          }
+        } catch (error) {
+          console.error("Erro ao enviar OTP:", error);
+        }
+        
         toast({
           title: "Conta criada!",
           description: "Verifique seu e-mail para confirmar a conta.",
         });
-        // Store email in session storage to pass to verification page
-        sessionStorage.setItem("verificationEmail", data.user.email || form.getValues("email"));
+        
         setLocation("/email-verification");
       } else {
         toast({

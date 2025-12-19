@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Book, Loader2, Mail, ArrowLeft, RefreshCw, Edit2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { Loader2, Mail, RefreshCw, Edit2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface EmailVerificationProps {
@@ -22,6 +21,15 @@ export default function EmailVerification(props: EmailVerificationProps) {
   const [canResend, setCanResend] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newEmail, setNewEmail] = useState(email);
+
+  // Load email from sessionStorage on mount
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("verificationEmail");
+    if (storedEmail && !email) {
+      setEmail(storedEmail);
+      setNewEmail(storedEmail);
+    }
+  }, [email]);
 
   // Timer para reenvio
   useEffect(() => {
@@ -46,32 +54,35 @@ export default function EmailVerification(props: EmailVerificationProps) {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Verifica código OTP
+  // Verifica código OTP via backend customizado
   const verifyMutation = useMutation({
     mutationFn: async () => {
       if (code.length !== 6) {
         throw new Error("Digite um código de 6 dígitos");
       }
 
-      const { error, data } = await supabase.auth.verifyOtp({
-        email: email,
-        token: code,
-        type: "signup",
+      const response = await apiRequest("POST", "/api/auth/verify-otp", {
+        email,
+        code,
       });
-
-      if (error) {
-        throw new Error(error.message || "Código inválido");
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Código inválido");
       }
-
+      
       return data;
     },
     onSuccess: () => {
       toast({
         title: "Email verificado!",
-        description: "Bem-vindo à BíbliaFS!",
+        description: "Bem-vindo à BíbliaFS! Você já pode fazer login.",
       });
-      // Aguarda um momento e redireciona
-      setTimeout(() => setLocation("/"), 1500);
+      // Clear session storage
+      sessionStorage.removeItem("verificationEmail");
+      // Redirect to login
+      setTimeout(() => setLocation("/login"), 1500);
     },
     onError: (error: any) => {
       toast({
@@ -83,17 +94,22 @@ export default function EmailVerification(props: EmailVerificationProps) {
     },
   });
 
-  // Reenvio de código
+  // Reenvio de código via backend
   const resendMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email: email,
-      });
-
-      if (error) {
-        throw new Error(error.message || "Erro ao reenviar código");
+      const response = await apiRequest("POST", "/api/auth/resend-otp", { email });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Erro ao reenviar código");
       }
+      
+      // In development, show code in console for testing
+      if (data.code) {
+        console.log("[DEV] Código OTP:", data.code);
+      }
+      
+      return data;
     },
     onSuccess: () => {
       toast({
@@ -113,24 +129,32 @@ export default function EmailVerification(props: EmailVerificationProps) {
     },
   });
 
-  // Atualizar email
+  // Atualizar email e reenviar código
   const updateEmailMutation = useMutation({
     mutationFn: async () => {
       if (!newEmail || newEmail === email) {
         throw new Error("Digite um email diferente");
       }
+      
+      const response = await apiRequest("POST", "/api/auth/send-otp", { email: newEmail });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Erro ao enviar código");
+      }
+      
+      // Update stored email
+      sessionStorage.setItem("verificationEmail", newEmail);
       setEmail(newEmail);
       setIsEditing(false);
       setCode("");
-
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email: newEmail,
-      });
-
-      if (error) {
-        throw new Error(error.message || "Erro ao enviar para novo email");
+      
+      // In development, show code in console for testing
+      if (data.code) {
+        console.log("[DEV] Código OTP:", data.code);
       }
+      
+      return data;
     },
     onSuccess: () => {
       toast({
@@ -205,7 +229,6 @@ export default function EmailVerification(props: EmailVerificationProps) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
-          {/* Ícone de email em círculo roxo/azul */}
           <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-full flex items-center justify-center border border-primary/30">
             <Mail className="w-10 h-10 text-primary" />
           </div>
@@ -219,7 +242,6 @@ export default function EmailVerification(props: EmailVerificationProps) {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Campo de código */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Código de Verificação</label>
             <Input
@@ -238,7 +260,6 @@ export default function EmailVerification(props: EmailVerificationProps) {
             <p className="text-xs text-muted-foreground text-center">Digite o código de 6 dígitos</p>
           </div>
 
-          {/* Botão Verificar */}
           <Button
             onClick={() => verifyMutation.mutate()}
             disabled={verifyMutation.isPending || code.length !== 6}
@@ -251,7 +272,6 @@ export default function EmailVerification(props: EmailVerificationProps) {
             Verificar Email
           </Button>
 
-          {/* Reenvio de código */}
           <div className="flex justify-center">
             <Button
               variant="ghost"
@@ -265,7 +285,6 @@ export default function EmailVerification(props: EmailVerificationProps) {
             </Button>
           </div>
 
-          {/* Corrigir email */}
           <div className="flex justify-center">
             <Button
               variant="ghost"
@@ -281,7 +300,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
 
         <CardFooter className="text-center text-xs text-muted-foreground">
           <p className="w-full">
-            ✏️ Verifique sua caixa de spam se não encontrar o email.
+            Verifique sua caixa de spam se não encontrar o email.
           </p>
         </CardFooter>
       </Card>
