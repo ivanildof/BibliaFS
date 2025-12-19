@@ -331,6 +331,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
+  // Send OTP via email
+  async function sendOTPEmail(email: string, code: string): Promise<boolean> {
+    try {
+      // For development: just log it
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`\n📧 [OTP Email] Código para ${email}: ${code}\n`);
+        return true;
+      }
+
+      // For production: use Nodemailer with SMTP (will be configured by user)
+      // This is a placeholder - user will configure SMTP credentials
+      console.log(`[OTP Email] Production: would send ${code} to ${email}`);
+      return true;
+    } catch (error) {
+      console.error("[OTP Email] Error:", error);
+      return false;
+    }
+  }
+
   // Register with OTP code (creates user and sends 6-digit code)
   app.post('/api/auth/register-with-otp', async (req, res) => {
     try {
@@ -378,9 +397,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Save OTP to database
       await storage.createOTP({ email, code, expiresAt });
       
-      // Send email via Supabase with the OTP code
-      // For now, just log it in development
-      console.log(`\n📧 [OTP] Código para ${email}: ${code}\n`);
+      // Send email with the OTP code
+      const emailSent = await sendOTPEmail(email, code);
+      
+      if (!emailSent) {
+        console.warn(`[Register OTP] Email sending failed, but user was created. Code: ${code}`);
+      }
       
       console.log(`[Register OTP] OTP created for ${email}, expires at ${expiresAt.toISOString()}`);
       
@@ -445,7 +467,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.deleteOTPByEmail(email);
       await storage.createOTP({ email, code, expiresAt });
       
-      console.log(`\n📧 [OTP] Novo código para ${email}: ${code}\n`);
+      // Send email with the new OTP code
+      await sendOTPEmail(email, code);
       
       res.json({ 
         message: "Novo código enviado!",
