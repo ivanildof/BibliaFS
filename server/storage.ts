@@ -61,18 +61,8 @@ import {
   donations,
   type InsertDonation,
   type Donation,
-  emailOtp,
 } from "@shared/schema";
 
-// OTP Types
-export interface OTPData {
-  id: string;
-  email: string;
-  code: string;
-  expiresAt: Date;
-  verified: boolean;
-  createdAt: Date;
-}
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
 
@@ -191,12 +181,6 @@ export interface IStorage {
   
   // Stats
   getDashboardStats(userId: string): Promise<{ communityPosts: number }>;
-  
-  // Email OTP
-  createOTP(data: { email: string; code: string; expiresAt: Date }): Promise<OTPData>;
-  getOTPByEmail(email: string): Promise<OTPData | undefined>;
-  deleteOTPByEmail(email: string): Promise<void>;
-  markOTPVerified(email: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1685,45 +1669,6 @@ export class DatabaseStorage implements IStorage {
       .where(eq(groupDiscussions.id, discussionId))
       .returning();
     return updated;
-  }
-
-  // ============================================
-  // EMAIL OTP OPERATIONS
-  // ============================================
-  
-  async createOTP(data: { email: string; code: string; expiresAt: Date }): Promise<OTPData> {
-    const [otp] = await db
-      .insert(emailOtp)
-      .values({
-        email: data.email,
-        code: data.code,
-        expiresAt: data.expiresAt,
-        verified: false,
-        createdAt: new Date(),
-      })
-      .returning();
-    return otp as OTPData;
-  }
-
-  async getOTPByEmail(email: string): Promise<OTPData | undefined> {
-    const [otp] = await db
-      .select()
-      .from(emailOtp)
-      .where(eq(emailOtp.email, email))
-      .orderBy(desc(emailOtp.createdAt))
-      .limit(1);
-    return otp as OTPData | undefined;
-  }
-
-  async deleteOTPByEmail(email: string): Promise<void> {
-    await db.delete(emailOtp).where(eq(emailOtp.email, email));
-  }
-
-  async markOTPVerified(email: string): Promise<void> {
-    await db
-      .update(emailOtp)
-      .set({ verified: true })
-      .where(eq(emailOtp.email, email));
   }
 }
 

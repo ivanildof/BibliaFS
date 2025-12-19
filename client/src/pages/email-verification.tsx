@@ -4,9 +4,9 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { Loader2, Mail, RefreshCw, Edit2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/lib/supabase";
 
 interface EmailVerificationProps {
   email?: string;
@@ -54,22 +54,21 @@ export default function EmailVerification(props: EmailVerificationProps) {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Verifica código OTP via backend customizado
+  // Verifica código OTP via Supabase
   const verifyMutation = useMutation({
     mutationFn: async () => {
       if (code.length !== 6) {
         throw new Error("Digite um código de 6 dígitos");
       }
 
-      const response = await apiRequest("POST", "/api/auth/verify-otp", {
+      const { data, error } = await supabase.auth.verifyOtp({
         email,
-        code,
+        token: code,
+        type: 'email',
       });
       
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Código inválido");
+      if (error) {
+        throw new Error(error.message || "Código inválido");
       }
       
       return data;
@@ -94,22 +93,21 @@ export default function EmailVerification(props: EmailVerificationProps) {
     },
   });
 
-  // Reenvio de código via backend
+  // Reenvio de código via Supabase
   const resendMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/auth/resend-otp", { email });
-      const data = await response.json();
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+        },
+      });
       
-      if (!response.ok) {
-        throw new Error(data.message || "Erro ao reenviar código");
+      if (error) {
+        throw new Error(error.message || "Erro ao reenviar código");
       }
       
-      // In development, show code in console for testing
-      if (data.code) {
-        console.log("[DEV] Código OTP:", data.code);
-      }
-      
-      return data;
+      return null;
     },
     onSuccess: () => {
       toast({
@@ -136,11 +134,15 @@ export default function EmailVerification(props: EmailVerificationProps) {
         throw new Error("Digite um email diferente");
       }
       
-      const response = await apiRequest("POST", "/api/auth/send-otp", { email: newEmail });
-      const data = await response.json();
+      const { error } = await supabase.auth.signInWithOtp({
+        email: newEmail,
+        options: {
+          shouldCreateUser: false,
+        },
+      });
       
-      if (!response.ok) {
-        throw new Error(data.message || "Erro ao enviar código");
+      if (error) {
+        throw new Error(error.message || "Erro ao enviar código");
       }
       
       // Update stored email
@@ -149,12 +151,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
       setIsEditing(false);
       setCode("");
       
-      // In development, show code in console for testing
-      if (data.code) {
-        console.log("[DEV] Código OTP:", data.code);
-      }
-      
-      return data;
+      return null;
     },
     onSuccess: () => {
       toast({

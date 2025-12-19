@@ -76,19 +76,17 @@ export default function Register() {
         // Store email in session storage to pass to verification page
         sessionStorage.setItem("verificationEmail", email);
         
-        // Send OTP code via custom backend
+        // Send OTP code via Supabase native OTP
         try {
-          const response = await fetch("/api/auth/send-otp", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
+          const { data: otpData, error } = await supabase.auth.signInWithOtp({
+            email,
+            options: {
+              shouldCreateUser: false,
+            },
           });
           
-          const otpData = await response.json();
-          
-          // In development, log the code for testing
-          if (otpData.code) {
-            console.log("[DEV] Código OTP:", otpData.code);
+          if (error) {
+            console.error("Erro ao enviar OTP:", error.message);
           }
         } catch (error) {
           console.error("Erro ao enviar OTP:", error);

@@ -313,23 +313,6 @@ export async function runMigrations() {
       ON group_answers(discussion_id, created_at DESC)
     `);
 
-    // Create email_otp table for OTP verification
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS email_otp (
-        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
-        email VARCHAR(255) NOT NULL,
-        code VARCHAR(6) NOT NULL,
-        expires_at TIMESTAMP NOT NULL,
-        verified BOOLEAN DEFAULT false,
-        created_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
-
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_email_otp_email 
-      ON email_otp(email)
-    `);
-
     console.log("Migrations completed successfully!");
   } catch (error) {
     console.error("Migration error:", error);

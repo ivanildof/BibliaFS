@@ -273,3 +273,11 @@ bible-audio/
 17. ✅ Sidebar Auto-Close on Navigation - Fixed sidebar closing behavior on mobile when selecting a page from menu
 18. ✅ Audio Playback System - OpenAI TTS API with server-side PostgreSQL cache (tested and working)
 19. ✅ CSP Media Security Policy - Fixed Content Security Policy to allow blob: URL audio playback
+20. ✅ Email Verification OTP - Migrado do sistema customizado para Supabase nativo (Dec 19, 2025)
+    - Usa OTP de 6 dígitos do Supabase
+    - Emails enviados com branding BíbliaFS configurado no Supabase Email Templates
+    - OTP enviado automaticamente após cadastro via `supabase.auth.signInWithOtp()`
+    - Verificação via `supabase.auth.verifyOtp()`
+    - Suporte a reenvio e correção de email
+    - Removidas APIs customizadas: `/api/auth/send-otp`, `/api/auth/verify-otp`, `/api/auth/resend-otp`
+    - Tabela `email_otp` removida do banco (Supabase gerencia internamente)
