@@ -33,6 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { type Lesson } from "@shared/schema";
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -191,6 +192,8 @@ type FormData = z.infer<typeof formSchema>;
 export default function Teacher() {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const isFreeUser = user?.subscriptionPlan === "free";
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [objectives, setObjectives] = useState<string[]>([]);
   const [newObjective, setNewObjective] = useState("");
@@ -274,8 +277,8 @@ export default function Teacher() {
   const handleAssistantSubmit = async () => {
     if (!assistantInput.trim()) return;
     
-    // Check if limit is reached
-    if (limitReached) {
+    // Check if limit is reached (free users only)
+    if (isFreeUser && limitReached) {
       toast({
         title: "Limite de conversas atingido",
         description: "Você atingiu o limite de 20 conversas para o plano gratuito. Assine um plano para continuar usando a IA.",
@@ -306,8 +309,8 @@ export default function Teacher() {
         throw new Error("Resposta vazia do assistente - tente novamente");
       }
       
-      // Update conversation counter
-      if (data.conversationsUsed !== undefined) {
+      // Update conversation counter (free users only)
+      if (isFreeUser && data.conversationsUsed !== undefined) {
         setConversationsUsed(data.conversationsUsed);
         
         // Show warning at 15 conversations
@@ -911,7 +914,7 @@ export default function Teacher() {
               <CardDescription>
                 Faça perguntas sobre conteúdo bíblico, métodos de ensino e planejamento de aulas
               </CardDescription>
-              {conversationsUsed > 0 && (
+              {isFreeUser && conversationsUsed > 0 && (
                 <div className="mt-4 p-3 bg-muted rounded-lg">
                   <p className="text-sm font-medium">
                     Conversas usadas: <span className={conversationsUsed >= 15 ? "text-destructive font-bold" : ""}>{conversationsUsed}</span> / {conversationsLimit}
