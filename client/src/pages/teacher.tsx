@@ -211,9 +211,10 @@ export default function Teacher() {
   const [isAssistantLoading, setIsAssistantLoading] = useState(false);
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [conversationsUsed, setConversationsUsed] = useState(0);
-  const [conversationsLimit] = useState(20);
+  const [conversationsLimit, setConversationsLimit] = useState(0);
   const [showLimitWarning, setShowLimitWarning] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
+  const [userPlan, setUserPlan] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const objectivesRef = useRef<HTMLDivElement>(null);
 
@@ -277,11 +278,21 @@ export default function Teacher() {
   const handleAssistantSubmit = async () => {
     if (!assistantInput.trim()) return;
     
-    // Check if limit is reached (free users only)
-    if (isFreeUser && limitReached) {
+    // Check if limit is reached
+    if (limitReached) {
+      let message = "Você atingiu o limite de conversas.";
+      
+      if (userPlan === "free") {
+        message = "Você atingiu o limite de 20 conversas. Assine um plano premium para continuar.";
+      } else if (userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") {
+        message = "Você atingiu o limite de conversas deste plano. Faça upgrade para Premium Plus.";
+      } else if (userPlan === "premium_plus") {
+        message = "Você atingiu o limite de conversas. Entre em contato para um plano customizado.";
+      }
+      
       toast({
-        title: "Limite de conversas atingido",
-        description: "Você atingiu o limite de 20 conversas para o plano gratuito. Assine um plano para continuar usando a IA.",
+        title: "Limite atingido",
+        description: message,
         variant: "destructive",
       });
       return;
@@ -301,7 +312,7 @@ export default function Teacher() {
       
       if (data.limitReached) {
         setLimitReached(true);
-        throw new Error("Você atingiu o limite de 20 conversas para o plano gratuito.");
+        throw new Error("Você atingiu o limite de conversas.");
       }
       
       if (!data || !data.answer) {
@@ -309,17 +320,36 @@ export default function Teacher() {
         throw new Error("Resposta vazia do assistente - tente novamente");
       }
       
-      // Update conversation counter (free users only)
-      if (isFreeUser && data.conversationsUsed !== undefined) {
+      // Update conversation counter and plan info for all users
+      if (data.conversationsUsed !== undefined) {
         setConversationsUsed(data.conversationsUsed);
+        if (data.conversationsLimit) {
+          setConversationsLimit(data.conversationsLimit);
+        }
+        if (data.plan) {
+          setUserPlan(data.plan);
+        }
         
-        // Show warning at 15 conversations
-        if (data.conversationsUsed === 15) {
-          setShowLimitWarning(true);
-          toast({
-            title: "Você usou 15 de 20 conversas",
-            description: "Considere assinar um plano premium para conversas ilimitadas com a IA.",
-          });
+        // Show warning at 75% of limit
+        if (data.conversationsLimit && data.conversationsUsed >= Math.floor(data.conversationsLimit * 0.75)) {
+          if (!showLimitWarning) {
+            setShowLimitWarning(true);
+            const remaining = data.conversationsLimit - data.conversationsUsed;
+            let upgradeMessage = "";
+            
+            if (data.plan === "free") {
+              upgradeMessage = "Assine um plano premium para mais conversas.";
+            } else if (data.plan === "monthly" || data.plan === "annual" || data.plan === "yearly") {
+              upgradeMessage = "Faça upgrade para Premium Plus para aumentar seu limite.";
+            } else if (data.plan === "premium_plus") {
+              upgradeMessage = "Entre em contato para um plano customizado.";
+            }
+            
+            toast({
+              title: `Próximo do limite (${remaining} conversas restantes)`,
+              description: upgradeMessage,
+            });
+          }
         }
       }
       
@@ -914,19 +944,23 @@ export default function Teacher() {
               <CardDescription>
                 Faça perguntas sobre conteúdo bíblico, métodos de ensino e planejamento de aulas
               </CardDescription>
-              {isFreeUser && conversationsUsed > 0 && (
+              {conversationsUsed > 0 && conversationsLimit > 0 && (
                 <div className="mt-4 p-3 bg-muted rounded-lg">
                   <p className="text-sm font-medium">
-                    Conversas usadas: <span className={conversationsUsed >= 15 ? "text-destructive font-bold" : ""}>{conversationsUsed}</span> / {conversationsLimit}
+                    Conversas usadas: <span className={conversationsUsed >= Math.floor(conversationsLimit * 0.75) ? "text-destructive font-bold" : ""}>{conversationsUsed}</span> / {conversationsLimit}
                   </p>
                   {showLimitWarning && !limitReached && (
                     <p className="text-xs text-yellow-600 dark:text-yellow-500 mt-2">
-                      ⚠️ Você está próximo do limite. Assine um plano premium para conversas ilimitadas.
+                      {userPlan === "free" && "⚠️ Você está próximo do limite. Assine um plano premium."}
+                      {(userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") && "⚠️ Você está próximo do limite. Faça upgrade para Premium Plus."}
+                      {userPlan === "premium_plus" && "⚠️ Você está próximo do limite. Entre em contato para um plano customizado."}
                     </p>
                   )}
                   {limitReached && (
                     <p className="text-xs text-destructive mt-2">
-                      ❌ Limite de conversas atingido. Assine um plano para continuar.
+                      {userPlan === "free" && "❌ Limite atingido. Assine um plano."}
+                      {(userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") && "❌ Limite atingido. Faça upgrade para Premium Plus."}
+                      {userPlan === "premium_plus" && "❌ Limite atingido. Entre em contato para plano customizado."}
                     </p>
                   )}
                 </div>

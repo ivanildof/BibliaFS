@@ -1361,23 +1361,47 @@ REGRAS IMPORTANTES:
         return res.status(503).json({ error: "Serviço de IA indisponível" });
       }
 
-      // Check AI conversation limit for free users
+      // Check AI conversation limit based on subscription plan
       const currentUser = await storage.getUser(userId);
-      if (currentUser?.subscriptionPlan === "free") {
-        const conversationCount = currentUser.aiRequestsToday || 0;
+      const plan = currentUser?.subscriptionPlan || "free";
+      
+      // Define conversation limits by plan
+      const conversationLimits: Record<string, number> = {
+        free: 20,
+        monthly: 100,
+        yearly: 200,
+        annual: 200,
+        premium_plus: 500
+      };
+      
+      const conversationCount = currentUser?.aiRequestsToday || 0;
+      const limit = conversationLimits[plan] || 20;
+      const warningThreshold = Math.floor(limit * 0.75); // Warn at 75% of limit
+      
+      if (conversationCount >= limit) {
+        let upgradeMessage = "";
         
-        if (conversationCount >= 20) {
-          return res.status(429).json({ 
-            error: "Limite de conversas atingido",
-            message: "Você atingiu o limite de 20 conversas para o plano gratuito. Assine um plano premium para conversas ilimitadas.",
-            limitReached: true
-          });
+        if (plan === "free") {
+          upgradeMessage = "Assine um plano premium para mais conversas com a IA.";
+        } else if (plan === "monthly" || plan === "annual" || plan === "yearly") {
+          upgradeMessage = "Faça upgrade para Premium Plus para aumentar seu limite de conversas.";
+        } else if (plan === "premium_plus") {
+          upgradeMessage = "Você atingiu o limite máximo. Entre em contato para um plano customizado com limite maior.";
         }
         
-        // Track warning at 15 conversations
-        if (conversationCount === 15) {
-          console.log(`⚠️ User ${userId} at 15/20 AI conversations (free plan)`);
-        }
+        return res.status(429).json({ 
+          error: "Limite de conversas atingido",
+          message: `Você usou ${conversationCount} de ${limit} conversas. ${upgradeMessage}`,
+          limitReached: true,
+          plan,
+          conversationCount,
+          limit
+        });
+      }
+      
+      // Track warning at 75% of limit
+      if (conversationCount === warningThreshold) {
+        console.log(`⚠️ User ${userId} at ${conversationCount}/${limit} AI conversations (${plan} plan)`);
       }
 
       const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica e teologia. Responda de forma específica, aprofundada e com referências bíblicas quando apropriado.
@@ -1412,28 +1436,42 @@ IMPORTANTE:
         answer: answer.substring(0, 150) 
       });
 
-      // Increment AI request counter for free users
+      // Increment AI request counter for all users
       const updatedUser = await storage.getUser(userId);
-      if (updatedUser?.subscriptionPlan === "free") {
-        const newCount = (updatedUser.aiRequestsToday || 0) + 1;
-        const resetAt = new Date();
-        resetAt.setHours(24, 0, 0, 0); // Reset at midnight
-        
-        if (supabaseAdmin) {
-          await supabaseAdmin.from("users").update({
-            ai_requests_today: newCount,
-            ai_requests_reset_at: resetAt
-          }).eq("id", userId);
-        }
-        
+      const userPlan = updatedUser?.subscriptionPlan || "free";
+      
+      // Define conversation limits by plan
+      const limits: Record<string, number> = {
+        free: 20,
+        monthly: 100,
+        yearly: 200,
+        annual: 200,
+        premium_plus: 500
+      };
+      
+      const newCount = (updatedUser?.aiRequestsToday || 0) + 1;
+      const resetAt = new Date();
+      resetAt.setHours(24, 0, 0, 0); // Reset at midnight
+      const userLimit = limits[userPlan] || 20;
+      
+      if (supabaseAdmin) {
+        await supabaseAdmin.from("users").update({
+          ai_requests_today: newCount,
+          ai_requests_reset_at: resetAt
+        }).eq("id", userId);
+      }
+      
+      // Only return counter info for users with limits (not unlimited plans)
+      if (userPlan !== "premium_plus") {
         res.json({ 
           answer,
           conversationsUsed: newCount,
-          conversationsLimit: 20,
-          conversationsRemaining: 20 - newCount
+          conversationsLimit: userLimit,
+          conversationsRemaining: userLimit - newCount,
+          plan: userPlan
         });
       } else {
-        res.json({ answer });
+        res.json({ answer, plan: userPlan });
       }
     } catch (error: any) {
       console.error("Erro no assistente IA:", error);
