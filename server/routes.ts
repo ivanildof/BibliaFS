@@ -1365,13 +1365,14 @@ REGRAS IMPORTANTES:
       const currentUser = await storage.getUser(userId);
       const plan = currentUser?.subscriptionPlan || "free";
       
-      // Define conversation limits by plan
+      // Define conversation limits by plan (aligned with pricing page)
+      // Free: 3/day, Monthly: 500/month, Yearly: 3750/year (~312/month), Premium Plus: 7200/year (~600/month)
       const conversationLimits: Record<string, number> = {
-        free: 20,
-        monthly: 100,
-        yearly: 200,
-        annual: 200,
-        premium_plus: 500
+        free: 3,
+        monthly: 500,
+        yearly: 312,
+        annual: 312,
+        premium_plus: 600
       };
       
       const conversationCount = currentUser?.aiRequestsToday || 0;
@@ -1440,13 +1441,14 @@ IMPORTANTE:
       const updatedUser = await storage.getUser(userId);
       const userPlan = updatedUser?.subscriptionPlan || "free";
       
-      // Define conversation limits by plan
+      // Define conversation limits by plan (aligned with pricing page)
+      // Free: 3/day, Monthly: 500/month, Yearly: 3750/year (~312/month), Premium Plus: 7200/year (~600/month)
       const limits: Record<string, number> = {
-        free: 20,
-        monthly: 100,
-        yearly: 200,
-        annual: 200,
-        premium_plus: 500
+        free: 3,
+        monthly: 500,
+        yearly: 312,
+        annual: 312,
+        premium_plus: 600
       };
       
       const newCount = (updatedUser?.aiRequestsToday || 0) + 1;

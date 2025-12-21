@@ -283,11 +283,11 @@ export default function Teacher() {
       let message = "Você atingiu o limite de conversas.";
       
       if (userPlan === "free") {
-        message = "Você atingiu o limite de 20 conversas. Assine um plano premium para continuar.";
+        message = "Você atingiu o limite de 3 conversas por dia. Assine um plano premium para mais conversas.";
       } else if (userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") {
-        message = "Você atingiu o limite de conversas deste plano. Faça upgrade para Premium Plus.";
+        message = "Você atingiu o limite mensal de conversas. Faça upgrade para Premium Plus.";
       } else if (userPlan === "premium_plus") {
-        message = "Você atingiu o limite de conversas. Entre em contato para um plano customizado.";
+        message = "Você atingiu o limite mensal de conversas. Entre em contato para um plano customizado.";
       }
       
       toast({
