@@ -75,17 +75,12 @@ export default function Register() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       
-      const email = data.email;
-      
-      // Store email in session storage to pass to verification page
-      sessionStorage.setItem("verificationEmail", email);
-      
       toast({
-        title: "Conta criada!",
-        description: "Verifique seu e-mail para confirmar a conta.",
+        title: "Conta criada com sucesso!",
+        description: "Você pode fazer login agora.",
       });
       
-      setLocation("/email-verification");
+      setLocation("/login");
     },
     onError: (error: any) => {
       toast({
