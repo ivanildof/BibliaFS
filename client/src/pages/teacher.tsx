@@ -207,6 +207,10 @@ export default function Teacher() {
   const [assistantInput, setAssistantInput] = useState("");
   const [isAssistantLoading, setIsAssistantLoading] = useState(false);
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+  const [conversationsUsed, setConversationsUsed] = useState(0);
+  const [conversationsLimit] = useState(20);
+  const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const objectivesRef = useRef<HTMLDivElement>(null);
 
@@ -269,6 +273,16 @@ export default function Teacher() {
 
   const handleAssistantSubmit = async () => {
     if (!assistantInput.trim()) return;
+    
+    // Check if limit is reached
+    if (limitReached) {
+      toast({
+        title: "Limite de conversas atingido",
+        description: "Você atingiu o limite de 20 conversas para o plano gratuito. Assine um plano para continuar usando a IA.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const userMessage = { role: "user" as const, content: assistantInput };
     const questionToSend = assistantInput;
@@ -282,9 +296,28 @@ export default function Teacher() {
       const data = await res.json();
       console.log("Resposta do assistente:", data);
       
+      if (data.limitReached) {
+        setLimitReached(true);
+        throw new Error("Você atingiu o limite de 20 conversas para o plano gratuito.");
+      }
+      
       if (!data || !data.answer) {
         console.error("Resposta inválida:", data);
         throw new Error("Resposta vazia do assistente - tente novamente");
+      }
+      
+      // Update conversation counter
+      if (data.conversationsUsed !== undefined) {
+        setConversationsUsed(data.conversationsUsed);
+        
+        // Show warning at 15 conversations
+        if (data.conversationsUsed === 15) {
+          setShowLimitWarning(true);
+          toast({
+            title: "Você usou 15 de 20 conversas",
+            description: "Considere assinar um plano premium para conversas ilimitadas com a IA.",
+          });
+        }
       }
       
       setAssistantMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
@@ -878,6 +911,23 @@ export default function Teacher() {
               <CardDescription>
                 Faça perguntas sobre conteúdo bíblico, métodos de ensino e planejamento de aulas
               </CardDescription>
+              {conversationsUsed > 0 && (
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <p className="text-sm font-medium">
+                    Conversas usadas: <span className={conversationsUsed >= 15 ? "text-destructive font-bold" : ""}>{conversationsUsed}</span> / {conversationsLimit}
+                  </p>
+                  {showLimitWarning && !limitReached && (
+                    <p className="text-xs text-yellow-600 dark:text-yellow-500 mt-2">
+                      ⚠️ Você está próximo do limite. Assine um plano premium para conversas ilimitadas.
+                    </p>
+                  )}
+                  {limitReached && (
+                    <p className="text-xs text-destructive mt-2">
+                      ❌ Limite de conversas atingido. Assine um plano para continuar.
+                    </p>
+                  )}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

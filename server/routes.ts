@@ -1351,6 +1351,7 @@ REGRAS IMPORTANTES:
   app.post("/api/teacher/ask-assistant", isAuthenticated, async (req: any, res) => {
     try {
       const { question, context } = req.body;
+      const userId = req.user.claims.sub;
       
       if (!question) {
         return res.status(400).json({ error: "Pergunta é obrigatória" });
@@ -1358,6 +1359,25 @@ REGRAS IMPORTANTES:
 
       if (!process.env.OPENAI_API_KEY) {
         return res.status(503).json({ error: "Serviço de IA indisponível" });
+      }
+
+      // Check AI conversation limit for free users
+      const currentUser = await storage.getUser(userId);
+      if (currentUser?.subscriptionPlan === "free") {
+        const conversationCount = currentUser.aiRequestsToday || 0;
+        
+        if (conversationCount >= 20) {
+          return res.status(429).json({ 
+            error: "Limite de conversas atingido",
+            message: "Você atingiu o limite de 20 conversas para o plano gratuito. Assine um plano premium para conversas ilimitadas.",
+            limitReached: true
+          });
+        }
+        
+        // Track warning at 15 conversations
+        if (conversationCount === 15) {
+          console.log(`⚠️ User ${userId} at 15/20 AI conversations (free plan)`);
+        }
       }
 
       const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica e teologia. Responda de forma específica, aprofundada e com referências bíblicas quando apropriado.
@@ -1391,7 +1411,30 @@ IMPORTANTE:
         answerLength: answer.length,
         answer: answer.substring(0, 150) 
       });
-      res.json({ answer });
+
+      // Increment AI request counter for free users
+      const updatedUser = await storage.getUser(userId);
+      if (updatedUser?.subscriptionPlan === "free") {
+        const newCount = (updatedUser.aiRequestsToday || 0) + 1;
+        const resetAt = new Date();
+        resetAt.setHours(24, 0, 0, 0); // Reset at midnight
+        
+        if (supabaseAdmin) {
+          await supabaseAdmin.from("users").update({
+            ai_requests_today: newCount,
+            ai_requests_reset_at: resetAt
+          }).eq("id", userId);
+        }
+        
+        res.json({ 
+          answer,
+          conversationsUsed: newCount,
+          conversationsLimit: 20,
+          conversationsRemaining: 20 - newCount
+        });
+      } else {
+        res.json({ answer });
+      }
     } catch (error: any) {
       console.error("Erro no assistente IA:", error);
       res.status(500).json({ error: "Falha ao processar pergunta" });
