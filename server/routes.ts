@@ -1366,17 +1366,53 @@ REGRAS IMPORTANTES:
       const plan = currentUser?.subscriptionPlan || "free";
       
       // Define conversation limits by plan (aligned with pricing page)
-      // Free: 3/day, Monthly: 500/month, Yearly: 3750/year (~312/month), Premium Plus: 7200/year (~600/month)
+      // Free: 3/day, Monthly: 500/month, Yearly: 3750/year, Premium Plus: 7200/year
       const conversationLimits: Record<string, number> = {
         free: 3,
         monthly: 500,
-        yearly: 312,
-        annual: 312,
-        premium_plus: 600
+        yearly: 3750,
+        annual: 3750,
+        premium_plus: 7200
       };
       
-      const conversationCount = currentUser?.aiRequestsToday || 0;
-      const limit = conversationLimits[plan] || 20;
+      // Check if reset period has passed
+      let conversationCount = currentUser?.aiRequestsToday || 0;
+      const resetAt = currentUser?.aiRequestsResetAt;
+      const now = new Date();
+      
+      // Determine reset period and calculate next reset
+      let shouldReset = false;
+      let nextResetAt = new Date();
+      
+      if (plan === "free") {
+        // Free: daily reset at midnight
+        shouldReset = !!(resetAt && new Date(resetAt) <= now);
+        nextResetAt.setHours(24, 0, 0, 0);
+      } else if (plan === "monthly") {
+        // Monthly: reset on first day of next month
+        shouldReset = !!(resetAt && new Date(resetAt) <= now);
+        nextResetAt.setMonth(nextResetAt.getMonth() + 1);
+        nextResetAt.setDate(1);
+        nextResetAt.setHours(0, 0, 0, 0);
+      } else if (plan === "yearly" || plan === "annual" || plan === "premium_plus") {
+        // Annual/Premium Plus: reset on same day next year
+        shouldReset = !!(resetAt && new Date(resetAt) <= now);
+        nextResetAt.setFullYear(nextResetAt.getFullYear() + 1);
+        nextResetAt.setHours(0, 0, 0, 0);
+      }
+      
+      // Reset counter if period has passed
+      if (shouldReset) {
+        conversationCount = 0;
+        if (supabaseAdmin) {
+          await supabaseAdmin.from("users").update({
+            ai_requests_today: 0,
+            ai_requests_reset_at: nextResetAt
+          }).eq("id", userId);
+        }
+      }
+      
+      const limit = conversationLimits[plan] || 3;
       const warningThreshold = Math.floor(limit * 0.75); // Warn at 75% of limit
       
       if (conversationCount >= limit) {
@@ -1442,29 +1478,40 @@ IMPORTANTE:
       const userPlan = updatedUser?.subscriptionPlan || "free";
       
       // Define conversation limits by plan (aligned with pricing page)
-      // Free: 3/day, Monthly: 500/month, Yearly: 3750/year (~312/month), Premium Plus: 7200/year (~600/month)
+      // Free: 3/day, Monthly: 500/month, Yearly: 3750/year, Premium Plus: 7200/year
       const limits: Record<string, number> = {
         free: 3,
         monthly: 500,
-        yearly: 312,
-        annual: 312,
-        premium_plus: 600
+        yearly: 3750,
+        annual: 3750,
+        premium_plus: 7200
       };
       
       const newCount = (updatedUser?.aiRequestsToday || 0) + 1;
-      const resetAt = new Date();
-      resetAt.setHours(24, 0, 0, 0); // Reset at midnight
-      const userLimit = limits[userPlan] || 20;
+      let nextReset = new Date();
+      const userLimit = limits[userPlan] || 3;
+      
+      // Calculate next reset date based on plan
+      if (userPlan === "free") {
+        nextReset.setHours(24, 0, 0, 0); // Tomorrow midnight
+      } else if (userPlan === "monthly") {
+        nextReset.setMonth(nextReset.getMonth() + 1);
+        nextReset.setDate(1);
+        nextReset.setHours(0, 0, 0, 0); // First day of next month
+      } else if (userPlan === "yearly" || userPlan === "annual" || userPlan === "premium_plus") {
+        nextReset.setFullYear(nextReset.getFullYear() + 1);
+        nextReset.setHours(0, 0, 0, 0); // Same day next year
+      }
       
       if (supabaseAdmin) {
         await supabaseAdmin.from("users").update({
           ai_requests_today: newCount,
-          ai_requests_reset_at: resetAt
+          ai_requests_reset_at: nextReset
         }).eq("id", userId);
       }
       
-      // Only return counter info for users with limits (not unlimited plans)
-      if (userPlan !== "premium_plus") {
+      // Only return counter info for users with periodic limits
+      if (userPlan === "free" || userPlan === "monthly" || userPlan === "yearly" || userPlan === "annual") {
         res.json({ 
           answer,
           conversationsUsed: newCount,
