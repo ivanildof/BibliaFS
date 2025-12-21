@@ -406,9 +406,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Check for specific error messages
         const errorMessage = createError?.message || "Erro ao criar conta";
-        if (errorMessage.includes("already exists")) {
-          return res.status(400).json({ message: "Este e-mail já está em uso." });
+        const errorCode = (createError as any)?.code || "";
+        
+        // Email already exists
+        if (errorMessage.includes("already") || errorCode === "email_exists") {
+          return res.status(400).json({ message: "Este e-mail já está registrado. Tente fazer login ou use um e-mail diferente." });
         }
+        
         if (errorMessage.includes("password")) {
           return res.status(400).json({ message: "A senha deve ter pelo menos 6 caracteres." });
         }
