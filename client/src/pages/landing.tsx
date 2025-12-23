@@ -14,7 +14,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { 
-  Book, 
   Brain, 
   Headphones, 
   GraduationCap, 
@@ -27,10 +26,11 @@ import {
   Zap,
   Shield,
   Globe,
-  LogIn
+  LogIn,
+  Book
 } from "lucide-react";
 import { Link } from "wouter";
-import heroImage from "@assets/generated_images/Open_Bible_with_warm_sunlight_407fbff0.png";
+import logoImage from "@assets/Biblia_FS_1766520633441.png";
 import { useLanguage } from '@/contexts/LanguageContext';
 
 
@@ -143,9 +143,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo/Brand */}
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent">
-              <Book className="h-6 w-6 text-primary-foreground" />
-            </div>
+            <img src={logoImage} alt="BíbliaFS Logo" className="h-10 w-10 object-cover rounded" />
             <div>
               <h2 className="font-display font-bold text-lg text-foreground">BíbliaFS</h2>
               <p className="text-xs text-muted-foreground">Estudo Bíblico Premium</p>
@@ -255,7 +253,7 @@ export default function Landing() {
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: `linear-gradient(135deg, rgba(107,33,240,0.85) 0%, rgba(67,56,202,0.75) 50%, rgba(255,190,11,0.4) 100%), url(${heroImage})`,
+            backgroundImage: `linear-gradient(135deg, rgba(107,33,240,0.85) 0%, rgba(67,56,202,0.75) 50%, rgba(255,190,11,0.4) 100%), url(${logoImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
