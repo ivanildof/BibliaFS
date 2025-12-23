@@ -5,7 +5,7 @@ import { Share2, Copy, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import * as htmlToImage from "html-to-image";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 
 interface DailyVerse {
   id: string;
@@ -24,8 +24,18 @@ export function DailyVerse() {
   const { t } = useLanguage();
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Calculate day of year to ensure query changes daily
+  const dayOfYear = useMemo(() => {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), 0, 0);
+    const diff = today.getTime() - start.getTime();
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+  }, []);
+
   const { data: verse, isLoading } = useQuery<DailyVerse>({
-    queryKey: ["/api/daily-verse"],
+    queryKey: ["/api/daily-verse", dayOfYear],
+    staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
   });
 
   const handleCopyText = async () => {
