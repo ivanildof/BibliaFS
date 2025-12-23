@@ -32,6 +32,8 @@ import {
 import { Link } from "wouter";
 import logoImage from "@assets/Biblia_FS_1766520633441.png";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
 
 
 const themes = [
@@ -99,6 +101,36 @@ const faqs = [
     answer: "Sim! A plataforma de comunidade permite compartilhar versículos, notas e planos de leitura com seu grupo de estudo."
   },
 ];
+
+// Custom hook for scroll-triggered animations
+function useScrollReveal() {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  return { ref, isVisible };
+}
 
 export default function Landing() {
   const { t } = useLanguage();
@@ -253,7 +285,7 @@ export default function Landing() {
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: `linear-gradient(135deg, rgba(107,33,240,0.85) 0%, rgba(67,56,202,0.75) 50%, rgba(255,190,11,0.4) 100%), url(${logoImage})`,
+            backgroundImage: `linear-gradient(135deg, rgba(107,33,240,0.85) 0%, rgba(67,56,202,0.75) 50%, rgba(255,190,11,0.4) 100%)`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -314,15 +346,27 @@ export default function Landing() {
               { icon: Sparkles, title: "Temas Premium", desc: "4 temas exclusivos + personalizáveis", color: "from-amber-400 to-amber-500" },
               { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia + planos sem internet", color: "from-indigo-500 to-purple-500" },
               { icon: Shield, title: "Plano Básico Gratuito", desc: "Recursos essenciais para sempre", color: "from-orange-400 to-amber-500" },
-            ].map((benefit, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-white/80 dark:bg-card/80 border border-purple-200/50 dark:border-purple-800/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${benefit.color} mb-4 shadow-lg`}>
-                  <benefit.icon className="h-7 w-7 text-white" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">{benefit.title}</h3>
-                <p className="text-sm text-muted-foreground">{benefit.desc}</p>
-              </div>
-            ))}
+            ].map((benefit, idx) => {
+              const BenefitCard = () => {
+                const { ref, isVisible } = useScrollReveal();
+                return (
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.6, delay: idx * 0.1 }}
+                    className="p-6 rounded-2xl bg-white/80 dark:bg-card/80 border border-purple-200/50 dark:border-purple-800/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${benefit.color} mb-4 shadow-lg`}>
+                      <benefit.icon className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">{benefit.title}</h3>
+                    <p className="text-sm text-muted-foreground">{benefit.desc}</p>
+                  </motion.div>
+                );
+              };
+              return <BenefitCard key={idx} />;
+            })}
           </div>
         </div>
       </section>
@@ -340,23 +384,36 @@ export default function Landing() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="premium-card border-purple-200/50 dark:border-purple-800/30 bg-white/90 dark:bg-card/90" data-testid={`card-feature-${index}`}>
-                <CardHeader>
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
-                      <feature.icon className="h-7 w-7 text-white" />
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base leading-relaxed">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
+            {features.map((feature, index) => {
+              const FeatureCard = () => {
+                const { ref, isVisible } = useScrollReveal();
+                return (
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                  >
+                    <Card className="premium-card border-purple-200/50 dark:border-purple-800/30 bg-white/90 dark:bg-card/90" data-testid={`card-feature-${index}`}>
+                      <CardHeader>
+                        <div className="flex items-center gap-4 mb-2">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
+                            <feature.icon className="h-7 w-7 text-white" />
+                          </div>
+                        </div>
+                        <CardTitle className="text-xl">{feature.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <CardDescription className="text-base leading-relaxed">
+                          {feature.description}
+                        </CardDescription>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              };
+              return <FeatureCard key={index} />;
+            })}
           </div>
         </div>
       </section>
@@ -519,9 +576,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
-                  <Book className="h-6 w-6 text-white" />
-                </div>
+                <img src={logoImage} alt="BíbliaFS Logo" className="h-10 w-10 object-cover rounded-lg shadow-lg" />
                 <div>
                   <h3 className="font-display font-bold">BíbliaFS</h3>
                   <p className="text-xs text-muted-foreground">Estudo Bíblico Premium</p>
