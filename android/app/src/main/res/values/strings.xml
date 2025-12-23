@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">MeuApp</string>
-    <string name="title_activity_main">MeuApp</string>
-    <string name="package_name">com.myapp.android</string>
-    <string name="custom_url_scheme">com.myapp.android</string>
+    <string name="app_name">BíbliaFS</string>
+    <string name="title_activity_main">BíbliaFS</string>
+    <string name="package_name">com.bibliafullstack.app</string>
+    <string name="custom_url_scheme">com.bibliafullstack.app</string>
 </resources>

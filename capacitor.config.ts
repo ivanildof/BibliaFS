@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.myapp.android',
-  appName: 'MeuApp',
+  appId: 'com.bibliafullstack.app',
+  appName: 'BíbliaFS',
   webDir: 'dist/public',
   server: {
     androidScheme: 'https'
