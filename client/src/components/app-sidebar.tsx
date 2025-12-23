@@ -32,6 +32,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect } from "react";
+import logoImage from "@assets/Biblia_FS_1766520633441.png";
 
 export function AppSidebar() {
   const [location] = useLocation();
@@ -70,9 +71,7 @@ export function AppSidebar() {
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 shadow-lg">
-            <Book className="h-7 w-7 text-white" />
-          </div>
+          <img src={logoImage} alt="BíbliaFS Logo" className="h-12 w-12 object-cover rounded-2xl shadow-lg" />
           <div>
             <h2 className="font-display text-xl font-bold text-gray-800 dark:text-gray-100">{t.common.appName}</h2>
             <p className="text-xs text-gray-500 dark:text-gray-400">{t.sections.premiumStudy}</p>
