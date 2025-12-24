@@ -298,6 +298,33 @@ export default function Security() {
           </CardContent>
         </Card>
 
+        <div className="grid md:grid-cols-3 gap-4 py-8">
+          <Link href="/about">
+            <Card className="hover-elevate cursor-pointer">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold mb-2">Sobre</h3>
+                <p className="text-sm text-muted-foreground">Conheça o BíbliaFS</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/privacy">
+            <Card className="hover-elevate cursor-pointer">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold mb-2">Privacidade</h3>
+                <p className="text-sm text-muted-foreground">Proteção de dados</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/terms">
+            <Card className="hover-elevate cursor-pointer">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold mb-2">Termos</h3>
+                <p className="text-sm text-muted-foreground">Regras e condições</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
         <footer className="text-center text-sm text-muted-foreground py-6 border-t">
           <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
           <p className="mt-1">
