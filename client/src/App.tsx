@@ -73,6 +73,11 @@ function Router() {
           <Route path="/reset-password" component={ResetPassword} />
           <Route path="/planos" component={Pricing} />
           <Route path="/pricing" component={Pricing} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/security" component={Security} />
+          <Route path="/about" component={About} />
+          <Route path="/contact" component={Contact} />
         </>
       ) : (
         <>
