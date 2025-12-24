@@ -196,29 +196,37 @@ export default function About() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  {platforms.map((platform, index) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center justify-between p-2 rounded-lg bg-muted/50"
-                      data-testid={`platform-${platform.name.toLowerCase()}`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <platform.icon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{platform.name}</span>
-                      </div>
-                      <span 
-                        className={`text-xs px-2 py-0.5 rounded-full ${
-                          platform.status === "Disponível" 
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" 
-                            : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-                        }`}
-                        data-testid={`status-platform-${platform.name.toLowerCase()}`}
-                      >
-                        {platform.status}
-                      </span>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="text-sm font-semibold text-muted-foreground mb-2">Disponível:</h4>
+                    <div className="space-y-1">
+                      {platforms.filter(p => p.status === "Disponível").map((platform, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center gap-2 p-2 rounded-lg bg-green-50 dark:bg-green-900/20"
+                          data-testid={`platform-${platform.name.toLowerCase()}`}
+                        >
+                          <platform.icon className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-900 dark:text-green-300">{platform.name}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-muted-foreground mb-2">Em breve:</h4>
+                    <div className="space-y-1">
+                      {platforms.filter(p => p.status === "Em breve").map((platform, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center gap-2 p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20"
+                          data-testid={`platform-${platform.name.toLowerCase()}`}
+                        >
+                          <platform.icon className="h-4 w-4 text-amber-600" />
+                          <span className="text-sm text-amber-900 dark:text-amber-300">{platform.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
