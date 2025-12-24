@@ -283,6 +283,33 @@ export default function About() {
           </div>
         </div>
 
+        <div className="grid md:grid-cols-3 gap-4">
+          <Link href="/privacy">
+            <Card className="hover-elevate cursor-pointer">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold mb-2">Privacidade</h3>
+                <p className="text-sm text-muted-foreground">Proteção de dados</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/terms">
+            <Card className="hover-elevate cursor-pointer">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold mb-2">Termos</h3>
+                <p className="text-sm text-muted-foreground">Regras e condições</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/security">
+            <Card className="hover-elevate cursor-pointer">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold mb-2">Segurança</h3>
+                <p className="text-sm text-muted-foreground">Medidas de segurança</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
         <Card data-testid="card-fabrisite" className="border-none shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
           <CardContent className="p-6 text-center space-y-4">
             <div className="flex justify-center">
