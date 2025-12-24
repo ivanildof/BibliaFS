@@ -27,7 +27,8 @@ import {
   Shield,
   Globe,
   LogIn,
-  Book
+  Book,
+  ExternalLink
 } from "lucide-react";
 import { Link } from "wouter";
 import logoImage from "@assets/Biblia_FS_1766520633441.png";
@@ -293,53 +294,46 @@ export default function Landing() {
         
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative z-10 max-w-5xl mx-auto px-6 text-center"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Badge className="mb-6 bg-amber-400/90 text-purple-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
-              A Revolução do Estudo Bíblico
-            </Badge>
+          <Badge className="mb-6 bg-amber-400/90 text-purple-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
+            A Revolução do Estudo Bíblico
+          </Badge>
+          
+          <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
+            Estude a Bíblia com <span className="text-amber-300">Inteligência Artificial</span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
+            Descubra novos insights teológicos, estude offline e tenha um assistente IA que responde suas dúvidas sobre as escrituras sagradas.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg"
+              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
+              onClick={() => window.location.href = "/api/register"}
+              data-testid="button-start-free"
+            >
+              Começar Grátis
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
             
-            <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
-              Estude a Bíblia com <span className="text-amber-300">Inteligência Artificial</span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-              Descubra novos insights teológicos, estude offline e tenha um assistente IA que responde suas dúvidas sobre as escrituras sagradas.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg"
-                className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
-                onClick={() => window.location.href = "/api/register"}
-                data-testid="button-start-free"
-              >
-                Começar Grátis
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              
-              <Button 
-                size="lg"
-                variant="outline"
-                className="text-lg px-10 py-6 rounded-full bg-white/15 backdrop-blur-lg border-2 border-white/60 text-white hover:bg-white/25 hover:border-white/80 shadow-lg"
-                onClick={() => {
-                  document.getElementById("recursos")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                data-testid="button-see-features"
-              >
-                Veja os Recursos
-              </Button>
-            </div>
-          </motion.div>
-        </div>
+            <Button 
+              size="lg"
+              variant="outline"
+              className="text-lg px-10 py-6 rounded-full bg-white/15 backdrop-blur-lg border-2 border-white/60 text-white hover:bg-white/25 hover:border-white/80 shadow-lg"
+              onClick={() => {
+                document.getElementById("recursos")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              data-testid="button-see-features"
+            >
+              Veja os Recursos
+            </Button>
+          </div>
+        </motion.div>
       </section>
 
       {/* Benefits Section */}
@@ -453,7 +447,7 @@ export default function Landing() {
                     animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <Card className="overflow-hidden hover-elevate" data-testid={`card-theme-${index}`}>
+                    <Card className="overflow-hidden hover-elevate h-full" data-testid={`card-theme-${index}`}>
                       <div className="h-32 flex items-center justify-center" style={{ backgroundColor: theme.primary }}>
                         <Book className="h-16 w-16" style={{ color: theme.secondary }} />
                       </div>
@@ -482,37 +476,39 @@ export default function Landing() {
             </p>
           </div>
           
-          <Card className="border-2 border-primary/50">
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10">
-              <h3 className="font-display text-2xl font-bold">Funcionalidades Exclusivas</h3>
-              <p className="text-muted-foreground mt-2">Transforme sua forma de estudar a Bíblia</p>
-            </CardHeader>
-            <CardContent className="pt-8">
-              <div className="grid md:grid-cols-2 gap-6">
-                {premiumFeatures.map((feature, index) => {
-                  const FeatureItem = () => {
-                    const { ref, isVisible } = useScrollReveal();
-                    return (
-                      <motion.div 
-                        ref={ref}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-                        transition={{ duration: 0.3, delay: index * 0.03 }}
-                        className="flex items-start gap-3" 
-                        data-testid={`feature-item-${index}`}
-                      >
-                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-accent/30 mt-0.5">
-                          <Check className="h-4 w-4 text-primary" />
-                        </div>
-                        <span className="text-base font-medium leading-relaxed">{feature}</span>
-                      </motion.div>
-                    );
-                  };
-                  return <FeatureItem key={index} />;
-                })}
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <Card className="border-2 border-primary/50 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10">
+                <h3 className="font-display text-2xl font-bold">Funcionalidades Exclusivas</h3>
+                <p className="text-muted-foreground mt-2">Transforme sua forma de estudar a Bíblia</p>
+              </CardHeader>
+              <CardContent className="pt-8">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {premiumFeatures.map((feature, index) => (
+                    <motion.div 
+                      key={index} 
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="flex items-start gap-3" 
+                      data-testid={`feature-item-${index}`}
+                    >
+                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-accent/30 mt-0.5">
+                        <Check className="h-4 w-4 text-primary" />
+                      </div>
+                      <span className="text-base font-medium leading-relaxed">{feature}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
@@ -535,9 +531,9 @@ export default function Landing() {
                 return (
                   <motion.div
                     ref={ref}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                    animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <Card className="hover-elevate border-border/50 h-full" data-testid={`testimonial-${index}`}>
                       <CardHeader>
@@ -658,35 +654,31 @@ export default function Landing() {
             </div>
             
             <div>
-              <h4 className="font-bold mb-3">Empresa</h4>
+              <h4 className="font-bold mb-3">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/about" className="text-muted-foreground hover:text-foreground">Sobre</a></li>
-                <li><a href="/contact" className="text-muted-foreground hover:text-foreground">Contato</a></li>
-                <li><a href="/help" className="text-muted-foreground hover:text-foreground">Suporte</a></li>
+                <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacidade</Link></li>
+                <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Termos</Link></li>
+                <li><Link href="/security" className="text-muted-foreground hover:text-foreground">Segurança</Link></li>
+                <li><Link href="/about" className="text-muted-foreground hover:text-foreground">Sobre</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-bold mb-3">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/privacy" className="text-muted-foreground hover:text-foreground">Privacidade</a></li>
-                <li><a href="/terms" className="text-muted-foreground hover:text-foreground">Termos</a></li>
-                <li><a href="/security" className="text-muted-foreground hover:text-foreground">Segurança</a></li>
-              </ul>
+              <h4 className="font-bold mb-3">Desenvolvedor</h4>
+              <a 
+                href="https://fabrisite.com.br/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                FabriSite
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
           </div>
           
-          <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-            © 2026 - BíbliaFS. Todos os direitos reservados. Desenvolvido por{" "}
-            <a 
-              href="https://fabrisite.com.br/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline font-semibold"
-              data-testid="link-fabrisite"
-            >
-              FabriSite
-            </a>
+          <div className="pt-8 border-t border-purple-200/50 dark:border-purple-800/30 text-center text-sm text-muted-foreground">
+            <p>© 2026 BíbliaFS. Todos os direitos reservados. Desenvolvido por FabriSite.</p>
           </div>
         </div>
       </footer>
