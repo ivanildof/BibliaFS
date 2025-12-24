@@ -78,8 +78,8 @@ export default function About() {
   const platforms = [
     { name: "Web", icon: Monitor, status: "Disponível" },
     { name: "Desktop", icon: Monitor, status: "Disponível" },
-    { name: "Android", icon: Smartphone, status: "Em breve" },
-    { name: "iOS", icon: Tablet, status: "Em breve" }
+    { name: "Android", icon: Smartphone, status: "Disponível" },
+    { name: "iOS", icon: Tablet, status: "Disponível" }
   ];
 
   return (
