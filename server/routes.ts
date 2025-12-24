@@ -28,6 +28,47 @@ import { achievements as seedAchievements } from "./seed-achievements";
 import { runMigrations } from "./migrations";
 import { fetchBibleChapter } from "./multilingual-bible-apis";
 
+// Temporary email domain blocklist
+const BLOCKED_DOMAINS = new Set([
+  'tempmail.com',
+  '10minutemail.com',
+  'guerrillamail.com',
+  'mailinator.com',
+  'disposablemail.com',
+  'throwaway.email',
+  'yopmail.com',
+  'trashmail.com',
+  'temp-mail.com',
+  'maildrop.cc',
+  'sharklasers.com',
+  'tempmail.io',
+  'temp-mail.io',
+  'fakeinbox.com',
+  'mytrashmail.com',
+  '0-mail.com',
+  'jetable.org',
+  'pokemail.net',
+  'temp.email',
+  'tempalias.com',
+  'alias.email',
+  'hide.email',
+  'temp-mails.com',
+  'mailnesia.com',
+  'spam4.me',
+  'grr.la',
+  'temp.sh',
+  '1secmail.com',
+]);
+
+function isValidEmailDomain(email: string): boolean {
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return false;
+  if (BLOCKED_DOMAINS.has(domain)) return false;
+  // Basic check: must have at least one dot
+  if (!domain.includes('.')) return false;
+  return true;
+}
+
 // Map Portuguese book names to abbreviations
 const BOOK_NAME_TO_ABBREV: Record<string, string> = {
   'Gênesis': 'gn', 'Êxodo': 'ex', 'Levítico': 'lv', 'Números': 'nm', 'Deuteronômio': 'dt',
@@ -388,6 +429,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!email || !password) {
         return res.status(400).json({ message: "Email e senha são obrigatórios" });
+      }
+
+      // Validate email domain (block temporary/disposable emails)
+      if (!isValidEmailDomain(email)) {
+        return res.status(400).json({ message: "Por favor, use um endereço de e-mail válido. E-mails temporários não são permitidos." });
       }
       
       // Create user with confirmed email (so they don't get signup link)
