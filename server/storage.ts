@@ -383,12 +383,15 @@ export class DatabaseStorage implements IStorage {
         if (!isUnlocked && achievement.category === "streak") {
           let shouldUnlock = false;
 
-          if (achievement.requirement === "Streak de 7 dias" && newStreak >= 7) {
-            shouldUnlock = true;
-          } else if (achievement.requirement === "Streak de 30 dias" && newStreak >= 30) {
-            shouldUnlock = true;
-          } else if (achievement.requirement === "Streak de 100 dias" && newStreak >= 100) {
-            shouldUnlock = true;
+          if (typeof achievement.requirement === 'object' && achievement.requirement?.value) {
+            const requirementValue = achievement.requirement.value;
+            if (requirementValue === 7 && newStreak >= 7) {
+              shouldUnlock = true;
+            } else if (requirementValue === 30 && newStreak >= 30) {
+              shouldUnlock = true;
+            } else if (requirementValue === 100 && newStreak >= 100) {
+              shouldUnlock = true;
+            }
           }
 
           if (shouldUnlock) {
@@ -442,8 +445,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createReadingPlanTemplate(template: InsertReadingPlanTemplate): Promise<ReadingPlanTemplate> {
-    const [created] = await db.insert(readingPlanTemplates).values(template).returning();
-    return created;
+    const created = await db.insert(readingPlanTemplates).values(template as any).returning();
+    return (Array.isArray(created) ? created[0] : created) as ReadingPlanTemplate;
   }
 
   // User Reading Plans
@@ -474,8 +477,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createReadingPlan(plan: InsertReadingPlan): Promise<ReadingPlan> {
-    const [created] = await db.insert(readingPlans).values(plan).returning();
-    return created;
+    const created = await db.insert(readingPlans).values(plan as any).returning();
+    return (Array.isArray(created) ? created[0] : created) as ReadingPlan;
   }
 
   async updateReadingPlan(id: string, userId: string, data: Partial<ReadingPlan>): Promise<ReadingPlan | null> {
@@ -635,8 +638,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPrayer(prayer: InsertPrayer): Promise<Prayer> {
-    const [created] = await db.insert(prayers).values(prayer).returning();
-    return created;
+    const created = await db.insert(prayers).values(prayer as any).returning();
+    return (Array.isArray(created) ? created[0] : created) as Prayer;
   }
 
   async updatePrayer(id: string, userId: string, data: Partial<Prayer>): Promise<Prayer | null> {
@@ -769,8 +772,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPodcast(podcastData: InsertPodcast): Promise<Podcast> {
-    const [podcast] = await db.insert(podcasts).values(podcastData).returning();
-    return podcast;
+    const podcast = await db.insert(podcasts).values(podcastData as any).returning();
+    return (Array.isArray(podcast) ? podcast[0] : podcast) as Podcast;
   }
 
   async updatePodcast(id: string, data: Partial<Podcast>): Promise<Podcast | null> {
@@ -854,8 +857,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createLesson(lesson: InsertLesson): Promise<Lesson> {
-    const [created] = await db.insert(lessons).values(lesson).returning();
-    return created;
+    const created = await db.insert(lessons).values(lesson as any).returning();
+    return (Array.isArray(created) ? created[0] : created) as Lesson;
   }
 
   async updateLesson(id: string, teacherId: string, data: Partial<Lesson>): Promise<Lesson | null> {
