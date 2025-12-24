@@ -291,42 +291,54 @@ export default function Landing() {
           }}
         />
         
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <Badge className="mb-6 bg-amber-400/90 text-purple-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
-            A Revolução do Estudo Bíblico
-          </Badge>
-          
-          <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
-            Estude a Bíblia com <span className="text-amber-300">Inteligência Artificial</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-            Descubra novos insights teológicos, estude offline e tenha um assistente IA que responde suas dúvidas sobre as escrituras sagradas.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg"
-              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
-              onClick={() => window.location.href = "/api/register"}
-              data-testid="button-start-free"
-            >
-              Começar Grátis
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 max-w-5xl mx-auto px-6 text-center"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <Badge className="mb-6 bg-amber-400/90 text-purple-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
+              A Revolução do Estudo Bíblico
+            </Badge>
             
-            <Button 
-              size="lg"
-              variant="outline"
-              className="text-lg px-10 py-6 rounded-full bg-white/15 backdrop-blur-lg border-2 border-white/60 text-white hover:bg-white/25 hover:border-white/80 shadow-lg"
-              onClick={() => {
-                document.getElementById("recursos")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              data-testid="button-see-features"
-            >
-              Veja os Recursos
-            </Button>
-          </div>
+            <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
+              Estude a Bíblia com <span className="text-amber-300">Inteligência Artificial</span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
+              Descubra novos insights teológicos, estude offline e tenha um assistente IA que responde suas dúvidas sobre as escrituras sagradas.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                size="lg"
+                className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
+                onClick={() => window.location.href = "/api/register"}
+                data-testid="button-start-free"
+              >
+                Começar Grátis
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                className="text-lg px-10 py-6 rounded-full bg-white/15 backdrop-blur-lg border-2 border-white/60 text-white hover:bg-white/25 hover:border-white/80 shadow-lg"
+                onClick={() => {
+                  document.getElementById("recursos")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                data-testid="button-see-features"
+              >
+                Veja os Recursos
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -431,16 +443,29 @@ export default function Landing() {
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {themes.map((theme, index) => (
-              <Card key={index} className="overflow-hidden hover-elevate" data-testid={`card-theme-${index}`}>
-                <div className="h-32 flex items-center justify-center" style={{ backgroundColor: theme.primary }}>
-                  <Book className="h-16 w-16" style={{ color: theme.secondary }} />
-                </div>
-                <CardHeader>
-                  <h3 className="text-center font-bold text-lg">{theme.name}</h3>
-                </CardHeader>
-              </Card>
-            ))}
+            {themes.map((theme, index) => {
+              const ThemeCard = () => {
+                const { ref, isVisible } = useScrollReveal();
+                return (
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <Card className="overflow-hidden hover-elevate" data-testid={`card-theme-${index}`}>
+                      <div className="h-32 flex items-center justify-center" style={{ backgroundColor: theme.primary }}>
+                        <Book className="h-16 w-16" style={{ color: theme.secondary }} />
+                      </div>
+                      <CardHeader>
+                        <h3 className="text-center font-bold text-lg">{theme.name}</h3>
+                      </CardHeader>
+                    </Card>
+                  </motion.div>
+                );
+              };
+              return <ThemeCard key={index} />;
+            })}
           </div>
         </div>
       </section>
@@ -464,14 +489,27 @@ export default function Landing() {
             </CardHeader>
             <CardContent className="pt-8">
               <div className="grid md:grid-cols-2 gap-6">
-                {premiumFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-3" data-testid={`feature-item-${index}`}>
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-accent/30 mt-0.5">
-                      <Check className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="text-base font-medium leading-relaxed">{feature}</span>
-                  </div>
-                ))}
+                {premiumFeatures.map((feature, index) => {
+                  const FeatureItem = () => {
+                    const { ref, isVisible } = useScrollReveal();
+                    return (
+                      <motion.div 
+                        ref={ref}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                        transition={{ duration: 0.3, delay: index * 0.03 }}
+                        className="flex items-start gap-3" 
+                        data-testid={`feature-item-${index}`}
+                      >
+                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-accent/30 mt-0.5">
+                          <Check className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="text-base font-medium leading-relaxed">{feature}</span>
+                      </motion.div>
+                    );
+                  };
+                  return <FeatureItem key={index} />;
+                })}
               </div>
             </CardContent>
           </Card>
@@ -491,29 +529,42 @@ export default function Landing() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover-elevate border-border/50" data-testid={`testimonial-${index}`}>
-                <CardHeader>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-white font-bold">
-                      {testimonial.avatar}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg">{testimonial.name}</h3>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="italic text-muted-foreground">"{testimonial.content}"</p>
-                </CardContent>
-              </Card>
-            ))}
+            {testimonials.map((testimonial, index) => {
+              const TestimonialCard = () => {
+                const { ref, isVisible } = useScrollReveal();
+                return (
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                    animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                  >
+                    <Card className="hover-elevate border-border/50 h-full" data-testid={`testimonial-${index}`}>
+                      <CardHeader>
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-white font-bold">
+                            {testimonial.avatar}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-lg">{testimonial.name}</h3>
+                            <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-1 mb-4">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          ))}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="italic text-muted-foreground">"{testimonial.content}"</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              };
+              return <TestimonialCard key={index} />;
+            })}
           </div>
         </div>
       </section>
@@ -531,16 +582,29 @@ export default function Landing() {
           </div>
           
           <Accordion type="single" collapsible className="w-full space-y-4">
-            {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`faq-${index}`} className="border rounded-lg border-border/50 px-4" data-testid={`faq-item-${index}`}>
-                <AccordionTrigger className="font-bold text-lg hover:no-underline py-4">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed pb-4">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+            {faqs.map((faq, index) => {
+              const FAQItem = () => {
+                const { ref, isVisible } = useScrollReveal();
+                return (
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                  >
+                    <AccordionItem value={`faq-${index}`} className="border rounded-lg border-border/50 px-4" data-testid={`faq-item-${index}`}>
+                      <AccordionTrigger className="font-bold text-lg hover:no-underline py-4">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground leading-relaxed pb-4">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
+                );
+              };
+              return <FAQItem key={index} />;
+            })}
           </Accordion>
         </div>
       </section>
