@@ -82,6 +82,8 @@ const VERSIONS = [
 ];
 
 import { AudioPlayer } from "@/components/bible-reader/audio-player";
+import { SEO } from "@/components/seo/SEO";
+import { ShareSheet } from "@/components/ShareSheet";
 
 export default function BibleReader() {
   const { toast } = useToast();
@@ -1606,92 +1608,19 @@ export default function BibleReader() {
         )}
       </main>
 
-      {/* Share Sheet */}
-      <Sheet open={shareSheetOpen} onOpenChange={setShareSheetOpen}>
-        <SheetContent side="bottom" className="h-[90vh]">
-          <SheetHeader>
-            <SheetTitle>{t.bible.shareVerse}</SheetTitle>
-          </SheetHeader>
-          
-          {verseToShare && chapterData && (
-            <div className="mt-6 space-y-6">
-              {/* Preview Card */}
-              <div id="verse-card" className="bg-gradient-to-br from-primary/20 via-background to-primary/10 rounded-lg p-8 border shadow-lg">
-                <div className="space-y-4">
-                  <p className="font-serif text-xl md:text-2xl leading-relaxed text-foreground">
-                    "{verseToShare.text}"
-                  </p>
-                  <p className="text-right font-medium text-muted-foreground">
-                    {chapterData.book.name} {chapterData.chapter.number}:{verseToShare.number}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="grid gap-3">
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    try {
-                      const text = `"${verseToShare.text}"\n\n${chapterData.book.name} ${chapterData.chapter.number}:${verseToShare.number}`;
-                      await navigator.clipboard.writeText(text);
-                      toast({
-                        title: t.bible.copied,
-                        description: t.bible.verseCopied,
-                      });
-                    } catch (error) {
-                      toast({
-                        title: t.bible.error,
-                        description: t.bible.failedToCopy,
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  data-testid="button-copy-text"
-                >
-                  <Copy className="h-4 w-4 mr-2" />
-                  {t.bible.copyText}
-                </Button>
-                
-                <Button
-                  onClick={async () => {
-                    try {
-                      const { toPng } = await import('html-to-image');
-                      const element = document.getElementById('verse-card');
-                      if (!element) return;
-                      
-                      const dataUrl = await toPng(element, {
-                        quality: 1,
-                        pixelRatio: 2,
-                      });
-                      
-                      const link = document.createElement('a');
-                      link.download = `${chapterData.book.abbrev}-${chapterData.chapter.number}-${verseToShare.number}.png`;
-                      link.href = dataUrl;
-                      link.click();
-                      
-                      toast({
-                        title: t.bible.downloadStarted,
-                        description: t.bible.verseImageDownloaded,
-                      });
-                    } catch (error) {
-                      toast({
-                        title: t.bible.error,
-                        description: t.bible.failedToGenerate,
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  data-testid="button-download-image"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  {t.bible.downloadImage}
-                </Button>
-              </div>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
+      {/* Share Sheet with Social Media Options */}
+      {verseToShare && chapterData && (
+        <ShareSheet
+          open={shareSheetOpen}
+          onOpenChange={setShareSheetOpen}
+          bookName={t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
+          bookAbbrev={chapterData.book.abbrev}
+          chapter={chapterData.chapter.number}
+          verseNumber={verseToShare.number}
+          verseText={verseToShare.text}
+          version={version}
+        />
+      )}
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-30 px-4">
