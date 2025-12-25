@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -594,31 +595,39 @@ export default function Teacher() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decorative Blur Elements */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[150px] -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto p-6 relative z-10">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12"
+        >
           <div>
-            <h1 className="font-display text-4xl font-bold mb-2 flex items-center gap-3" data-testid="text-page-title">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
-                <GraduationCap className="h-6 w-6 text-white" />
+            <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent flex items-center gap-4" data-testid="text-page-title">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-2xl shadow-primary/20">
+                <GraduationCap className="h-7 w-7 text-white" />
               </div>
               {t.teacherMode.title}
-              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+              <Sparkles className="h-6 w-6 text-primary animate-pulse" />
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Crie aulas, gerencie estudantes e converse com IA
+            <p className="text-lg text-muted-foreground max-w-xl">
+              Crie aulas inspiradoras, gerencie seus alunos e potencialize seu ensino com IA
             </p>
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={(open) => open ? setIsCreateDialogOpen(true) : handleCloseDialog()}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-lesson" onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="h-5 w-5 mr-2" />
+              <Button size="lg" className="rounded-2xl h-14 px-8 shadow-xl shadow-primary/20" data-testid="button-create-lesson" onClick={() => setIsCreateDialogOpen(true)}>
+                <Plus className="h-6 w-6 mr-2" />
                 {t.teacherMode.new_lesson}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl">
+            <DialogContent className="max-w-3xl rounded-3xl border-none bg-card/95 backdrop-blur-2xl">
               <DialogHeader>
                 <DialogTitle>{editingLessonId ? "Editar Aula" : "Criar Nova Aula"}</DialogTitle>
                 <DialogDescription>
@@ -919,265 +928,273 @@ export default function Teacher() {
               </Form>
             </DialogContent>
           </Dialog>
-        </div>
+        </motion.div>
 
         {/* Tabs */}
-        <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as "lessons" | "assistant")} className="mb-8">
-          <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/50 p-1 rounded-xl">
-            <TabsTrigger value="lessons" data-testid="tab-lessons" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all py-3">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Minhas Aulas
-            </TabsTrigger>
-            <TabsTrigger value="assistant" data-testid="tab-assistant" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all py-3">
-              <Brain className="h-4 w-4 mr-2" />
-              Assistente IA Teológico
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as "lessons" | "assistant")} className="mb-10">
+            <TabsList className="grid w-full max-w-md grid-cols-2 mb-10 bg-muted/50 p-1.5 rounded-2xl h-auto">
+              <TabsTrigger value="lessons" data-testid="tab-lessons" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all py-4 text-base font-bold">
+                <BookOpen className="h-5 w-5 mr-2" />
+                Minhas Aulas
+              </TabsTrigger>
+              <TabsTrigger value="assistant" data-testid="tab-assistant" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all py-4 text-base font-bold">
+                <Brain className="h-5 w-5 mr-2" />
+                Assistente IA
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </motion.div>
 
         {/* Assistant Tab */}
         {currentTab === "assistant" && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                Assistente IA Teológico
-              </CardTitle>
-              <CardDescription>
-                Faça perguntas sobre conteúdo bíblico, métodos de ensino e planejamento de aulas
-              </CardDescription>
-              {conversationsUsed > 0 && conversationsLimit > 0 && (
-                <div className="mt-4 p-3 bg-muted rounded-lg">
-                  <p className="text-sm font-medium">
-                    Conversas usadas: <span className={conversationsUsed >= Math.floor(conversationsLimit * 0.75) ? "text-destructive font-bold" : ""}>{conversationsUsed}</span> / {conversationsLimit}
-                  </p>
-                  {showLimitWarning && !limitReached && (
-                    <p className="text-xs text-yellow-600 dark:text-yellow-500 mt-2">
-                      {userPlan === "free" && "⚠️ Você está próximo do limite. Assine um plano premium."}
-                      {(userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") && "⚠️ Você está próximo do limite. Faça upgrade para Premium Plus."}
-                      {userPlan === "premium_plus" && "⚠️ Você está próximo do limite. Entre em contato para um plano customizado."}
-                    </p>
-                  )}
-                  {limitReached && (
-                    <p className="text-xs text-destructive mt-2">
-                      {userPlan === "free" && "❌ Limite atingido. Assine um plano."}
-                      {(userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") && "❌ Limite atingido. Faça upgrade para Premium Plus."}
-                      {userPlan === "premium_plus" && "❌ Limite atingido. Entre em contato para plano customizado."}
-                    </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+            <Card className="rounded-[2.5rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[650px] mb-8">
+              <CardHeader className="bg-primary/5 p-6 md:p-8 border-b border-primary/10">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                      <Brain className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl font-bold">Assistente IA Teológico</CardTitle>
+                      <CardDescription className="text-base">
+                        Pergunte sobre educação bíblica, pedagogia e conteúdo
+                      </CardDescription>
+                    </div>
+                  </div>
+                  {conversationsUsed > 0 && conversationsLimit > 0 && (
+                    <div className="flex flex-col items-end gap-1">
+                      <Badge variant="outline" className="rounded-xl px-4 py-2 bg-background/50 border-primary/20 font-bold text-primary">
+                        {conversationsUsed}/{conversationsLimit} Conversas
+                      </Badge>
+                      {showLimitWarning && !limitReached && (
+                        <span className="text-xs text-amber-600">Próximo do limite</span>
+                      )}
+                      {limitReached && (
+                        <span className="text-xs text-destructive font-bold">Limite atingido</span>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Chat Area */}
-                <div className="border rounded-lg p-4 h-96 overflow-y-auto bg-muted/30 space-y-3">
-                  {assistantMessages.length === 0 ? (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
-                      <p className="text-center">
-                        Comece perguntando algo sobre educação bíblica, pedagogia ou conteúdo...
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+                {assistantMessages.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
+                    <div className="p-6 rounded-[2rem] bg-muted/30">
+                      <MessageSquare className="h-12 w-12 text-muted-foreground" />
+                    </div>
+                    <div className="max-w-md">
+                      <h4 className="font-bold text-xl mb-2">Inicie uma conversa</h4>
+                      <p className="text-muted-foreground text-lg">
+                        "Como posso explicar a graça de Deus para crianças de 7 anos?"
                       </p>
                     </div>
-                  ) : (
-                    <>
-                      {assistantMessages.map((msg, i) => (
-                        <div
-                          key={i}
-                          className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                        >
-                          <div
-                            className={`max-w-md px-4 py-3 rounded-lg ${
-                              msg.role === "user"
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-background border"
-                            }`}
-                          >
-                            <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                          </div>
+                  </div>
+                ) : (
+                  <>
+                    {assistantMessages.map((msg, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 10, x: msg.role === "user" ? 20 : -20 }}
+                        animate={{ opacity: 1, y: 0, x: 0 }}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                      >
+                        <div className={`max-w-[80%] p-5 rounded-[1.5rem] shadow-sm ${
+                          msg.role === "user" 
+                            ? "bg-primary text-white rounded-tr-none" 
+                            : "bg-muted/50 backdrop-blur-sm rounded-tl-none border border-border/50 text-foreground"
+                        }`}>
+                          <p className="text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                         </div>
-                      ))}
-                      {isAssistantLoading && (
-                        <div className="flex justify-start">
-                          <div className="bg-background border px-4 py-2 rounded-lg">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          </div>
+                      </motion.div>
+                    ))}
+                    {isAssistantLoading && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                        <div className="bg-muted/50 p-5 rounded-[1.5rem] rounded-tl-none flex items-center gap-3">
+                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                          <span className="font-bold text-muted-foreground">Pensando...</span>
                         </div>
-                      )}
-                      <div ref={messagesEndRef} />
-                    </>
-                  )}
-                </div>
-
-                {/* Input Area */}
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Faça uma pergunta..."
+                      </motion.div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </>
+                )}
+              </CardContent>
+              <CardFooter className="p-6 md:p-8 bg-background/50 backdrop-blur-xl border-t border-border/50">
+                <div className="flex gap-4 w-full">
+                  <Input 
+                    placeholder="Digite sua dúvida teológica..."
                     value={assistantInput}
                     onChange={(e) => setAssistantInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAssistantSubmit()}
+                    className="flex-1 rounded-2xl h-14 bg-muted/50 border-none px-6 text-lg"
                     disabled={isAssistantLoading}
                     data-testid="input-assistant-question"
                   />
-                  <Button
+                  <Button 
+                    size="icon" 
+                    className="h-14 w-14 rounded-2xl shadow-lg shadow-primary/20" 
                     onClick={handleAssistantSubmit}
                     disabled={isAssistantLoading || !assistantInput.trim()}
-                    size="icon"
                     data-testid="button-send-question"
                   >
                     {isAssistantLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-6 w-6 animate-spin" />
                     ) : (
-                      <MessageSquare className="h-4 w-4" />
+                      <MessageSquare className="h-6 w-6" />
                     )}
                   </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardFooter>
+            </Card>
+          </motion.div>
         )}
 
         {/* Stats */}
         {currentTab === "lessons" && (
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Aulas</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold" data-testid="text-total-lessons">
-                {lessons.length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Aulas Publicadas</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">
-                {publishedLessons.length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.teacherMode.students} Ativos</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                24
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
-              <BarChart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                87%
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10">
+            {[
+              { title: "Total de Aulas", value: lessons.length, icon: BookOpen, color: "text-primary", bg: "bg-primary/10", testId: "text-total-lessons" },
+              { title: "Publicadas", value: publishedLessons.length, icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10" },
+              { title: `${t.teacherMode.students} Ativos`, value: 24, icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+              { title: "Taxa de Conclusão", value: "87%", icon: BarChart, color: "text-amber-500", bg: "bg-amber-500/10" },
+            ].map((stat, idx) => (
+              <motion.div
+                key={stat.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 + idx * 0.05 }}
+              >
+                <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+                  <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                    <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.title}</CardTitle>
+                    <div className={`p-2 rounded-xl ${stat.bg}`}>
+                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-3xl md:text-4xl font-bold ${stat.color}`} data-testid={stat.testId}>
+                      {stat.value}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         )}
 
         {/* Lessons List */}
         {currentTab === "lessons" && (
           <>
             {lessons.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <BookOpen className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhuma aula criada</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Crie sua primeira aula para começar a ensinar
-                  </p>
-                  <Button onClick={() => setIsCreateDialogOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Criar Primeira Aula
-                  </Button>
-                </CardContent>
-              </Card>
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                <Card className="rounded-[3rem] border-none bg-muted/20 backdrop-blur-sm">
+                  <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-background shadow-inner mb-8">
+                      <BookOpen className="h-12 w-12 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-bold text-2xl mb-4">Nenhuma aula criada ainda</h3>
+                    <p className="text-muted-foreground mb-10 max-w-md text-lg">
+                      Crie sua primeira aula e comece a transformar vidas através do ensino bíblico.
+                    </p>
+                    <Button size="lg" className="rounded-2xl h-14 px-10 font-bold shadow-xl shadow-primary/10" onClick={() => setIsCreateDialogOpen(true)}>
+                      <Plus className="h-6 w-6 mr-2" />
+                      Criar Primeira Aula
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-10">
                 {/* Published Lessons */}
                 {publishedLessons.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-lg mb-4">Publicadas</h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {publishedLessons.map((lesson) => (
-                        <Card key={lesson.id} className="hover-elevate" data-testid={`card-lesson-${lesson.id}`}>
-                          <CardHeader>
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <CardTitle className="mb-2">{lesson.title}</CardTitle>
-                                <CardDescription>{lesson.description}</CardDescription>
-                              </div>
-                              <Badge className="bg-green-500/10 text-green-700">Publicada</Badge>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-2 text-sm">
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <BookOpen className="h-4 w-4" />
-                                {lesson.scriptureReferences?.[0]?.book} {lesson.scriptureReferences?.[0]?.chapter}
-                              </div>
-                              {lesson.scheduledFor && (
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                  <Calendar className="h-4 w-4" />
-                                  Agendada
+                    <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      Aulas Publicadas
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <AnimatePresence mode="popLayout">
+                        {publishedLessons.map((lesson, idx) => (
+                          <motion.div
+                            key={lesson.id}
+                            layout
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ delay: idx * 0.05 }}
+                          >
+                            <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg group h-full" data-testid={`card-lesson-${lesson.id}`}>
+                              <CardHeader className="pb-4">
+                                <div className="flex items-start justify-between gap-4 mb-2">
+                                  <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">{lesson.title}</CardTitle>
+                                  <Badge className="rounded-full px-3 py-1 bg-green-500/10 text-green-600 border-none font-bold text-[10px] uppercase tracking-widest shrink-0">Publicada</Badge>
                                 </div>
-                              )}
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <Users className="h-4 w-4" />
-                                12 alunos participando
-                              </div>
-                            </div>
-                          </CardContent>
-                          <CardFooter className="gap-2">
-                            <Button variant="outline" size="sm">
-                              <BarChart className="h-4 w-4 mr-2" />
-                              Ver {t.teacherMode.progress}
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => exportLessonToPDF(lesson)}
-                              data-testid="button-export-pdf"
-                            >
-                              <Download className="h-4 w-4 mr-2" />
-                              PDF
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleEditLesson(lesson)}
-                              data-testid={`button-edit-lesson-${lesson.id}`}
-                            >
-                              Editar
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDeleteLesson(lesson.id)}
-                              className="text-destructive"
-                              data-testid={`button-delete-lesson-${lesson.id}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
+                                <CardDescription className="line-clamp-2">{lesson.description}</CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3 text-sm">
+                                  <div className="flex items-center gap-3 text-primary font-bold">
+                                    <div className="p-1.5 rounded-lg bg-primary/10">
+                                      <BookOpen className="h-4 w-4" />
+                                    </div>
+                                    {lesson.scriptureReferences?.[0]?.book} {lesson.scriptureReferences?.[0]?.chapter}
+                                  </div>
+                                  {lesson.scheduledFor && (
+                                    <div className="flex items-center gap-3 text-muted-foreground">
+                                      <div className="p-1.5 rounded-lg bg-muted">
+                                        <Calendar className="h-4 w-4" />
+                                      </div>
+                                      Aula Agendada
+                                    </div>
+                                  )}
+                                  <div className="flex items-center gap-3 text-muted-foreground">
+                                    <div className="p-1.5 rounded-lg bg-muted">
+                                      <Users className="h-4 w-4" />
+                                    </div>
+                                    12 alunos participando
+                                  </div>
+                                </div>
+                              </CardContent>
+                              <CardFooter className="pt-4 gap-2 flex-wrap">
+                                <Button variant="outline" size="sm" className="rounded-xl">
+                                  <BarChart className="h-4 w-4 mr-1" />
+                                  {t.teacherMode.progress}
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="rounded-xl"
+                                  onClick={() => exportLessonToPDF(lesson)}
+                                  data-testid="button-export-pdf"
+                                >
+                                  <Download className="h-4 w-4 mr-1" />
+                                  PDF
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="rounded-xl"
+                                  onClick={() => handleEditLesson(lesson)}
+                                  data-testid={`button-edit-lesson-${lesson.id}`}
+                                >
+                                  Editar
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  className="rounded-xl hover:bg-destructive/10"
+                                  onClick={() => handleDeleteLesson(lesson.id)}
+                                  data-testid={`button-delete-lesson-${lesson.id}`}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive/70" />
+                                </Button>
+                              </CardFooter>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
                     </div>
                   </div>
                 )}
@@ -1185,37 +1202,50 @@ export default function Teacher() {
                 {/* Draft Lessons */}
                 {draftLessons.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-lg mb-4">Rascunhos ({draftLessons.length})</h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {draftLessons.map((lesson) => (
-                        <Card key={lesson.id} className="border-dashed">
-                          <CardHeader>
-                            <div className="flex items-start justify-between">
-                              <CardTitle className="mb-2">{lesson.title}</CardTitle>
-                              <Badge variant="secondary">Rascunho</Badge>
-                            </div>
-                          </CardHeader>
-                          <CardFooter className="gap-2">
-                            <Button 
-                              variant="outline" 
-                              className="flex-1"
-                              onClick={() => handleEditLesson(lesson)}
-                              data-testid={`button-edit-draft-${lesson.id}`}
-                            >
-                              Continuar Editando
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDeleteLesson(lesson.id)}
-                              className="text-destructive"
-                              data-testid={`button-delete-draft-${lesson.id}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
+                    <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-amber-500" />
+                      Rascunhos ({draftLessons.length})
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <AnimatePresence mode="popLayout">
+                        {draftLessons.map((lesson, idx) => (
+                          <motion.div
+                            key={lesson.id}
+                            layout
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ delay: idx * 0.05 }}
+                          >
+                            <Card className="rounded-2xl border-none bg-muted/30 backdrop-blur-sm border-dashed group h-full">
+                              <CardHeader className="pb-4">
+                                <div className="flex items-start justify-between gap-4">
+                                  <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">{lesson.title}</CardTitle>
+                                  <Badge variant="secondary" className="rounded-full px-3 py-1 border-none font-bold text-[10px] uppercase tracking-widest shrink-0">Rascunho</Badge>
+                                </div>
+                              </CardHeader>
+                              <CardFooter className="gap-3">
+                                <Button 
+                                  className="flex-1 rounded-xl h-11 font-bold"
+                                  onClick={() => handleEditLesson(lesson)}
+                                  data-testid={`button-edit-draft-${lesson.id}`}
+                                >
+                                  Continuar Editando
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  className="rounded-xl hover:bg-destructive/10"
+                                  onClick={() => handleDeleteLesson(lesson.id)}
+                                  data-testid={`button-delete-draft-${lesson.id}`}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive/70" />
+                                </Button>
+                              </CardFooter>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
                     </div>
                   </div>
                 )}
