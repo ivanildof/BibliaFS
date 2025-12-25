@@ -437,6 +437,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create user with confirmed email (so they don't get signup link)
+      if (!supabaseAdmin) {
+        throw new Error("Supabase Admin client not initialized");
+      }
       const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,

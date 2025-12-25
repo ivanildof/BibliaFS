@@ -24,17 +24,14 @@ export function DailyVerse() {
   const { t } = useLanguage();
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Get user's timezone for accurate daily verse rotation
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   const { data: verse, isLoading } = useQuery<DailyVerse>({
-    queryKey: ["/api/daily-verse", timezone],
+    queryKey: ["/api/daily-verse"],
     queryFn: async () => {
-      const response = await fetch(`/api/daily-verse?timezone=${encodeURIComponent(timezone)}`);
+      const response = await fetch("/api/daily-verse");
       if (!response.ok) throw new Error('Failed to fetch daily verse');
       return response.json();
     },
-    staleTime: 0, // Never cache - recalculate based on current day
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
     gcTime: 1000 * 60 * 60 * 24, // Keep in background cache for 24 hours
   });
 
