@@ -47,6 +47,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useOffline } from "@/contexts/OfflineContext";
+import { useTheme, readingThemes } from "@/contexts/ThemeContext";
 import type { Bookmark, Highlight, Note } from "@shared/schema";
 import {
   Popover,
@@ -84,6 +85,8 @@ export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter } = useOffline();
+  const { readingTheme } = useTheme();
+  const currentReadingTheme = readingThemes[readingTheme];
   
   // Parse URL query params for search results
   const urlParams = new URLSearchParams(window.location.search);
@@ -1227,8 +1230,14 @@ export default function BibleReader() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      {/* Main Content - Apply Reading Theme */}
+      <main 
+        className={`max-w-4xl mx-auto px-4 py-6 rounded-lg transition-colors ${readingTheme !== "default" ? "reading-themed-content" : ""}`}
+        style={readingTheme !== "default" ? { 
+          backgroundColor: "var(--reading-bg)", 
+          color: "var(--reading-text)" 
+        } : undefined}
+      >
         {loadingChapter ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -1236,12 +1245,18 @@ export default function BibleReader() {
         ) : chapterData ? (
           <>
             {/* Book Name - Large Centered */}
-            <h1 className="text-center text-3xl md:text-4xl font-serif font-semibold text-foreground mb-2" data-testid="text-book-name">
+            <h1 
+              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2" 
+              data-testid="text-book-name"
+            >
               {t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
             </h1>
             
             {/* Chapter Number - Gigantic Centered */}
-            <div className="text-center text-8xl md:text-9xl font-display font-bold text-foreground/90 mb-8" data-testid="text-chapter-number">
+            <div 
+              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8" 
+              data-testid="text-chapter-number"
+            >
               {chapterData.chapter.number}
             </div>
 
@@ -1267,13 +1282,19 @@ export default function BibleReader() {
                   >
                     <PopoverTrigger asChild>
                       <div 
-                        className={`flex items-baseline gap-2 cursor-pointer rounded-md px-2 py-1 transition-all hover:bg-accent/50 ${highlightBg}`}
+                        className={`flex items-baseline gap-2 cursor-pointer rounded-md px-2 py-1 transition-all ${readingTheme === "default" ? "hover:bg-accent/50" : ""} ${highlightBg}`}
                         data-testid={`verse-container-${verse.number}`}
                       >
-                        <sup className={`text-[0.65rem] font-bold ${getVerseNumberColor(verse.number)} min-w-[1.5rem] text-right flex-shrink-0 leading-none`} data-testid={`verse-number-${verse.number}`}>
+                        <sup 
+                          className={`verse-number text-[0.65rem] font-bold min-w-[1.5rem] text-right flex-shrink-0 leading-none ${readingTheme === "default" ? getVerseNumberColor(verse.number) : ""}`} 
+                          data-testid={`verse-number-${verse.number}`}
+                        >
                           {verse.number}
                         </sup>
-                        <p className="flex-1 font-serif text-base md:text-lg leading-relaxed text-foreground" data-testid={`verse-text-${verse.number}`}>
+                        <p 
+                          className="verse-text flex-1 font-serif text-base md:text-lg leading-relaxed" 
+                          data-testid={`verse-text-${verse.number}`}
+                        >
                           {verse.text}
                         </p>
                       </div>

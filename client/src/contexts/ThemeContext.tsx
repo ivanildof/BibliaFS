@@ -13,11 +13,11 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const readingThemeStyles: Record<ReadingTheme, { bg: string; text: string; name: string }> = {
-  default: { bg: "", text: "", name: "Padrão" },
-  sepia: { bg: "bg-[#f4ecd8]", text: "text-[#5c4b37]", name: "Sépia" },
-  paper: { bg: "bg-[#faf9f6]", text: "text-[#333333]", name: "Papel" },
-  night: { bg: "bg-[#1a1a2e]", text: "text-[#e8e8e8]", name: "Noturno" },
+const readingThemeStyles: Record<ReadingTheme, { bg: string; text: string; name: string; background: string; textColor: string }> = {
+  default: { bg: "", text: "", name: "Padrão", background: "", textColor: "" },
+  sepia: { bg: "bg-[#f4ecd8]", text: "text-[#5c4b37]", name: "Sépia", background: "#f4ecd8", textColor: "#5c4b37" },
+  paper: { bg: "bg-[#faf9f6]", text: "text-[#333333]", name: "Papel", background: "#faf9f6", textColor: "#333333" },
+  night: { bg: "bg-[#1a1a2e]", text: "text-[#e8e8e8]", name: "Noturno", background: "#1a1a2e", textColor: "#e8e8e8" },
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -44,6 +44,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem("readingTheme", readingTheme);
+    
+    // Apply reading theme CSS variables to document root
+    const root = document.documentElement;
+    const themeStyles = readingThemeStyles[readingTheme];
+    
+    if (readingTheme !== "default") {
+      root.style.setProperty("--reading-bg", themeStyles.background);
+      root.style.setProperty("--reading-text", themeStyles.textColor);
+      root.classList.add("reading-theme-active");
+    } else {
+      root.style.removeProperty("--reading-bg");
+      root.style.removeProperty("--reading-text");
+      root.classList.remove("reading-theme-active");
+    }
   }, [readingTheme]);
 
   const setTheme = (newTheme: Theme) => {

@@ -333,4 +333,23 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+
+  /* Reading Theme - applies to Bible reader content only */
+  .reading-themed-content {
+    color: var(--reading-text);
+  }
+  
+  /* Target verse text and headings specifically, not all descendants */
+  .reading-themed-content h1,
+  .reading-themed-content .verse-text,
+  .reading-themed-content .chapter-number,
+  .reading-themed-content .book-name {
+    color: var(--reading-text) !important;
+  }
+  
+  /* Verse numbers - slightly dimmed */
+  .reading-themed-content .verse-number {
+    color: var(--reading-text) !important;
+    opacity: 0.6;
+  }
 }
