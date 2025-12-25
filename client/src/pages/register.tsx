@@ -28,6 +28,9 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
+import logoImage from "@assets/Biblia_FS_1766520633441.png";
+import { motion } from "framer-motion";
+
 export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -96,31 +99,85 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <Book className="w-8 h-8 text-primary" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Criar Conta</CardTitle>
-          <CardDescription>
-            Crie sua conta para começar a estudar a Bíblia
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-purple-50/10 to-amber-50/10 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px]" />
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md relative z-10"
+      >
+        <Card className="border-none shadow-2xl rounded-3xl backdrop-blur-sm bg-card/90">
+          <CardHeader className="text-center space-y-4 pt-8">
+            <motion.div 
+              initial={{ rotate: -10, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mx-auto"
+            >
+              <img src={logoImage} alt="BíbliaFS Logo" className="w-20 h-20 object-cover rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300" />
+            </motion.div>
+            <CardTitle className="text-3xl font-extrabold tracking-tight">Criar Conta</CardTitle>
+            <CardDescription className="text-base font-medium">
+              Junte-se à nossa comunidade de estudo bíblico
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-8 pb-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold text-sm">Nome</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="João"
+                            className="h-12 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary font-medium"
+                            data-testid="input-firstName"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold text-sm">Sobrenome</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Silva"
+                            className="h-12 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary font-medium"
+                            data-testid="input-lastName"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nome</FormLabel>
+                      <FormLabel className="font-bold text-sm">Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="João"
-                          data-testid="input-firstName"
+                          type="email"
+                          placeholder="seu@email.com"
+                          className="h-12 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary font-medium"
+                          data-testid="input-email"
                           {...field}
                         />
                       </FormControl>
@@ -130,133 +187,98 @@ export default function Register() {
                 />
                 <FormField
                   control={form.control}
-                  name="lastName"
+                  name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sobrenome</FormLabel>
+                      <FormLabel className="font-bold text-sm">Senha</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Silva"
-                          data-testid="input-lastName"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Mínimo 6 caracteres"
+                            className="h-12 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary font-medium pr-10"
+                            data-testid="input-password"
+                            {...field}
+                          />
+                          <button
+                            type="button"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            onClick={() => setShowPassword(!showPassword)}
+                            data-testid="button-toggle-password"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="seu@email.com"
-                        data-testid="input-email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Senha</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Sua senha (mínimo 6 caracteres)"
-                          className="pr-10"
-                          data-testid="input-password"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                          onClick={() => setShowPassword(!showPassword)}
-                          data-testid="button-toggle-password"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirmar Senha</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirme sua senha"
-                          className="pr-10"
-                          data-testid="input-confirmPassword"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          data-testid="button-toggle-confirmPassword"
-                        >
-                          {showConfirmPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={registerMutation.isPending}
-                data-testid="button-register"
-              >
-                {registerMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Criando conta...
-                  </>
-                ) : (
-                  "Criar Conta"
-                )}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <p className="text-sm text-center text-muted-foreground">
-            Já tem uma conta?{" "}
-            <Link href="/login" className="text-primary hover:underline" data-testid="link-login">
-              Entrar
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold text-sm">Confirmar Senha</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirme sua senha"
+                            className="h-12 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary font-medium pr-10"
+                            data-testid="input-confirmPassword"
+                            {...field}
+                          />
+                          <button
+                            type="button"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            data-testid="button-toggle-confirmPassword"
+                          >
+                            {showConfirmPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="w-full h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all mt-4"
+                  disabled={registerMutation.isPending}
+                  data-testid="button-register"
+                >
+                  {registerMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Criando conta...
+                    </>
+                  ) : (
+                    "Começar agora"
+                  )}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-6 px-8 pb-10 bg-muted/20 rounded-b-3xl border-t border-border/50">
+            <p className="text-sm text-center text-muted-foreground pt-6 font-medium">
+              Já tem uma conta?{" "}
+              <Link href="/login" className="text-primary font-bold hover:underline underline-offset-4" data-testid="link-login">
+                Fazer login
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </motion.div>
     </div>
   );
 }
