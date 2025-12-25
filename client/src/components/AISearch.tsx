@@ -59,7 +59,7 @@ export function AISearch() {
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -68,7 +68,7 @@ export function AISearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsOpen(true)}
-            className="pl-10"
+            className="pl-10 w-full"
             data-testid="input-ai-search"
           />
         </div>
@@ -76,7 +76,7 @@ export function AISearch() {
           type="submit"
           size="sm"
           disabled={searchMutation.isPending || query.trim().length < 3}
-          className="h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md shrink-0"
+          className="h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md shrink-0 w-full sm:w-auto"
           data-testid="button-ai-search"
         >
           {searchMutation.isPending ? (

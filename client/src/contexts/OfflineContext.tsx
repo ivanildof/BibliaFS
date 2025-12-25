@@ -49,17 +49,26 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
         setDownloadedChapters(keys);
         
         // Initialize SQLite database lazily or in background to not block initial render
-        setTimeout(async () => {
-          try {
-            const ready = await bibleSqlite.init();
-            setSqliteReady(ready);
-            if (ready) {
-              console.log("[OfflineProvider] SQLite Bible database ready");
+        // Moving to an even more deferred approach with requestIdleCallback if available
+        const deferInit = () => {
+          setTimeout(async () => {
+            try {
+              const ready = await bibleSqlite.init();
+              setSqliteReady(ready);
+              if (ready) {
+                console.log("[OfflineProvider] SQLite Bible database ready");
+              }
+            } catch (e) {
+              console.error("Error initializing SQLite in background:", e);
             }
-          } catch (e) {
-            console.error("Error initializing SQLite in background:", e);
-          }
-        }, 1000);
+          }, 3000); // Increased delay to 3 seconds to ensure login screen shows first
+        };
+
+        if ('requestIdleCallback' in window) {
+          (window as any).requestIdleCallback(deferInit);
+        } else {
+          deferInit();
+        }
       } catch (error) {
         console.error("Error initializing offline storage:", error);
       }
