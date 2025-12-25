@@ -73,18 +73,16 @@ export function AISearch() {
           />
           <Button
             type="submit"
-            size="sm"
+            size="icon"
+            variant="ghost"
             disabled={searchMutation.isPending || query.trim().length < 3}
-            className="absolute right-1 top-1/2 -translate-y-1/2"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-primary/10 text-primary"
             data-testid="button-ai-search"
           >
             {searchMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <>
-                <Sparkles className="h-4 w-4 mr-1" />
-                Buscar
-              </>
+              <Sparkles className="h-4 w-4" />
             )}
           </Button>
         </div>
