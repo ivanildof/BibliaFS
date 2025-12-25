@@ -902,7 +902,7 @@ export default function Settings() {
                 <Button 
                   variant="link" 
                   className="w-full justify-start p-0 h-auto"
-                  onClick={() => window.location.href = '/termos'}
+                  onClick={() => window.open('/terms', '_blank')}
                   data-testid="link-terms"
                 >
                   Termos de Uso
@@ -910,7 +910,7 @@ export default function Settings() {
                 <Button 
                   variant="link" 
                   className="w-full justify-start p-0 h-auto"
-                  onClick={() => window.location.href = '/privacidade'}
+                  onClick={() => window.open('/privacy', '_blank')}
                   data-testid="link-privacy"
                 >
                   Política de Privacidade
@@ -918,7 +918,7 @@ export default function Settings() {
                 <Button 
                   variant="link" 
                   className="w-full justify-start p-0 h-auto"
-                  onClick={() => window.location.href = '/ajuda'}
+                  onClick={() => window.open('/help', '_blank')}
                   data-testid="link-help"
                 >
                   Central de Ajuda
@@ -926,7 +926,7 @@ export default function Settings() {
                 <Button 
                   variant="link" 
                   className="w-full justify-start p-0 h-auto"
-                  onClick={() => window.location.href = '/contato'}
+                  onClick={() => window.open('/contact', '_blank')}
                   data-testid="link-contact"
                 >
                   Falar com Suporte
