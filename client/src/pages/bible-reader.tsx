@@ -154,8 +154,21 @@ export default function BibleReader() {
   const [isBooksOpen, setIsBooksOpen] = useState(false);
   const [matchedBooks, setMatchedBooks] = useState<BibleBook[]>([]);
   const [isChaptersOpen, setIsChaptersOpen] = useState(false);
-  const [selectedVerse, setSelectedVerse] = useState<number | null>(queryVerse ? parseInt(queryVerse) : null);
-  const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(false);
+  const [selectedVerse, setSelectedVerse] = useState<number | null>(() => {
+    if (queryVerse) return parseInt(queryVerse);
+    return null;
+  });
+  const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(!!queryVerse);
+
+  // Scroll to verse if provided in URL
+  useEffect(() => {
+    if (queryVerse && chapterData) {
+      const verseElement = document.querySelector(`[data-testid="verse-container-${queryVerse}"]`);
+      if (verseElement) {
+        verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [chapterData, queryVerse]);
   const [noteText, setNoteText] = useState("");
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [verseToShare, setVerseToShare] = useState<{ number: number; text: string } | null>(null);
