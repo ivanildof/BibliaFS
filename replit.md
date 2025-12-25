@@ -288,3 +288,30 @@ bible-audio/
       - Correção de email com novo OTP
       - Sem API customizadas (tudo via Supabase Admin)
       - Tabela `email_otp` removida (Supabase gerencia internamente)
+
+## Completed in Session (Dec 25, 2025)
+21. ✅ AI Semantic Search - Busca inteligente de versículos por tema/contexto
+    - **Endpoint**: `POST /api/bible/ai-search`
+    - **Modelo**: GPT-4o-mini com JSON estruturado
+    - **Funcionalidades**:
+      - Busca semântica por temas teológicos
+      - Retorna 3-8 versículos mais relevantes
+      - Resumo explicativo gerado por IA
+      - Quota tracking (25% do limite do plano)
+    - **Frontend**: Componente `<AISearch />` na Home page
+
+22. ✅ Gamification Banner - Exibição proeminente de XP, streak e conquistas
+    - **Componente**: `<GamificationBanner />` na Home page
+    - **Dados**: XP total, dias de streak, conquistas recentes
+    - **Navegação**: Link direto para página de perfil
+
+23. ✅ Reading Themes - Temas de leitura para conforto visual
+    - **Temas**: Sépia, Papel Envelhecido, Noturno
+    - **Implementação**: CSS Variables + classes escopadas
+    - **Seletor**: Em Configurações → Temas de Leitura
+    - **Persistência**: LocalStorage
+
+24. ✅ Offline Mode - Indicadores visuais e download de capítulos
+    - **Ícones**: CloudOff (baixado), Cloud (não baixado)
+    - **Download**: Capítulo individual ou livro inteiro
+    - **Armazenamento**: IndexedDB + SQLite fallback (NVI)
