@@ -11,7 +11,8 @@ import {
   Award,
   Target,
   Zap,
-  Crown
+  Crown,
+  Check
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Achievement, UserAchievement } from "@shared/schema";
@@ -291,5 +292,4 @@ export default function Progress() {
       </div>
     </div>
   );
-}
 }

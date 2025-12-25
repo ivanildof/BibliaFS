@@ -187,7 +187,7 @@ export default function ReadingPlans() {
           
           <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-lg hover-elevate">
+              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-lg">
                 <Plus className="h-5 w-5 mr-2" />
                 {t.plans.startPlan}
               </Button>
@@ -497,7 +497,7 @@ export default function ReadingPlans() {
                       <CardFooter className="pt-2 pb-6 px-6">
                         <Button 
                           size="lg"
-                          className="w-full rounded-2xl h-12 text-base font-bold shadow-lg shadow-primary/20 hover-elevate transition-all active-elevate-2"
+                          className="w-full rounded-2xl h-12 text-base font-bold shadow-lg shadow-primary/20"
                           onClick={() => completeDayMutation.mutate({ planId: plan.id, day: currentDay })}
                           disabled={
                             completeDayMutation.isPending || 
@@ -547,7 +547,7 @@ export default function ReadingPlans() {
                             {plan.description}
                           </CardDescription>
                         </div>
-                        <Badge variant="default" className="rounded-full px-3 bg-amber-500 hover:bg-amber-600">
+                        <Badge variant="default" className="rounded-full px-3 bg-amber-500">
                           <Trophy className="h-3 w-3 mr-1" />
                           {t.plans.completed}
                         </Badge>
@@ -572,5 +572,4 @@ export default function ReadingPlans() {
       </div>
     </div>
   );
-}
 }
