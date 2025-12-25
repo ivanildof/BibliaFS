@@ -160,6 +160,62 @@ export default function BibleReader() {
   });
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(!!queryVerse);
 
+  // Fetch all Bible books
+  const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
+    queryKey: ["/api/bible/books"],
+    retry: 3,
+    retryDelay: 1000,
+  });
+
+  // Fetch current chapter with offline fallback and multilingual support
+  const { data: chapterData, isLoading: loadingChapter, error: chapterError } = useQuery<Chapter>({
+    queryKey: selectedBook ? [`/api/bible/multilang/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`] : [""],
+    enabled: !!selectedBook,
+    retry: isOnline ? 2 : 0, // Don't retry if offline
+    retryDelay: 1000,
+    queryFn: async ({ queryKey }) => {
+      const url = queryKey[0] as string;
+      if (!url || url === "") return null;
+      
+      // Try offline first if we're offline
+      if (!isOnline && selectedBook) {
+        const offlineData = await getOfflineChapter(selectedBook, selectedChapter, version);
+        if (offlineData) {
+          return offlineData;
+        }
+        throw new Error(t.bible.contentNotAvailableOffline);
+      }
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("API error");
+        }
+        return response.json();
+      } catch (error) {
+        // Try offline fallback if online request fails
+        if (selectedBook) {
+          const offlineData = await getOfflineChapter(selectedBook, selectedChapter, version);
+          if (offlineData) {
+            // Only show toast once every 5 seconds to avoid spam
+            const now = Date.now();
+            const lastToastKey = 'lastOfflineToast';
+            const lastToast = parseInt(sessionStorage.getItem(lastToastKey) || '0');
+            if (now - lastToast > 5000) {
+              toast({
+                title: t.bible.offlineModeTitle,
+                description: t.bible.loadingSavedContent,
+              });
+              sessionStorage.setItem(lastToastKey, now.toString());
+            }
+            return offlineData;
+          }
+        }
+        throw error; // Re-throw if no offline data available
+      }
+    },
+  });
+
   // Scroll to verse if provided in URL
   useEffect(() => {
     if (queryVerse && chapterData) {
@@ -629,62 +685,6 @@ export default function BibleReader() {
       stopAllAudio();
     }
   }, [highlightPopoverOpen, playingVerseNumber]);
-
-  // Fetch all Bible books
-  const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
-    queryKey: ["/api/bible/books"],
-    retry: 3,
-    retryDelay: 1000,
-  });
-
-  // Fetch current chapter with offline fallback and multilingual support
-  const { data: chapterData, isLoading: loadingChapter, error: chapterError } = useQuery<Chapter>({
-    queryKey: selectedBook ? [`/api/bible/multilang/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}`] : [""],
-    enabled: !!selectedBook,
-    retry: isOnline ? 2 : 0, // Don't retry if offline
-    retryDelay: 1000,
-    queryFn: async ({ queryKey }) => {
-      const url = queryKey[0] as string;
-      if (!url || url === "") return null;
-      
-      // Try offline first if we're offline
-      if (!isOnline && selectedBook) {
-        const offlineData = await getOfflineChapter(selectedBook, selectedChapter, version);
-        if (offlineData) {
-          return offlineData;
-        }
-        throw new Error(t.bible.contentNotAvailableOffline);
-      }
-      
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("API error");
-        }
-        return response.json();
-      } catch (error) {
-        // Try offline fallback if online request fails
-        if (selectedBook) {
-          const offlineData = await getOfflineChapter(selectedBook, selectedChapter, version);
-          if (offlineData) {
-            // Only show toast once every 5 seconds to avoid spam
-            const now = Date.now();
-            const lastToastKey = 'lastOfflineToast';
-            const lastToast = parseInt(sessionStorage.getItem(lastToastKey) || '0');
-            if (now - lastToast > 5000) {
-              toast({
-                title: t.bible.offlineModeTitle,
-                description: t.bible.loadingSavedContent,
-              });
-              sessionStorage.setItem(lastToastKey, now.toString());
-            }
-            return offlineData;
-          }
-        }
-        throw error; // Re-throw if no offline data available
-      }
-    },
-  });
 
   // Fetch user bookmarks
   const { data: bookmarks = [] } = useQuery<Bookmark[]>({
