@@ -1519,97 +1519,149 @@ export default function Groups() {
           </TabsContent>
         </Tabs>
       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>Membro desde {group.joinedAt ? formatDistanceToNow(new Date(group.joinedAt), { addSuffix: true, locale: ptBR }) : "agora"}</span>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedGroup(group);
-                        }}
-                        data-testid={`button-view-group-${group.id}`}
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Abrir
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
 
-          <TabsContent value="discover">
-            {publicGroups.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <Globe className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhum grupo público</h3>
-                  <p className="text-muted-foreground">
-                    Seja o primeiro a criar um grupo público!
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {publicGroups.map((group) => {
-                  const isMember = myGroupIds.has(group.id);
-                  
-                  return (
-                    <Card key={group.id} className="hover-elevate" data-testid={`card-discover-${group.id}`}>
-                      <CardHeader>
-                        <CardTitle>{group.name}</CardTitle>
-                        <CardDescription>
-                          {group.description || "Sem descrição"}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <BookOpen className="h-4 w-4" />
-                          <span>Grupo de estudo bíblico</span>
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        {isMember ? (
-                          <Badge variant="secondary" className="w-full justify-center py-2">
-                            Você já é membro
-                          </Badge>
-                        ) : (
-                          <Button 
-                            className="w-full"
-                            onClick={() => joinMutation.mutate(group.id)}
-                            disabled={joinMutation.isPending}
-                            data-testid={`button-join-${group.id}`}
-                          >
-                            {joinMutation.isPending ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <>
-                                <UserPlus className="h-4 w-4 mr-2" />
-                                Participar
-                              </>
-                            )}
-                          </Button>
-                        )}
-                      </CardFooter>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
+      {/* Join by Code Dialog */}
+      <Dialog open={isJoinByCodeDialogOpen} onOpenChange={setIsJoinByCodeDialogOpen}>
+        <DialogContent className="rounded-3xl border-none shadow-2xl">
+          <DialogHeader>
+            <div className="p-3 rounded-2xl bg-primary/10 w-fit mb-4">
+              <UserPlus className="h-6 w-6 text-primary" />
+            </div>
+            <DialogTitle className="text-2xl font-bold">Usar Código de Convite</DialogTitle>
+            <DialogDescription className="text-base">
+              Digite o código que você recebeu para entrar em um grupo privado
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input 
+              placeholder="Digite o código (ex: ABC12345)"
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+              className="h-14 font-mono text-center text-xl rounded-2xl bg-muted/50 border-primary/10 focus-visible:ring-primary tracking-widest"
+              data-testid="input-invite-code"
+            />
+          </div>
+          <DialogFooter className="gap-3 sm:gap-0">
+            <Button 
+              variant="outline" 
+              className="rounded-xl"
+              onClick={() => {
+                setIsJoinByCodeDialogOpen(false);
+                setInviteCode("");
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => acceptInviteMutation.mutate(inviteCode)}
+              disabled={!inviteCode || acceptInviteMutation.isPending}
+              className="rounded-xl font-bold shadow-lg shadow-primary/20"
+              data-testid="button-accept-invite"
+            >
+              {acceptInviteMutation.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Check className="h-4 w-4 mr-2" />
+              )}
+              Entrar no Grupo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Group Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="rounded-3xl border-none shadow-2xl max-w-xl">
+          <DialogHeader>
+            <div className="p-3 rounded-2xl bg-primary/10 w-fit mb-4">
+              <Plus className="h-6 w-6 text-primary" />
+            </div>
+            <DialogTitle className="text-3xl font-bold">Novo Grupo</DialogTitle>
+            <DialogDescription className="text-base">
+              Crie um ambiente seguro para compartilhar conhecimento bíblico.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold text-sm">Nome do Grupo</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: Jovens em Cristo" 
+                        className="h-14 rounded-2xl bg-muted/50 border-primary/10 focus-visible:ring-primary text-lg"
+                        data-testid="input-group-name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold text-sm">Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Qual o objetivo principal deste grupo?" 
+                        rows={3}
+                        className="rounded-2xl bg-muted/50 border-primary/10 focus-visible:ring-primary resize-none p-4"
+                        data-testid="textarea-group-description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-primary/5">
+                    <div className="space-y-0.5">
+                      <FormLabel className="font-bold text-base flex items-center gap-2">
+                        <Globe className="h-4 w-4 text-primary" />
+                        Grupo Público
+                      </FormLabel>
+                      <p className="text-xs text-muted-foreground font-medium">Outras pessoas poderão encontrar e entrar no grupo</p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        data-testid="switch-is-public"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter className="pt-4">
+                <Button 
+                  type="submit" 
+                  disabled={createMutation.isPending}
+                  className="w-full h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20"
+                  data-testid="button-save-group"
+                >
+                  {createMutation.isPending ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : (
+                    <Check className="h-5 w-5 mr-2" />
+                  )}
+                  Criar Comunidade
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
