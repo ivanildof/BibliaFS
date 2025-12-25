@@ -2777,19 +2777,10 @@ IMPORTANTE:
   // Daily Verse Routes
   app.get("/api/daily-verse", async (req, res) => {
     try {
-      // Calculate day of year (1-365) based on user's timezone
-      const timezoneParam = req.query.timezone;
-      const timezone = typeof timezoneParam === 'string' ? timezoneParam : 'America/Sao_Paulo';
-      const formatter = new Intl.DateTimeFormat('en-US', { 
-        timeZone: timezone, 
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit' 
-      });
-      
-      const userLocalDate = new Date(formatter.format(new Date()));
-      const start = new Date(userLocalDate.getFullYear(), 0, 0);
-      const diff = userLocalDate.getTime() - start.getTime();
+      // Calculate day of year (1-365) based on current UTC date to be consistent for everyone
+      const now = new Date();
+      const start = new Date(now.getUTCFullYear(), 0, 0);
+      const diff = now.getTime() - start.getTime();
       const oneDay = 1000 * 60 * 60 * 24;
       const dayOfYear = Math.floor(diff / oneDay);
 
