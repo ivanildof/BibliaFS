@@ -81,6 +81,8 @@ const VERSIONS = [
   { value: "ra", label: "RA" },
 ];
 
+import { AudioPlayer } from "@/components/bible-reader/audio-player";
+
 export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -88,6 +90,10 @@ export default function BibleReader() {
   const { readingTheme } = useTheme();
   const currentReadingTheme = readingThemes[readingTheme];
   
+  // Audio state
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+
   // Parse URL query params for search results
   const urlParams = new URLSearchParams(window.location.search);
   const queryBook = urlParams.get("book");
@@ -282,6 +288,7 @@ export default function BibleReader() {
       
       audio.onloadeddata = () => {
         setIsLoadingAudio(false);
+        setAudioDuration(audio.duration);
         audio.play().then(() => {
           setIsPlayingAudio(true);
           setAudioUrl(blobUrl);
@@ -302,6 +309,14 @@ export default function BibleReader() {
             variant: "destructive",
           });
         });
+      };
+
+      audio.ontimeupdate = () => {
+        setAudioCurrentTime(audio.currentTime);
+        // Salvar progresso a cada 10 segundos
+        if (Math.floor(audio.currentTime) % 10 === 0) {
+          saveAudioProgress(audio.currentTime, audio.duration);
+        }
       };
       
       audio.onended = () => {
