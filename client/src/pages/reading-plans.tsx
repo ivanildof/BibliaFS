@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -164,90 +165,104 @@ export default function ReadingPlans() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-6 sm:py-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decorative Blur Elements */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-6 sm:py-8 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-12"
+        >
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2" data-testid="text-page-title">
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent" data-testid="text-page-title">
               {t.plans.title}
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
               {t.plans.subtitle}
             </p>
           </div>
           
           <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap">
+              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-lg hover-elevate">
                 <Plus className="h-5 w-5 mr-2" />
                 {t.plans.startPlan}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl border-none bg-card/95 backdrop-blur-2xl">
               <DialogHeader>
-                <DialogTitle>Criar Plano de Leitura</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-2xl">Criar Plano de Leitura</DialogTitle>
+                <DialogDescription className="text-base">
                   Escolha um modelo pré-definido ou crie um plano customizado
                 </DialogDescription>
               </DialogHeader>
 
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="templates">Modelos</TabsTrigger>
-                  <TabsTrigger value="custom">Customizado</TabsTrigger>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-6">
+                <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-2xl">
+                  <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm">Modelos</TabsTrigger>
+                  <TabsTrigger value="custom" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm">Customizado</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="templates" className="space-y-4">
+                <TabsContent value="templates" className="space-y-6 mt-6">
               {templatesLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 gap-4">
-                  {templates.map((template) => (
-                    <Card 
-                      key={template.id} 
-                      className={`cursor-pointer transition-all hover-elevate ${
-                        selectedTemplate?.id === template.id ? 'ring-2 ring-primary' : ''
-                      }`}
-                      onClick={() => setSelectedTemplate(template)}
-                      data-testid={`card-template-${template.id}`}
+                  {templates.map((template, idx) => (
+                    <motion.div
+                      key={template.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
                     >
-                      <CardHeader>
-                        <CardTitle className="text-lg truncate">{template.name}</CardTitle>
-                        <CardDescription className="text-sm">
-                          {template.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge variant="secondary">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {template.duration} {t.plans.days}
-                          </Badge>
-                          {template.category && (
-                            <Badge variant="outline">
-                              {template.category}
+                      <Card 
+                        className={`cursor-pointer transition-all hover-elevate rounded-3xl border-none shadow-md bg-card/50 backdrop-blur-sm ${
+                          selectedTemplate?.id === template.id ? 'ring-2 ring-primary bg-primary/5' : ''
+                        }`}
+                        onClick={() => setSelectedTemplate(template)}
+                        data-testid={`card-template-${template.id}`}
+                      >
+                        <CardHeader>
+                          <CardTitle className="text-lg truncate">{template.name}</CardTitle>
+                          <CardDescription className="text-sm line-clamp-2">
+                            {template.description}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant="secondary" className="rounded-full px-3">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {template.duration} {t.plans.days}
                             </Badge>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
+                            {template.category && (
+                              <Badge variant="outline" className="rounded-full px-3">
+                                {template.category}
+                              </Badge>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   ))}
                 </div>
               )}
                 </TabsContent>
 
-                <TabsContent value="custom" className="space-y-4">
-                  <div className="space-y-4">
+                <TabsContent value="custom" className="space-y-6 mt-6">
+                  <div className="space-y-6 bg-muted/30 p-6 rounded-3xl">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="version">Versão</Label>
+                        <Label htmlFor="version" className="text-sm font-medium">Versão</Label>
                         <Select value={customVersion} onValueChange={setCustomVersion}>
-                          <SelectTrigger id="version" data-testid="select-version">
+                          <SelectTrigger id="version" data-testid="select-version" className="rounded-xl bg-background">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="rounded-xl">
                             {BIBLE_VERSIONS.map(v => (
                               <SelectItem key={v} value={v}>{v.toUpperCase()}</SelectItem>
                             ))}
@@ -256,12 +271,12 @@ export default function ReadingPlans() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="book">Livro</Label>
+                        <Label htmlFor="book" className="text-sm font-medium">Livro</Label>
                         <Select value={customBook} onValueChange={setCustomBook}>
-                          <SelectTrigger id="book" data-testid="select-book">
+                          <SelectTrigger id="book" data-testid="select-book" className="rounded-xl bg-background">
                             <SelectValue placeholder="Escolha um livro" />
                           </SelectTrigger>
-                          <SelectContent className="max-h-60">
+                          <SelectContent className="max-h-60 rounded-xl">
                             {BIBLE_BOOKS.map(book => (
                               <SelectItem key={book} value={book}>{book}</SelectItem>
                             ))}
@@ -272,7 +287,7 @@ export default function ReadingPlans() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="start">Capítulo Inicial</Label>
+                        <Label htmlFor="start" className="text-sm font-medium">Capítulo Inicial</Label>
                         <Input 
                           id="start" 
                           type="number" 
@@ -280,12 +295,13 @@ export default function ReadingPlans() {
                           value={customStartChapter}
                           onChange={(e) => setCustomStartChapter(e.target.value)}
                           placeholder="Ex: 1"
+                          className="rounded-xl bg-background"
                           data-testid="input-start-chapter"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="end">Capítulo Final</Label>
+                        <Label htmlFor="end" className="text-sm font-medium">Capítulo Final</Label>
                         <Input 
                           id="end" 
                           type="number" 
@@ -293,29 +309,32 @@ export default function ReadingPlans() {
                           value={customEndChapter}
                           onChange={(e) => setCustomEndChapter(e.target.value)}
                           placeholder="Ex: 5"
+                          className="rounded-xl bg-background"
                           data-testid="input-end-chapter"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="verses">Versículos (opcional)</Label>
+                      <Label htmlFor="verses" className="text-sm font-medium">Versículos (opcional)</Label>
                       <Input 
                         id="verses" 
                         value={customVerses}
                         onChange={(e) => setCustomVerses(e.target.value)}
                         placeholder="Ex: 1-10 ou deixe em branco para todos"
+                        className="rounded-xl bg-background"
                         data-testid="input-verses"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="title">Título do Plano (opcional)</Label>
+                      <Label htmlFor="title" className="text-sm font-medium">Título do Plano (opcional)</Label>
                       <Input 
                         id="title" 
                         value={customTitle}
                         onChange={(e) => setCustomTitle(e.target.value)}
                         placeholder="Ex: Minha Leitura de Mateus"
+                        className="rounded-xl bg-background"
                         data-testid="input-plan-title"
                       />
                     </div>
@@ -323,11 +342,12 @@ export default function ReadingPlans() {
                 </TabsContent>
               </Tabs>
               
-              <DialogFooter>
+              <DialogFooter className="mt-8 gap-3 sm:gap-0">
                 <Button 
                   variant="outline" 
                   onClick={() => setIsTemplatesDialogOpen(false)}
                   data-testid="button-cancel"
+                  className="rounded-xl"
                 >
                   {t.common.cancel}
                 </Button>
@@ -336,6 +356,7 @@ export default function ReadingPlans() {
                     disabled={!selectedTemplate || createFromTemplateMutation.isPending}
                     onClick={() => selectedTemplate && createFromTemplateMutation.mutate(selectedTemplate.id)}
                     data-testid="button-start-plan"
+                    className="rounded-xl shadow-md"
                   >
                     {createFromTemplateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     {createFromTemplateMutation.isPending ? t.plans.starting : t.plans.startPlan}
@@ -345,6 +366,7 @@ export default function ReadingPlans() {
                     disabled={!customBook || !customStartChapter || !customEndChapter || createCustomPlanMutation.isPending}
                     onClick={() => createCustomPlanMutation.mutate()}
                     data-testid="button-create-custom"
+                    className="rounded-xl shadow-md"
                   >
                     {createCustomPlanMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     {createCustomPlanMutation.isPending ? "Criando..." : "Criar Plano"}
@@ -353,141 +375,149 @@ export default function ReadingPlans() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          {[
+            { title: t.plans.activePlans, val: activePlans.length, icon: BookOpen, tid: "text-active-plans", color: "text-primary" },
+            { title: t.plans.completedPlans, val: completedPlans.length, icon: Check, tid: "text-completed-plans", color: "text-green-500" },
+            { title: t.plans.currentDay, val: activePlans[0]?.currentDay ?? 0, icon: Calendar, tid: "text-current-day", color: "text-amber-500" }
+          ].map((stat, idx) => (
+            <motion.div
+              key={stat.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + idx * 0.1 }}
+            >
+              <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg group hover:bg-card transition-colors">
+                <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                  <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{stat.title}</CardTitle>
+                  <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                </CardHeader>
+                <CardContent>
+                  <div className={`text-4xl font-bold ${stat.color}`} data-testid={stat.tid}>
+                    {stat.val}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.plans.activePlans}</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary" data-testid="text-active-plans">
-                {activePlans.length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.plans.completedPlans}</CardTitle>
-              <Check className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold" data-testid="text-completed-plans">
-                {completedPlans.length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.plans.currentDay}</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {activePlans[0]?.currentDay ?? 0}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <section className="mb-12">
-          <h2 className="font-display text-2xl font-bold mb-4">{t.plans.activePlans}</h2>
+        <section className="mb-16">
+          <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
+            <TrendingUp className="h-6 w-6 text-primary" />
+            {t.plans.activePlans}
+          </h2>
           
           {activePlans.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                  <BookOpen className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{t.plans.noActivePlans}</h3>
-                <p className="text-muted-foreground mb-4">
-                  {t.plans.choosePlanDescription}
-                </p>
-                <Button onClick={() => setIsTemplatesDialogOpen(true)} data-testid="button-start-first-plan">
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t.plans.startFirstPlan}
-                </Button>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="rounded-3xl border-none border-dashed bg-muted/30 backdrop-blur-sm">
+                <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-background shadow-inner mb-6">
+                    <BookOpen className="h-10 w-10 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-bold text-xl mb-3">{t.plans.noActivePlans}</h3>
+                  <p className="text-muted-foreground mb-8 max-w-sm">
+                    {t.plans.choosePlanDescription}
+                  </p>
+                  <Button onClick={() => setIsTemplatesDialogOpen(true)} data-testid="button-start-first-plan" size="lg" className="rounded-2xl px-8">
+                    <Plus className="h-5 w-5 mr-2" />
+                    {t.plans.startFirstPlan}
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-6">
-              {activePlans.map((plan) => {
+            <div className="grid md:grid-cols-2 gap-8">
+              {activePlans.map((plan, planIdx) => {
                 const currentDay = plan.currentDay ?? 1;
                 const progress = (currentDay / plan.totalDays) * 100;
                 const schedule = plan.schedule as Array<{ day: number; readings: any[]; isCompleted: boolean }>;
                 const completedDays = schedule.filter(s => s.isCompleted).length;
                 
                 return (
-                  <Card key={plan.id} data-testid={`card-plan-${plan.id}`}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <CardTitle className="mb-2">{plan.title}</CardTitle>
-                          <CardDescription className="text-sm">
-                            {plan.description}
-                          </CardDescription>
+                  <motion.div
+                    key={plan.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + planIdx * 0.1 }}
+                  >
+                    <Card className="rounded-[2.5rem] border-none bg-card/80 backdrop-blur-xl shadow-xl overflow-hidden" data-testid={`card-plan-${plan.id}`}>
+                      <CardHeader className="pb-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <CardTitle className="text-xl sm:text-2xl mb-2">{plan.title}</CardTitle>
+                            <CardDescription className="text-sm line-clamp-2">
+                              {plan.description}
+                            </CardDescription>
+                          </div>
+                          <Badge variant="secondary" className="rounded-full px-4 py-1 bg-primary/10 text-primary border-none text-sm font-semibold">
+                            <Target className="h-3 w-3 mr-1.5" />
+                            {t.plans.day} {currentDay}/{plan.totalDays}
+                          </Badge>
                         </div>
-                        <Badge variant="secondary">
-                          <Target className="h-3 w-3 mr-1" />
-                          {t.plans.day} {currentDay}/{plan.totalDays}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted-foreground">{t.plans.progress}</span>
-                          <span className="font-medium">{Math.round(progress)}%</span>
-                        </div>
-                        <Progress value={progress} className="h-2" />
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {completedDays} {t.plans.of_days_completed.replace('{total}', plan.totalDays.toString())}
-                        </span>
-                        <TrendingUp className="h-4 w-4 text-primary" />
-                      </div>
-
-                      {schedule[currentDay - 1] && !schedule[currentDay - 1].isCompleted && (
-                        <div className="pt-2 border-t">
-                          <p className="text-sm text-muted-foreground mb-2">{t.plans.todayReading}</p>
-                          <div className="space-y-1">
-                            {schedule[currentDay - 1].readings.map((reading: any, idx: number) => (
-                              <p key={idx} className="text-sm font-medium">
-                                {getBookName(reading.book, language)} {reading.chapter}
-                                {reading.verses ? `:${reading.verses}` : ''}
-                              </p>
-                            ))}
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="bg-muted/30 p-4 rounded-[1.5rem]">
+                          <div className="flex justify-between text-sm font-bold mb-3">
+                            <span className="text-muted-foreground">{t.plans.progress}</span>
+                            <span className="text-primary">{Math.round(progress)}%</span>
+                          </div>
+                          <Progress value={progress} className="h-3 rounded-full" />
+                          <div className="flex items-center justify-between text-xs mt-3 text-muted-foreground">
+                            <span>{completedDays} dias concluídos</span>
+                            <span>{plan.totalDays - completedDays} restantes</span>
                           </div>
                         </div>
-                      )}
-                    </CardContent>
-                    <CardFooter>
-                      <Button 
-                        className="w-full"
-                        onClick={() => completeDayMutation.mutate({ planId: plan.id, day: currentDay })}
-                        disabled={
-                          completeDayMutation.isPending || 
-                          (schedule[currentDay - 1]?.isCompleted ?? false)
-                        }
-                        data-testid={`button-complete-day-${plan.id}`}
-                      >
-                        {completeDayMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        {schedule[currentDay - 1]?.isCompleted ? (
-                          <>
-                            <Check className="h-4 w-4 mr-2" />
-                            {t.plans.dayCompleted}
-                          </>
-                        ) : (
-                          t.plans.markDayComplete
+                        
+                        {schedule[currentDay - 1] && !schedule[currentDay - 1].isCompleted && (
+                          <div className="pt-4 border-t border-border/50">
+                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">{t.plans.todayReading}</p>
+                            <div className="grid gap-2">
+                              {schedule[currentDay - 1].readings.map((reading: any, idx: number) => (
+                                <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-muted/20 border border-border/30">
+                                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                                    {idx + 1}
+                                  </div>
+                                  <p className="text-base font-semibold">
+                                    {getBookName(reading.book, language)} {reading.chapter}
+                                    {reading.verses ? `:${reading.verses}` : ''}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         )}
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                      </CardContent>
+                      <CardFooter className="pt-2 pb-6 px-6">
+                        <Button 
+                          size="lg"
+                          className="w-full rounded-2xl h-12 text-base font-bold shadow-lg shadow-primary/20 hover-elevate transition-all active-elevate-2"
+                          onClick={() => completeDayMutation.mutate({ planId: plan.id, day: currentDay })}
+                          disabled={
+                            completeDayMutation.isPending || 
+                            (schedule[currentDay - 1]?.isCompleted ?? false)
+                          }
+                          data-testid={`button-complete-day-${plan.id}`}
+                        >
+                          {completeDayMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                          {schedule[currentDay - 1]?.isCompleted ? (
+                            <>
+                              <Check className="h-5 w-5 mr-2" />
+                              {t.plans.dayCompleted}
+                            </>
+                          ) : (
+                            t.plans.markDayComplete
+                          )}
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
                 );
               })}
             </div>
@@ -496,33 +526,45 @@ export default function ReadingPlans() {
 
         {completedPlans.length > 0 && (
           <section>
-            <h2 className="font-display text-2xl font-bold mb-4">{t.plans.completedPlans}</h2>
+            <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
+              <Trophy className="h-6 w-6 text-amber-500" />
+              {t.plans.completedPlans}
+            </h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {completedPlans.map((plan) => (
-                <Card key={plan.id} className="bg-muted/30" data-testid={`card-completed-plan-${plan.id}`}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <CardTitle className="mb-2">{plan.title}</CardTitle>
-                        <CardDescription className="text-sm">
-                          {plan.description}
-                        </CardDescription>
+              {completedPlans.map((plan, idx) => (
+                <motion.div
+                  key={plan.id}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 + idx * 0.1 }}
+                >
+                  <Card key={plan.id} className="rounded-[2rem] border-none bg-muted/20 backdrop-blur-sm shadow-sm opacity-80" data-testid={`card-completed-plan-${plan.id}`}>
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <CardTitle className="text-lg mb-1">{plan.title}</CardTitle>
+                          <CardDescription className="text-sm line-clamp-1">
+                            {plan.description}
+                          </CardDescription>
+                        </div>
+                        <Badge variant="default" className="rounded-full px-3 bg-amber-500 hover:bg-amber-600">
+                          <Trophy className="h-3 w-3 mr-1" />
+                          {t.plans.completed}
+                        </Badge>
                       </div>
-                      <Badge variant="default" className="bg-primary">
-                        <Trophy className="h-3 w-3 mr-1" />
-                        {t.plans.completed}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t.plans.completedOn} {new Date(plan.completedAt!).toLocaleDateString(language)}
-                      </span>
-                      <Check className="h-5 w-5 text-primary" />
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Concluído em {new Date(plan.completedAt!).toLocaleDateString(language)}
+                        </span>
+                        <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                          <Check className="h-5 w-5 text-green-500" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           </section>
@@ -530,4 +572,5 @@ export default function ReadingPlans() {
       </div>
     </div>
   );
+}
 }
