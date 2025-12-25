@@ -13,13 +13,15 @@ import {
   Brain,
   Headphones,
   Sparkles,
-  TrendingUp,
   Calendar,
+  TrendingUp,
   Award
 } from "lucide-react";
 import { Link } from "wouter";
 import type { ReadingPlan } from "@shared/schema";
 import { DailyVerse } from "@/components/DailyVerse";
+import { GamificationBanner } from "@/components/GamificationBanner";
+import { AISearch } from "@/components/AISearch";
 
 export default function Home() {
   const { toast } = useToast();
@@ -87,6 +89,14 @@ export default function Home() {
             Continue sua jornada espiritual hoje
           </p>
         </div>
+
+        {/* AI Search Bar */}
+        <div className="relative">
+          <AISearch />
+        </div>
+
+        {/* Gamification Banner */}
+        <GamificationBanner />
 
         {/* Daily Verse */}
         <DailyVerse />

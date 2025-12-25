@@ -2361,6 +2361,105 @@ IMPORTANTE:
     }
   });
 
+  // AI-powered semantic Bible search
+  app.post("/api/bible/ai-search", isAuthenticated, async (req: any, res) => {
+    try {
+      const { query } = req.body;
+      const userId = req.user.claims.sub;
+      
+      if (!query || query.length < 3) {
+        return res.status(400).json({ error: "Busca deve ter pelo menos 3 caracteres" });
+      }
+
+      // Check AI quota
+      const quotaCheck = await checkAiQuota(userId);
+      if (!quotaCheck.allowed) {
+        return res.status(429).json({ 
+          error: quotaCheck.message || "Limite de IA atingido",
+          remaining: quotaCheck.remaining 
+        });
+      }
+
+      const openai = new OpenAI();
+      
+      const systemPrompt = `Você é um especialista em Bíblia e teologia. O usuário fará uma pergunta ou buscará por um tema.
+Sua tarefa é retornar versículos bíblicos relevantes para a busca.
+
+IMPORTANTE: Retorne um JSON válido com a seguinte estrutura:
+{
+  "summary": "Um breve resumo de 1-2 frases sobre o tema na Bíblia",
+  "results": [
+    {
+      "reference": "João 3:16",
+      "book": "jo",
+      "chapter": 3,
+      "verse": 16,
+      "text": "Texto do versículo aqui",
+      "relevance": "Alta"
+    }
+  ]
+}
+
+Regras:
+- Retorne entre 3 e 8 versículos mais relevantes
+- Use abreviações de livros em português minúsculo: gn, ex, lv, nm, dt, js, jz, rt, 1sm, 2sm, 1rs, 2rs, 1cr, 2cr, ed, ne, et, job, sl, pv, ec, ct, is, jr, lm, ez, dn, os, jl, am, ob, jn, mq, na, hc, sf, ag, zc, ml, mt, mc, lc, jo, at, rm, 1co, 2co, gl, ef, fp, cl, 1ts, 2ts, 1tm, 2tm, tt, fm, hb, tg, 1pe, 2pe, 1jo, 2jo, 3jo, jd, ap
+- Relevance deve ser: "Alta", "Média" ou "Relacionado"
+- Use a tradução NVI ou ARC para o texto
+- Retorne APENAS o JSON, sem markdown ou explicações adicionais`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: query }
+        ],
+        temperature: 0.3,
+        max_tokens: 2000,
+      });
+
+      // Track AI spending
+      await storage.trackAISpending(userId, AI_REQUEST_COST);
+
+      const responseText = completion.choices[0]?.message?.content || "";
+      
+      try {
+        // Clean up the response - remove markdown code blocks if present
+        let cleanJson = responseText.trim();
+        if (cleanJson.startsWith("```json")) {
+          cleanJson = cleanJson.slice(7);
+        }
+        if (cleanJson.startsWith("```")) {
+          cleanJson = cleanJson.slice(3);
+        }
+        if (cleanJson.endsWith("```")) {
+          cleanJson = cleanJson.slice(0, -3);
+        }
+        cleanJson = cleanJson.trim();
+        
+        const result = JSON.parse(cleanJson);
+        res.json({
+          query,
+          summary: result.summary || "",
+          results: result.results || [],
+        });
+      } catch (parseError) {
+        console.error("[AI Search] Failed to parse response:", responseText);
+        res.status(500).json({ 
+          error: "Erro ao processar resposta da IA",
+          query,
+          results: []
+        });
+      }
+    } catch (error: any) {
+      console.error("[AI Search] Error:", error);
+      res.status(500).json({ 
+        error: error.message || "Erro na busca com IA",
+        query: req.body.query,
+        results: []
+      });
+    }
+  });
+
   // Get user's Bible bookmarks
   app.get("/api/bible/bookmarks", isAuthenticated, async (req: any, res) => {
     try {

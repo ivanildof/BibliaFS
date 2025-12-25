@@ -1,20 +1,38 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type Theme = "light" | "dark";
+type ReadingTheme = "default" | "sepia" | "paper" | "night";
 
 interface ThemeContextType {
   theme: Theme;
+  readingTheme: ReadingTheme;
   setTheme: (theme: Theme) => void;
+  setReadingTheme: (theme: ReadingTheme) => void;
   toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const readingThemeStyles: Record<ReadingTheme, { bg: string; text: string; name: string }> = {
+  default: { bg: "", text: "", name: "Padrão" },
+  sepia: { bg: "bg-[#f4ecd8]", text: "text-[#5c4b37]", name: "Sépia" },
+  paper: { bg: "bg-[#faf9f6]", text: "text-[#333333]", name: "Papel" },
+  night: { bg: "bg-[#1a1a2e]", text: "text-[#e8e8e8]", name: "Noturno" },
+};
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem("theme");
     if (stored === "light" || stored === "dark") return stored;
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+
+  const [readingTheme, setReadingThemeState] = useState<ReadingTheme>(() => {
+    const stored = localStorage.getItem("readingTheme");
+    if (stored === "default" || stored === "sepia" || stored === "paper" || stored === "night") {
+      return stored;
+    }
+    return "default";
   });
 
   useEffect(() => {
@@ -24,8 +42,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem("readingTheme", readingTheme);
+  }, [readingTheme]);
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
+  };
+
+  const setReadingTheme = (newTheme: ReadingTheme) => {
+    setReadingThemeState(newTheme);
   };
 
   const toggleTheme = () => {
@@ -33,7 +59,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, readingTheme, setTheme, setReadingTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -44,3 +70,9 @@ export function useTheme() {
   if (!context) throw new Error("useTheme must be used within ThemeProvider");
   return context;
 }
+
+export function getReadingThemeStyles(readingTheme: ReadingTheme) {
+  return readingThemeStyles[readingTheme];
+}
+
+export const readingThemes = readingThemeStyles;

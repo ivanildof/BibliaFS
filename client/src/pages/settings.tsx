@@ -18,13 +18,15 @@ import {
   BellRing,
   Clock,
   Send,
-  Loader2
+  Loader2,
+  BookOpen
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { useTheme, readingThemes } from "@/contexts/ThemeContext";
 
 const predefinedThemes = [
   { 
@@ -94,6 +96,55 @@ interface NotificationPreferences {
   teacherModeUpdates: boolean;
   weekendOnly: boolean;
   timezone: string;
+}
+
+function ReadingThemeCard() {
+  const { readingTheme, setReadingTheme } = useTheme();
+  
+  const themes = [
+    { id: "default" as const, name: "Padrão", bg: "bg-background", text: "text-foreground", description: "Tema do sistema" },
+    { id: "sepia" as const, name: "Sépia", bg: "bg-[#f4ecd8]", text: "text-[#5c4b37]", description: "Tom quente e acolhedor" },
+    { id: "paper" as const, name: "Papel", bg: "bg-[#faf9f6]", text: "text-[#333333]", description: "Branco suave como papel" },
+    { id: "night" as const, name: "Noturno", bg: "bg-[#1a1a2e]", text: "text-[#e8e8e8]", description: "Ideal para leitura à noite" },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <BookOpen className="h-5 w-5" />
+          Tema de Leitura
+        </CardTitle>
+        <CardDescription>
+          Escolha um tema de fundo para leitura da Bíblia mais confortável
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <RadioGroup 
+          value={readingTheme} 
+          onValueChange={(value) => setReadingTheme(value as typeof readingTheme)}
+          className="grid grid-cols-2 gap-4"
+        >
+          {themes.map((theme) => (
+            <Label
+              key={theme.id}
+              htmlFor={`reading-${theme.id}`}
+              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 cursor-pointer hover-elevate transition-colors [&:has([data-state=checked])]:border-primary`}
+            >
+              <div className={`w-full h-20 rounded-lg ${theme.bg} ${theme.text} flex items-center justify-center font-serif text-sm border`}>
+                "Porque Deus amou..."
+              </div>
+              <div className="text-center">
+                <p className="font-medium text-sm">{theme.name}</p>
+                <p className="text-xs text-muted-foreground">{theme.description}</p>
+              </div>
+              <RadioGroupItem value={theme.id} id={`reading-${theme.id}`} className="sr-only" />
+            </Label>
+          ))}
+        </RadioGroup>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function Settings() {
@@ -404,6 +455,9 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Reading Theme */}
+            <ReadingThemeCard />
           </TabsContent>
 
           <TabsContent value="notifications" className="space-y-6">
