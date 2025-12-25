@@ -190,12 +190,13 @@ export default function Groups() {
 
   const { data: allGroups = [], isLoading: loadingAll } = useQuery<Group[]>({
     queryKey: ["/api/groups"],
-    retry: 2,
+    retry: 0,
   });
 
   const { data: myGroups = [], isLoading: loadingMy } = useQuery<Group[]>({
     queryKey: ["/api/groups/my"],
-    retry: 2,
+    retry: 0,
+    enabled: !!user,
   });
 
   const { data: groupMembers = [] } = useQuery<GroupMember[]>({
@@ -1326,7 +1327,7 @@ export default function Groups() {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && allGroups.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
         <div className="flex items-center justify-center py-20">
