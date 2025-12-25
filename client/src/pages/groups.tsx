@@ -44,6 +44,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -1509,17 +1510,29 @@ export default function Groups() {
                       </CardDescription>
                     </CardHeader>
                     <CardFooter className="bg-primary/5 p-5 group-hover:bg-primary/10 transition-colors">
-                      <Button 
-                        className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10"
-                        onClick={() => joinMutation.mutate(group.id)}
-                        disabled={myGroupIds.has(group.id) || joinMutation.isPending}
-                      >
-                        {myGroupIds.has(group.id) ? (
-                          <><CheckCircle2 className="mr-2 h-5 w-5" /> Já é membro</>
-                        ) : (
-                          "Participar agora"
-                        )}
-                      </Button>
+                      {!user ? (
+                        <Link href="/login">
+                          <Button className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10">
+                            Entrar para participar
+                          </Button>
+                        </Link>
+                      ) : myGroupIds.has(group.id) ? (
+                        <Button 
+                          className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10"
+                          variant="outline"
+                          onClick={() => setSelectedGroup(group)}
+                        >
+                          <CheckCircle2 className="mr-2 h-5 w-5" /> Já é membro
+                        </Button>
+                      ) : (
+                        <Button 
+                          className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10"
+                          onClick={() => joinMutation.mutate(group.id)}
+                          disabled={joinMutation.isPending}
+                        >
+                          {joinMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Participar agora"}
+                        </Button>
+                      )}
                     </CardFooter>
                   </Card>
                 </motion.div>
