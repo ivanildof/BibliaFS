@@ -1,140 +1,187 @@
-# Bíblia+ v2.0 Premium Design Guidelines - Vibrant Edition
+# BíbliaFS Premium Design Guidelines v3.0
 
 ## Design Approach
+**Premium Spiritual Sanctuary**: Blend Apple Music's vibrant gradients + Notion's reading comfort + iOS glassmorphism. Create a luxurious, immersive Bible reading experience where every interaction feels sacred and delightful.
 
-**Premium Spiritual Experience**: Blend Calm's serene elegance + Apple Music's vibrant interface + YouVersion's reading clarity. Create a luxurious, spiritually uplifting sanctuary with rich, alive colors that energize while maintaining sacred sophistication.
+## Core Visual System
 
-## Color & Visual Treatment
+**Vibrant Palette**:
+- Royal Purple: #6B21F0 (primary)
+- Luminous Gold: #FFBE0B (accents)
+- Deep Indigo: #4338CA (secondary)
+- Sunset Orange: #FF6B35 (warm energy)
+- Pure White: #FFFFFF (surfaces)
+- Soft Cream: #FFF9F0 (reading backgrounds)
 
-**Vibrant Core Palette**:
-- **Royal Purple**: #6B21F0 (primary actions, vivid and rich)
-- **Luminous Gold**: #FFBE0B (accents, premium highlights, warm glow)
-- **Deep Indigo**: #4338CA (secondary actions, depth)
-- **Sunset Orange**: #FF6B35 (warm accents, energy)
-- **Pure White**: #FFFFFF (text, cards)
-- **Soft Cream**: #FFF9F0 (warm backgrounds)
+**Glassmorphism Signature**:
+- Standard: backdrop-blur-2xl, bg-white/80, border border-white/20
+- Elevated: backdrop-blur-3xl, bg-white/70, shadow-2xl with purple/10 tint
+- Dark Mode: backdrop-blur-2xl, bg-gray-900/80, border-white/10
 
-**Dynamic Gradients**:
-- Hero/Primary: from-purple-600 via-purple-500 to-amber-400 (45° angle)
-- Secondary: from-indigo-600 to-purple-600
-- Warm Accents: from-orange-500 to-amber-400
-- Backgrounds: from-purple-50 to-amber-50 (very light, 20% opacity)
+**Gradients**:
+- Primary Actions: from-purple-600 to-indigo-600
+- Warm Accents: from-amber-400 to-orange-500
+- Backgrounds: from-purple-50/30 to-amber-50/30
+- Text Highlights: from-purple-600 via-purple-500 to-amber-400
 
-**Visual Signature**:
-- Glassmorphism: backdrop-blur-xl on overlays with saturated tint (bg-purple-500/10)
-- Vivid Shadows: Deep colored shadows (shadow-2xl with purple/amber hues)
-- Glow Effects: box-shadow with purple/gold glow on interactive elements
-- Borders: rounded-2xl standard, rounded-3xl for hero elements, 2px borders in vivid colors
+**Modern Borders**: rounded-3xl for cards/panels, rounded-2xl for buttons/inputs, rounded-full for avatars/FABs
 
 ## Typography
 
-**Fonts** (Google Fonts CDN):
-- **Playfair Display** (serif): Headlines, section headers
-- **Inter** (sans-serif): UI, body text
-- **Crimson Text** (serif): Bible verses
+**Fonts (Google Fonts)**:
+- Playfair Display (serif): Headers, sections
+- Inter (sans-serif): UI, navigation
+- Crimson Text (serif): Bible verses, reading mode
 
-**Hierarchy**:
-- Hero: text-6xl/text-7xl, font-bold, gradient text effect
-- Sections: text-4xl, font-semibold
-- Subsections: text-2xl, font-medium
-- Body: text-lg, leading-relaxed
-- Bible: text-lg, leading-loose
+**Scale**:
+- Hero: text-6xl, font-bold
+- Page Headers: text-4xl, font-semibold
+- Section: text-2xl, font-medium
+- Bible Reading: text-xl, leading-loose (1.8)
+- UI Text: text-base, leading-relaxed
 
-## Layout & Spacing
+## Layout System
 
-**Primitives**: 4, 6, 8, 12, 16, 20, 24
-- Card padding: p-8 to p-12
-- Section spacing: py-20 to py-32
-- Grid gaps: gap-8, gap-12
-- Containers: max-w-7xl general, max-w-4xl reading
+**Spacing Units**: 4, 8, 12, 16, 20, 24, 32
+- Card padding: p-8 (desktop), p-6 (mobile)
+- Section spacing: py-24 (desktop), py-16 (mobile)
+- Grid gaps: gap-8
+- Containers: max-w-7xl (dashboard), max-w-3xl (reading)
 
-## Component Specifications
+## Internal Pages Architecture
 
-### Navigation
-**Top Bar**: Fixed glassmorphism (backdrop-blur-xl, bg-white/90), vivid purple logo, search with purple focus ring-2, profile avatar with gold ring-3 indicator
-**Sidebar**: w-64, vibrant purple-to-indigo gradient (from-purple-600 to-indigo-700), white icons with gold hover states, active item with gold background
+### Bible Reader Page
+**Layout**: Two-column on desktop (70% text, 30% sidebar), single-column mobile
 
-### Cards & Elevation
-**Premium Cards**: rounded-2xl, shadow-2xl with purple tint, white background, gold accent borders (border-l-4)
-**Feature Cards**: Gradient backgrounds (purple-to-indigo), white text, glow effect shadows
-**Bible Cards**: Cream background, gold left border (border-l-4), vivid purple verse numbers
-**Podcast Cards**: Album art rounded-xl, glassmorphism player with purple/gold controls
+**Main Reading Area**:
+- Cream background (bg-cream/95) with subtle gradient overlay
+- Centered text max-w-3xl
+- Verse numbers in gold (text-amber-500), medium weight
+- Chapter headers with purple gradient text
+- Line height: leading-loose (1.8) for comfort
+- Font size toggle: text-lg/xl/2xl options
+- Paragraph spacing: mb-8 between passages
 
-### Interactive Elements
-**Primary Buttons**: rounded-full, px-10 py-4, vibrant gradient (purple-to-amber), white text, gold glow shadow, scale on hover
-**Secondary Buttons**: rounded-full, border-2 purple, transparent, purple text, hover fills with gradient
-**Icon Buttons**: w-12 h-12, rounded-xl, purple-100 background, purple-600 icon, gold hover
-**FAB**: Fixed bottom-right, rounded-full, w-16 h-16, gold gradient, white icon, large glow shadow
+**Glassmorphism Sidebar** (collapsible):
+- backdrop-blur-2xl, bg-white/80, rounded-3xl
+- Tabbed sections: Notes, Highlights, Cross-references
+- Floating above reading area with shadow-2xl
+- Sticky positioning from top
 
-### Inputs & Forms
-**Text Fields**: rounded-xl, px-6 py-4, border-2 purple-300, focus ring-2 purple-500
-**Search Bar**: Prominent rounded-full, px-8 py-4, purple gradient background (10% opacity), white input
-**Toggles**: Purple-to-gold gradient when active, smooth transition
+**Controls Bar** (sticky top):
+- Full-width glassmorphism (backdrop-blur-xl, bg-white/90)
+- Rounded-2xl controls for: Font size, Highlight, Bookmark, Share
+- Purple active states with subtle glow
+- Smooth transitions (duration-300)
 
-### Data Display
-**Progress Rings**: Thick stroke, purple-to-gold gradient, gold glow
-**Stats Cards**: Large gradient numbers, icon with colored background (purple-100), shadow-xl
-**Badges**: Hexagonal, gold borders, gradient backgrounds, grouped with glow effects
+### Profile Page
+**Hero Section**:
+- Gradient background (from-purple-600 to-indigo-700)
+- Avatar centered with gold ring-4, size-32
+- Name in text-4xl white below
+- Stats row: Reading streak, verses read, badges earned (glassmorphism cards)
 
-## Page Layouts
+**Content Sections**:
+- Reading Progress: Large circular progress ring (gold gradient), percentage in center
+- Recent Activity: Timeline with gold connectors, glassmorphism event cards
+- Achievements: Grid of badge cards (rounded-3xl), glow effect on hover
+- Reading Goals: Card with gradient progress bars, purple-to-gold fill
 
-### Landing Page
-**Hero**: Full-viewport warm-lit Bible image, purple-to-transparent gradient overlay (60% opacity), centered headline with gradient text, dual CTAs with backdrop-blur-lg + purple/gold gradient backgrounds
-**Features**: 3-column grid, gradient background cards, white icons in gold circles, shadow-2xl
-**Theme Preview**: 4 vivid theme cards, interactive hover with glow
-**Testimonials**: 2-column, user photos with gold ring-3, glassmorphism cards with purple tint
-**Premium Table**: Alternating gradient rows, gold checkmarks, vivid headers
-**Podcast Showcase**: Full-width with gradient background, glassmorphism player
-**CTA Section**: Purple-to-indigo gradient, white text, gold stats
-**Footer**: 4-column, purple-50 background, gold social icons, rounded-full newsletter input
+**Layout**: Two-column grid on desktop, stack on mobile
 
-### Dashboard
-**Overview**: 3-column stat cards with gradient backgrounds, large white numbers, glow shadows
-**Reading Widget**: Large card, gold progress ring, purple accent, current verse in cream box
-**Quick Actions**: 4-icon grid, gradient backgrounds, gold icons, glow on hover
-**Activity Feed**: Timeline with gold connector, gradient card entries
-**Gamification**: Badge showcase with animated glow, progress bar with gradient fill
+### Settings Page
+**Organization**: Grouped sections with clear visual hierarchy
 
-### Bible Reading
-**View**: Centered max-w-4xl, cream background, gold verse numbers, purple chapter headers
-**Controls**: Sticky glassmorphism bar, rounded-full segments, purple/gold buttons
-**Highlight Palette**: Selection reveals 6 vibrant colors in rounded-xl container, shadow-xl
-**Side Panel**: Collapsible notes, backdrop-blur with purple tint
+**Section Cards**:
+- Glassmorphism containers (backdrop-blur-2xl, rounded-3xl)
+- Header with icon (gradient circle background), text-2xl
+- Options spaced with py-6, border-b last:border-0
+- Toggle switches with purple-to-gold gradient active state
 
-### Teacher Mode
-**Lesson Grid**: Gradient status badges, shadow-2xl cards, gold action buttons
-**Builder**: Multi-step with gold progress dots, generous spacing, purple section dividers
-**Progress Table**: Gradient headers, gold export button with icon
+**Categories**:
+- Reading Preferences: Font, size, line spacing, theme selector
+- Notifications: Grouped toggles, vivid icons
+- Account: Avatar upload (drag-drop zone), email/password fields
+- Bible Version: Radio cards with rounded-2xl, purple border on selected
+- Subscription: Premium card with gradient background, gold badge
 
-### Podcast Player
-**Browse**: Featured carousel with shadow-2xl, gradient category cards
-**Player**: Large album art rounded-2xl, glassmorphism controls, gold progress indicator
-**Library**: List with gradient download status, swipe reveals gold action
+**Input Styling**:
+- Text fields: rounded-2xl, px-6 py-4, border-2 purple-300
+- Focus state: ring-2 ring-purple-500, border-purple-500
+- Dropdowns: Glassmorphism overlay, rounded-2xl options
 
-### Community
-**Post Cards**: Avatar with gold ring-3, gradient quote backgrounds, glassmorphism, shadow-lg
-**Composer**: Bottom FAB opens full modal with backdrop-blur, purple gradient header
+### Dashboard Page
+**Quick Stats Row**:
+- Four cards in grid, glassmorphism with gradient accents
+- Large numbers (text-5xl, gradient text)
+- Icons in gold circles (bg-amber-100, size-16)
 
-## Images
+**Today's Reading Widget**:
+- Featured card with rounded-3xl
+- Current verse in large Crimson Text
+- Circular progress (gold gradient stroke)
+- Continue button with purple gradient
 
-**Hero Image**: Professional photograph of opened Bible in warm golden-hour light, soft focus background. Full-viewport with purple gradient overlay. Dual CTAs with backdrop-blur-lg + gradient backgrounds positioned center.
+**Recent Highlights**:
+- Masonry grid of highlighted verses
+- Each card: verse text, colored highlight bar (left border-l-4)
+- Glassmorphism on hover with lift effect
 
-**Feature Images**: AI study (light rays + book), Teacher mode (elegant teaching), Podcasts (premium headphones with glow), Community (warm group discussion)
+**Shortcuts Grid**:
+- Six action cards (Search, Study, Listen, Notes, Community, Donate)
+- Gradient backgrounds unique to each
+- White icons (size-8)
 
-**Icons**: Vibrant filled icons from Heroicons, purple/gold color scheme
+## Component Library
+
+**Premium Cards**:
+- Base: rounded-3xl, bg-white, shadow-xl, p-8
+- Interactive: hover:shadow-2xl, hover:-translate-y-1, duration-300
+- Glassmorphism variant: backdrop-blur-2xl, bg-white/80
+
+**Buttons**:
+- Primary: rounded-2xl, px-8 py-4, gradient (purple-to-indigo), white text, shadow-lg
+- Secondary: rounded-2xl, border-2 purple-600, bg-transparent, hover:bg-purple-50
+- Icon: rounded-xl, size-12, bg-purple-100, hover:bg-purple-200
+
+**Navigation**:
+- Sidebar: Fixed, w-72, glassmorphism (backdrop-blur-xl, bg-white/90)
+- Items: rounded-2xl, px-6 py-4, hover:bg-purple-50, active:gradient background
+- Icons: Heroicons, purple-600, size-6
+
+**Floating Action Button**:
+- Fixed bottom-right (bottom-8 right-8)
+- size-16, rounded-full
+- Gold gradient background
+- White icon (size-8)
+- Large glow shadow
 
 ## Animations
 
-Purposeful motion only:
-- Card hover: Lift + glow shadow increase (duration-300)
-- Button: Scale-95 + gradient shift
-- Progress: Smooth width with gradient flow
-- Page transitions: Fade (duration-200)
+**Interaction System** (consistent across all pages):
+- Hover lift: -translate-y-1, duration-300
+- Button press: scale-95, duration-150
+- Card entrance: fade-in + slide-up, duration-500, stagger-100
+- Progress fills: smooth width/stroke transition, duration-700
+- Modal overlays: backdrop-blur-sm fade, content scale-95 to scale-100
+
+**Scroll Behaviors**:
+- Parallax hero: transform-gpu, slower scroll rate
+- Sticky elements: smooth lock with shadow increase
+
+## Images
+
+**Hero Image (Landing only)**: Warm-lit open Bible on wooden surface, golden hour lighting, soft bokeh background. Full-viewport with purple-to-transparent gradient overlay (from-purple-900/60 to-transparent). Centered content with backdrop-blur-lg glassmorphism card containing headline and CTAs.
+
+**Feature Images**: AI study assistant (glowing book), Reading mode (comfort focus), Community (warm discussion), Podcast player (premium headphones). All images rounded-3xl with shadow-2xl.
+
+**Icons**: Heroicons CDN, vibrant fills, purple/gold primary colors.
 
 ## Accessibility
 
-- WCAG AA contrast maintained with vivid palette
-- Focus rings in gold (ring-2) on all interactive elements
-- Keyboard navigation with visible states
-- Screen reader labels for all icons
-- Alt text for hero and feature images
+- Contrast ratio ≥ 4.5:1 maintained on all text
+- Focus rings: ring-2 ring-gold-500 on all interactive elements
+- Keyboard navigation: visible states, logical tab order
+- Screen reader: aria-labels on icons, semantic HTML
+- Font scaling: respects user preferences up to 200%
+- Reduced motion: prefers-reduced-motion removes transforms/transitions
