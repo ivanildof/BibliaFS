@@ -521,7 +521,7 @@ export default function Teacher() {
       scriptureBase,
     });
     setObjectives(lesson.objectives || []);
-    setContentBlocks(lesson.contentBlocks || []);
+    setContentBlocks((lesson as any).contentBlocks || []);
     setQuestions((lesson.questions || []).map((q: any) => {
       if (typeof q === 'string') return { question: q, answer: "" };
       if (q.question) return { question: q.question, answer: q.answer || "" };
