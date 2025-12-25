@@ -1325,13 +1325,14 @@ export default function Groups() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Carregando grupos...</p>
+      <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+              <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse rounded-full" />
             </div>
+            <p className="text-muted-foreground font-medium animate-pulse tracking-wide">Preparando seus grupos...</p>
           </div>
         </div>
       </div>
@@ -1339,229 +1340,185 @@ export default function Groups() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="font-display text-4xl font-bold mb-2 flex items-center gap-3" data-testid="text-page-title">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700">
-                <Users className="h-6 w-6 text-white" />
-              </div>
-              Grupos de Estudo
+    <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+        >
+          <div className="space-y-2">
+            <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight" data-testid="text-page-title">
+              Grupos de <span className="text-primary relative inline-block">
+                Estudo
+                <div className="absolute -bottom-1 left-0 w-full h-1 bg-primary/20 rounded-full" />
+              </span>
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Conecte-se com outros estudantes da Bíblia
+            <p className="text-lg text-muted-foreground font-medium max-w-xl">
+              Compartilhe sua fé e cresça em conhecimento bíblico com sua comunidade.
             </p>
           </div>
           
-          <div className="flex gap-2">
-            <Dialog open={isJoinByCodeDialogOpen} onOpenChange={setIsJoinByCodeDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="lg" data-testid="button-use-code">
-                  <UserPlus className="h-5 w-5 mr-2" />
-                  Usar Código
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Usar Código de Convite</DialogTitle>
-                  <DialogDescription>
-                    Digite o código que você recebeu para entrar em um grupo privado
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <Input 
-                    placeholder="Digite o código (ex: ABC12345)"
-                    value={inviteCode}
-                    onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                    className="font-mono text-center text-lg"
-                    data-testid="input-invite-code"
-                  />
-                </div>
-                <DialogFooter>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      setIsJoinByCodeDialogOpen(false);
-                      setInviteCode("");
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button 
-                    onClick={() => acceptInviteMutation.mutate(inviteCode)}
-                    disabled={!inviteCode || acceptInviteMutation.isPending}
-                    data-testid="button-accept-invite"
-                  >
-                    {acceptInviteMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Check className="h-4 w-4 mr-2" />
-                    )}
-                    Entrar no Grupo
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => setIsJoinByCodeDialogOpen(true)}
+              className="rounded-2xl h-14 px-8 border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all font-bold flex-1 sm:flex-none shadow-sm" 
+              data-testid="button-use-code"
+            >
+              <UserPlus className="h-5 w-5 mr-2.5 text-primary" />
+              Usar Código
+            </Button>
 
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="lg" data-testid="button-create-group">
-                  <Plus className="h-5 w-5 mr-2" />
-                  Criar Grupo
-                </Button>
-              </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Criar Novo Grupo</DialogTitle>
-                <DialogDescription>
-                  Crie um grupo para estudar a Bíblia com outras pessoas
-                </DialogDescription>
-              </DialogHeader>
-              
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nome do Grupo</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Ex: Grupo de Estudo de Romanos"
-                            data-testid="input-group-name"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Descrição (opcional)</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Descreva o propósito do grupo..."
-                            data-testid="textarea-group-description"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="isPublic"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                        <div className="space-y-0.5">
-                          <FormLabel className="text-base">Grupo Público</FormLabel>
-                          <p className="text-sm text-muted-foreground">
-                            Qualquer pessoa pode encontrar e participar
-                          </p>
-                        </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            data-testid="switch-is-public"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <DialogFooter>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setIsCreateDialogOpen(false)}
-                      data-testid="button-cancel"
-                    >
-                      Cancelar
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      disabled={createMutation.isPending}
-                      data-testid="button-save-group"
-                    >
-                      {createMutation.isPending ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Criando...
-                        </>
-                      ) : (
-                        "Criar Grupo"
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+            <Button 
+              size="lg" 
+              onClick={() => setIsCreateDialogOpen(true)}
+              className="rounded-2xl h-14 px-8 font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex-1 sm:flex-none" 
+              data-testid="button-create-group"
+            >
+              <Plus className="h-5 w-5 mr-2.5" />
+              Criar Grupo
+            </Button>
           </div>
-        </div>
+        </motion.div>
 
-        <Tabs defaultValue="my-groups" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="my-groups" data-testid="tab-my-groups">
+        <Tabs defaultValue="my-groups" className="space-y-8">
+          <TabsList className="bg-muted/30 p-1.5 rounded-2xl border border-primary/5">
+            <TabsTrigger 
+              value="my-groups" 
+              className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
+              data-testid="tab-my-groups"
+            >
               Meus Grupos ({myGroups.length})
             </TabsTrigger>
-            <TabsTrigger value="discover" data-testid="tab-discover">
+            <TabsTrigger 
+              value="discover" 
+              className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
+              data-testid="tab-discover"
+            >
               Descobrir ({publicGroups.length})
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="my-groups">
+          <TabsContent value="my-groups" className="mt-0">
             {myGroups.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhum grupo ainda</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Crie um grupo ou encontre um para participar
-                  </p>
-                  <Button onClick={() => setIsCreateDialogOpen(true)} data-testid="button-create-first-group">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Criar Primeiro Grupo
-                  </Button>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <Card className="border-none bg-card/40 backdrop-blur-sm shadow-xl rounded-3xl">
+                  <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary/10 mb-6 rotate-3">
+                      <Users className="h-10 w-10 text-primary" />
+                    </div>
+                    <h3 className="font-bold text-2xl text-foreground mb-3">Sua jornada começa aqui</h3>
+                    <p className="text-muted-foreground mb-8 max-w-sm font-medium">
+                      Você ainda não participa de nenhum grupo. Comece criando o seu ou explorando comunidades existentes.
+                    </p>
+                    <Button 
+                      size="lg"
+                      className="rounded-2xl h-14 px-10 font-bold shadow-lg shadow-primary/20"
+                      onClick={() => setIsCreateDialogOpen(true)} 
+                      data-testid="button-create-first-group"
+                    >
+                      <Plus className="h-5 w-5 mr-2.5" />
+                      Criar Primeiro Grupo
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {myGroups.map((group) => (
-                  <Card key={group.id} className="hover-elevate cursor-pointer" onClick={() => setSelectedGroup(group)} data-testid={`card-group-${group.id}`}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="flex items-center gap-2">
-                            {group.name}
-                            {group.role === "leader" && (
-                              <Crown className="h-4 w-4 text-yellow-500" />
-                            )}
-                          </CardTitle>
-                          <CardDescription className="mt-1">
-                            {group.description || "Sem descrição"}
-                          </CardDescription>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {myGroups.map((group, index) => (
+                  <motion.div
+                    key={group.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card 
+                      className="group relative overflow-hidden border-none bg-card/40 backdrop-blur-sm hover:bg-card/60 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-3xl cursor-pointer"
+                      onClick={() => setSelectedGroup(group)} 
+                      data-testid={`card-group-${group.id}`}
+                    >
+                      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/80 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <CardHeader className="pb-4">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="p-3.5 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                            <Users className="h-7 w-7 text-primary" />
+                          </div>
+                          <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                            {group.role === "leader" ? (
+                              <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
+                            ) : "Membro"}
+                          </Badge>
                         </div>
-                        <Badge variant={group.isPublic ? "secondary" : "outline"}>
+                        <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors leading-tight">
+                          {group.name}
+                        </CardTitle>
+                        <CardDescription className="line-clamp-2 text-sm font-medium leading-relaxed mt-2 text-muted-foreground/80">
+                          {group.description || "Nenhuma descrição fornecida para este grupo."}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardFooter className="pt-4 border-t border-primary/5 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-primary/60 uppercase tracking-widest">
                           {group.isPublic ? (
-                            <><Globe className="h-3 w-3 mr-1" /> Público</>
+                            <><Globe className="h-3.5 w-3.5" /> Público</>
                           ) : (
-                            <><Lock className="h-3 w-3 mr-1" /> Privado</>
+                            <><Lock className="h-3.5 w-3.5" /> Privado</>
                           )}
-                        </Badge>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-primary font-bold text-sm group-hover:translate-x-1 transition-transform">
+                          Acessar <ChevronRight className="h-4 w-4" />
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="discover" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {publicGroups.map((group, index) => (
+                <motion.div
+                  key={group.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="group border-none bg-card/40 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden">
+                    <CardHeader className="pb-4">
+                      <div className="p-3.5 rounded-2xl bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors w-fit mb-4">
+                        <Globe className="h-7 w-7 text-blue-500" />
                       </div>
+                      <CardTitle className="text-2xl font-bold">{group.name}</CardTitle>
+                      <CardDescription className="line-clamp-2 min-h-[3rem] mt-2 text-sm font-medium text-muted-foreground/80">
+                        {group.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardFooter className="bg-primary/5 p-5 group-hover:bg-primary/10 transition-colors">
+                      <Button 
+                        className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10"
+                        onClick={() => joinMutation.mutate(group.id)}
+                        disabled={myGroupIds.has(group.id) || joinMutation.isPending}
+                      >
+                        {myGroupIds.has(group.id) ? (
+                          <><CheckCircle2 className="mr-2 h-5 w-5" /> Já é membro</>
+                        ) : (
+                          "Participar agora"
+                        )}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
