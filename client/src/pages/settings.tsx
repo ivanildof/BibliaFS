@@ -27,6 +27,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useTheme, readingThemes } from "@/contexts/ThemeContext";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { Globe } from "lucide-react";
 
 const predefinedThemes = [
   { 
@@ -96,6 +98,50 @@ interface NotificationPreferences {
   teacherModeUpdates: boolean;
   weekendOnly: boolean;
   timezone: string;
+}
+
+function LanguageSelector() {
+  const { language, setLanguage, t } = useLanguage();
+  
+  const languages = [
+    { id: "pt" as Language, name: "Português (Brasil)", flag: "🇧🇷" },
+    { id: "en" as Language, name: "English", flag: "🇺🇸" },
+    { id: "es" as Language, name: "Español", flag: "🇪🇸" },
+    { id: "nl" as Language, name: "Nederlands", flag: "🇳🇱" },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Globe className="h-5 w-5" />
+          Idioma do Aplicativo
+        </CardTitle>
+        <CardDescription>
+          Escolha o idioma de sua preferência
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <RadioGroup 
+          value={language} 
+          onValueChange={(value) => setLanguage(value as Language)}
+          className="grid grid-cols-2 gap-3"
+        >
+          {languages.map((lang) => (
+            <Label
+              key={lang.id}
+              htmlFor={`lang-${lang.id}`}
+              className={`flex items-center gap-3 rounded-lg border-2 p-3 cursor-pointer hover-elevate transition-colors [&:has([data-state=checked])]:border-primary`}
+            >
+              <span className="text-xl">{lang.flag}</span>
+              <span className="font-medium text-sm">{lang.name}</span>
+              <RadioGroupItem value={lang.id} id={`lang-${lang.id}`} className="sr-only" />
+            </Label>
+          ))}
+        </RadioGroup>
+      </CardContent>
+    </Card>
+  );
 }
 
 function ReadingThemeCard() {
@@ -728,6 +774,8 @@ export default function Settings() {
               </CardContent>
             </Card>
 
+            <LanguageSelector />
+
             <Card>
               <CardHeader>
                 <CardTitle>Plano de Assinatura</CardTitle>
@@ -834,11 +882,56 @@ export default function Settings() {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col items-start gap-4">
-                <Button variant="outline">Exportar Meus Dados</Button>
-                <Button variant="outline" className="text-destructive">
+                <Button variant="outline" data-testid="button-export-data">
+                  Exportar Meus Dados
+                </Button>
+                <Button variant="outline" className="text-destructive" data-testid="button-delete-account">
                   Excluir Minha Conta
                 </Button>
               </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Links Úteis</CardTitle>
+                <CardDescription>
+                  Acesse informações importantes
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Button 
+                  variant="link" 
+                  className="w-full justify-start p-0 h-auto"
+                  onClick={() => window.location.href = '/termos'}
+                  data-testid="link-terms"
+                >
+                  Termos de Uso
+                </Button>
+                <Button 
+                  variant="link" 
+                  className="w-full justify-start p-0 h-auto"
+                  onClick={() => window.location.href = '/privacidade'}
+                  data-testid="link-privacy"
+                >
+                  Política de Privacidade
+                </Button>
+                <Button 
+                  variant="link" 
+                  className="w-full justify-start p-0 h-auto"
+                  onClick={() => window.location.href = '/ajuda'}
+                  data-testid="link-help"
+                >
+                  Central de Ajuda
+                </Button>
+                <Button 
+                  variant="link" 
+                  className="w-full justify-start p-0 h-auto"
+                  onClick={() => window.location.href = '/contato'}
+                  data-testid="link-contact"
+                >
+                  Falar com Suporte
+                </Button>
+              </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
