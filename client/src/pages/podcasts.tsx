@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +25,11 @@ import {
   MoreVertical,
   Download,
   Check,
-  WifiOff
+  WifiOff,
+  Radio,
+  Library,
+  Bookmark,
+  Users
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -73,27 +78,20 @@ export default function Podcasts() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
   
-  // Reserve space for fixed player bar
-  const playerBarHeight = "pb-24";
-
-  // Create podcast dialog state
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newPodcastTitle, setNewPodcastTitle] = useState("");
   const [newPodcastDescription, setNewPodcastDescription] = useState("");
   const [newPodcastBook, setNewPodcastBook] = useState("");
 
-  // Edit/Delete podcast state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
 
-  // Offline download state
   const [downloadedEpisodes, setDownloadedEpisodes] = useState<Set<string>>(new Set());
   const [downloadingEpisodes, setDownloadingEpisodes] = useState<Set<string>>(new Set());
 
-  // Load downloaded episodes on mount
   useEffect(() => {
     async function loadDownloaded() {
       try {
@@ -108,26 +106,17 @@ export default function Podcasts() {
 
   const downloadEpisode = async (episode: Episode, podcast: Podcast) => {
     if (downloadingEpisodes.has(episode.id) || downloadedEpisodes.has(episode.id)) return;
-
     setDownloadingEpisodes(prev => new Set(prev).add(episode.id));
-    
     try {
-      // First, generate the audio if needed
       const authHeaders = await getAuthHeaders();
       const response = await fetch(`/api/bible/audio?book=${episode.bookAbbrev}&chapter=${episode.chapterNumber}`, {
         headers: authHeaders,
       });
-      
       if (!response.ok) throw new Error("Failed to fetch audio");
-      
       const data = await response.json();
       const audioUrl = data.audioUrl;
-      
-      // Fetch the actual audio data
       const audioResponse = await fetch(audioUrl);
       const audioBlob = await audioResponse.blob();
-      
-      // Save to IndexedDB
       await podcastStorage.saveEpisode({
         id: episode.id,
         podcastId: podcast.id,
@@ -136,18 +125,10 @@ export default function Podcasts() {
         downloadedAt: Date.now(),
         size: audioBlob.size,
       });
-      
       setDownloadedEpisodes(prev => new Set(prev).add(episode.id));
-      toast({
-        title: "Episódio baixado!",
-        description: `"${episode.title}" disponível offline`,
-      });
+      toast({ title: "Episódio baixado!", description: `"${episode.title}" disponível offline` });
     } catch (error: any) {
-      toast({
-        title: "Erro ao baixar",
-        description: error.message || "Tente novamente mais tarde",
-        variant: "destructive",
-      });
+      toast({ title: "Erro ao baixar", description: error.message || "Tente novamente mais tarde", variant: "destructive" });
     } finally {
       setDownloadingEpisodes(prev => {
         const newSet = new Set(prev);
@@ -157,37 +138,9 @@ export default function Podcasts() {
     }
   };
 
-  const { data: podcasts = [] } = useQuery<Podcast[]>({
-    queryKey: ["/api/podcasts"],
-  });
-
-  const { data: subscriptions = [] } = useQuery<any[]>({
-    queryKey: ["/api/podcasts/subscriptions"],
-  });
-
-  const { data: myPodcasts = [] } = useQuery<Podcast[]>({
-    queryKey: ["/api/podcasts/my"],
-  });
-
-  const subscribeMutation = useMutation({
-    mutationFn: async (podcastId: string) => {
-      return apiRequest("POST", "/api/podcasts/subscribe", { podcastId });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/subscriptions"] });
-      toast({ title: "Inscrito!", description: "Você se inscreveu no podcast" });
-    },
-  });
-
-  const unsubscribeMutation = useMutation({
-    mutationFn: async (podcastId: string) => {
-      return apiRequest("DELETE", `/api/podcasts/subscribe/${podcastId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/subscriptions"] });
-      toast({ title: "Desinscrito", description: "Você se desinscreveu do podcast" });
-    },
-  });
+  const { data: podcasts = [] } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts"] });
+  const { data: subscriptions = [] } = useQuery<any[]>({ queryKey: ["/api/podcasts/subscriptions"] });
+  const { data: myPodcasts = [] } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts/my"] });
 
   const createPodcastMutation = useMutation({
     mutationFn: async (data: { title: string; description: string; bibleBook?: string; bibleChapter?: number }) => {
@@ -200,67 +153,7 @@ export default function Podcasts() {
       setCreateDialogOpen(false);
       resetCreateForm();
     },
-    onError: () => {
-      toast({ title: "Erro", description: "Não foi possível criar o podcast", variant: "destructive" });
-    },
   });
-
-  const updatePodcastMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: { title?: string; description?: string } }) => {
-      return apiRequest("PATCH", `/api/podcasts/${id}`, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
-      toast({ title: "Podcast atualizado!", description: "As alterações foram salvas" });
-      setEditDialogOpen(false);
-      setSelectedPodcast(null);
-    },
-    onError: () => {
-      toast({ title: "Erro", description: "Não foi possível atualizar o podcast", variant: "destructive" });
-    },
-  });
-
-  const deletePodcastMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return apiRequest("DELETE", `/api/podcasts/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
-      toast({ title: "Podcast excluído", description: "O podcast foi removido" });
-      setDeleteDialogOpen(false);
-      setSelectedPodcast(null);
-    },
-    onError: () => {
-      toast({ title: "Erro", description: "Não foi possível excluir o podcast", variant: "destructive" });
-    },
-  });
-
-  const openEditDialog = (podcast: Podcast) => {
-    setSelectedPodcast(podcast);
-    setEditTitle(podcast.title);
-    setEditDescription(podcast.description || "");
-    setEditDialogOpen(true);
-  };
-
-  const openDeleteDialog = (podcast: Podcast) => {
-    setSelectedPodcast(podcast);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleUpdatePodcast = () => {
-    if (!selectedPodcast || !editTitle.trim()) return;
-    updatePodcastMutation.mutate({
-      id: selectedPodcast.id,
-      data: { title: editTitle.trim(), description: editDescription.trim() },
-    });
-  };
-
-  const handleDeletePodcast = () => {
-    if (!selectedPodcast) return;
-    deletePodcastMutation.mutate(selectedPodcast.id);
-  };
 
   const resetCreateForm = () => {
     setNewPodcastTitle("");
@@ -268,19 +161,15 @@ export default function Podcasts() {
     setNewPodcastBook("");
   };
 
-  // Audio player controls
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration || 0);
     const handleEnded = () => setIsPlaying(false);
-
     audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("loadedmetadata", updateDuration);
     audio.addEventListener("ended", handleEnded);
-
     return () => {
       audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("loadedmetadata", updateDuration);
@@ -289,101 +178,47 @@ export default function Podcasts() {
   }, [currentEpisode]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
+    if (audioRef.current) audioRef.current.volume = volume / 100;
   }, [volume]);
 
   const playEpisode = async (episode: Episode, podcast: Podcast) => {
     setCurrentEpisode(episode);
     setCurrentPodcast(podcast);
-    
-    // If episode has pre-recorded audio, use it
     if (episode.audioData) {
       if (audioRef.current) {
         audioRef.current.src = episode.audioData;
-        audioRef.current.play().catch(() => {
-          setIsPlaying(false);
-        });
+        audioRef.current.play().catch(() => setIsPlaying(false));
         setIsPlaying(true);
       }
       return;
     }
-    
-    // Generate audio via TTS using the chapter info
     if (episode.bookAbbrev && episode.chapterNumber) {
       setIsLoadingAudio(true);
-      toast({ 
-        title: "Gerando áudio...", 
-        description: "O áudio está sendo gerado. Isso pode levar alguns segundos." 
-      });
-      
       try {
         const authHeaders = await getAuthHeaders();
-        const response = await fetch(
-          `/api/bible/audio/pt/nvi/${episode.bookAbbrev}/${episode.chapterNumber}`,
-          { 
-            credentials: 'include',
-            headers: authHeaders
-          }
-        );
-        
+        const response = await fetch(`/api/bible/audio/pt/nvi/${episode.bookAbbrev}/${episode.chapterNumber}`, { credentials: 'include', headers: authHeaders });
         if (response.ok) {
           const blob = await response.blob();
           const audioUrl = URL.createObjectURL(blob);
-          
           if (audioRef.current) {
             audioRef.current.src = audioUrl;
-            audioRef.current.play().catch(() => {
-              toast({ 
-                title: "Erro ao reproduzir", 
-                description: "Não foi possível reproduzir o áudio",
-                variant: "destructive"
-              });
-              setIsPlaying(false);
-            });
+            audioRef.current.play().catch(() => setIsPlaying(false));
             setIsPlaying(true);
           }
-        } else {
-          toast({ 
-            title: "Áudio não disponível", 
-            description: "Não foi possível gerar o áudio neste momento",
-            variant: "destructive"
-          });
         }
       } catch (error) {
-        toast({ 
-          title: "Erro de conexão", 
-          description: "Verifique sua conexão e tente novamente",
-          variant: "destructive"
-        });
+        toast({ title: "Erro de conexão", variant: "destructive" });
       } finally {
         setIsLoadingAudio(false);
       }
-    } else {
-      toast({ 
-        title: "Áudio não disponível", 
-        description: "Este episódio não tem informações do capítulo" 
-      });
     }
   };
 
   const togglePlay = () => {
     if (!audioRef.current || !currentEpisode) return;
-    
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(() => {});
-    }
+    if (isPlaying) audioRef.current.pause();
+    else audioRef.current.play().catch(() => {});
     setIsPlaying(!isPlaying);
-  };
-
-  const seekTo = (time: number) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      setCurrentTime(time);
-    }
   };
 
   const skip = (seconds: number) => {
@@ -399,518 +234,219 @@ export default function Podcasts() {
     return `${mins}:${String(secs).padStart(2, '0')}`;
   };
 
-  const handleCreatePodcast = () => {
-    if (!newPodcastBook) {
-      toast({ title: "Erro", description: "Selecione um livro da Bíblia", variant: "destructive" });
-      return;
-    }
-    const title = newPodcastTitle.trim() || `Leitura de ${newPodcastBook}`;
-    createPodcastMutation.mutate({
-      title,
-      description: newPodcastDescription,
-      bibleBook: newPodcastBook,
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-background pb-48">
+    <div className="min-h-screen bg-background relative overflow-hidden pb-40">
       <audio ref={audioRef} className="hidden" />
       
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
-              BíbliaFS Rádio
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Podcasts cristãos integrados ao seu estudo
-            </p>
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto p-6">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10"
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <Radio className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="font-display text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                BíbliaFS Rádio
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Podcasts cristãos integrados ao seu estudo
+              </p>
+            </div>
           </div>
           
           <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button data-testid="button-create-podcast">
-                <Plus className="h-4 w-4 mr-2" />
+              <Button className="rounded-xl h-12 px-6 shadow-lg shadow-primary/20">
+                <Plus className="h-5 w-5 mr-2" />
                 Criar Podcast
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="rounded-2xl">
               <DialogHeader>
                 <DialogTitle>Criar Novo Podcast</DialogTitle>
-                <DialogDescription>
-                  Escolha um livro da Bíblia e o sistema gerará automaticamente os episódios para cada capítulo com áudio narrado.
-                </DialogDescription>
+                <DialogDescription>Escolha um livro da Bíblia para gerar episódios automaticamente.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label>Livro da Bíblia *</Label>
                   <Select value={newPodcastBook} onValueChange={setNewPodcastBook}>
-                    <SelectTrigger data-testid="select-bible-book">
+                    <SelectTrigger className="rounded-xl h-12">
                       <SelectValue placeholder="Selecione um livro..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {BIBLE_BOOKS.map(book => (
-                        <SelectItem key={book} value={book}>{book}</SelectItem>
-                      ))}
+                      {BIBLE_BOOKS.map(book => <SelectItem key={book} value={book}>{book}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="podcast-title">Título do Podcast</Label>
+                  <Label>Título do Podcast</Label>
                   <Input 
-                    id="podcast-title" 
-                    placeholder={newPodcastBook ? `Leitura de ${newPodcastBook}` : "Ex: Leitura de Romanos"}
+                    placeholder="Ex: Leitura de Romanos"
+                    className="rounded-xl h-12"
                     value={newPodcastTitle}
                     onChange={(e) => setNewPodcastTitle(e.target.value)}
-                    data-testid="input-podcast-title"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="podcast-description">Descrição (opcional)</Label>
-                  <Textarea 
-                    id="podcast-description" 
-                    placeholder="Descrição será gerada automaticamente se não preenchida"
-                    value={newPodcastDescription}
-                    onChange={(e) => setNewPodcastDescription(e.target.value)}
-                    data-testid="input-podcast-description"
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
-                  Cancelar
-                </Button>
+                <Button variant="outline" className="rounded-xl" onClick={() => setCreateDialogOpen(false)}>Cancelar</Button>
                 <Button 
-                  onClick={handleCreatePodcast}
+                  className="rounded-xl"
+                  onClick={() => createPodcastMutation.mutate({ title: newPodcastTitle.trim() || `Leitura de ${newPodcastBook}`, description: newPodcastDescription, bibleBook: newPodcastBook })}
                   disabled={createPodcastMutation.isPending || !newPodcastBook}
-                  data-testid="button-confirm-create"
                 >
-                  {createPodcastMutation.isPending ? "Gerando episódios..." : "Criar Podcast"}
+                  {createPodcastMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : "Criar Podcast"}
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
+        </motion.div>
 
-        <div className="mb-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-10">
           <div className="relative max-w-xl">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input 
               placeholder="Buscar podcasts ou episódios..." 
-              className="pl-10 h-12"
-              data-testid="input-search-podcasts"
+              className="pl-12 h-14 rounded-2xl bg-card/80 backdrop-blur-xl border-none shadow-lg text-lg"
             />
           </div>
-        </div>
+        </motion.div>
 
         <Tabs defaultValue="discover" className="space-y-8">
-          <TabsList>
-            <TabsTrigger value="discover" data-testid="tab-discover">Descobrir</TabsTrigger>
-            <TabsTrigger value="subscriptions" data-testid="tab-subscriptions">
-              Inscrições ({subscriptions.length})
-            </TabsTrigger>
-            <TabsTrigger value="my-podcasts" data-testid="tab-my-podcasts">
-              Meus Podcasts ({myPodcasts.length})
-            </TabsTrigger>
+          <TabsList className="bg-muted/50 p-1.5 rounded-2xl h-auto">
+            <TabsTrigger value="discover" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Descobrir</TabsTrigger>
+            <TabsTrigger value="subscriptions" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Inscrições ({subscriptions.length})</TabsTrigger>
+            <TabsTrigger value="my-podcasts" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Meus Podcasts ({myPodcasts.length})</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="discover" className="space-y-8">
-            <section>
-              <h2 className="font-display text-2xl font-bold mb-4">Podcasts Disponíveis</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {podcasts.map((podcast: any, index: number) => {
-                  const isSubscribed = subscriptions.some((s: any) => s.podcastId === podcast.id);
-                  const episodes: Episode[] = podcast.episodes || [];
-                  
-                  return (
-                    <Card key={podcast.id} className="hover-elevate" data-testid={`card-podcast-${index}`}>
-                      <div 
-                        className="h-48 bg-cover bg-center flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5" 
-                        style={{ backgroundImage: podcast.imageUrl ? `url(${podcast.imageUrl})` : undefined }}
-                      >
-                        {!podcast.imageUrl && <Headphones className="h-16 w-16 text-primary" />}
-                      </div>
-                      <CardHeader>
-                        <CardTitle className="truncate">{podcast.title}</CardTitle>
-                        <CardDescription className="line-clamp-2">
-                          {podcast.description || 'Sem descrição'}
-                        </CardDescription>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                          <span>{episodes.length} episódios</span>
-                          <span>•</span>
-                          <span>{podcast.category || 'Geral'}</span>
-                          {podcast.bibleBook && (
-                            <>
-                              <span>•</span>
-                              <span>{podcast.bibleBook}{podcast.bibleChapter ? ` ${podcast.bibleChapter}` : ''}</span>
-                            </>
-                          )}
+          <TabsContent value="discover">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence mode="popLayout">
+                {podcasts.map((podcast: any, idx: number) => (
+                  <motion.div
+                    key={podcast.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: idx * 0.05 }}
+                  >
+                    <Card className="rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
+                      <div className="h-48 relative overflow-hidden bg-primary/10">
+                        {podcast.imageUrl ? (
+                          <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Headphones className="h-16 w-16 text-primary/40" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                          <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
                         </div>
+                      </div>
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
+                        <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
                       </CardHeader>
-                      <CardContent>
-                        {episodes.length > 0 && (
-                          <div className="space-y-2 mb-4">
-                            {episodes.slice(0, 2).map((ep: Episode) => (
+                      <CardContent className="flex-1 space-y-4">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                          <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
+                          {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                        </div>
+                        {podcast.episodes?.length > 0 && (
+                          <div className="space-y-2">
+                            {podcast.episodes.slice(0, 2).map((ep: Episode) => (
                               <div 
                                 key={ep.id} 
-                                className="flex items-center justify-between p-2 rounded-lg bg-muted hover-elevate cursor-pointer"
+                                className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-primary/5 transition-colors cursor-pointer group/ep"
                                 onClick={() => playEpisode(ep, podcast)}
                               >
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">{ep.title}</p>
-                                  <p className="text-xs text-muted-foreground">
+                                  <p className="text-sm font-bold truncate group-hover/ep:text-primary">{ep.title}</p>
+                                  <p className="text-xs text-muted-foreground flex items-center gap-2">
                                     {formatTime(ep.duration)}
-                                    {downloadedEpisodes.has(ep.id) && (
-                                      <Badge variant="secondary" className="ml-2 text-xs">
-                                        <WifiOff className="h-2 w-2 mr-1" />
-                                        Offline
-                                      </Badge>
-                                    )}
+                                    {downloadedEpisodes.has(ep.id) && <Badge variant="secondary" className="h-4 text-[8px] bg-green-500/10 text-green-600 border-none">OFFLINE</Badge>}
                                   </p>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <Button 
-                                    size="icon" 
-                                    variant="ghost"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      downloadEpisode(ep, podcast);
-                                    }}
-                                    disabled={downloadingEpisodes.has(ep.id) || downloadedEpisodes.has(ep.id)}
-                                    data-testid={`button-download-${ep.id}`}
-                                  >
-                                    {downloadingEpisodes.has(ep.id) ? (
-                                      <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : downloadedEpisodes.has(ep.id) ? (
-                                      <Check className="h-4 w-4 text-green-500" />
-                                    ) : (
-                                      <Download className="h-4 w-4" />
-                                    )}
-                                  </Button>
-                                  <Button size="icon" variant="ghost" data-testid={`button-play-${ep.id}`}>
-                                    <Play className="h-4 w-4" />
-                                  </Button>
+                                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover/ep:bg-primary group-hover/ep:text-white transition-all">
+                                  <Play className="h-4 w-4 fill-current" />
                                 </div>
                               </div>
                             ))}
                           </div>
                         )}
                       </CardContent>
-                      <CardFooter>
-                        <Button 
-                          variant={isSubscribed ? "default" : "outline"} 
-                          className="w-full" 
-                          data-testid={`button-subscribe-${index}`}
-                          onClick={() => {
-                            if (isSubscribed) {
-                              unsubscribeMutation.mutate(podcast.id);
-                            } else {
-                              subscribeMutation.mutate(podcast.id);
-                            }
-                          }}
-                          disabled={subscribeMutation.isPending || unsubscribeMutation.isPending}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          {isSubscribed ? "Inscrito" : "Inscrever-se"}
+                      <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
+                        <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                          Ver Podcast
+                        </Button>
+                        <Button size="icon" variant="ghost" className="rounded-xl h-11 w-11 hover:bg-primary/10">
+                          <Plus className="h-5 w-5" />
                         </Button>
                       </CardFooter>
                     </Card>
-                  );
-                })}
-              </div>
-            </section>
-          </TabsContent>
-
-          <TabsContent value="subscriptions">
-            {subscriptions.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <Headphones className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhuma inscrição</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Inscreva-se em podcasts para acompanhar novos episódios
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-6">
-                {subscriptions.map((sub: any, index: number) => {
-                  const episodes: Episode[] = sub.podcast.episodes || [];
-                  return (
-                    <Card key={index} className="hover-elevate">
-                      <CardHeader>
-                        <CardTitle>{sub.podcast.title}</CardTitle>
-                        <CardDescription>{episodes.length} episódios disponíveis</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {episodes.map((ep: Episode) => (
-                            <div 
-                              key={ep.id} 
-                              className="flex items-center justify-between p-3 rounded-lg bg-muted hover-elevate cursor-pointer"
-                              onClick={() => playEpisode(ep, sub.podcast)}
-                            >
-                              <div className="flex-1 min-w-0">
-                                <p className="font-medium text-sm truncate">{ep.title}</p>
-                                <p className="text-xs text-muted-foreground">{formatTime(ep.duration)}</p>
-                              </div>
-                              <Button size="icon" variant="ghost" data-testid={`button-play-sub-${ep.id}`}>
-                                <Play className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="my-podcasts">
-            {myPodcasts.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <Headphones className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhum podcast criado</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Escolha um livro da Bíblia e o sistema gerará episódios automaticamente
-                  </p>
-                  <Button onClick={() => setCreateDialogOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Criar Primeiro Podcast
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-6">
-                {myPodcasts.map((podcast: any) => {
-                  const episodes: Episode[] = podcast.episodes || [];
-                  return (
-                    <Card key={podcast.id}>
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <CardTitle className="truncate">{podcast.title}</CardTitle>
-                            {podcast.description && (
-                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                {podcast.description}
-                              </p>
-                            )}
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button size="icon" variant="ghost" data-testid={`button-podcast-menu-${podcast.id}`}>
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => openEditDialog(podcast)} data-testid="menu-edit-podcast">
-                                <Pencil className="h-4 w-4 mr-2" />
-                                Editar
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => openDeleteDialog(podcast)} 
-                                className="text-destructive focus:text-destructive"
-                                data-testid="menu-delete-podcast"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Excluir
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
-                          {podcast.bibleBook && (
-                            <Badge variant="secondary">{podcast.bibleBook}</Badge>
-                          )}
-                          <span>{episodes.length} capítulos</span>
-                          <span>•</span>
-                          <span>Gerado automaticamente</span>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        {episodes.length === 0 ? (
-                          <p className="text-sm text-muted-foreground text-center py-4">
-                            Gerando episódios...
-                          </p>
-                        ) : (
-                          <div className="grid gap-2 max-h-64 overflow-y-auto">
-                            {episodes.slice(0, 10).map((ep: Episode) => (
-                              <div 
-                                key={ep.id} 
-                                className="flex items-center justify-between p-3 rounded-lg bg-muted hover-elevate cursor-pointer"
-                                onClick={() => playEpisode(ep, podcast)}
-                              >
-                                <div className="flex-1 min-w-0">
-                                  <p className="font-medium text-sm truncate">{ep.title}</p>
-                                  <p className="text-xs text-muted-foreground">Áudio narrado</p>
-                                </div>
-                                <Button size="icon" variant="ghost">
-                                  <Play className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            ))}
-                            {episodes.length > 10 && (
-                              <p className="text-sm text-muted-foreground text-center py-2">
-                                +{episodes.length - 10} capítulos
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
 
-      {/* Edit Podcast Dialog */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Podcast</DialogTitle>
-            <DialogDescription>
-              Altere o título ou a descrição do seu podcast
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-title">Título</Label>
-              <Input 
-                id="edit-title" 
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                data-testid="input-edit-title"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">Descrição</Label>
-              <Textarea 
-                id="edit-description" 
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
-                data-testid="input-edit-description"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleUpdatePodcast}
-              disabled={updatePodcastMutation.isPending || !editTitle.trim()}
-              data-testid="button-save-edit"
-            >
-              {updatePodcastMutation.isPending ? "Salvando..." : "Salvar"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Floating Player */}
+      <AnimatePresence>
+        {currentEpisode && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-20 left-4 right-4 md:left-10 md:right-10 z-50"
+          >
+            <Card className="rounded-[2.5rem] border-none bg-card/90 backdrop-blur-2xl shadow-2xl overflow-hidden max-w-4xl mx-auto border-t border-white/10">
+              <div className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
+                <div className="flex items-center gap-4 flex-1 w-full">
+                  <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-primary/20 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-lg">
+                    {currentPodcast?.imageUrl ? <img src={currentPodcast.imageUrl} className="w-full h-full object-cover" /> : <Radio className="h-10 w-10 text-primary" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-lg line-clamp-1">{currentEpisode.title}</h4>
+                    <p className="text-sm text-muted-foreground font-medium line-clamp-1">{currentPodcast?.title}</p>
+                  </div>
+                </div>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir podcast?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir "{selectedPodcast?.title}"? Esta ação não pode ser desfeita e todos os episódios serão removidos.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeletePodcast}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              data-testid="button-confirm-delete"
-            >
-              {deletePodcastMutation.isPending ? "Excluindo..." : "Excluir"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+                <div className="flex flex-col items-center gap-2 flex-1 w-full md:max-w-md">
+                  <div className="flex items-center gap-6">
+                    <Button variant="ghost" size="icon" className="rounded-full h-10 w-10" onClick={() => skip(-15)}><SkipBack className="h-5 w-5 fill-current" /></Button>
+                    <Button size="icon" className="h-14 w-14 rounded-full shadow-xl shadow-primary/20" onClick={togglePlay}>
+                      {isLoadingAudio ? <Loader2 className="h-6 w-6 animate-spin" /> : isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Play className="h-6 w-6 fill-current" />}
+                    </Button>
+                    <Button variant="ghost" size="icon" className="rounded-full h-10 w-10" onClick={() => skip(15)}><SkipForward className="h-5 w-5 fill-current" /></Button>
+                  </div>
+                  <div className="w-full flex items-center gap-3">
+                    <span className="text-[10px] font-bold text-muted-foreground w-10 text-right">{formatTime(currentTime)}</span>
+                    <Slider value={[currentTime]} max={duration || 100} step={1} onValueChange={(v) => skip(v[0] - currentTime)} className="flex-1" />
+                    <span className="text-[10px] font-bold text-muted-foreground w-10">{formatTime(duration)}</span>
+                  </div>
+                </div>
 
-      {/* Fixed Player Bar - Only show when episode is selected */}
-      {currentEpisode && (
-      <div className="fixed bottom-16 md:bottom-0 left-12 md:left-64 right-0 bg-card border-t z-[60]">
-        <div className="max-w-7xl mx-auto p-2 md:p-4">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Headphones className="h-8 w-8 text-primary" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">
-                {currentEpisode?.title || "Selecione um episódio"}
-              </p>
-              <p className="text-sm text-muted-foreground truncate">
-                {currentPodcast?.title || "Nenhum podcast selecionado"}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button size="icon" variant="ghost" onClick={() => skip(-15)} data-testid="button-skip-back">
-                <SkipBack className="h-5 w-5" />
-              </Button>
-              <Button 
-                size="icon" 
-                className="h-12 w-12"
-                onClick={togglePlay}
-                disabled={!currentEpisode || isLoadingAudio}
-                data-testid="button-play-pause"
-              >
-                {isLoadingAudio ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : isPlaying ? (
-                  <Pause className="h-5 w-5" />
-                ) : (
-                  <Play className="h-5 w-5" />
-                )}
-              </Button>
-              <Button size="icon" variant="ghost" onClick={() => skip(30)} data-testid="button-skip-forward">
-                <SkipForward className="h-5 w-5" />
-              </Button>
-            </div>
-
-            <div className="hidden md:flex items-center gap-3 flex-1">
-              <span className="text-xs text-muted-foreground min-w-[40px]">
-                {formatTime(currentTime)}
-              </span>
-              <Slider
-                value={[currentTime]}
-                max={duration || 100}
-                step={1}
-                className="flex-1"
-                onValueChange={([value]) => seekTo(value)}
-                disabled={!currentEpisode}
-              />
-              <span className="text-xs text-muted-foreground min-w-[40px]">
-                {formatTime(duration)}
-              </span>
-            </div>
-
-            <div className="hidden lg:flex items-center gap-2 w-32">
-              <Volume2 className="h-4 w-4 text-muted-foreground shrink-0" />
-              <Slider
-                value={[volume]}
-                max={100}
-                step={1}
-                onValueChange={([value]) => setVolume(value)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      )}
+                <div className="hidden md:flex items-center gap-4 w-40">
+                  <Volume2 className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                  <Slider value={[volume]} max={100} step={1} onValueChange={(v) => setVolume(v[0])} />
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

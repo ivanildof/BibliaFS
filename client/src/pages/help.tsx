@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,171 +7,175 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { HelpCircle, MessageCircle, Book, Video, Mail, ArrowLeft } from "lucide-react";
+import { HelpCircle, MessageCircle, Book, Video, Mail, ArrowLeft, Sparkles, Heart, Globe, Smartphone, Clock } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Help() {
+  const faqs = [
+    {
+      q: "Como criar um plano de leitura?",
+      a: "Acesse a seção 'Planos' no menu lateral ou na navegação inferior. Você verá uma lista de planos disponíveis organizados por duração. Clique em 'Iniciar Plano' no plano que desejar e ele será automaticamente adicionado aos seus planos ativos.",
+      icon: Book
+    },
+    {
+      q: "Como funciona o modo offline?",
+      a: "No leitor da Bíblia, você verá um ícone de nuvem no canto superior. Clique nele para baixar o capítulo atual e poder lê-lo mesmo sem internet. Você pode gerenciar todos os capítulos baixados acessando a página 'Offline' no menu lateral.",
+      icon: Smartphone
+    },
+    {
+      q: "Posso destacar e fazer anotações nos versículos?",
+      a: "Sim! Ao ler a Bíblia, clique em qualquer versículo para abrir um menu com opções. Você pode escolher entre 6 cores de destaque, adicionar notas pessoais ou salvar como favorito. Todas as marcações ficam sincronizadas na nuvem.",
+      icon: Sparkles
+    },
+    {
+      q: "Como funciona o sistema de gamificação?",
+      a: "Cada vez que você lê capítulos ou completa planos, ganha XP. Ao acumular XP, você sobe de nível: Iniciante → Aprendiz → Conhecedor → Sábio → Mestre. Além disso, pode conquistar insígnias por atingir marcos especiais.",
+      icon: Heart
+    },
+    {
+      q: "Como usar o diário de orações?",
+      a: "Acesse 'Orações' no menu e clique em 'Nova Oração'. Você pode escrever sua oração e até gravar um áudio. Quando a oração for respondida, marque-a como 'Respondida' para manter um histórico das bênçãos.",
+      icon: Clock
+    },
+    {
+      q: "O aplicativo é realmente 100% gratuito?",
+      a: "Sim! O BíbliaFS é completamente gratuito e sempre será. O aplicativo é mantido por doações voluntárias de usuários que desejam apoiar o desenvolvimento e manter o app acessível para todos.",
+      icon: Heart
+    }
+  ];
+
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-white dark:bg-slate-950">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} 
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
           <Link href="/about" data-testid="link-back-help">
-            <Button variant="ghost" size="icon" data-testid="button-back-help">
+            <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-back-help">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <p className="text-sm text-muted-foreground">Voltar para Sobre</p>
-          </div>
-        </div>
+          <p className="text-muted-foreground">Voltar para Sobre</p>
+        </motion.div>
 
-        <div className="text-center space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4"
+        >
           <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-500/5 flex items-center justify-center shadow-lg">
-              <HelpCircle className="h-10 w-10 text-amber-600" />
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-xl shadow-amber-500/20">
+              <HelpCircle className="h-10 w-10 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">Ajuda e Suporte</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+            Ajuda e Suporte
+          </h1>
+          <p className="text-muted-foreground text-lg">
             Estamos aqui para ajudar você a aproveitar ao máximo o BíbliaFS
           </p>
-        </div>
+        </motion.div>
 
-        <Card data-testid="card-faq" className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Book className="h-5 w-5" />
-              Perguntas Frequentes
-            </CardTitle>
-            <CardDescription>
-              Clique nas perguntas para ver as respostas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1" data-testid="accordion-faq-1">
-                <AccordionTrigger data-testid="trigger-faq-1">Como criar um plano de leitura?</AccordionTrigger>
-                <AccordionContent>
-                  Acesse a seção "Planos" no menu lateral ou na navegação inferior. Você verá uma lista de planos disponíveis organizados por duração (7 dias, 30 dias, 365 dias, etc.). Clique em "Iniciar Plano" no plano que desejar e ele será automaticamente adicionado aos seus planos ativos.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-2" data-testid="accordion-faq-2">
-                <AccordionTrigger data-testid="trigger-faq-2">Como funciona o modo offline?</AccordionTrigger>
-                <AccordionContent>
-                  No leitor da Bíblia, você verá um ícone de nuvem no canto superior. Clique nele para baixar o capítulo atual e poder lê-lo mesmo sem internet. Você pode gerenciar todos os capítulos baixados acessando a página "Offline" no menu lateral, onde também pode ver quanto espaço está sendo usado.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" data-testid="accordion-faq-3">
-                <AccordionTrigger data-testid="trigger-faq-3">Posso destacar e fazer anotações nos versículos?</AccordionTrigger>
-                <AccordionContent>
-                  Sim! Ao ler a Bíblia, clique em qualquer versículo para abrir um menu com opções. Você pode escolher entre 6 cores de destaque (amarelo, verde, azul, roxo, rosa e laranja), adicionar notas pessoais ou salvar como favorito. Todas essas marcações ficam sincronizadas na nuvem.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" data-testid="accordion-faq-4">
-                <AccordionTrigger data-testid="trigger-faq-4">Como funciona o sistema de gamificação?</AccordionTrigger>
-                <AccordionContent>
-                  Cada vez que você lê capítulos, completa planos ou mantém uma sequência de leitura diária, ganha XP (pontos de experiência). Ao acumular XP, você sobe de nível: Iniciante → Aprendiz → Conhecedor → Sábio → Mestre. Além disso, pode conquistar 18 diferentes conquistas por atingir marcos especiais, como ler 7 dias seguidos ou completar seu primeiro plano.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-5" data-testid="accordion-faq-5">
-                <AccordionTrigger data-testid="trigger-faq-5">Como usar o diário de orações?</AccordionTrigger>
-                <AccordionContent>
-                  Acesse "Orações" no menu e clique em "Nova Oração". Você pode escrever sua oração, categorizá-la (Agradecimento, Súplica, Intercessão ou Confissão) e até gravar um áudio da sua oração. Quando a oração for respondida, marque-a como "Respondida" para manter um histórico das bênçãos recebidas.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" data-testid="accordion-faq-6">
-                <AccordionTrigger data-testid="trigger-faq-6">O aplicativo é realmente 100% gratuito?</AccordionTrigger>
-                <AccordionContent>
-                  Sim! O BíbliaFS é completamente gratuito e sempre será. Todos os recursos estão disponíveis sem custo algum. O aplicativo é mantido por doações voluntárias de usuários que desejam apoiar o desenvolvimento e manter o app gratuito para todos. Você pode doar se quiser, mas não é obrigatório.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-7" data-testid="accordion-faq-7">
-                <AccordionTrigger data-testid="trigger-faq-7">Como compartilhar versículos?</AccordionTrigger>
-                <AccordionContent>
-                  Na página do Versículo do Dia ou ao selecionar qualquer versículo no leitor, você tem a opção de copiar o texto formatado ou baixar uma imagem bonita do versículo para compartilhar nas redes sociais ou com amigos.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-8" data-testid="accordion-faq-8">
-                <AccordionTrigger data-testid="trigger-faq-8">Posso usar em vários dispositivos?</AccordionTrigger>
-                <AccordionContent>
-                  Sim! Ao fazer login com sua conta, todos os seus dados (planos, notas, destaques, orações, progresso) são sincronizados automaticamente entre todos os seus dispositivos. Você pode começar a ler no celular e continuar no computador sem perder nada.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-9" data-testid="accordion-faq-9">
-                <AccordionTrigger data-testid="trigger-faq-9">Quais versões da Bíblia estão disponíveis?</AccordionTrigger>
-                <AccordionContent>
-                  Atualmente oferecemos 4 versões em português: NVI (Nova Versão Internacional), ACF (Almeida Corrigida Fiel), ARC (Almeida Revista e Corrigida) e RA (Almeida Revista e Atualizada). Você pode alternar entre elas a qualquer momento no leitor da Bíblia.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-10" data-testid="accordion-faq-10">
-                <AccordionTrigger data-testid="trigger-faq-10">Como alterar o idioma do aplicativo?</AccordionTrigger>
-                <AccordionContent>
-                  No canto superior direito, você encontrará um seletor de idiomas. O BíbliaFS está disponível em Português (BR), English, Nederlands e Español. Ao mudar o idioma, toda a interface é traduzida automaticamente.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
-
-        <div className="grid md:grid-cols-2 gap-4">
-
-          <Card data-testid="card-tutorials">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="h-5 w-5" />
-                Tutoriais em Vídeo
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card data-testid="card-faq" className="rounded-[2.5rem] border-none bg-card/80 backdrop-blur-xl shadow-lg overflow-hidden">
+            <CardHeader className="bg-primary/5 p-8 border-b border-primary/10">
+              <CardTitle className="flex items-center gap-3 text-2xl font-bold">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                  <Book className="h-6 w-6" />
+                </div>
+                Perguntas Frequentes
               </CardTitle>
-              <CardDescription>
-                Aprenda a usar todos os recursos
+              <CardDescription className="text-base">
+                Clique nas perguntas para ver as respostas
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Em breve disponibilizaremos tutoriais em vídeo para ajudá-lo a explorar todos os recursos do BíbliaFS.
-              </p>
-              <Button variant="outline" className="w-full" disabled>
-                <Video className="h-4 w-4 mr-2" />
-                Ver Tutoriais (Em Breve)
-              </Button>
+            <CardContent className="p-8">
+              <Accordion type="single" collapsible className="w-full space-y-4">
+                {faqs.map((faq, idx) => (
+                  <AccordionItem 
+                    key={idx} 
+                    value={`item-${idx}`} 
+                    className="border-none bg-muted/30 rounded-2xl px-6"
+                    data-testid={`accordion-faq-${idx}`}
+                  >
+                    <AccordionTrigger className="hover:no-underline py-6 font-bold text-lg text-left" data-testid={`trigger-faq-${idx}`}>
+                      <div className="flex items-center gap-4">
+                        <faq.icon className="h-5 w-5 text-primary shrink-0" />
+                        <span>{faq.q}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground text-base leading-relaxed pb-6">
+                      {faq.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </CardContent>
           </Card>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+            <Card data-testid="card-tutorials" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600">
+                    <Video className="h-6 w-6" />
+                  </div>
+                  Tutoriais em Vídeo
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Aprenda a usar todos os recursos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <p className="text-muted-foreground leading-relaxed">
+                  Em breve disponibilizaremos tutoriais em vídeo para ajudá-lo a explorar todos os recursos do BíbliaFS de forma visual e prática.
+                </p>
+                <Button variant="outline" className="w-full rounded-xl h-12" disabled>
+                  <Video className="h-4 w-4 mr-2" />
+                  Ver Tutoriais (Em Breve)
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
+            <Card data-testid="card-contact-support" className="rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                    <MessageCircle className="h-6 w-6" />
+                  </div>
+                  Precisa de Mais Ajuda?
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Nossa equipe está pronta para atendê-lo
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <p className="text-muted-foreground leading-relaxed">
+                  Se você não encontrou a resposta para sua dúvida nas FAQs acima, entre em contato conosco diretamente. Responderemos o mais breve possível!
+                </p>
+                <Link href="/contact" data-testid="link-contact-help">
+                  <Button className="w-full rounded-xl h-12 shadow-lg shadow-primary/20" data-testid="button-contact-us">
+                    <Mail className="h-4 w-4 mr-2" />
+                    Fale Conosco
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
 
-        <Card data-testid="card-contact-support">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              Precisa de Mais Ajuda?
-            </CardTitle>
-            <CardDescription>
-              Nossa equipe está pronta para atendê-lo
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Se você não encontrou a resposta para sua dúvida, entre em contato conosco. Responderemos o mais breve possível!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/contact" className="flex-1" data-testid="link-contact-help">
-                <Button className="w-full" data-testid="button-contact-us">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Fale Conosco
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <footer className="text-center text-sm text-muted-foreground py-6 border-t">
+        <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border/50">
           <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
           <p className="mt-1">
             Desenvolvido por{" "}
@@ -178,7 +183,7 @@ export default function Help() {
               href="https://fabrisite.com.br/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary hover:underline font-medium"
             >
               FabriSite
             </a>

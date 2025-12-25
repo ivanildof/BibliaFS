@@ -1,165 +1,168 @@
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, ArrowLeft } from "lucide-react";
+import { FileText, ArrowLeft, CheckCircle2, AlertTriangle, ShieldAlert, BookOpen, Scale, Mail } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Terms() {
+  const sections = [
+    {
+      title: "1. Aceitação dos Termos",
+      icon: CheckCircle2,
+      content: "Ao acessar e usar o BíbliaFS, você concorda em cumprir e estar vinculado a estes Termos de Uso. Se você não concordar com alguma parte destes termos, não deverá usar nosso aplicativo."
+    },
+    {
+      title: "2. Uso do Serviço",
+      icon: BookOpen,
+      intro: "O BíbliaFS é um aplicativo gratuito de estudo bíblico. Você concorda em usar o serviço apenas para fins legais e de acordo com estes Termos.",
+      forbidden: [
+        "Usar o serviço para qualquer finalidade ilegal ou não autorizada",
+        "Tentar acessar dados de outros usuários",
+        "Interferir ou interromper o serviço ou servidores",
+        "Usar o conteúdo para fins comerciais sem autorização",
+        "Publicar conteúdo ofensivo, difamatório ou inadequado"
+      ]
+    },
+    {
+      title: "3. Conteúdo do Usuário",
+      icon: FileText,
+      content: "Você mantém todos os direitos sobre o conteúdo que cria no aplicativo (notas, orações, posts). No entanto, ao compartilhar conteúdo publicamente na comunidade, você concede ao BíbliaFS uma licença não exclusiva para exibir esse conteúdo. Reservamo-nos o direito de remover qualquer conteúdo que viole estes termos ou seja considerado inadequado."
+    },
+    {
+      title: "4. Propriedade Intelectual",
+      icon: ShieldAlert,
+      content: "O aplicativo BíbliaFS e todo seu conteúdo original são propriedade do BíbliaFS e são protegidos por leis de direitos autorais internacionais. Os textos bíblicos disponibilizados são de domínio público ou usados com permissão de seus respectivos detentores de direitos."
+    },
+    {
+      title: "5. Limitação de Responsabilidade",
+      icon: AlertTriangle,
+      content: "O BíbliaFS é fornecido 'como está'. Não garantimos que o serviço será ininterrupto ou livre de erros. Não nos responsabilizamos por quaisquer danos resultantes do uso ou incapacidade de usar o serviço."
+    },
+    {
+      title: "6. Modificações",
+      icon: Scale,
+      content: "Reservamo-nos o direito de modificar ou substituir estes Termos a qualquer momento. Mudanças significativas serão notificadas através do aplicativo."
+    }
+  ];
+
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-white dark:bg-slate-950">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-purple-500/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} 
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
           <Link href="/about" data-testid="link-back-terms">
-            <Button variant="ghost" size="icon" data-testid="button-back-terms">
+            <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-back-terms">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <p className="text-sm text-muted-foreground">Voltar para Sobre</p>
-          </div>
-        </div>
+          <p className="text-muted-foreground">Voltar para Sobre</p>
+        </motion.div>
 
-        <div className="text-center space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4"
+        >
           <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center shadow-lg">
-              <FileText className="h-10 w-10 text-purple-600" />
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-xl shadow-purple-500/20">
+              <FileText className="h-10 w-10 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">Termos de Uso</h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">
+            Termos de Uso
+          </h1>
           <p className="text-muted-foreground">
             Última atualização: {new Date().toLocaleDateString('pt-BR')}
           </p>
-        </div>
+        </motion.div>
 
-        <Card data-testid="card-acceptance">
-          <CardHeader>
-            <CardTitle>1. Aceitação dos Termos</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-muted-foreground">
-            <p>
-              Ao acessar e usar o BíbliaFS, você concorda em cumprir e estar vinculado a estes Termos de Uso. 
-              Se você não concordar com alguma parte destes termos, não deverá usar nosso aplicativo.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="card-usage">
-          <CardHeader>
-            <CardTitle>2. Uso do Serviço</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-muted-foreground">
-            <p>
-              O BíbliaFS é um aplicativo gratuito de estudo bíblico. Você concorda em usar o serviço 
-              apenas para fins legais e de acordo com estes Termos.
-            </p>
-            <p className="font-medium">Você concorda em NÃO:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Usar o serviço para qualquer finalidade ilegal ou não autorizada</li>
-              <li>Tentar acessar dados de outros usuários</li>
-              <li>Interferir ou interromper o serviço ou servidores</li>
-              <li>Usar o conteúdo para fins comerciais sem autorização</li>
-              <li>Publicar conteúdo ofensivo, difamatório ou inadequado</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="card-content">
-          <CardHeader>
-            <CardTitle>3. Conteúdo do Usuário</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-muted-foreground">
-            <p>
-              Você mantém todos os direitos sobre o conteúdo que cria no aplicativo (notas, orações, posts). 
-              No entanto, ao compartilhar conteúdo publicamente na comunidade, você concede ao BíbliaFS 
-              uma licença não exclusiva para exibir esse conteúdo.
-            </p>
-            <p>
-              Reservamo-nos o direito de remover qualquer conteúdo que viole estes termos ou seja 
-              considerado inadequado.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="card-intellectual">
-          <CardHeader>
-            <CardTitle>4. Propriedade Intelectual</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-muted-foreground">
-            <p>
-              O aplicativo BíbliaFS e todo seu conteúdo original são propriedade do BíbliaFS e são 
-              protegidos por leis de direitos autorais internacionais.
-            </p>
-            <p>
-              Os textos bíblicos disponibilizados são de domínio público ou usados com permissão 
-              de seus respectivos detentores de direitos.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="card-liability">
-          <CardHeader>
-            <CardTitle>5. Limitação de Responsabilidade</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-muted-foreground">
-            <p>
-              O BíbliaFS é fornecido "como está". Não garantimos que o serviço será ininterrupto 
-              ou livre de erros. Não nos responsabilizamos por quaisquer danos resultantes do uso 
-              ou incapacidade de usar o serviço.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="card-modifications">
-          <CardHeader>
-            <CardTitle>6. Modificações</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-muted-foreground">
-            <p>
-              Reservamo-nos o direito de modificar ou substituir estes Termos a qualquer momento. 
-              Mudanças significativas serão notificadas através do aplicativo.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="card-contact-terms">
-          <CardHeader>
-            <CardTitle>7. Contato</CardTitle>
-          </CardHeader>
-          <CardContent className="text-muted-foreground">
-            <p>
-              Se você tiver dúvidas sobre estes Termos de Uso, entre em contato conosco através 
-              da página "Fale Conosco".
-            </p>
-          </CardContent>
-        </Card>
-
-        <div className="grid md:grid-cols-3 gap-4 py-8">
-          <Link href="/about">
-            <Card className="hover-elevate cursor-pointer">
-              <CardContent className="p-4 text-center">
-                <h3 className="font-semibold mb-2">Sobre</h3>
-                <p className="text-sm text-muted-foreground">Conheça o BíbliaFS</p>
+        {sections.map((section, idx) => (
+          <motion.div
+            key={section.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 + idx * 0.05 }}
+          >
+            <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-primary/10">
+                    <section.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  {section.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
+                {section.content && <p>{section.content}</p>}
+                {section.intro && <p>{section.intro}</p>}
+                {section.forbidden && (
+                  <div className="space-y-3 pt-2">
+                    <p className="font-bold text-foreground">Você concorda em NÃO:</p>
+                    <ul className="space-y-2">
+                      {section.forbidden.map((item, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className="h-2 w-2 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          </Link>
-          <Link href="/privacy">
-            <Card className="hover-elevate cursor-pointer">
-              <CardContent className="p-4 text-center">
-                <h3 className="font-semibold mb-2">Privacidade</h3>
-                <p className="text-sm text-muted-foreground">Proteção de dados</p>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/security">
-            <Card className="hover-elevate cursor-pointer">
-              <CardContent className="p-4 text-center">
-                <h3 className="font-semibold mb-2">Segurança</h3>
-                <p className="text-sm text-muted-foreground">Medidas de segurança</p>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
+          </motion.div>
+        ))}
 
-        <footer className="text-center text-sm text-muted-foreground py-6 border-t">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-green-500/10">
+                  <Mail className="h-5 w-5 text-green-600" />
+                </div>
+                7. Contato
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-muted-foreground">
+              <p>
+                Se você tiver dúvidas sobre estes Termos de Uso, entre em contato conosco através 
+                da página "Fale Conosco".
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.55 }}
+          className="grid md:grid-cols-3 gap-4 py-8"
+        >
+          {[
+            { href: "/about", title: "Sobre", desc: "Conheça o BíbliaFS" },
+            { href: "/privacy", title: "Privacidade", desc: "Proteção de dados" },
+            { href: "/security", title: "Segurança", desc: "Medidas de segurança" }
+          ].map((link, idx) => (
+            <Link key={idx} href={link.href}>
+              <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg cursor-pointer h-full transition-all hover:shadow-xl">
+                <CardContent className="p-5 text-center">
+                  <h3 className="font-bold mb-1">{link.title}</h3>
+                  <p className="text-sm text-muted-foreground">{link.desc}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </motion.div>
+
+        <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border/50">
           <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
           <p className="mt-1">
             Desenvolvido por{" "}
@@ -167,7 +170,7 @@ export default function Terms() {
               href="https://fabrisite.com.br/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary hover:underline font-medium"
             >
               FabriSite
             </a>

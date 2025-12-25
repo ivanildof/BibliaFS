@@ -18,7 +18,11 @@ import {
   Check,
   Calendar,
   Clock,
-  Loader2
+  Loader2,
+  Heart,
+  Sparkles,
+  CheckCircle2,
+  Trash2
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -30,7 +34,6 @@ import { insertPrayerSchema, type Prayer } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-// Form schema
 const formSchema = insertPrayerSchema.extend({
   title: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),
   content: z.string().min(5, "O conteúdo deve ter pelo menos 5 caracteres"),
@@ -119,9 +122,6 @@ export default function Prayers() {
 
   const activePrayers = prayers.filter(p => !p.isAnswered);
   const answeredPrayers = prayers.filter(p => p.isAnswered);
-  
-  // Extract padding classes for reuse
-  const pageContainerClass = "max-w-5xl mx-auto px-6 sm:px-8 py-6 sm:py-8";
 
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -133,7 +133,7 @@ export default function Prayers() {
   const streamRef = useRef<MediaStream | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const MAX_RECORDING_SECONDS = 300; // 5 minutes max
+  const MAX_RECORDING_SECONDS = 300;
   const MAX_AUDIO_SIZE_MB = 5;
 
   const cleanupRecording = () => {
@@ -159,7 +159,6 @@ export default function Prayers() {
         handleStopRecording();
       }
       cleanupRecording();
-      // Reset audio states when dialog closes
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
@@ -240,27 +239,21 @@ export default function Prayers() {
     }
   };
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-5xl mx-auto p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Carregando orações...</p>
-            </div>
-          </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando orações...</p>
         </div>
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-5xl mx-auto p-6">
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-5xl mx-auto">
           <Card className="border-destructive">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
@@ -281,27 +274,40 @@ export default function Prayers() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-display text-4xl font-bold mb-2" data-testid="text-page-title">
-              Minhas Orações
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Registre e acompanhe suas orações
-            </p>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-5xl mx-auto p-6">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10"
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <Heart className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="font-display text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent" data-testid="text-page-title">
+                Minhas Orações
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Registre e acompanhe suas orações
+              </p>
+            </div>
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-new-prayer">
+              <Button size="lg" className="rounded-xl h-12 px-6 shadow-lg shadow-primary/20" data-testid="button-new-prayer">
                 <Plus className="h-5 w-5 mr-2" />
                 Nova Oração
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="rounded-2xl">
               <DialogHeader>
                 <DialogTitle>Registrar Nova Oração</DialogTitle>
                 <DialogDescription>
@@ -320,6 +326,7 @@ export default function Prayers() {
                         <FormControl>
                           <Input 
                             placeholder="Ex: Pela saúde da família"
+                            className="rounded-xl"
                             data-testid="input-prayer-title"
                             {...field}
                           />
@@ -338,7 +345,7 @@ export default function Prayers() {
                         <FormControl>
                           <Textarea 
                             placeholder="Escreva sua oração..."
-                            className="min-h-[120px]"
+                            className="min-h-[120px] rounded-xl"
                             data-testid="textarea-prayer-content"
                             {...field}
                           />
@@ -355,7 +362,7 @@ export default function Prayers() {
                         <Button 
                           type="button"
                           variant="outline" 
-                          className="flex-1"
+                          className="flex-1 rounded-xl"
                           onClick={handleStartRecording}
                           data-testid="button-start-recording"
                         >
@@ -366,7 +373,7 @@ export default function Prayers() {
                         <Button 
                           type="button"
                           variant="destructive" 
-                          className="flex-1"
+                          className="flex-1 rounded-xl"
                           onClick={handleStopRecording}
                           data-testid="button-stop-recording"
                         >
@@ -383,7 +390,7 @@ export default function Prayers() {
                   )}
                   
                   {audioBlob && previewUrl && (
-                    <div className="space-y-3 p-4 bg-muted rounded-lg">
+                    <div className="space-y-3 p-4 bg-muted rounded-xl">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">Preview da Gravação</span>
                         <span className="text-xs text-muted-foreground">
@@ -403,7 +410,7 @@ export default function Prayers() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="w-full"
+                        className="w-full rounded-xl"
                         onClick={() => {
                           setAudioBlob(null);
                           setPreviewUrl(null);
@@ -426,6 +433,7 @@ export default function Prayers() {
                   <Button 
                     type="button"
                     variant="outline" 
+                    className="rounded-xl"
                     onClick={() => setIsCreateDialogOpen(false)}
                     data-testid="button-cancel-prayer"
                   >
@@ -433,6 +441,7 @@ export default function Prayers() {
                   </Button>
                   <Button 
                     type="submit"
+                    className="rounded-xl"
                     disabled={createMutation.isPending}
                     data-testid="button-save-prayer"
                   >
@@ -444,197 +453,253 @@ export default function Prayers() {
             </Form>
           </DialogContent>
           </Dialog>
-        </div>
+        </motion.div>
 
-        {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Orações Ativas</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary" data-testid="text-active-prayers">
-                {activePrayers.length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Orações Respondidas</CardTitle>
-              <Check className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-600" data-testid="text-answered-prayers">
-                {answeredPrayers.length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Orações</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {prayers.length}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Prayers List */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6">
-            <TabsTrigger value="active" data-testid="tab-active-prayers">
-              Ativas ({activePrayers.length})
-            </TabsTrigger>
-            <TabsTrigger value="answered" data-testid="tab-answered-prayers">
-              Respondidas ({answeredPrayers.length})
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="active">
-            {activePrayers.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                    <MessageSquare className="h-8 w-8 text-muted-foreground" />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-10"
+        >
+          {[
+            { label: "Orações Ativas", value: activePrayers.length, icon: MessageSquare, color: "text-primary", testId: "text-active-prayers" },
+            { label: "Respondidas", value: answeredPrayers.length, icon: CheckCircle2, color: "text-green-600", testId: "text-answered-prayers" },
+            { label: "Total", value: prayers.length, icon: Sparkles, color: "text-amber-600", testId: "text-total-prayers" },
+          ].map((stat, idx) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 + idx * 0.05 }}
+            >
+              <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+                  <div className="p-2 rounded-xl bg-muted/50">
+                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhuma oração ativa</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Registre sua primeira oração
-                  </p>
-                  <Button onClick={() => setIsCreateDialogOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nova Oração
-                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className={`text-3xl font-bold ${stat.color}`} data-testid={stat.testId}>
+                    {stat.value}
+                  </div>
                 </CardContent>
               </Card>
-            ) : (
-              <div className="space-y-4">
-                {activePrayers.map((prayer) => (
-                  <Card key={prayer.id} className="hover-elevate" data-testid={`card-prayer-${prayer.id}`}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="mb-2 truncate">{prayer.title}</CardTitle>
-                          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {formatDistanceToNow(new Date(prayer.createdAt!), { 
-                                addSuffix: true,
-                                locale: ptBR 
-                              })}
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="mb-8 bg-muted/50 p-1.5 rounded-2xl h-auto">
+              <TabsTrigger 
+                value="active" 
+                className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all py-3 px-6"
+                data-testid="tab-active-prayers"
+              >
+                Ativas ({activePrayers.length})
+              </TabsTrigger>
+              <TabsTrigger 
+                value="answered" 
+                className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all py-3 px-6"
+                data-testid="tab-answered-prayers"
+              >
+                Respondidas ({answeredPrayers.length})
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="active">
+              {activePrayers.length === 0 ? (
+                <Card className="rounded-2xl border-dashed border-none bg-muted/30">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-[2rem] bg-muted/50 mb-6">
+                      <Heart className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-bold text-xl mb-2">Nenhuma oração ativa</h3>
+                    <p className="text-muted-foreground mb-6 max-w-md">
+                      Registre sua primeira oração e acompanhe as bênçãos de Deus
+                    </p>
+                    <Button className="rounded-xl" onClick={() => setIsCreateDialogOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Nova Oração
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  <AnimatePresence mode="popLayout">
+                    {activePrayers.map((prayer, idx) => (
+                      <motion.div
+                        key={prayer.id}
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: idx * 0.05 }}
+                      >
+                        <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg group" data-testid={`card-prayer-${prayer.id}`}>
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <CardTitle className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{prayer.title}</CardTitle>
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                  <div className="flex items-center gap-1.5">
+                                    <Clock className="h-3.5 w-3.5" />
+                                    {formatDistanceToNow(new Date(prayer.createdAt!), { 
+                                      addSuffix: true,
+                                      locale: ptBR 
+                                    })}
+                                  </div>
+                                  {prayer.location && (
+                                    <div className="flex items-center gap-1.5">
+                                      <MapPin className="h-3.5 w-3.5" />
+                                      {prayer.location.name || "Localização salva"}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <Badge variant="secondary" className="rounded-full px-3 py-1 font-bold text-[10px] uppercase tracking-widest">Ativa</Badge>
                             </div>
-                            {prayer.location && (
-                              <div className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />
-                                {prayer.location.name || "Localização salva"}
+                          </CardHeader>
+                          
+                          <CardContent>
+                            {prayer.content && (
+                              <p className="text-muted-foreground leading-relaxed mb-4">
+                                {prayer.content}
+                              </p>
+                            )}
+                            
+                            {prayer.audioUrl && (
+                              <div className="p-4 bg-muted/50 rounded-xl">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="p-1.5 rounded-lg bg-primary/10">
+                                    <Mic className="h-4 w-4 text-primary" />
+                                  </div>
+                                  <span className="text-sm font-medium">
+                                    Gravação de {Math.floor((prayer.audioDuration || 0) / 60)}:
+                                    {String((prayer.audioDuration || 0) % 60).padStart(2, '0')}
+                                  </span>
+                                </div>
+                                <audio 
+                                  controls 
+                                  className="w-full" 
+                                  src={prayer.audioUrl}
+                                  data-testid={`audio-prayer-${prayer.id}`}
+                                />
                               </div>
                             )}
-                          </div>
-                        </div>
-                        <Badge variant="secondary">Ativa</Badge>
-                      </div>
-                    </CardHeader>
-                    
-                    <CardContent>
-                      {prayer.content && (
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                          {prayer.content}
-                        </p>
-                      )}
-                      
-                      {prayer.audioUrl && (
-                        <div className="p-3 bg-muted rounded-lg">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Mic className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">
-                              Gravação de {Math.floor((prayer.audioDuration || 0) / 60)}:
-                              {String((prayer.audioDuration || 0) % 60).padStart(2, '0')}
-                            </span>
-                          </div>
-                          <audio 
-                            controls 
-                            className="w-full" 
-                            src={prayer.audioUrl}
-                            data-testid={`audio-prayer-${prayer.id}`}
-                          />
-                        </div>
-                      )}
-                    </CardContent>
-                    
-                    <CardFooter className="gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => markAnsweredMutation.mutate({ id: prayer.id, isAnswered: true })}
-                        data-testid={`button-mark-answered-${prayer.id}`}
+                          </CardContent>
+                          
+                          <CardFooter className="gap-3 pt-2">
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              className="rounded-xl"
+                              onClick={() => markAnsweredMutation.mutate({ id: prayer.id, isAnswered: true })}
+                              data-testid={`button-mark-answered-${prayer.id}`}
+                            >
+                              <Check className="h-4 w-4 mr-1" />
+                              Marcar Respondida
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="rounded-xl hover:bg-destructive/10"
+                              onClick={() => deleteMutation.mutate(prayer.id)}
+                              data-testid={`button-delete-prayer-${prayer.id}`}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive/70" />
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="answered">
+              {answeredPrayers.length === 0 ? (
+                <Card className="rounded-2xl border-dashed border-none bg-muted/30">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-[2rem] bg-green-500/10 mb-6">
+                      <CheckCircle2 className="h-10 w-10 text-green-600" />
+                    </div>
+                    <h3 className="font-bold text-xl mb-2">Nenhuma oração respondida ainda</h3>
+                    <p className="text-muted-foreground max-w-md">
+                      Quando Deus responder suas orações, marque-as aqui para celebrar!
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  <AnimatePresence mode="popLayout">
+                    {answeredPrayers.map((prayer, idx) => (
+                      <motion.div
+                        key={prayer.id}
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: idx * 0.05 }}
                       >
-                        <Check className="h-4 w-4 mr-2" />
-                        Marcar como Respondida
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(prayer.id)}
-                        data-testid={`button-delete-prayer-${prayer.id}`}
-                      >
-                        Excluir
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="answered">
-            {answeredPrayers.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 mb-4">
-                    <Check className="h-8 w-8 text-green-600" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Nenhuma oração respondida</h3>
-                  <p className="text-muted-foreground">
-                    Marque suas orações como respondidas quando forem atendidas
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {answeredPrayers.map((prayer) => (
-                  <Card key={prayer.id} className="border-green-500/20 bg-green-500/5">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <CardTitle className="flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
-                            <Check className="h-3 w-3 text-green-600" />
-                          </div>
-                          {prayer.title}
-                        </CardTitle>
-                        <Badge className="bg-green-500/20 text-green-700">
-                          Respondida
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      {prayer.content && (
-                        <p className="text-sm text-muted-foreground">
-                          {prayer.content}
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+                        <Card className="rounded-2xl border-none bg-green-500/5 backdrop-blur-xl shadow-lg" data-testid={`card-answered-${prayer.id}`}>
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <CardTitle className="text-xl font-bold mb-2">{prayer.title}</CardTitle>
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                  <div className="flex items-center gap-1.5">
+                                    <Calendar className="h-3.5 w-3.5" />
+                                    Respondida {prayer.answeredAt && formatDistanceToNow(new Date(prayer.answeredAt), { 
+                                      addSuffix: true,
+                                      locale: ptBR 
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                              <Badge className="rounded-full px-3 py-1 bg-green-500/10 text-green-600 border-none font-bold text-[10px] uppercase tracking-widest">Respondida</Badge>
+                            </div>
+                          </CardHeader>
+                          
+                          {prayer.content && (
+                            <CardContent>
+                              <p className="text-muted-foreground leading-relaxed">
+                                {prayer.content}
+                              </p>
+                            </CardContent>
+                          )}
+                          
+                          <CardFooter className="gap-3 pt-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="rounded-xl"
+                              onClick={() => markAnsweredMutation.mutate({ id: prayer.id, isAnswered: false })}
+                              data-testid={`button-unmark-answered-${prayer.id}`}
+                            >
+                              Mover para Ativas
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="rounded-xl hover:bg-destructive/10"
+                              onClick={() => deleteMutation.mutate(prayer.id)}
+                              data-testid={`button-delete-answered-${prayer.id}`}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive/70" />
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </motion.div>
       </div>
     </div>
   );
