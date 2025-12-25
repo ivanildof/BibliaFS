@@ -79,6 +79,7 @@ function Router() {
           <Route path="/security" component={Security} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
+          <Route path="/groups" component={Groups} />
         </>
       ) : (
         <>
