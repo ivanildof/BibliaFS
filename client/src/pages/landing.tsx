@@ -45,17 +45,17 @@ const themes = [
 ];
 
 const premiumFeatures = [
-  "Assistente IA Teológico Avançado",
-  "Temas Totalmente Personalizáveis",
-  "Modo Professor Completo",
-  "Podcasts Integrados",
+  "Busca Inteligente com IA Teológica",
+  "Temas de Leitura Personalizáveis (Sépia, Noturno)",
+  "Modo Professor com Geração de Esboços",
+  "Sistema de Gamificação (XP e Streaks)",
+  "Acesso Offline Completo (Download de Livros)",
+  "Podcasts Teológicos Integrados",
   "Gravação de Orações em Áudio",
-  "Sistema de Gamificação",
   "Exportação de Aulas em PDF",
-  "Sincronização na Nuvem",
-  "Acesso Offline Completo",
+  "Sincronização em Tempo Real",
   "Comentários Teológicos Premium",
-  "Comunidade Exclusiva",
+  "Comunidade e Grupos de Estudo",
   "Suporte Prioritário",
 ];
 
