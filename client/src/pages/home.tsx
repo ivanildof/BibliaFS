@@ -80,7 +80,7 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Welcome Header */}
         <div className="space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold gradient-text leading-tight" data-testid="text-welcome">
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold gradient-text leading-tight text-center" data-testid="text-welcome">
             Bem-vindo, {user?.firstName || "estudante"}!
           </h1>
           <p className="text-sm sm:text-base lg:text-lg text-muted-foreground text-center">
