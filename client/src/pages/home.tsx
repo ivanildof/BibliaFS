@@ -83,7 +83,7 @@ export default function Home() {
           <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold gradient-text leading-tight" data-testid="text-welcome">
             Bem-vindo, {user?.firstName || "estudante"}!
           </h1>
-          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground text-center">
             Continue sua jornada espiritual hoje
           </p>
         </div>
