@@ -59,8 +59,8 @@ export function AISearch() {
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSearch} className="relative">
-        <div className="relative">
+      <form onSubmit={handleSearch} className="flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
@@ -68,26 +68,26 @@ export function AISearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsOpen(true)}
-            className="pl-10 pr-24"
+            className="pl-10"
             data-testid="input-ai-search"
           />
-          <Button
-            type="submit"
-            size="sm"
-            disabled={searchMutation.isPending || query.trim().length < 3}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-3 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md"
-            data-testid="button-ai-search"
-          >
-            {searchMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4 mr-1" />
-                Buscar
-              </>
-            )}
-          </Button>
         </div>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={searchMutation.isPending || query.trim().length < 3}
+          className="h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md shrink-0"
+          data-testid="button-ai-search"
+        >
+          {searchMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4 mr-1" />
+              Buscar
+            </>
+          )}
+        </Button>
       </form>
 
       {isOpen && (searchMutation.data || searchMutation.isPending) && (
