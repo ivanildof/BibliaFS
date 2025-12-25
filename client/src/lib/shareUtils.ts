@@ -46,7 +46,7 @@ export function generateVerseShareUrl(
   verse: number,
   version: string
 ): string {
-  const baseUrl = window.location.origin;
+  const baseUrl = import.meta.env.VITE_APP_URL || "https://bibliasf.com";
   return `${baseUrl}/bible?book=${book}&chapter=${chapter}&verse=${verse}&version=${version}`;
 }
 
