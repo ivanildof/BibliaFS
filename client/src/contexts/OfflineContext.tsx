@@ -48,12 +48,18 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
         const keys = new Set(chapters.map(ch => `${ch.book}-${ch.chapter}-${ch.version}`));
         setDownloadedChapters(keys);
         
-        // Initialize SQLite database for complete offline Bible
-        const ready = await bibleSqlite.init();
-        setSqliteReady(ready);
-        if (ready) {
-          console.log("[OfflineProvider] SQLite Bible database ready");
-        }
+        // Initialize SQLite database lazily or in background to not block initial render
+        setTimeout(async () => {
+          try {
+            const ready = await bibleSqlite.init();
+            setSqliteReady(ready);
+            if (ready) {
+              console.log("[OfflineProvider] SQLite Bible database ready");
+            }
+          } catch (e) {
+            console.error("Error initializing SQLite in background:", e);
+          }
+        }, 1000);
       } catch (error) {
         console.error("Error initializing offline storage:", error);
       }
