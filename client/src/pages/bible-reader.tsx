@@ -241,11 +241,51 @@ export default function BibleReader() {
       audio.onended = null;
       audio.onerror = null;
       audio.onloadeddata = null;
+      audio.ontimeupdate = null;
+      audio.onpause = null;
+      audio.onplay = null;
       audioElementRef.current = null;
     }
     setIsPlayingAudio(false);
     setAudioUrl(null);
     setPlayingVerseNumber(null);
+    setAudioCurrentTime(0);
+    setAudioDuration(0);
+  };
+
+  // Audio seek handler
+  const handleAudioSeek = (value: number) => {
+    const audio = audioElementRef.current;
+    if (audio) {
+      audio.currentTime = value;
+      setAudioCurrentTime(value);
+    }
+  };
+
+  // Toggle audio play/pause
+  const handleAudioToggle = () => {
+    const audio = audioElementRef.current;
+    if (!audio) return;
+    
+    if (isPlayingAudio) {
+      audio.pause();
+      setIsPlayingAudio(false);
+    } else {
+      audio.play().then(() => {
+        setIsPlayingAudio(true);
+      }).catch(console.error);
+    }
+  };
+
+  // Get current audio title
+  const getAudioTitle = () => {
+    if (playingVerseNumber) {
+      return `${t.bibleBooks[selectedBook || ''] || selectedBook} ${selectedChapter}:${playingVerseNumber}`;
+    }
+    if (audioMode === 'book') {
+      return `${t.bibleBooks[selectedBook || ''] || selectedBook} - Capítulo ${bookPlaylist[currentPlaylistIndex] || selectedChapter}`;
+    }
+    return `${t.bibleBooks[selectedBook || ''] || selectedBook} ${selectedChapter}`;
   };
 
   const playChapterAudio = async (chapter: number) => {
@@ -490,6 +530,7 @@ export default function BibleReader() {
       
       audio.onloadeddata = () => {
         setIsLoadingAudio(false);
+        setAudioDuration(audio.duration);
         audio.play().then(() => {
           setIsPlayingAudio(true);
           setAudioUrl(blobUrl);
@@ -511,11 +552,17 @@ export default function BibleReader() {
           });
         });
       };
+
+      audio.ontimeupdate = () => {
+        setAudioCurrentTime(audio.currentTime);
+      };
       
       audio.onended = () => {
         URL.revokeObjectURL(blobUrl);
         setIsPlayingAudio(false);
         setPlayingVerseNumber(null);
+        setAudioCurrentTime(0);
+        setAudioDuration(0);
       };
       
       audio.onerror = () => {
@@ -1819,6 +1866,20 @@ export default function BibleReader() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Audio Player */}
+      {(isPlayingAudio || isLoadingAudio || audioCurrentTime > 0) && (
+        <AudioPlayer
+          isPlaying={isPlayingAudio}
+          isLoading={isLoadingAudio}
+          onToggle={handleAudioToggle}
+          onStop={stopAllAudio}
+          title={getAudioTitle()}
+          currentTime={audioCurrentTime}
+          duration={audioDuration}
+          onSeek={handleAudioSeek}
+        />
+      )}
     </div>
   );
 }
