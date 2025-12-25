@@ -21,6 +21,7 @@ import {
   Loader2,
   BookOpen
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -352,44 +353,58 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/5 rounded-full blur-[150px]" />
+      
+      <div className="relative z-10 max-w-4xl mx-auto p-6 md:p-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-display text-4xl font-bold mb-2 flex items-center gap-3" data-testid="text-page-title">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-gray-500 to-gray-700">
-              <SettingsIcon className="h-6 w-6 text-white" />
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
+        >
+          <h1 className="font-display text-4xl md:text-5xl font-extrabold mb-3 flex items-center gap-4 tracking-tight" data-testid="text-page-title">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-indigo-600 shadow-lg shadow-primary/30">
+              <SettingsIcon className="h-7 w-7 text-white" />
             </div>
             Configurações
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-muted-foreground font-medium">
             Personalize sua experiência
           </p>
-        </div>
+        </motion.div>
 
-        <Tabs defaultValue="appearance" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="appearance" data-testid="tab-appearance">
-              <Palette className="h-4 w-4 mr-2" />
-              Aparência
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+        <Tabs defaultValue="appearance" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-4 bg-card/80 backdrop-blur-xl rounded-2xl p-1.5 shadow-lg border-none h-auto">
+            <TabsTrigger value="appearance" className="flex items-center gap-2 py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-appearance">
+              <Palette className="h-4 w-4" />
+              <span className="hidden sm:inline font-medium">Aparência</span>
             </TabsTrigger>
-            <TabsTrigger value="notifications" data-testid="tab-notifications">
-              <Bell className="h-4 w-4 mr-2" />
-              Notificações
+            <TabsTrigger value="notifications" className="flex items-center gap-2 py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-notifications">
+              <Bell className="h-4 w-4" />
+              <span className="hidden sm:inline font-medium">Notificações</span>
             </TabsTrigger>
-            <TabsTrigger value="account" data-testid="tab-account">
-              <User className="h-4 w-4 mr-2" />
-              Conta
+            <TabsTrigger value="account" className="flex items-center gap-2 py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-account">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline font-medium">Conta</span>
             </TabsTrigger>
-            <TabsTrigger value="privacy" data-testid="tab-privacy">
-              <Shield className="h-4 w-4 mr-2" />
-              Privacidade
+            <TabsTrigger value="privacy" className="flex items-center gap-2 py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-privacy">
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline font-medium">Privacidade</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="appearance" className="space-y-6">
             {/* Theme Selection */}
-            <Card>
+            <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
               <CardHeader>
                 <CardTitle>Tema de Cores</CardTitle>
                 <CardDescription>
@@ -935,6 +950,7 @@ export default function Settings() {
             </Card>
           </TabsContent>
         </Tabs>
+        </motion.div>
       </div>
     </div>
   );

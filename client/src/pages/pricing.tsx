@@ -24,6 +24,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { motion } from "framer-motion";
 
 interface SubscriptionStatus {
   plan: string;
@@ -243,11 +244,15 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-amber-500/5 rounded-full blur-[150px]" />
+      
       {/* Header */}
-      <div className="p-4 md:p-6">
+      <div className="relative z-10 p-4 md:p-6">
         <Link href="/">
-          <Button variant="ghost" size="sm" data-testid="button-back">
+          <Button variant="ghost" size="sm" className="rounded-2xl" data-testid="button-back">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
@@ -255,52 +260,70 @@ export default function Pricing() {
       </div>
 
       {/* Hero */}
-      <section className="px-4 pb-8 md:pb-12 text-center">
-        <h1 className="font-display text-3xl md:text-5xl font-bold mb-4" data-testid="text-page-title">
-          Escolha seu Plano
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Transforme seu estudo bíblico com recursos premium
-        </p>
-        
-        {isPremium && (
-          <Badge className="mt-4 bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30">
-            <Crown className="h-3 w-3 mr-1" />
-            Assinante {currentPlan === 'monthly' ? 'Mensal' : currentPlan === 'yearly' ? 'Anual' : 'Premium Plus'}
-          </Badge>
-        )}
+      <section className="relative z-10 px-4 pb-8 md:pb-12 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Planos Premium</p>
+          <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-4 tracking-tight" data-testid="text-page-title">
+            Escolha seu Plano
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-medium">
+            Transforme seu estudo bíblico com recursos premium
+          </p>
+          
+          {isPremium && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Badge className="mt-6 bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30 px-4 py-2 rounded-full text-sm font-bold">
+                <Crown className="h-4 w-4 mr-2" />
+                Assinante {currentPlan === 'monthly' ? 'Mensal' : currentPlan === 'yearly' ? 'Anual' : 'Premium Plus'}
+              </Badge>
+            </motion.div>
+          )}
+        </motion.div>
       </section>
 
       {/* Plans Grid */}
-      <section className="px-4 pb-12 md:pb-16">
+      <section className="relative z-10 px-4 pb-12 md:pb-16">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {plans.filter(plan => plan.id !== 'free').map((plan) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {plans.filter(plan => plan.id !== 'free').map((plan, index) => {
               const buttonConfig = getButtonConfig(plan);
               const isCurrentPlan = plan.id === currentPlan;
               const IconComponent = plan.icon;
               
               return (
-                <Card 
+                <motion.div
                   key={plan.id}
-                  className={`relative flex flex-col transition-all duration-200 ${
-                    plan.popular ? 'border-primary shadow-lg ring-2 ring-primary/20' : ''
-                  } ${isCurrentPlan ? 'bg-primary/5' : ''}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                <Card 
+                  className={`relative flex flex-col transition-all duration-500 rounded-3xl border-none backdrop-blur-sm hover:shadow-2xl hover:-translate-y-1 ${
+                    plan.popular ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-xl ring-2 ring-primary/30' : 'bg-card/80 shadow-lg'
+                  } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >
-                  <CardHeader className="pb-2 space-y-3">
+                  <CardHeader className="pb-4 space-y-4 pt-8">
                     {/* Icon and Popular Badge Row */}
                     <div className="flex items-center justify-between">
-                      <div className={`h-10 w-10 rounded-xl ${plan.iconBg} flex items-center justify-center`}>
-                        <IconComponent className="h-5 w-5 text-white" />
+                      <div className={`h-14 w-14 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-lg`}>
+                        <IconComponent className="h-7 w-7 text-white" />
                       </div>
                       {plan.popular && (
-                        <Badge className="bg-primary text-primary-foreground text-xs">
+                        <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full font-bold shadow-lg shadow-primary/30">
                           Popular
                         </Badge>
                       )}
                       {isCurrentPlan && !plan.popular && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-sm px-3 py-1 rounded-full font-bold border-green-500 text-green-600">
                           <Check className="h-3 w-3 mr-1" />
                           Atual
                         </Badge>
@@ -308,33 +331,35 @@ export default function Pricing() {
                     </div>
                     
                     <div>
-                      <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <CardDescription className="text-sm mt-1">
+                      <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                      <CardDescription className="text-base mt-2 font-medium">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
                     {/* Price */}
-                    <div className="pt-2">
-                      <span className="text-3xl font-bold">{plan.price}</span>
-                      <span className="text-muted-foreground text-sm ml-1">/{plan.period}</span>
+                    <div className="pt-3">
+                      <span className="text-5xl font-extrabold tracking-tight">{plan.price}</span>
+                      <span className="text-muted-foreground text-base ml-2 font-medium">/{plan.period}</span>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="flex-1 pb-4">
-                    <ul className="space-y-2">
+                  <CardContent className="flex-1 pb-6">
+                    <ul className="space-y-3">
                       {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm" data-testid={`feature-${plan.id}-${i}`}>
-                          <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span>{feature}</span>
+                        <li key={i} className="flex items-start gap-3 text-base" data-testid={`feature-${plan.id}-${i}`}>
+                          <div className="p-1 rounded-full bg-primary/10 mt-0.5">
+                            <Check className="h-3 w-3 text-primary" />
+                          </div>
+                          <span className="font-medium">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </CardContent>
 
-                  <CardFooter>
+                  <CardFooter className="pb-8">
                     <Button 
-                      className="w-full"
+                      className={`w-full h-14 rounded-2xl font-bold text-lg shadow-lg transition-all ${plan.popular ? 'shadow-primary/30 hover:shadow-primary/40' : ''}`}
                       variant={plan.popular ? "default" : "outline"}
                       disabled={buttonConfig.disabled || checkoutMutation.isPending || portalMutation.isPending}
                       onClick={() => {
@@ -354,6 +379,7 @@ export default function Pricing() {
                     </Button>
                   </CardFooter>
                 </Card>
+                </motion.div>
               );
             })}
           </div>
@@ -361,59 +387,74 @@ export default function Pricing() {
       </section>
 
       {/* Trust Badges */}
-      <section className="px-4 pb-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-center">
-            <div className="flex items-center gap-2 text-muted-foreground">
+      <section className="relative z-10 px-4 pb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+            <div className="flex items-center gap-2 bg-card/60 backdrop-blur-sm px-5 py-3 rounded-2xl border border-border/50 shadow-sm">
               <Shield className="h-5 w-5 text-green-500" />
-              <span className="text-sm">Pagamento seguro</span>
+              <span className="text-sm font-medium">Pagamento seguro</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 bg-card/60 backdrop-blur-sm px-5 py-3 rounded-2xl border border-border/50 shadow-sm">
               <Check className="h-5 w-5 text-green-500" />
-              <span className="text-sm">Cancele quando quiser</span>
+              <span className="text-sm font-medium">Cancele quando quiser</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 bg-card/60 backdrop-blur-sm px-5 py-3 rounded-2xl border border-border/50 shadow-sm">
               <Star className="h-5 w-5 text-amber-500" />
-              <span className="text-sm">Garantia de 30 dias</span>
+              <span className="text-sm font-medium">Garantia de 30 dias</span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* FAQ */}
-      <section className="px-4 pb-16">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="font-display text-2xl font-bold text-center mb-6">
+      <section className="relative z-10 px-4 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="max-w-2xl mx-auto"
+        >
+          <h2 className="font-display text-3xl font-bold text-center mb-8">
             Perguntas Frequentes
           </h2>
           
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full bg-card/60 backdrop-blur-sm rounded-3xl border border-border/50 shadow-lg overflow-hidden">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left" data-testid={`faq-question-${index}`}>
+              <AccordionItem key={index} value={`item-${index}`} className="border-b-border/30 last:border-b-0 px-6">
+                <AccordionTrigger className="text-left py-5 text-base font-medium hover:no-underline" data-testid={`faq-question-${index}`}>
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground pb-5 text-base">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer CTA */}
-      <section className="px-4 pb-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-muted-foreground mb-4">
-            Dúvidas? Entre em contato conosco
+      <section className="relative z-10 px-4 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="max-w-2xl mx-auto text-center"
+        >
+          <p className="text-muted-foreground mb-6 text-lg font-medium">
+            Dúvidas? Estamos aqui para ajudar
           </p>
           <Link href="/contact">
-            <Button variant="outline" data-testid="button-contact">
+            <Button variant="outline" size="lg" className="rounded-2xl px-8 h-12 font-bold" data-testid="button-contact">
               Fale Conosco
             </Button>
           </Link>
-        </div>
+        </motion.div>
       </section>
     </div>
   );

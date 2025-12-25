@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { motion } from "framer-motion";
 import { 
   User,
   BookOpen,
@@ -165,15 +166,19 @@ export default function Profile() {
   const completedPlans = readingPlans.filter(p => p.isCompleted);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/5 rounded-full blur-[150px]" />
+      
       {/* Mobile Header with Action Buttons */}
-      <div className="md:hidden sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b px-4 py-3">
+      <div className="md:hidden sticky top-0 z-20 bg-background/80 backdrop-blur-2xl border-b border-border/50 px-4 py-3">
         <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" size="icon" data-testid="button-share-profile-mobile">
+          <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-share-profile-mobile">
             <Share2 className="h-5 w-5" />
           </Button>
           <Link href="/configurações">
-            <Button variant="ghost" size="icon" data-testid="button-settings-mobile">
+            <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-settings-mobile">
               <Settings className="h-5 w-5" />
             </Button>
           </Link>
@@ -244,19 +249,24 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="relative z-10 max-w-6xl mx-auto p-4 md:p-8 space-y-8">
         {/* Profile Header */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+        <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-xl">
+          <CardContent className="pt-8 pb-8 px-8">
+            <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
               <ProfileImageUpload 
                 currentImage={user.profileImageUrl} 
                 userName={`${user.firstName} ${user.lastName}`}
               />
               
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2 flex-wrap">
-                  <h1 className="font-display text-3xl font-bold" data-testid="text-profile-name">
+                <div className="flex items-center gap-3 mb-3 flex-wrap">
+                  <h1 className="font-display text-4xl font-extrabold tracking-tight" data-testid="text-profile-name">
                     {user.firstName} {user.lastName}
                   </h1>
                   <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
@@ -484,27 +494,33 @@ export default function Profile() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
         {/* Tabs Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto" data-testid="tabs-profile">
-            <TabsTrigger value="plans" className="flex-col gap-1 py-3" data-testid="tab-plans">
-              <BookOpen className="h-4 w-4" />
-              <span className="text-xs">{t.profile.my_plans}</span>
+          <TabsList className="grid w-full grid-cols-3 h-auto bg-card/80 backdrop-blur-xl rounded-2xl p-1.5 shadow-lg border-none" data-testid="tabs-profile">
+            <TabsTrigger value="plans" className="flex-col gap-1.5 py-3.5 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-plans">
+              <BookOpen className="h-5 w-5" />
+              <span className="text-xs font-medium">{t.profile.my_plans}</span>
             </TabsTrigger>
-            <TabsTrigger value="prayers" className="flex-col gap-1 py-3" data-testid="tab-prayers">
-              <HandHeart className="h-4 w-4" />
-              <span className="text-xs">{t.nav.prayers}</span>
+            <TabsTrigger value="prayers" className="flex-col gap-1.5 py-3.5 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-prayers">
+              <HandHeart className="h-5 w-5" />
+              <span className="text-xs font-medium">{t.nav.prayers}</span>
             </TabsTrigger>
-            <TabsTrigger value="donate" className="flex-col gap-1 py-3" data-testid="tab-donate">
-              <Heart className="h-4 w-4" />
-              <span className="text-xs">Doar</span>
+            <TabsTrigger value="donate" className="flex-col gap-1.5 py-3.5 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-donate">
+              <Heart className="h-5 w-5" />
+              <span className="text-xs font-medium">Doar</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Donate Tab */}
           <TabsContent value="donate" className="space-y-6 mt-6">
-            <Card>
+            <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-start gap-2">
                   <Heart className="h-5 w-5 text-pink-600 fill-current mt-1 shrink-0" />
@@ -937,6 +953,7 @@ export default function Profile() {
             </div>
           </TabsContent>
         </Tabs>
+        </motion.div>
       </div>
     </div>
   );
