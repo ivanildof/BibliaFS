@@ -24,6 +24,9 @@ import {
   getFacebookShareUrl,
 } from "@/lib/shareUtils";
 
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+
 interface ShareSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -47,11 +50,24 @@ export function ShareSheet({
 }: ShareSheetProps) {
   const { toast } = useToast();
 
+  const shareMutation = useMutation({
+    mutationFn: async (platform: string) => {
+      return await apiRequest("POST", "/api/bible/share", {
+        book: bookAbbrev,
+        chapter,
+        verse: verseNumber,
+        version,
+        platform
+      });
+    }
+  });
+
   const shareText = generateVerseShareText(bookName, chapter, verseNumber, verseText, version);
   const shareUrl = generateVerseShareUrl(bookAbbrev, chapter, verseNumber, version);
   const fullShareText = `${shareText}\n${shareUrl}`;
 
   const handleNativeShare = async () => {
+    shareMutation.mutate("native");
     const success = await shareContent({
       title: `${bookName} ${chapter}:${verseNumber}`,
       text: shareText,
@@ -65,6 +81,7 @@ export function ShareSheet({
   };
 
   const handleCopy = async () => {
+    shareMutation.mutate("copy");
     const success = await copyToClipboard(fullShareText);
     toast({
       title: success ? "Copiado!" : "Erro ao copiar",
@@ -75,21 +92,25 @@ export function ShareSheet({
   };
 
   const handleWhatsApp = () => {
+    shareMutation.mutate("whatsapp");
     window.open(getWhatsAppShareUrl(fullShareText), "_blank");
     onOpenChange(false);
   };
 
   const handleTelegram = () => {
+    shareMutation.mutate("telegram");
     window.open(getTelegramShareUrl(shareText, shareUrl), "_blank");
     onOpenChange(false);
   };
 
   const handleTwitter = () => {
+    shareMutation.mutate("twitter");
     window.open(getTwitterShareUrl(shareText, shareUrl), "_blank");
     onOpenChange(false);
   };
 
   const handleFacebook = () => {
+    shareMutation.mutate("facebook");
     window.open(getFacebookShareUrl(shareUrl), "_blank");
     onOpenChange(false);
   };

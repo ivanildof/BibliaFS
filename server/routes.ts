@@ -22,6 +22,7 @@ import {
   insertOfflineContentSchema,
   insertDailyVerseSchema,
   insertDonationSchema,
+  insertSharedLinkSchema,
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
@@ -4423,6 +4424,32 @@ Formato da resposta:
       res.json(progress);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Shared links tracking
+  app.post("/api/bible/share", async (req: any, res) => {
+    try {
+      const { book, chapter, verse, version, platform } = req.body;
+      const userId = req.isAuthenticated() ? req.user.claims.sub : null;
+
+      if (!book || !chapter || !verse || !version) {
+        return res.status(400).json({ message: "Dados de compartilhamento incompletos" });
+      }
+
+      await storage.createSharedLink({
+        userId,
+        book,
+        chapter,
+        verse,
+        version,
+        platform
+      });
+
+      res.status(201).json({ success: true });
+    } catch (error) {
+      console.error("[Share Tracking] Error:", error);
+      res.status(500).json({ message: "Erro ao registrar compartilhamento" });
     }
   });
 

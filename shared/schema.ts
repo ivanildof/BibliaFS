@@ -569,15 +569,33 @@ export const podcasts = pgTable("podcasts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Shared links tracking
+export const sharedLinks = pgTable("shared_links", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "set null" }),
+  book: text("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse").notNull(),
+  version: varchar("version").notNull(),
+  platform: varchar("platform", { length: 50 }), // whatsapp, facebook, twitter, telegram, copy
+  sharedAt: timestamp("shared_at").defaultNow(),
+});
+
+export const insertSharedLinkSchema = createInsertSchema(sharedLinks).omit({ 
+  id: true, 
+  sharedAt: true 
+});
+
+export type SharedLink = typeof sharedLinks.$inferSelect;
+export type InsertSharedLink = z.infer<typeof insertSharedLinkSchema>;
+
 // Podcast subscriptions
 export const podcastSubscriptions = pgTable("podcast_subscriptions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   podcastId: varchar("podcast_id").notNull().references(() => podcasts.id, { onDelete: "cascade" }),
-  
   currentEpisodeId: text("current_episode_id"),
   currentPosition: integer("current_position").default(0),
-  
   subscribedAt: timestamp("subscribed_at").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({

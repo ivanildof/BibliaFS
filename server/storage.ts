@@ -188,6 +188,8 @@ export interface IStorage {
   getOTPByEmail(email: string): Promise<any | undefined>;
   deleteOTPByEmail(email: string): Promise<void>;
   verifyOTP(email: string, code: string): Promise<boolean>;
+  // Shared links
+  createSharedLink(link: InsertSharedLink): Promise<SharedLink>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1734,6 +1736,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(emailOtp.id, otp.id));
 
     return true;
+  }
+  async createSharedLink(link: InsertSharedLink): Promise<SharedLink> {
+    const [created] = await db.insert(sharedLinks).values(link).returning();
+    return created;
   }
 }
 
