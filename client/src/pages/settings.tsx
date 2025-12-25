@@ -461,7 +461,6 @@ export default function Settings() {
           </TabsContent>
 
           <TabsContent value="notifications" className="space-y-6">
-            {/* Push Notification Enable/Disable */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -469,7 +468,7 @@ export default function Settings() {
                   Notificações Push
                 </CardTitle>
                 <CardDescription>
-                  Receba lembretes diretamente no seu dispositivo
+                  Receba lembretes diretamente no seu dispositivo para leitura e oração
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -479,47 +478,54 @@ export default function Settings() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="space-y-0.5">
-                        <Label>Ativar Notificações Push</Label>
-                        <p className="text-sm text-muted-foreground">
-                          {pushSubscribed
-                            ? "Notificações ativadas"
-                            : pushPermission === "denied"
-                            ? "Permissão negada no navegador"
-                            : "Clique para ativar notificações"}
-                        </p>
+                    <div className="flex items-center justify-between p-4 border rounded-lg bg-accent/30 hover:bg-accent/50 transition-all">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-full">
+                          <Bell className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">Status do Serviço</p>
+                          <p className="text-sm text-muted-foreground">
+                            {pushSubscribed
+                              ? "Você está inscrito para receber notificações"
+                              : "Receba lembretes de leitura e avisos"}
+                          </p>
+                        </div>
                       </div>
-                      <Switch
-                        checked={pushSubscribed}
-                        disabled={pushLoading || pushPermission === "denied"}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            subscribePush();
-                          } else {
-                            unsubscribePush();
-                          }
-                        }}
-                        data-testid="switch-push-notifications"
-                      />
-                    </div>
-                    
-                    {pushSubscribed && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleTestNotification}
-                        disabled={testingSending}
-                        data-testid="button-test-notification"
-                      >
-                        {testingSending ? (
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <div className="flex items-center gap-2">
+                        {pushSubscribed ? (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={unsubscribePush} 
+                            disabled={pushLoading}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            Desativar
+                          </Button>
                         ) : (
-                          <Send className="h-4 w-4 mr-2" />
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            onClick={subscribePush} 
+                            disabled={pushLoading}
+                            className="bg-primary hover:bg-primary/90"
+                          >
+                            Ativar Agora
+                          </Button>
                         )}
-                        Enviar Notificação de Teste
-                      </Button>
-                    )}
+                        {pushSubscribed && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={handleTestNotification}
+                            disabled={testingSending}
+                          >
+                            {testingSending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Testar"}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
               </CardContent>

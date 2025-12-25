@@ -599,10 +599,11 @@ export default function Teacher() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-4xl font-bold mb-2 flex items-center gap-3" data-testid="text-page-title">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               {t.teacherMode.title}
+              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
             </h1>
             <p className="text-lg text-muted-foreground">
               Crie aulas, gerencie estudantes e converse com IA
@@ -921,14 +922,14 @@ export default function Teacher() {
 
         {/* Tabs */}
         <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as "lessons" | "assistant")} className="mb-8">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="lessons" data-testid="tab-lessons">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/50 p-1 rounded-xl">
+            <TabsTrigger value="lessons" data-testid="tab-lessons" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all py-3">
               <BookOpen className="h-4 w-4 mr-2" />
-              Aulas
+              Minhas Aulas
             </TabsTrigger>
-            <TabsTrigger value="assistant" data-testid="tab-assistant">
+            <TabsTrigger value="assistant" data-testid="tab-assistant" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all py-3">
               <Brain className="h-4 w-4 mr-2" />
-              Assistente IA
+              Assistente IA Teológico
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -938,7 +939,7 @@ export default function Teacher() {
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-orange-500" />
+                <Sparkles className="h-5 w-5 text-primary animate-pulse" />
                 Assistente IA Teológico
               </CardTitle>
               <CardDescription>
