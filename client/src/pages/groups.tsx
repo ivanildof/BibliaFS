@@ -33,7 +33,8 @@ import {
   Star,
   CheckCircle2,
   AlertCircle,
-  FileText
+  FileText,
+  ChevronRight
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -170,6 +171,8 @@ interface GroupAnswer {
     profileImageUrl?: string;
   };
 }
+
+import logoImage from "@assets/Biblia_FS_1766520633441.png";
 
 export default function Groups() {
   const { user } = useAuth();
@@ -1343,6 +1346,11 @@ export default function Groups() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10">
+        <div className="flex flex-col items-center justify-center mb-8">
+          <img src={logoImage} alt="BíbliaFS Logo" className="h-24 w-24 object-cover rounded-3xl shadow-2xl mb-6 hover:scale-105 transition-transform duration-300" />
+          <h1 className="text-4xl font-extrabold text-center tracking-tight">Grupos de Estudo</h1>
+          <p className="text-lg text-muted-foreground text-center max-w-md mt-2 font-medium">Compartilhe sua jornada de fé e estudo bíblico com sua comunidade.</p>
+        </div>
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -219,7 +219,7 @@ export default function Landing() {
           <div className="hidden sm:block">
             <Button 
               size="sm"
-              onClick={() => window.location.href = "/api/login"}
+              onClick={() => window.location.href = "/login"}
               data-testid="button-login-header"
               className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg"
             >
@@ -267,7 +267,7 @@ export default function Landing() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <a 
-                    href="/api/login" 
+                    href="/login" 
                     className="cursor-pointer flex items-center text-primary font-medium"
                     data-testid="link-login-mobile"
                   >
@@ -314,7 +314,7 @@ export default function Landing() {
             <Button 
               size="lg"
               className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
-              onClick={() => window.location.href = "/api/register"}
+              onClick={() => window.location.href = "/register"}
               data-testid="button-start-free"
             >
               Começar Grátis
