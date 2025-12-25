@@ -4431,33 +4431,7 @@ Formato da resposta:
   app.post("/api/bible/share", async (req: any, res) => {
     try {
       const { book, chapter, verse, version, platform } = req.body;
-      const userId = req.isAuthenticated() ? req.user.claims.sub : null;
-
-      if (!book || !chapter || !verse || !version) {
-        return res.status(400).json({ message: "Dados de compartilhamento incompletos" });
-      }
-
-      await storage.createSharedLink({
-        userId,
-        book,
-        chapter,
-        verse,
-        version,
-        platform
-      });
-
-      res.status(201).json({ success: true });
-    } catch (error) {
-      console.error("[Share Tracking] Error:", error);
-      res.status(500).json({ message: "Erro ao registrar compartilhamento" });
-    }
-  });
-
-  // Shared links tracking
-  app.post("/api/bible/share", async (req: any, res) => {
-    try {
-      const { book, chapter, verse, version, platform } = req.body;
-      const userId = req.isAuthenticated() ? req.user.claims.sub : null;
+      const userId = req.user?.claims?.sub || null;
 
       if (!book || !chapter || !verse || !version) {
         return res.status(400).json({ message: "Dados de compartilhamento incompletos" });
