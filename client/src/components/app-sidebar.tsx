@@ -58,6 +58,7 @@ export function AppSidebar() {
 
   const studyItems = [
     { title: t.nav.compareVersions, url: "/compare", icon: Columns },
+    { title: "Conquistas", url: "/achievements", icon: Trophy },
     { title: t.nav.discover, url: "/community", icon: Users },
     { title: t.nav.studyGroups, url: "/groups", icon: UsersRound },
     { title: t.nav.podcasts, url: "/podcasts", icon: Headphones },

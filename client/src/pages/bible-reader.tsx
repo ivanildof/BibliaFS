@@ -989,8 +989,21 @@ export default function BibleReader() {
     );
   }
 
+  const seoTitle = chapterData 
+    ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number} (${version.toUpperCase()})`
+    : "Leitor Bíblico";
+    
+  const seoDescription = chapterData && chapterData.verses.length > 0
+    ? chapterData.verses.slice(0, 3).map(v => `${v.number}. ${v.text}`).join(" ")
+    : "Leia e estude a Bíblia Sagrada com IA teológica e recursos premium.";
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      <SEO 
+        title={seoTitle}
+        description={seoDescription}
+        ogType="book"
+      />
       {/* Top Header - Icons only */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">

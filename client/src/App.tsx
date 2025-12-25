@@ -46,6 +46,7 @@ import ResetPassword from "@/pages/reset-password";
 import NotFound from "@/pages/not-found";
 import Groups from "@/pages/groups";
 import VersionCompare from "@/pages/version-compare";
+import Achievements from "@/pages/achievements";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -96,6 +97,8 @@ function Router() {
           <Route path="/teacher" component={Teacher} />
           <Route path="/groups" component={Groups} />
           <Route path="/community" component={Community} />
+          <Route path="/achievements" component={Achievements} />
+          <Route path="/conquistas" component={Achievements} />
           <Route path="/configurações" component={Settings} />
           <Route path="/settings" component={Settings} />
           <Route path="/perfil" component={Profile} />
