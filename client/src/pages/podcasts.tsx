@@ -868,32 +868,58 @@ export default function Podcasts() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-20 left-4 right-4 md:left-10 md:right-10 z-50"
+            className="fixed bottom-0 left-0 right-0 z-[100] md:bottom-6 md:left-6 md:right-6"
           >
-            <Card className="rounded-[2.5rem] border-none bg-card/90 backdrop-blur-2xl shadow-2xl overflow-hidden max-w-4xl mx-auto border-t border-white/10">
-              <div className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
-                <div className="flex items-center gap-4 flex-1 w-full">
-                  <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-primary/20 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-lg">
-                    {currentPodcast?.imageUrl ? <img src={currentPodcast.imageUrl} className="w-full h-full object-cover" /> : <Radio className="h-10 w-10 text-primary" />}
+            <Card className="rounded-none md:rounded-[2.5rem] border-none bg-card/95 backdrop-blur-2xl shadow-2xl overflow-hidden max-w-5xl mx-auto border-t md:border border-white/10">
+              <div className="p-3 md:p-6 flex flex-col md:flex-row items-center gap-2 md:gap-6">
+                <div className="flex items-center gap-3 flex-1 w-full min-w-0">
+                  <div className="h-12 w-12 md:h-20 md:w-20 rounded-xl md:rounded-2xl bg-primary/20 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-lg">
+                    {currentPodcast?.imageUrl ? <img src={currentPodcast.imageUrl} className="w-full h-full object-cover" /> : <Radio className="h-6 w-6 md:h-10 md:w-10 text-primary" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-lg line-clamp-1">{currentEpisode.title}</h4>
-                    <p className="text-sm text-muted-foreground font-medium line-clamp-1">{currentPodcast?.title}</p>
+                    <h4 className="font-bold text-sm md:text-lg line-clamp-1">{currentEpisode.title}</h4>
+                    <p className="text-xs md:text-sm text-muted-foreground font-medium line-clamp-1">{currentPodcast?.title}</p>
+                  </div>
+                  <div className="flex md:hidden items-center">
+                    <Button 
+                      size="icon" 
+                      variant="ghost"
+                      className="h-10 w-10 rounded-full" 
+                      onClick={togglePlay}
+                    >
+                      {isLoadingAudio ? <Loader2 className="h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current" />}
+                    </Button>
+                    <Button 
+                      size="icon" 
+                      variant="ghost"
+                      className="h-10 w-10 rounded-full text-muted-foreground" 
+                      onClick={() => setCurrentEpisode(null)}
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-2 flex-1 w-full md:max-w-md">
-                  <div className="flex items-center gap-6">
+                <div className="flex flex-col items-center gap-1 md:gap-2 flex-1 w-full md:max-w-md">
+                  <div className="hidden md:flex items-center gap-6">
                     <Button variant="ghost" size="icon" className="rounded-full h-10 w-10" onClick={() => skip(-15)}><SkipBack className="h-5 w-5 fill-current" /></Button>
                     <Button size="icon" className="h-14 w-14 rounded-full shadow-xl shadow-primary/20" onClick={togglePlay}>
                       {isLoadingAudio ? <Loader2 className="h-6 w-6 animate-spin" /> : isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Play className="h-6 w-6 fill-current" />}
                     </Button>
                     <Button variant="ghost" size="icon" className="rounded-full h-10 w-10" onClick={() => skip(15)}><SkipForward className="h-5 w-5 fill-current" /></Button>
                   </div>
-                  <div className="w-full flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-muted-foreground w-10 text-right">{formatTime(currentTime)}</span>
-                    <Slider value={[currentTime]} max={duration || 100} step={1} onValueChange={(v) => skip(v[0] - currentTime)} className="flex-1" />
-                    <span className="text-[10px] font-bold text-muted-foreground w-10">{formatTime(duration)}</span>
+                  <div className="w-full flex items-center gap-3 px-2 md:px-0">
+                    <span className="text-[10px] font-bold text-muted-foreground w-8 md:w-10 text-right">{formatTime(currentTime)}</span>
+                    <Slider 
+                      value={[currentTime]} 
+                      max={duration || 100} 
+                      step={1} 
+                      onValueChange={(v) => {
+                        if (audioRef.current) audioRef.current.currentTime = v[0];
+                      }} 
+                      className="flex-1" 
+                    />
+                    <span className="text-[10px] font-bold text-muted-foreground w-8 md:w-10">{formatTime(duration)}</span>
                   </div>
                 </div>
 
@@ -901,6 +927,15 @@ export default function Podcasts() {
                   <Volume2 className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                   <Slider value={[volume]} max={100} step={1} onValueChange={(v) => setVolume(v[0])} />
                 </div>
+                
+                <Button 
+                  size="icon" 
+                  variant="ghost"
+                  className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground ml-auto" 
+                  onClick={() => setCurrentEpisode(null)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
               </div>
             </Card>
           </motion.div>
