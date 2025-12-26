@@ -568,6 +568,17 @@ export default function Podcasts() {
                           <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
                             Gerenciar
                           </Button>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            className="rounded-xl h-11 w-11 hover:bg-destructive/10 text-destructive"
+                            onClick={() => {
+                              setSelectedPodcast(podcast);
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </Button>
                         </CardFooter>
                       </Card>
                     </motion.div>
