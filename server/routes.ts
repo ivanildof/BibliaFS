@@ -2887,16 +2887,29 @@ Regras:
       const now = new Date();
       let localDateStr;
       try {
-        localDateStr = now.toLocaleDateString("en-US", { timeZone: timezone });
+        // Use a more robust way to get local date components
+        const formatter = new Intl.DateTimeFormat("en-US", {
+          timeZone: timezone,
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        });
+        const parts = formatter.formatToParts(now);
+        const dateParts: Record<string, string> = {};
+        parts.forEach(p => dateParts[p.type] = p.value);
+        
+        localDateStr = `${dateParts.year}-${dateParts.month.padStart(2, '0')}-${dateParts.day.padStart(2, '0')}`;
       } catch (e) {
-        localDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Sao_Paulo" });
+        localDateStr = now.toISOString().split('T')[0];
       }
       
-      const localDate = new Date(localDateStr);
-      const start = new Date(localDate.getFullYear(), 0, 0);
-      const diff = localDate.getTime() - start.getTime();
+      const localDate = new Date(localDateStr + "T00:00:00Z");
+      const startOfYear = new Date(Date.UTC(localDate.getUTCFullYear(), 0, 0));
+      const diff = localDate.getTime() - startOfYear.getTime();
       const oneDay = 1000 * 60 * 60 * 24;
       const dayOfYear = Math.floor(diff / oneDay);
+
+      console.log(`[DailyVerse] TZ: ${timezone}, LocalDate: ${localDateStr}, DayOfYear: ${dayOfYear}`);
 
       let verseData = await storage.getDailyVerse(dayOfYear);
       

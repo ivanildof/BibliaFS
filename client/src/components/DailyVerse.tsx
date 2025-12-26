@@ -28,12 +28,12 @@ export function DailyVerse() {
     queryKey: ["/api/daily-verse", Intl.DateTimeFormat().resolvedOptions().timeZone],
     queryFn: async () => {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const response = await fetch(`/api/daily-verse?tz=${encodeURIComponent(tz)}`);
+      const response = await fetch(`/api/daily-verse?tz=${encodeURIComponent(tz)}&t=${Date.now()}`);
       if (!response.ok) throw new Error('Failed to fetch daily verse');
       return response.json();
     },
-    staleTime: 1000 * 60 * 60, // Cache for 1 hour
-    gcTime: 1000 * 60 * 60 * 24, // Keep in background cache for 24 hours
+    staleTime: 0, // Disable cache to ensure fresh data on mount
+    gcTime: 1000 * 60 * 60, // Keep in background cache for 1 hour
   });
 
   const handleCopyText = async () => {
