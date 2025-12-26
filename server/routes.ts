@@ -2880,10 +2880,21 @@ Regras:
   // Daily Verse Routes
   app.get("/api/daily-verse", async (req, res) => {
     try {
-      // Calculate day of year (1-365) based on current UTC date to be consistent for everyone
+      // Get user timezone from query param, default to America/Sao_Paulo (UTC-3)
+      const timezone = (req.query.tz as string) || "America/Sao_Paulo";
+      
+      // Calculate day of year based on user's local date
       const now = new Date();
-      const start = new Date(now.getUTCFullYear(), 0, 0);
-      const diff = now.getTime() - start.getTime();
+      let localDateStr;
+      try {
+        localDateStr = now.toLocaleDateString("en-US", { timeZone: timezone });
+      } catch (e) {
+        localDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Sao_Paulo" });
+      }
+      
+      const localDate = new Date(localDateStr);
+      const start = new Date(localDate.getFullYear(), 0, 0);
+      const diff = localDate.getTime() - start.getTime();
       const oneDay = 1000 * 60 * 60 * 24;
       const dayOfYear = Math.floor(diff / oneDay);
 
