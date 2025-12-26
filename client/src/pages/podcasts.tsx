@@ -29,7 +29,11 @@ import {
   Radio,
   Library,
   Bookmark,
-  Users
+  Users,
+  LayoutGrid,
+  List,
+  CheckSquare,
+  X
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -91,6 +95,12 @@ export default function Podcasts() {
 
   const [downloadedEpisodes, setDownloadedEpisodes] = useState<Set<string>>(new Set());
   const [downloadingEpisodes, setDownloadingEpisodes] = useState<Set<string>>(new Set());
+  
+  // View mode and selection
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedPodcasts, setSelectedPodcasts] = useState<Set<string>>(new Set());
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     async function loadDownloaded() {
@@ -175,6 +185,48 @@ export default function Podcasts() {
       setDeleteDialogOpen(false);
     },
   });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (podcastIds: string[]) => {
+      const results = await Promise.all(
+        podcastIds.map(id => apiRequest("DELETE", `/api/podcasts/${id}`))
+      );
+      return results;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
+      toast({ title: "Podcasts excluídos", description: `${selectedPodcasts.size} podcasts foram removidos` });
+      setSelectedPodcasts(new Set());
+      setSelectionMode(false);
+      setBulkDeleteDialogOpen(false);
+    },
+    onError: () => {
+      toast({ title: "Erro ao excluir", description: "Alguns podcasts não puderam ser excluídos", variant: "destructive" });
+    },
+  });
+
+  const togglePodcastSelection = (podcastId: string) => {
+    setSelectedPodcasts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(podcastId)) {
+        newSet.delete(podcastId);
+      } else {
+        newSet.add(podcastId);
+      }
+      return newSet;
+    });
+  };
+
+  const selectAllPodcasts = () => {
+    const allIds = myPodcasts.map(p => p.id);
+    setSelectedPodcasts(new Set(allIds));
+  };
+
+  const clearSelection = () => {
+    setSelectedPodcasts(new Set());
+    setSelectionMode(false);
+  };
 
   const createPodcastMutation = useMutation({
     mutationFn: async (data: { title: string; description: string; bibleBook?: string; bibleChapter?: number }) => {
@@ -529,67 +581,223 @@ export default function Podcasts() {
           </TabsContent>
 
           <TabsContent value="my-podcasts">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <AnimatePresence mode="popLayout">
-                {myPodcasts.length > 0 ? (
-                  myPodcasts.map((podcast: any, idx: number) => (
-                    <motion.div
-                      key={podcast.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-2">
+                {/* View Toggle */}
+                <div className="flex items-center bg-muted/50 rounded-xl p-1">
+                  <Button 
+                    size="icon" 
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    className="rounded-lg h-9 w-9"
+                    onClick={() => setViewMode("grid")}
+                    data-testid="button-view-grid"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    size="icon" 
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    className="rounded-lg h-9 w-9"
+                    onClick={() => setViewMode("list")}
+                    data-testid="button-view-list"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Selection Mode Toggle */}
+                <Button 
+                  variant={selectionMode ? "secondary" : "outline"}
+                  className="rounded-xl h-9"
+                  onClick={() => {
+                    if (selectionMode) {
+                      clearSelection();
+                    } else {
+                      setSelectionMode(true);
+                    }
+                  }}
+                  data-testid="button-toggle-selection"
+                >
+                  {selectionMode ? <X className="h-4 w-4 mr-2" /> : <CheckSquare className="h-4 w-4 mr-2" />}
+                  {selectionMode ? "Cancelar" : "Selecionar"}
+                </Button>
+              </div>
+
+              {/* Selection Actions */}
+              {selectionMode && (
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-xl h-9"
+                    onClick={selectAllPodcasts}
+                    disabled={myPodcasts.length === 0}
+                    data-testid="button-select-all"
+                  >
+                    Selecionar Tudo ({myPodcasts.length})
+                  </Button>
+                  {selectedPodcasts.size > 0 && (
+                    <Button 
+                      variant="destructive" 
+                      className="rounded-xl h-9"
+                      onClick={() => setBulkDeleteDialogOpen(true)}
+                      data-testid="button-delete-selected"
                     >
-                      <Card className="rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
-                        <div className="h-48 relative overflow-hidden bg-primary/10">
-                          {podcast.imageUrl ? (
-                            <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Headphones className="h-16 w-16 text-primary/40" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                            <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
-                          </div>
-                        </div>
-                        <CardHeader className="pb-4">
-                          <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
-                          <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex-1 space-y-4">
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                            <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
-                            {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
-                          </div>
-                        </CardContent>
-                        <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
-                          <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
-                            Gerenciar
-                          </Button>
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
-                            className="rounded-xl h-11 w-11 hover:bg-destructive/10 text-destructive"
-                            onClick={() => {
-                              setSelectedPodcast(podcast);
-                              setDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="col-span-full py-20 text-center">
-                    <p className="text-muted-foreground">Você ainda não criou nenhum podcast.</p>
-                  </div>
-                )}
-              </AnimatePresence>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Excluir ({selectedPodcasts.size})
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
+
+            {/* Grid View */}
+            {viewMode === "grid" && (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AnimatePresence mode="popLayout">
+                  {myPodcasts.length > 0 ? (
+                    myPodcasts.map((podcast: any, idx: number) => (
+                      <motion.div
+                        key={podcast.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.05 }}
+                      >
+                        <Card className={`rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : ''}`}>
+                          <div className="h-48 relative overflow-hidden bg-primary/10">
+                            {selectionMode && (
+                              <div 
+                                className="absolute top-4 left-4 z-10 cursor-pointer"
+                                onClick={() => togglePodcastSelection(podcast.id)}
+                              >
+                                <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-white/80 border-white/50'}`}>
+                                  {selectedPodcasts.has(podcast.id) && <Check className="h-4 w-4 text-white" />}
+                                </div>
+                              </div>
+                            )}
+                            {podcast.imageUrl ? (
+                              <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Headphones className="h-16 w-16 text-primary/40" />
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                              <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                            </div>
+                          </div>
+                          <CardHeader className="pb-4">
+                            <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
+                            <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
+                          </CardHeader>
+                          <CardContent className="flex-1 space-y-4">
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                              <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
+                              {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                            </div>
+                          </CardContent>
+                          <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
+                            <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                              Gerenciar
+                            </Button>
+                            {!selectionMode && (
+                              <Button 
+                                size="icon" 
+                                variant="ghost" 
+                                className="rounded-xl h-11 w-11 hover:bg-destructive/10 text-destructive"
+                                onClick={() => {
+                                  setSelectedPodcast(podcast);
+                                  setDeleteDialogOpen(true);
+                                }}
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            )}
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="col-span-full py-20 text-center">
+                      <p className="text-muted-foreground">Você ainda não criou nenhum podcast.</p>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
+            {/* List View */}
+            {viewMode === "list" && (
+              <div className="space-y-3">
+                <AnimatePresence mode="popLayout">
+                  {myPodcasts.length > 0 ? (
+                    myPodcasts.map((podcast: any, idx: number) => (
+                      <motion.div
+                        key={podcast.id}
+                        layout
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.03 }}
+                      >
+                        <Card className={`rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-sm group overflow-hidden ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : ''}`}>
+                          <div className="flex items-center gap-4 p-4">
+                            {selectionMode && (
+                              <div 
+                                className="cursor-pointer flex-shrink-0"
+                                onClick={() => togglePodcastSelection(podcast.id)}
+                              >
+                                <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-muted border-border'}`}>
+                                  {selectedPodcasts.has(podcast.id) && <Check className="h-4 w-4 text-white" />}
+                                </div>
+                              </div>
+                            )}
+                            <div className="h-16 w-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                              {podcast.imageUrl ? (
+                                <img src={podcast.imageUrl} className="w-full h-full object-cover" />
+                              ) : (
+                                <Headphones className="h-8 w-8 text-primary/40" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-lg line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</h3>
+                              <p className="text-sm text-muted-foreground line-clamp-1">{podcast.description || 'Sem descrição'}</p>
+                              <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
+                                {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <Button variant="ghost" className="rounded-xl h-9 font-bold">
+                                Gerenciar
+                              </Button>
+                              {!selectionMode && (
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost" 
+                                  className="rounded-xl h-9 w-9 hover:bg-destructive/10 text-destructive"
+                                  onClick={() => {
+                                    setSelectedPodcast(podcast);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="py-20 text-center">
+                      <p className="text-muted-foreground">Você ainda não criou nenhum podcast.</p>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
@@ -615,6 +823,38 @@ export default function Podcasts() {
                 disabled={deletePodcastMutation.isPending}
               >
                 {deletePodcastMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : "Excluir"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Bulk Delete Confirmation Dialog */}
+        <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+          <AlertDialogContent className="rounded-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir {selectedPodcasts.size} podcasts?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente 
+                {selectedPodcasts.size === 1 ? " o podcast selecionado" : ` os ${selectedPodcasts.size} podcasts selecionados`} e todos os seus episódios.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+              <AlertDialogAction 
+                className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => {
+                  bulkDeleteMutation.mutate(Array.from(selectedPodcasts));
+                }}
+                disabled={bulkDeleteMutation.isPending}
+              >
+                {bulkDeleteMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Excluindo...
+                  </>
+                ) : (
+                  `Excluir ${selectedPodcasts.size} podcasts`
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
