@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Loader2,
   Trophy,
-  Target
+  Target,
+  Sparkles
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
