@@ -25,9 +25,10 @@ export function DailyVerse() {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const { data: verse, isLoading } = useQuery<DailyVerse>({
-    queryKey: ["/api/daily-verse"],
+    queryKey: ["/api/daily-verse", Intl.DateTimeFormat().resolvedOptions().timeZone],
     queryFn: async () => {
-      const response = await fetch("/api/daily-verse");
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const response = await fetch(`/api/daily-verse?tz=${encodeURIComponent(tz)}`);
       if (!response.ok) throw new Error('Failed to fetch daily verse');
       return response.json();
     },
