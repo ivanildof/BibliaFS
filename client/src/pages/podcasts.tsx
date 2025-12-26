@@ -399,6 +399,112 @@ export default function Podcasts() {
               </AnimatePresence>
             </div>
           </TabsContent>
+
+          <TabsContent value="subscriptions">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence mode="popLayout">
+                {subscriptions.length > 0 ? (
+                  subscriptions.map((podcast: any, idx: number) => (
+                    <motion.div
+                      key={podcast.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <Card className="rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
+                        <div className="h-48 relative overflow-hidden bg-primary/10">
+                          {podcast.imageUrl ? (
+                            <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Headphones className="h-16 w-16 text-primary/40" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                            <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                          </div>
+                        </div>
+                        <CardHeader className="pb-4">
+                          <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
+                          <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1 space-y-4">
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                            <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
+                            {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                          </div>
+                        </CardContent>
+                        <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
+                          <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                            Ver Podcast
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="col-span-full py-20 text-center">
+                    <p className="text-muted-foreground">Você ainda não se inscreveu em nenhum podcast.</p>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="my-podcasts">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence mode="popLayout">
+                {myPodcasts.length > 0 ? (
+                  myPodcasts.map((podcast: any, idx: number) => (
+                    <motion.div
+                      key={podcast.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <Card className="rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
+                        <div className="h-48 relative overflow-hidden bg-primary/10">
+                          {podcast.imageUrl ? (
+                            <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Headphones className="h-16 w-16 text-primary/40" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                            <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                          </div>
+                        </div>
+                        <CardHeader className="pb-4">
+                          <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
+                          <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1 space-y-4">
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                            <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
+                            {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                          </div>
+                        </CardContent>
+                        <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
+                          <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                            Gerenciar
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="col-span-full py-20 text-center">
+                    <p className="text-muted-foreground">Você ainda não criou nenhum podcast.</p>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
 
