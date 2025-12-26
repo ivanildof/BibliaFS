@@ -405,6 +405,19 @@ export default function ReadingPlans() {
         </div>
 
         <section className="mb-16">
+          <div className="bg-primary/5 p-6 rounded-[2rem] border border-primary/10 mb-12">
+            <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Como funcionam os planos?
+            </h2>
+            <p className="text-muted-foreground leading-relaxed">
+              Os planos de leitura ajudam você a manter uma constância no estudo bíblico. 
+              Ao iniciar um plano, você recebe leituras diárias organizadas. Cada dia concluído 
+              rende <strong>10 XP</strong> para sua evolução no aplicativo e mantém sua <strong>ofensiva (streak)</strong> ativa. 
+              Você pode escolher modelos prontos ou criar seu próprio roteiro personalizado.
+            </p>
+          </div>
+
           <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
             <TrendingUp className="h-6 w-6 text-primary" />
             {t.plans.activePlans}
