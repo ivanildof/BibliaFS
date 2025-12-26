@@ -138,9 +138,43 @@ export default function Podcasts() {
     }
   };
 
+  const [selectedTab, setSelectedTab] = useState("discover");
+
   const { data: podcasts = [] } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts"] });
   const { data: subscriptions = [] } = useQuery<any[]>({ queryKey: ["/api/podcasts/subscriptions"] });
   const { data: myPodcasts = [] } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts/my"] });
+
+  const subscribeMutation = useMutation({
+    mutationFn: async (podcastId: string) => {
+      return apiRequest("POST", `/api/podcasts/${podcastId}/subscribe`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/subscriptions"] });
+      toast({ title: "Inscrito!", description: "Você agora segue este podcast" });
+    },
+  });
+
+  const unsubscribeMutation = useMutation({
+    mutationFn: async (podcastId: string) => {
+      return apiRequest("DELETE", `/api/podcasts/${podcastId}/subscribe`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/subscriptions"] });
+      toast({ title: "Inscrição removida", description: "Você não segue mais este podcast" });
+    },
+  });
+
+  const deletePodcastMutation = useMutation({
+    mutationFn: async (podcastId: string) => {
+      return apiRequest("DELETE", `/api/podcasts/${podcastId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/podcasts/my"] });
+      toast({ title: "Podcast excluído" });
+      setDeleteDialogOpen(false);
+    },
+  });
 
   const createPodcastMutation = useMutation({
     mutationFn: async (data: { title: string; description: string; bibleBook?: string; bibleChapter?: number }) => {
@@ -321,8 +355,8 @@ export default function Podcasts() {
           </div>
         </motion.div>
 
-        <Tabs defaultValue="discover" className="space-y-8">
-          <TabsList className="bg-muted/50 p-1.5 rounded-2xl h-auto">
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-8">
+          <TabsList className="bg-muted/50 p-1.5 rounded-2xl h-auto flex-wrap">
             <TabsTrigger value="discover" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Descobrir</TabsTrigger>
             <TabsTrigger value="subscriptions" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Inscrições ({subscriptions.length})</TabsTrigger>
             <TabsTrigger value="my-podcasts" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Meus Podcasts ({myPodcasts.length})</TabsTrigger>
@@ -386,11 +420,35 @@ export default function Podcasts() {
                         )}
                       </CardContent>
                       <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
-                        <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                        <Button 
+                          variant="ghost" 
+                          className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all"
+                          onClick={() => {
+                            // Logic to view details could go here
+                            toast({ title: "Em breve", description: "Visualização detalhada do podcast" });
+                          }}
+                        >
                           Ver Podcast
                         </Button>
-                        <Button size="icon" variant="ghost" className="rounded-xl h-11 w-11 hover:bg-primary/10">
-                          <Plus className="h-5 w-5" />
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="rounded-xl h-11 w-11 hover:bg-primary/10"
+                          onClick={() => {
+                            const isSubscribed = subscriptions.some(s => s.id === podcast.id);
+                            if (isSubscribed) {
+                              unsubscribeMutation.mutate(podcast.id);
+                            } else {
+                              subscribeMutation.mutate(podcast.id);
+                            }
+                          }}
+                          disabled={subscribeMutation.isPending || unsubscribeMutation.isPending}
+                        >
+                          {subscriptions.some(s => s.id === podcast.id) ? (
+                            <Check className="h-5 w-5 text-green-500" />
+                          ) : (
+                            <Plus className="h-5 w-5" />
+                          )}
                         </Button>
                       </CardFooter>
                     </Card>
@@ -437,8 +495,25 @@ export default function Podcasts() {
                           </div>
                         </CardContent>
                         <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
-                          <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                          <Button 
+                            variant="ghost" 
+                            className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all"
+                            onClick={() => {
+                              toast({ title: "Em breve", description: "Visualização detalhada do podcast" });
+                            }}
+                          >
                             Ver Podcast
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            className="rounded-xl h-11 w-11 hover:bg-destructive/10 text-destructive"
+                            onClick={() => {
+                              setSelectedPodcast(podcast);
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-5 w-5" />
                           </Button>
                         </CardFooter>
                       </Card>
