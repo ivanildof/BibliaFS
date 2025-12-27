@@ -681,14 +681,15 @@ export const contentVerseReferences = pgTable("content_verse_references", {
 // Daily verses
 export const dailyVerses = pgTable("daily_verses", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  dayOfYear: integer("day_of_year").notNull().unique(),
-  book: varchar("book").notNull(),
-  chapter: integer("chapter").notNull(),
-  verse: integer("verse").notNull(),
-  version: varchar("version").notNull(),
-  theme: varchar("theme", { length: 100 }),
+  reference: text("reference").notNull(),
+  verseText: text("verse_text").notNull(),
+  dataAtribuida: date("data_atribuida").unique().notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const insertDailyVerseSchema = createInsertSchema(dailyVerses).omit({ id: true, createdAt: true });
+export type DailyVerse = typeof dailyVerses.$inferSelect;
+export type InsertDailyVerse = z.infer<typeof insertDailyVerseSchema>;
 
 // Offline content cache
 export const offlineContent = pgTable("offline_content", {
@@ -1120,9 +1121,7 @@ export const insertUserProgressSchema = createInsertSchema(userProgress).omit({ 
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
 export type UserProgress = typeof userProgress.$inferSelect;
 
-export const insertDailyVerseSchema = createInsertSchema(dailyVerses).omit({ id: true, createdAt: true });
-export type InsertDailyVerse = z.infer<typeof insertDailyVerseSchema>;
-export type DailyVerse = typeof dailyVerses.$inferSelect;
+// Daily Verse schemas removed from here as they are defined earlier in section 7
 
 // ============================================
 // PUSH NOTIFICATIONS

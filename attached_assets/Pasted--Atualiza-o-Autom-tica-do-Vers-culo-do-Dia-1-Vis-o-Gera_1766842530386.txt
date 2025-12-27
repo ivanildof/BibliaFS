@@ -1,0 +1,113 @@
+ Atualização Automática do "Versículo do Dia"
+1. Visão Geral
+Garantir que o recurso "Versículo do Dia" no aplicativo da Bíblia seja atualizado diariamente às 00:00 (meia-noite) no fuso horário de Brasília (UTC-3), sem depender de ações manuais ou abertura do app pelo usuário. A atualização deve ser centralizada no backend (Supabase) e acessível via API para todos os clientes (web, mobile, etc.).
+
+2. Objetivos
+Eliminar a estagnação do versículo (atualmente fixo).
+Garantir que cada novo dia civil (00:00–23:59, horário de Brasília) tenha um versículo diferente.
+Tornar o sistema robusto, escalável e independente do device do usuário.
+Usar ferramentas nativas do Supabase (PostgreSQL + Supabase Functions/Scheduled Tasks).
+3. Requisitos Funcionais
+3.1. Banco de Dados (Supabase)
+Tabela versiculos_do_dia:
+
+sql:
+id (UUID, PK)
+referencia TEXT (ex: "João 3:16")
+texto TEXT
+data_atribuida DATE (única por dia)
+criado_em TIMESTAMPTZ
+
+Chave única na coluna data_atribuida para evitar duplicatas.
+3.2. Seleção Diária Automática
+Um script (função do Supabase ou edge function) é executado diariamente às 00:00 (UTC-3).
+Esse script:
+Verifica se já existe um versículo para a data atual (CURRENT_DATE em UTC-3).
+Se não existir, seleciona aleatoriamente um versículo da tabela versiculos (biblioteca completa) que ainda não foi usado recentemente (ex: nos últimos 30 dias).
+Insere na versiculos_do_dia com data_atribuida = CURRENT_DATE (UTC-3).
+3.3. Fuso Horário
+Todo o sistema usa America/Sao_Paulo (UTC-3 / UTC-2 em horário de verão).
+Conversões de data/hora devem ser feitas com AT TIME ZONE 'America/Sao_Paulo'.
+3.4. API do App
+Endpoint público: GET /versiculo-do-dia
+Retorna:
+
+json:
+{
+  "referencia": "Provérbios 3:5",
+  "texto": "Confie no Senhor de todo o seu coração...",
+  "data": "2025-12-27"
+}
+
+O app nunca armazena o versículo localmente como fixo — sempre busca do backend.
+4. Requisitos Não Funcionais
+Confiabilidade: Atualização deve ocorrer mesmo se nenhum usuário abrir o app.
+Desempenho: A consulta do versículo do dia deve ser < 200ms.
+Escalabilidade: Funciona para 1 ou 100.000 usuários.
+Manutenibilidade: Código modular e com logs no Supabase.
+5. Solução Técnica Proposta
+5.1. Supabase Edge Function (ou Cron Job via第三方 como cron-job.org + Webhook)
+Opção recomendada: Supabase Cron (pg_cron) se disponível no seu plano, ou uma Edge Function acionada por um agendador externo confiável.
+Exemplo de Edge Function (TypeScript):
+
+ts:
+// Função: select_daily_verse
+// Roda diariamente via agendamento externo ou pg_cron
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(DENO_ENV.SUPABASE_URL, DENO_ENV.SUPABASE_SERVICE_ROLE_KEY);
+
+async function handler() {
+  const saoPauloDate = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
+  const today = new Date(saoPauloDate).toISOString().split('T')[0]; // YYYY-MM-DD
+
+  const { data: existing } = await supabase
+    .from('versiculos_do_dia')
+    .select('id')
+    .eq('data_atribuida', today)
+    .single();
+
+  if (!existing) {
+    // Selecionar versículo não usado nos últimos 30 dias
+    const { data: verse } = await supabase.rpc('get_random_unused_verse', { days: 30 });
+    if (verse) {
+      await supabase.from('versiculos_do_dia').insert({
+        referencia: verse.referencia,
+        texto: verse.texto,
+        data_atribuida: today
+      });
+    }
+  }
+
+  return new Response(JSON.stringify({ success: true }), { status: 200 });
+}
+
+5.2. Função SQL no Supabase (opcional)
+
+sql:
+-- Função: get_random_unused_verse(days INT)
+-- Retorna um versículo aleatório não usado nos últimos X dias
+CREATE OR REPLACE FUNCTION get_random_unused_verse(days INT)
+RETURNS TABLE(id UUID, referencia TEXT, texto TEXT) AS $$
+  SELECT id, referencia, texto
+  FROM versiculos
+  WHERE id NOT IN (
+    SELECT v.id
+    FROM versiculos v
+    JOIN versiculos_do_dia vdd ON v.referencia = vdd.referencia
+    WHERE vdd.data_atribuida >= CURRENT_DATE - $1
+  )
+  ORDER BY RANDOM()
+  LIMIT 1;
+$$ LANGUAGE sql;
+
+6. Validação
+Teste manual: verificar se o versículo muda ao mudar a data do sistema para o próximo dia (em ambiente de staging).
+Logs de execução diária.
+Alerta (via email ou Discord) se a atualização falhar por 2 dias consecutivos.
+7. Próximos Passos
+Criar a tabela versiculos_do_dia no Supabase.
+Popular a tabela versiculos com todos os versículos (se ainda não existir).
+Implementar a Edge Function ou pg_cron.
+Agendar a execução diária (00:00 Horário de Brasília).
+Atualizar o app para buscar o versículo via API, nunca armazenar fixo.

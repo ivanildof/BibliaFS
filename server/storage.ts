@@ -170,8 +170,10 @@ export interface IStorage {
   createVerseCommentary(commentary: InsertVerseCommentary): Promise<VerseCommentary>;
   
   // Daily Verse
-  getDailyVerse(dayOfYear: number): Promise<DailyVerse | undefined>;
+  getDailyVerseByDate(date: string): Promise<DailyVerse | undefined>;
   createDailyVerse(verse: InsertDailyVerse): Promise<DailyVerse>;
+  getRecentDailyVerses(days: number): Promise<DailyVerse[]>;
+  getRandomVerseFromLibrary(): Promise<{ reference: string; verseText: string } | undefined>;
   getAllDailyVerses(): Promise<DailyVerse[]>;
   
   // Donations
@@ -1047,8 +1049,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Daily Verse
-  async getDailyVerse(dayOfYear: number): Promise<DailyVerse | undefined> {
-    const [verse] = await db.select().from(dailyVerses).where(eq(dailyVerses.dayOfYear, dayOfYear));
+  async getDailyVerseByDate(date: string): Promise<DailyVerse | undefined> {
+    const [verse] = await db.select().from(dailyVerses).where(eq(dailyVerses.dataAtribuida, date));
     return verse;
   }
 
@@ -1057,8 +1059,44 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
+  async getRecentDailyVerses(days: number): Promise<DailyVerse[]> {
+    return await db
+      .select()
+      .from(dailyVerses)
+      .orderBy(desc(dailyVerses.dataAtribuida))
+      .limit(days);
+  }
+
+  async getRandomVerseFromLibrary(): Promise<{ reference: string; verseText: string } | undefined> {
+    // Try to get a random verse from bibleVerses table if it has content
+    // Otherwise return a fallback verse
+    try {
+      const [verse] = await db
+        .select({
+          reference: sql<string>`${bibleBooks.name} || ' ' || ${bibleVerses.chapterNumber} || ':' || ${bibleVerses.verseNumber}`,
+          verseText: bibleVerses.verseText
+        })
+        .from(bibleVerses)
+        .leftJoin(bibleBooks, eq(bibleVerses.bookId, bibleBooks.id))
+        .orderBy(sql`RANDOM()`)
+        .limit(1);
+      
+      if (verse) return verse;
+    } catch (e) {
+      console.error("Error fetching random verse:", e);
+    }
+
+    const fallbacks = [
+      { reference: "João 3:16", verseText: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna." },
+      { reference: "Salmos 23:1", verseText: "O Senhor é o meu pastor, nada me faltará." },
+      { reference: "Filipenses 4:13", verseText: "Posso todas as coisas naquele que me fortalece." },
+      { reference: "Romanos 8:28", verseText: "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus." }
+    ];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  }
+
   async getAllDailyVerses(): Promise<DailyVerse[]> {
-    return await db.select().from(dailyVerses);
+    return await db.select().from(dailyVerses).orderBy(desc(dailyVerses.dataAtribuida));
   }
 
   // Donations

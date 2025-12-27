@@ -9,13 +9,10 @@ import { useRef } from "react";
 
 interface DailyVerse {
   id: string;
-  dayOfYear: number;
-  book: string;
-  chapter: number;
-  verseNumber: number;
-  version: string;
-  text: string;
   reference: string;
+  text: string;
+  dataAtribuida: string;
+  version: string;
   theme?: string;
 }
 
@@ -66,7 +63,7 @@ export function DailyVerse() {
       });
 
       const link = document.createElement("a");
-      link.download = `versiculo-do-dia-${verse.dayOfYear}.png`;
+      link.download = `versiculo-do-dia-${verse.dataAtribuida}.png`;
       link.href = dataUrl;
       link.click();
 

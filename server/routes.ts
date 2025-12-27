@@ -2877,17 +2877,16 @@ Regras:
     }
   });
 
-  // Daily Verse Routes
+  // Get daily verse
   app.get("/api/daily-verse", async (req, res) => {
     try {
       // Get user timezone from query param, default to America/Sao_Paulo (UTC-3)
       const timezone = (req.query.tz as string) || "America/Sao_Paulo";
       
-      // Calculate day of year based on user's local date
+      // Calculate date based on user's local timezone
       const now = new Date();
       let localDateStr;
       try {
-        // Use a more robust way to get local date components
         const formatter = new Intl.DateTimeFormat("en-US", {
           timeZone: timezone,
           year: "numeric",
@@ -2897,69 +2896,60 @@ Regras:
         const parts = formatter.formatToParts(now);
         const dateParts: Record<string, string> = {};
         parts.forEach(p => dateParts[p.type] = p.value);
-        
         localDateStr = `${dateParts.year}-${dateParts.month.padStart(2, '0')}-${dateParts.day.padStart(2, '0')}`;
       } catch (e) {
         localDateStr = now.toISOString().split('T')[0];
       }
-      
-      const localDate = new Date(localDateStr + "T00:00:00Z");
-      const startOfYear = new Date(Date.UTC(localDate.getUTCFullYear(), 0, 0));
-      const diff = localDate.getTime() - startOfYear.getTime();
-      const oneDay = 1000 * 60 * 60 * 24;
-      const dayOfYear = Math.floor(diff / oneDay);
 
-      console.log(`[DailyVerse] TZ: ${timezone}, LocalDate: ${localDateStr}, DayOfYear: ${dayOfYear}`);
+      console.log(`[DailyVerse] TZ: ${timezone}, LocalDate: ${localDateStr}`);
 
-      let verseData = await storage.getDailyVerse(dayOfYear);
-      
-      // If no verse found for today, return a default inspirational verse
-      if (!verseData) {
-        verseData = {
-          id: 'default',
-          dayOfYear,
-          book: 'João',
-          chapter: 3,
-          verse: 16,
-          version: 'nvi',
-          theme: 'amor',
-          createdAt: new Date(),
-        };
-      }
+      let dailyVerse = await storage.getDailyVerseByDate(localDateStr);
 
-      // Fetch the actual verse text from Bible API
-      let text = "";
-      let reference = `${verseData.book} ${verseData.chapter}:${verseData.verse}`;
-      
-      try {
-        const bookAbbrev = getBookAbbreviation(verseData.book);
-        const chapterData = await fetchBibleChapter('pt', verseData.version, bookAbbrev, verseData.chapter);
-        if (chapterData?.verses) {
-          const verseObj = chapterData.verses.find((v: any) => v.number === verseData!.verse);
-          if (verseObj) {
-            text = verseObj.text;
+      if (!dailyVerse) {
+        // Selection logic: Pick a random verse from library not used in last 30 days
+        const recentVerses = await storage.getRecentDailyVerses(30);
+        const recentReferences = new Set(recentVerses.map(v => v.reference));
+
+        // Try to find a new verse
+        let attempts = 0;
+        let foundVerse = null;
+        
+        while (attempts < 5) {
+          const randomVerse = await storage.getRandomVerseFromLibrary();
+          if (randomVerse && !recentReferences.has(randomVerse.reference)) {
+            foundVerse = randomVerse;
+            break;
           }
+          attempts++;
         }
-      } catch (fetchErr) {
-        console.warn("[DailyVerse] Could not fetch verse text:", fetchErr);
-        // Fallback text for João 3:16
-        if (verseData.book === 'João' && verseData.chapter === 3 && verseData.verse === 16) {
-          text = "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.";
+
+        // Fallback if random unused verse not found
+        if (!foundVerse) {
+          foundVerse = await storage.getRandomVerseFromLibrary();
+        }
+
+        if (foundVerse) {
+          dailyVerse = await storage.createDailyVerse({
+            reference: foundVerse.reference,
+            verseText: foundVerse.verseText,
+            dataAtribuida: localDateStr
+          });
         }
       }
 
-      res.json({
-        id: verseData.id,
-        dayOfYear: verseData.dayOfYear,
-        book: verseData.book,
-        chapter: verseData.chapter,
-        verseNumber: verseData.verse,
-        version: verseData.version,
-        text,
-        reference,
-        theme: verseData.theme,
-      });
+      if (dailyVerse) {
+        res.json({
+          id: dailyVerse.id,
+          reference: dailyVerse.reference,
+          text: dailyVerse.verseText,
+          dataAtribuida: dailyVerse.dataAtribuida,
+          version: 'nvi' // Default metadata
+        });
+      } else {
+        res.status(404).json({ error: "Versículo não disponível" });
+      }
     } catch (error: any) {
+      console.error("[Daily Verse] Error:", error);
       res.status(500).json({ error: error.message });
     }
   });
