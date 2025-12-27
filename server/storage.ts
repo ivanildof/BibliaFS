@@ -1065,11 +1065,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getRecentDailyVerses(days: number): Promise<DailyVerse[]> {
-    return await db
-      .select()
-      .from(dailyVerses)
-      .orderBy(desc(dailyVerses.dataAtribuida))
-      .limit(days);
+    try {
+      return await db
+        .select()
+        .from(dailyVerses)
+        .orderBy(desc(dailyVerses.dataAtribuida))
+        .limit(days);
+    } catch (e) {
+      console.error("Error in getRecentDailyVerses:", e);
+      return [];
+    }
   }
 
   async getRandomVerseFromLibrary(): Promise<{ reference: string; verseText: string } | undefined> {
@@ -1099,7 +1104,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllDailyVerses(): Promise<DailyVerse[]> {
-    return await db.select().from(dailyVerses).orderBy(desc(dailyVerses.dataAtribuida));
+    try {
+      return await db.select().from(dailyVerses).orderBy(desc(dailyVerses.dataAtribuida));
+    } catch (e) {
+      console.error("Error in getAllDailyVerses:", e);
+      return [];
+    }
   }
 
   // Donations
