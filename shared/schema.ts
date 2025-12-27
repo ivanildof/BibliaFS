@@ -681,9 +681,12 @@ export const contentVerseReferences = pgTable("content_verse_references", {
 // Daily verses
 export const dailyVerses = pgTable("daily_verses", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  reference: text("reference").notNull(),
-  verseText: text("verse_text").notNull(),
-  dataAtribuida: date("data_atribuida").unique().notNull(),
+  dayOfYear: integer("day_of_year").notNull().unique(),
+  book: varchar("book").notNull(),
+  chapter: integer("chapter").notNull(),
+  verse: integer("verse").notNull(),
+  version: varchar("version").notNull(),
+  theme: varchar("theme", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

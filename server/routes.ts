@@ -2883,9 +2883,9 @@ Regras:
       // Get user timezone from query param, default to America/Sao_Paulo (UTC-3)
       const timezone = (req.query.tz as string) || "America/Sao_Paulo";
       
-      // Calculate date based on user's local timezone
+      // Calculate day of year based on user's local timezone
       const now = new Date();
-      let localDateStr;
+      let dayOfYear: number;
       try {
         const formatter = new Intl.DateTimeFormat("en-US", {
           timeZone: timezone,
@@ -2896,54 +2896,109 @@ Regras:
         const parts = formatter.formatToParts(now);
         const dateParts: Record<string, string> = {};
         parts.forEach(p => dateParts[p.type] = p.value);
-        localDateStr = `${dateParts.year}-${dateParts.month.padStart(2, '0')}-${dateParts.day.padStart(2, '0')}`;
+        const localDate = new Date(parseInt(dateParts.year), parseInt(dateParts.month) - 1, parseInt(dateParts.day));
+        const startOfYear = new Date(localDate.getFullYear(), 0, 0);
+        const diff = localDate.getTime() - startOfYear.getTime();
+        dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
       } catch (e) {
-        localDateStr = now.toISOString().split('T')[0];
+        const startOfYear = new Date(now.getFullYear(), 0, 0);
+        const diff = now.getTime() - startOfYear.getTime();
+        dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
       }
 
-      console.log(`[DailyVerse] TZ: ${timezone}, LocalDate: ${localDateStr}`);
+      console.log(`[DailyVerse] TZ: ${timezone}, DayOfYear: ${dayOfYear}`);
 
-      let dailyVerse = await storage.getDailyVerseByDate(localDateStr);
+      let dailyVerse = await storage.getDailyVerseByDayOfYear(dayOfYear);
 
       if (!dailyVerse) {
-        // Selection logic: Pick a random verse from library not used in last 30 days
-        const recentVerses = await storage.getRecentDailyVerses(30);
-        const recentReferences = new Set(recentVerses.map(v => v.reference));
+        // Curated list of daily verses with themes
+        const curatedVerses = [
+          { book: "jo", chapter: 3, verse: 16, version: "nvi", theme: "Amor de Deus", text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna." },
+          { book: "sl", chapter: 23, verse: 1, version: "nvi", theme: "Confiança", text: "O Senhor é o meu pastor, nada me faltará." },
+          { book: "fp", chapter: 4, verse: 13, version: "nvi", theme: "Força", text: "Posso todas as coisas naquele que me fortalece." },
+          { book: "rm", chapter: 8, verse: 28, version: "nvi", theme: "Providência", text: "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus." },
+          { book: "is", chapter: 41, verse: 10, version: "nvi", theme: "Coragem", text: "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a minha destra fiel." },
+          { book: "pv", chapter: 3, verse: 5, version: "nvi", theme: "Sabedoria", text: "Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento." },
+          { book: "mt", chapter: 11, verse: 28, version: "nvi", theme: "Descanso", text: "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei." },
+          { book: "jr", chapter: 29, verse: 11, version: "nvi", theme: "Esperança", text: "Porque sou eu que conheço os planos que tenho para vocês, planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro." },
+          { book: "sl", chapter: 46, verse: 1, version: "nvi", theme: "Refúgio", text: "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia." },
+          { book: "sl", chapter: 91, verse: 1, version: "nvi", theme: "Proteção", text: "Aquele que habita no abrigo do Altíssimo descansará à sombra do Todo-Poderoso." },
+          { book: "hb", chapter: 11, verse: 1, version: "nvi", theme: "Fé", text: "Ora, a fé é a certeza daquilo que esperamos e a prova das coisas que não vemos." },
+          { book: "1co", chapter: 13, verse: 4, version: "nvi", theme: "Amor", text: "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha." },
+          { book: "gl", chapter: 5, verse: 22, version: "nvi", theme: "Fruto do Espírito", text: "Mas o fruto do Espírito é: amor, alegria, paz, longanimidade, benignidade, bondade, fidelidade." },
+          { book: "ef", chapter: 6, verse: 10, version: "nvi", theme: "Batalha Espiritual", text: "No demais, fortalecei-vos no Senhor e na força do seu poder." },
+          { book: "tg", chapter: 1, verse: 2, version: "nvi", theme: "Provações", text: "Meus irmãos, tende por motivo de toda alegria quando cairdes em várias provações." }
+        ];
 
-        // Try to find a new verse
-        let attempts = 0;
-        let foundVerse = null;
-        
-        while (attempts < 5) {
-          const randomVerse = await storage.getRandomVerseFromLibrary();
-          if (randomVerse && !recentReferences.has(randomVerse.reference)) {
-            foundVerse = randomVerse;
-            break;
-          }
-          attempts++;
-        }
+        // Select verse based on day of year (cycling through curated list)
+        const verseIndex = dayOfYear % curatedVerses.length;
+        const selectedVerse = curatedVerses[verseIndex];
 
-        // Fallback if random unused verse not found
-        if (!foundVerse) {
-          foundVerse = await storage.getRandomVerseFromLibrary();
-        }
-
-        if (foundVerse) {
+        try {
           dailyVerse = await storage.createDailyVerse({
-            reference: foundVerse.reference,
-            verseText: foundVerse.verseText,
-            dataAtribuida: localDateStr
+            dayOfYear,
+            book: selectedVerse.book,
+            chapter: selectedVerse.chapter,
+            verse: selectedVerse.verse,
+            version: selectedVerse.version,
+            theme: selectedVerse.theme
+          });
+        } catch (e) {
+          console.error("[DailyVerse] Error creating verse:", e);
+        }
+
+        // Return curated verse even if save failed
+        if (!dailyVerse) {
+          return res.json({
+            id: `temp-${dayOfYear}`,
+            reference: `${selectedVerse.book.toUpperCase()} ${selectedVerse.chapter}:${selectedVerse.verse}`,
+            text: selectedVerse.text,
+            version: selectedVerse.version,
+            theme: selectedVerse.theme,
+            dayOfYear
           });
         }
       }
 
       if (dailyVerse) {
+        // Format book name for display
+        const bookNames: Record<string, string> = {
+          "jo": "João", "sl": "Salmos", "fp": "Filipenses", "rm": "Romanos",
+          "is": "Isaías", "pv": "Provérbios", "mt": "Mateus", "jr": "Jeremias",
+          "hb": "Hebreus", "1co": "1 Coríntios", "gl": "Gálatas", "ef": "Efésios", "tg": "Tiago"
+        };
+        const bookName = bookNames[dailyVerse.book] || dailyVerse.book.toUpperCase();
+        
+        // Get verse text from curated list
+        const curatedVerses = [
+          { book: "jo", chapter: 3, verse: 16, text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna." },
+          { book: "sl", chapter: 23, verse: 1, text: "O Senhor é o meu pastor, nada me faltará." },
+          { book: "fp", chapter: 4, verse: 13, text: "Posso todas as coisas naquele que me fortalece." },
+          { book: "rm", chapter: 8, verse: 28, text: "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus." },
+          { book: "is", chapter: 41, verse: 10, text: "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a minha destra fiel." },
+          { book: "pv", chapter: 3, verse: 5, text: "Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento." },
+          { book: "mt", chapter: 11, verse: 28, text: "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei." },
+          { book: "jr", chapter: 29, verse: 11, text: "Porque sou eu que conheço os planos que tenho para vocês, planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro." },
+          { book: "sl", chapter: 46, verse: 1, text: "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia." },
+          { book: "sl", chapter: 91, verse: 1, text: "Aquele que habita no abrigo do Altíssimo descansará à sombra do Todo-Poderoso." },
+          { book: "hb", chapter: 11, verse: 1, text: "Ora, a fé é a certeza daquilo que esperamos e a prova das coisas que não vemos." },
+          { book: "1co", chapter: 13, verse: 4, text: "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha." },
+          { book: "gl", chapter: 5, verse: 22, text: "Mas o fruto do Espírito é: amor, alegria, paz, longanimidade, benignidade, bondade, fidelidade." },
+          { book: "ef", chapter: 6, verse: 10, text: "No demais, fortalecei-vos no Senhor e na força do seu poder." },
+          { book: "tg", chapter: 1, verse: 2, text: "Meus irmãos, tende por motivo de toda alegria quando cairdes em várias provações." }
+        ];
+        
+        const matchedVerse = curatedVerses.find(v => 
+          v.book === dailyVerse!.book && v.chapter === dailyVerse!.chapter && v.verse === dailyVerse!.verse
+        );
+        
         res.json({
           id: dailyVerse.id,
-          reference: dailyVerse.reference,
-          text: dailyVerse.verseText,
-          dataAtribuida: dailyVerse.dataAtribuida,
-          version: 'nvi' // Default metadata
+          reference: `${bookName} ${dailyVerse.chapter}:${dailyVerse.verse}`,
+          text: matchedVerse?.text || "Versículo do dia",
+          version: dailyVerse.version,
+          theme: dailyVerse.theme,
+          dayOfYear: dailyVerse.dayOfYear
         });
       } else {
         res.status(404).json({ error: "Versículo não disponível" });
