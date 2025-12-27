@@ -1050,8 +1050,13 @@ export class DatabaseStorage implements IStorage {
 
   // Daily Verse
   async getDailyVerseByDate(date: string): Promise<DailyVerse | undefined> {
-    const [verse] = await db.select().from(dailyVerses).where(eq(dailyVerses.dataAtribuida, date));
-    return verse;
+    try {
+      const [verse] = await db.select().from(dailyVerses).where(eq(dailyVerses.dataAtribuida, date));
+      return verse;
+    } catch (e) {
+      console.error("Error in getDailyVerseByDate:", e);
+      return undefined;
+    }
   }
 
   async createDailyVerse(verse: InsertDailyVerse): Promise<DailyVerse> {
@@ -1068,8 +1073,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getRandomVerseFromLibrary(): Promise<{ reference: string; verseText: string } | undefined> {
-    // Try to get a random verse from bibleVerses table if it has content
-    // Otherwise return a fallback verse
     try {
       const [verse] = await db
         .select({
@@ -1083,7 +1086,7 @@ export class DatabaseStorage implements IStorage {
       
       if (verse) return verse;
     } catch (e) {
-      console.error("Error fetching random verse:", e);
+      console.error("Error fetching random verse from database:", e);
     }
 
     const fallbacks = [
