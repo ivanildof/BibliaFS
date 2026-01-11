@@ -62,6 +62,12 @@ import {
   type InsertDonation,
   type Donation,
   emailOtp,
+  feedback,
+  type InsertFeedback,
+  type Feedback,
+  sharedLinks,
+  type InsertSharedLink,
+  type SharedLink,
 } from "@shared/schema";
 
 import { db } from "./db";
@@ -191,6 +197,8 @@ export interface IStorage {
   verifyOTP(email: string, code: string): Promise<boolean>;
   // Shared links
   createSharedLink(link: InsertSharedLink): Promise<SharedLink>;
+  // Feedback
+  createFeedback(feedback: InsertFeedback): Promise<Feedback>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1772,6 +1780,11 @@ export class DatabaseStorage implements IStorage {
   }
   async createSharedLink(link: InsertSharedLink): Promise<SharedLink> {
     const [created] = await db.insert(sharedLinks).values(link).returning();
+    return created;
+  }
+
+  async createFeedback(feedbackData: InsertFeedback): Promise<Feedback> {
+    const [created] = await db.insert(feedback).values(feedbackData).returning();
     return created;
   }
 }

@@ -4481,6 +4481,21 @@ Formato da resposta:
     }
   });
 
+  // Feedback routes
+  app.post("/api/feedback", isAuthenticated, async (req: any, res) => {
+    try {
+      const data = insertFeedbackSchema.parse({
+        ...req.body,
+        userId: req.user.claims.sub
+      });
+      const feedback = await storage.createFeedback(data);
+      res.json(feedback);
+    } catch (error) {
+      console.error("[Feedback] Error:", error);
+      res.status(500).json({ message: "Erro ao enviar feedback" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

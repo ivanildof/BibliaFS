@@ -675,6 +675,21 @@ export const contentVerseReferences = pgTable("content_verse_references", {
   uniqueContentVerse: unique().on(table.contentId, table.verseId),
 }));
 
+// NPS and Feedback table
+export const feedback = pgTable("feedback", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 20 }).notNull(), // 'nps', 'general'
+  score: integer("score"), // 1-10 for NPS
+  comment: text("comment"),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertFeedbackSchema = createInsertSchema(feedback);
+export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
+export type Feedback = typeof feedback.$inferSelect;
+
 // ============================================
 // 7. DAILY & OFFLINE
 // ============================================

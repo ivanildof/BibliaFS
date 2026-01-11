@@ -48,6 +48,8 @@ import Groups from "@/pages/groups";
 import VersionCompare from "@/pages/version-compare";
 import Achievements from "@/pages/achievements";
 
+import { NPSDialog } from "@/components/NPSDialog";
+
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
@@ -223,6 +225,7 @@ function AppContent() {
               <Router />
             </main>
             <BottomNav />
+            <NPSDialog />
           </div>
         </div>
       </SidebarProvider>
