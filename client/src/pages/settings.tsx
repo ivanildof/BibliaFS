@@ -915,32 +915,32 @@ export default function Settings() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button 
-                  variant="link" 
-                  className="w-full justify-start p-0 h-auto"
+                  variant="ghost" 
+                  className="w-full justify-start text-primary underline-offset-4 hover:underline"
                   onClick={() => window.open('/terms', '_blank')}
                   data-testid="link-terms"
                 >
                   Termos de Uso
                 </Button>
                 <Button 
-                  variant="link" 
-                  className="w-full justify-start p-0 h-auto"
+                  variant="ghost" 
+                  className="w-full justify-start text-primary underline-offset-4 hover:underline"
                   onClick={() => window.open('/privacy', '_blank')}
                   data-testid="link-privacy"
                 >
                   Política de Privacidade
                 </Button>
                 <Button 
-                  variant="link" 
-                  className="w-full justify-start p-0 h-auto"
+                  variant="ghost" 
+                  className="w-full justify-start text-primary underline-offset-4 hover:underline"
                   onClick={() => window.open('/help', '_blank')}
                   data-testid="link-help"
                 >
                   Central de Ajuda
                 </Button>
                 <Button 
-                  variant="link" 
-                  className="w-full justify-start p-0 h-auto"
+                  variant="ghost" 
+                  className="w-full justify-start text-primary underline-offset-4 hover:underline"
                   onClick={() => window.open('/contact', '_blank')}
                   data-testid="link-contact"
                 >
