@@ -303,7 +303,7 @@ export default function Landing() {
           </Badge>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
-            Estude a Bíblia com <span className="text-amber-300">Inteligência Artificial</span>
+            Bíblia Online com <span className="text-amber-300">Inteligência Artificial</span> Teológica
           </h1>
           
           <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
@@ -340,9 +340,9 @@ export default function Landing() {
       <section className="py-24 px-6 bg-gradient-to-b from-purple-50 via-background to-amber-50/30 dark:from-purple-950/30 dark:via-background dark:to-amber-950/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Por que Escolher <span className="gradient-text">BíbliaFS</span>?</h2>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Por que Ler a <span className="gradient-text">Bíblia Sagrada</span> na BíbliaFS?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              A plataforma mais completa e inteligente para estudo bíblico
+              A melhor plataforma para estudar a Palavra de Deus online e offline.
             </p>
           </div>
           
@@ -382,10 +382,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Recursos <span className="gradient-text">Poderosos</span> Para Seu Estudo
+              Recursos de <span className="gradient-text">Estudo Bíblico</span> Avançados
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Tudo que você precisa para uma experiência de estudo bíblico transformadora
+              Tudo o que você precisa para ler a Bíblia Online e offline com profundidade teológica.
             </p>
           </div>
           
@@ -429,10 +429,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Temas Incríveis
+              <span className="text-primary">Temas de Leitura</span> da Bíblia Incríveis
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Personalize sua experiência com 4 temas premium ou crie o seu próprio
+              Personalize sua Bíblia Sagrada com temas premium como Sépia e Modo Noturno, ou crie seu próprio estilo de leitura.
             </p>
           </div>
           
@@ -570,7 +570,7 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Perguntas Frequentes
+              Dúvidas sobre a <span className="text-primary">Bíblia Sagrada</span> Online
             </h2>
             <p className="text-xl text-muted-foreground">
               Encontre respostas para as dúvidas mais comuns
