@@ -50,8 +50,6 @@ export function AppSidebar() {
 
   const menuItems = [
     { title: t.nav.home, url: "/", icon: Home },
-    { title: "Assinaturas", url: "/pricing", icon: Crown },
-    { title: "Feedback", url: "/contact", icon: MessageSquare },
     { title: t.nav.bible, url: "/bible-reader", icon: BookOpen },
     { title: t.favorites.title, url: "/favorites", icon: Bookmark },
     { title: t.nav.plans, url: "/plans", icon: Book },
@@ -154,6 +152,14 @@ export function AppSidebar() {
                   <Link href="/about">
                     <Info className="h-4 w-4" />
                     <span>{t.sections.about}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={location === "/contact"} data-testid="link-sidebar-feedback">
+                  <Link href="/contact">
+                    <MessageSquare className="h-4 w-4" />
+                    <span>Feedback</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
