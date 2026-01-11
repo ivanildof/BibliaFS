@@ -341,6 +341,23 @@ export async function runMigrations() {
       ON email_otp(email)
     `);
 
+    // Create feedback table for NPS and user feedback
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(50) NOT NULL,
+        score INTEGER,
+        comment TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_feedback_user 
+      ON feedback(user_id)
+    `);
+
     console.log("Migrations completed successfully!");
   } catch (error) {
     console.error("Migration error:", error);
