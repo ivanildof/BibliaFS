@@ -346,11 +346,18 @@ export async function runMigrations() {
       CREATE TABLE IF NOT EXISTS feedback (
         id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR REFERENCES users(id) ON DELETE CASCADE,
-        type VARCHAR(50) NOT NULL,
+        type VARCHAR(20) NOT NULL,
         score INTEGER,
         comment TEXT,
+        metadata JSONB DEFAULT '{}',
         created_at TIMESTAMP DEFAULT NOW()
       )
+    `);
+
+    // Add metadata column if it doesn't exist (for existing tables)
+    await db.execute(sql`
+      ALTER TABLE feedback 
+      ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'
     `);
 
     await db.execute(sql`

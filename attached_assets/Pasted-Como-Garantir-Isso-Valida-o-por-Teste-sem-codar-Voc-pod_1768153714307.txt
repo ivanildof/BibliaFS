@@ -1,0 +1,56 @@
+Como Garantir Isso – Validação por Teste (sem codar)
+Você pode validar essa regra apenas com testes manuais ou automatizados de comportamento, usando os seguintes cenários:
+
+Teste 1: Cadastro Limpo
+Ação: Criar um novo usuário (ex: usuario1@teste.com)
+Verificação:
+Ao logar pela primeira vez, nenhum dado pré-existente aparece (nem planos de leitura, nem notas, nem preferências de outro usuário)
+O tema inicial é o padrão (ex: "Clássico"), não o tema usado por outro usuário
+✅ Critério de sucesso: Interface totalmente limpa, como se fosse a primeira instalação do mundo.
+
+Teste 2: Isolamento entre Contas
+Ação:
+Criar usuario1, adicionar nota no Salmo 23
+Sair e criar usuario2
+Entrar com usuario2
+Verificação:
+usuario2 não vê a nota de usuario1
+Nenhum dado de usuario1 aparece em lugar algum
+✅ Critério de sucesso: Cada conta vive em seu próprio "universo de dados".
+
+Teste 3: Ambiente de Produção ≠ Desenvolvimento
+Ação: Acessar o site bibliafs.com.br (produção) como novo usuário
+Verificação:
+Nenhum dado de teste aparece (ex: “teste dev”, “admin”, “usuário de exemplo”)
+Nenhum plano de leitura fictício, nota de debug ou mensagem interna
+✅ Critério de sucesso: O ambiente de produção nunca contém dados de desenvolvimento.
+
+Teste 4: Dados Pessoais Não Compartilhados
+Ação: Dois usuários criam planos de leitura com o mesmo nome (ex: “Estudo de João”)
+Verificação:
+Cada um vê apenas o seu próprio plano
+Nenhum dos dois aparece na lista do outro
+✅ Critério de sucesso: Mesmo com nomes idênticos, os dados nunca se misturam.
+
+🛡️ Boas Práticas que Devem Estar Presentes (para validação)
+Mesmo sem ver o código, você pode exigir ou verificar que:
+
+Toda consulta ao banco inclui o ID do usuário logado
+→ Nenhuma listagem de dados acontece sem filtrar por user_id
+Não há tabelas ou coleções globais com dados pessoais
+→ Dados como notas, temas, progresso sempre estão vinculados a um usuário
+Ambientes são separados:
+dev.bibliafs.com.br (ou local) → para testes
+bibliafs.com.br → só com dados reais de usuários reais
+→ Nunca há migração automática de dados de dev para produção
+Backup de produção não contém credenciais de dev
+→ E vice-versa
+📋 Checklist de Validação (para testers)
+Item
+Testado? (Sim/Não/Observação)
+Novo cadastro inicia com interface limpa
+Usuário A não vê dados do Usuário B
+Nenhum dado de "teste", "admin" ou "dev" aparece em produção
+Tema escolhido por um usuário não afeta outro
+Planos de leitura são individuais
+Assistente IA não mostra histórico de outros
