@@ -11,7 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
-import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Book, Eye, EyeOff, Loader2, Mail } from "lucide-react";
+import { SiGoogle } from "react-icons/si";
 import { Link } from "wouter";
 
 const registerSchema = z.object({
@@ -270,7 +271,29 @@ export default function Register() {
             </Form>
           </CardContent>
           <CardFooter className="flex flex-col gap-6 px-8 pb-10 bg-muted/20 rounded-b-3xl border-t border-border/50">
-            <p className="text-sm text-center text-muted-foreground pt-6 font-medium">
+            <div className="w-full space-y-4 pt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-muted px-2 text-muted-foreground font-bold">Ou continue com</span>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                type="button"
+                className="w-full h-12 rounded-xl font-bold flex items-center justify-center gap-3 border-border/50 bg-card hover:bg-muted/50 transition-all shadow-sm"
+                onClick={() => window.location.href = "/api/auth/login"}
+                data-testid="button-register-google"
+              >
+                <SiGoogle className="h-5 w-5 text-[#4285F4]" />
+                Google
+              </Button>
+            </div>
+
+            <p className="text-sm text-center text-muted-foreground font-medium">
               Já tem uma conta?{" "}
               <Link href="/login" className="text-primary font-bold hover:underline underline-offset-4" data-testid="link-login">
                 Fazer login
