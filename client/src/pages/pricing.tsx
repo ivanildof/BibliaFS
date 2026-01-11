@@ -338,12 +338,12 @@ export default function Pricing() {
                     </div>
                     
                     {/* Price */}
-                    <div className="pt-3 flex items-baseline flex-wrap">
-                      <span className="text-2xl font-bold self-start mr-1 mt-1">R$</span>
-                      <span className="text-5xl font-extrabold tracking-tight">
+                    <div className="pt-3 flex items-baseline whitespace-nowrap overflow-hidden">
+                      <span className="text-xl font-bold mr-1">R$</span>
+                      <span className="text-4xl font-extrabold tracking-tight">
                         {plan.price.replace('R$ ', '')}
                       </span>
-                      <span className="text-muted-foreground text-base ml-2 font-medium">/{plan.period}</span>
+                      <span className="text-muted-foreground text-sm ml-1 font-medium">/{plan.period}</span>
                     </div>
                   </CardHeader>
 
