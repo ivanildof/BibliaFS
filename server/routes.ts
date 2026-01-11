@@ -132,14 +132,12 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     }
     
     const plan = user.subscriptionPlan || 'free';
-    
+
     // Premium users (monthly/yearly/premium_plus plans) - check their specific budget limits
     if (plan === 'monthly' || plan === 'yearly' || plan === 'premium_plus') {
-      // Each plan has its own 25% budget limit
       const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
       const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
       
-      // Set limits based on plan
       let monthlyLimit = 0;
       let yearlyLimit = 0;
       
@@ -151,7 +149,7 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
         yearlyLimit = 72.25; // 25% of R$289.00
       }
       
-      // Check monthly limit (for monthly plan)
+      // Check monthly limit
       if (monthlyLimit > 0 && monthlySpend >= monthlyLimit) {
         return {
           allowed: false,
@@ -160,19 +158,19 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
         };
       }
       
-      // Check yearly limit (for yearly and premium_plus plans)
+      // Check yearly limit
       if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
+        const planName = plan === 'premium_plus' ? 'Premium Plus' : 'Anual';
         return {
           allowed: false,
           remaining: 0,
-          message: `Limite de IA do plano atingido (R$${yearlyLimit.toFixed(2)}). Faça upgrade para Premium Plus para mais créditos.`
+          message: `Limite de IA do plano ${planName} atingido (R$${yearlyLimit.toFixed(2)}). O limite será renovado no próximo período.`
         };
       }
       
-      return { allowed: true, remaining: -1 }; // Still has budget
+      return { allowed: true, remaining: -1 };
     }
-    
-    // FREE USERS: Check total question limit (20 questions total)
+
     const totalRequests = user.aiRequestsCount || 0;
     const remaining = FREE_PLAN_AI_TOTAL_LIMIT - totalRequests;
 
