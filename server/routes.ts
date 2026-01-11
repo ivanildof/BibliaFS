@@ -3075,8 +3075,8 @@ Regras:
         mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${req.headers.get('origin') || process.env.VITE_APP_URL || 'http://localhost:5000'}/planos?success=true`,
-        cancel_url: `${req.headers.get('origin') || process.env.VITE_APP_URL || 'http://localhost:5000'}/planos?canceled=true`,
+        success_url: `${req.headers.origin || process.env.VITE_APP_URL || 'http://localhost:5000'}/planos?success=true`,
+        cancel_url: `${req.headers.origin || process.env.VITE_APP_URL || 'http://localhost:5000'}/planos?canceled=true`,
         metadata: { userId, planType },
       });
 
@@ -3102,7 +3102,7 @@ Regras:
 
       const session = await stripe.billingPortal.sessions.create({
         customer: user.stripeCustomerId,
-        return_url: `${req.headers.get('origin') || process.env.VITE_APP_URL || 'http://localhost:5000'}/planos`,
+        return_url: `${req.headers.origin || process.env.VITE_APP_URL || 'http://localhost:5000'}/planos`,
       });
 
       res.json({ url: session.url });
