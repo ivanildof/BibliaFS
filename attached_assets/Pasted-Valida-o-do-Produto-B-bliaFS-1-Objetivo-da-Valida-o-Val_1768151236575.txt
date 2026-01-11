@@ -1,0 +1,69 @@
+Validação do Produto: BíbliaFS
+1. Objetivo da Validação
+Validar se o produto BíbliaFS entrega valor real aos usuários por meio de:
+
+Engajamento contínuo no estudo bíblico
+Utilização efetiva do assistente de IA
+Adoção de funcionalidades premium (mesmo em versão gratuita)
+Satisfação com a experiência offline e personalização
+2. Hipóteses a Serem Validadas
+#
+Hipótese
+Métrica de Validação
+H1
+Usuários utilizam o assistente de IA com frequência para esclarecer dúvidas teológicas
+≥ 60% dos usuários ativos usam a IA pelo menos 2x/semana
+H2
+A personalização de temas aumenta o tempo médio de uso diário
+Média de sessão > 8 minutos nos usuários que trocam de tema
+H3
+O modo offline é um fator decisivo na retenção
+≥ 70% dos usuários retornam após 7 dias mesmo sem internet
+H4
+Usuários percebem valor suficiente para recomendar o app (NPS ≥ 50)
+NPS ≥ 50 em pesquisa pós-uso de 14 dias
+H5
+Funcionalidades “premium” (como planos de leitura e comunidade) são usadas mesmo na versão gratuita
+≥ 50% dos usuários criam ou seguem ao menos 1 plano de leitura
+3. Público-Alvo da Validação
+Cristãos evangélicos (todas as denominações)
+Estudantes de teologia
+Líderes de células/grupos pequenos
+Pessoas que já usam apps bíblicos (ex: YouVersion, Bíblia Sagrada)
+4. Escopo Mínimo para Validação (MVP de Validação)
+Nota: O site atual já cobre grande parte deste escopo.
+
+✅ Versão web responsiva (mobile-first)
+✅ Leitura offline (com cache local via Service Worker)
+✅ Assistente IA integrado à leitura (prompt contextual)
+✅ 4 temas visuais + opção de personalização básica
+✅ Plano de leitura semanal com notificações (push ou e-mail)
+✅ Compartilhamento de versículos/notas (via link ou redes)
+✅ Formulário de feedback embutido (pós-sessão)
+5. Métricas-Chave (KPIs)
+Ativação: % de usuários que leem ≥ 3 capítulos nos primeiros 3 dias
+Engajamento: Tempo médio por sessão, uso da IA, troca de tema
+Retenção: D1, D7, D30 (usuários ativos nos dias 1, 7 e 30 após instalação)
+Satisfação: NPS + taxa de respostas ao formulário de feedback
+Viralidade: Taxa de compartilhamento (links únicos gerados)
+6. Canais de Coleta de Feedback
+Pop-up de NPS após 7 dias de uso
+Formulário curto no rodapé: “O que você mudaria no BíbliaFS?”
+Entrevistas com 10–15 usuários (pastores, estudantes, líderes)
+Análise comportamental (Hotjar ou similar): onde os usuários clicam, saem, hesitam
+7. Critérios de Sucesso
+A validação será considerada bem-sucedida se:
+
+Pelo menos 3 das 5 hipóteses forem confirmadas
+NPS ≥ 50
+Retenção D7 ≥ 40%
+Se não for bem-sucedida, revisaremos:
+
+A utilidade percebida da IA
+A clareza do valor gratuito vs. premium
+A necessidade de mais recursos sociais (grupos, desafios)
+8. Próximos Passos Após Validação
+Iterar com base no feedback
+Preparar versão mobile (PWA ou app nativo)
+Definir plano premium (caso deseje monetizar futuramente)
+Integrar com FabriSite (se aplicável para gestão de usuários/clientes)
