@@ -75,7 +75,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: true,
-    priceId: "price_1SeNkrLxcUHgdisLFHU2eKzg",
+    priceId: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || "price_1SeNkrLxcUHgdisLFHU2eKzg",
     planType: "monthly",
   },
   {
@@ -96,7 +96,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: false,
-    priceId: "price_1SeNlfLxcUHgdisLeMyIChFe",
+    priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || "price_1SeNlfLxcUHgdisLeMyIChFe",
     planType: "yearly",
   },
   {
@@ -116,7 +116,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: false,
-    priceId: "price_1SeNmJLxcUHgdisLkccnbgRz",
+    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PLUS_PRICE_ID || "price_1SeNmJLxcUHgdisLkccnbgRz",
     planType: "premium_plus",
   },
 ];
