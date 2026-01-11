@@ -1,0 +1,77 @@
+garantir que a integração do login com Google + Supabase funcione de forma segura, confiável e com boa experiência do usuário, especialmente no seu contexto (aplicativo em produção, múltiplos usuários, necessidade de persistência de sessão, etc.):
+
+1. Persistência da sessão com localStorage
+Você já mencionou explicitamente:
+
+“precisa salvar meu token no localStorage do navegador... para ir direto ao dashboard tanto com login Google quanto normal.”
+
+Como fazer corretamente com Supabase:
+
+ts
+// Ao inicializar o cliente Supabase
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// Supabase já gerencia automaticamente a sessão no localStorage por padrão.
+// Mas confirme se NÃO está desativando isso:
+// ❌ Não faça: { auth: { persistSession: false } }
+
+ Se o usuário for criado sem escolher plano primeiro, como você relatou (precifiq.app.br), então intercepte o login e redirecione para a página de planos antes de liberar acesso ao dashboard.
+
+✅ 3. Configuração correta no Google Cloud Console
+Para evitar falhas de login com Google:
+
+Em Google Cloud Console > APIs & Services > Credentials:
+O OAuth 2.0 Client ID deve ter:
+Authorized JavaScript origins: https://seuapp.com.br (e http://localhost:3000 para dev)
+Authorized redirect URIs:
+https://seuapp.com.br/auth/v1/callback
+(esse é o endpoint padrão do Supabase Auth)
+Em Supabase Dashboard > Authentication > Providers:
+Ative Google e cole o Client ID e Client Secret do Google.
+✅ 4. Isolamento de dados por usuário (Row Level Security)
+Você disse:
+
+“quero que salve tudo de forma isolada, salva todas as informações do usuário logado”
+
+No Supabase, ative RLS (Row Level Security) em todas as tabelas sensíveis:
+
+sql
+-- Exemplo para tabela "projetos"
+ALTER TABLE projetos ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Usuário só vê seus próprios projetos"
+ON projetos FOR SELECT
+USING (auth.uid() = user_id);
+
+E sempre insira com auth.uid():
+
+ts
+const { data, error } = await supabase
+  .from('projetos')
+  .insert({ nome: '...', user_id: session.user.id });
+
+
+
+5. Tratamento de contas duplicadas (email + Google)
+Se um usuário se cadastrar com email/senha e depois tentar com Google usando o mesmo email, o Supabase pode rejeitar (por conflito de provedor).
+
+Solução:
+
+Use supabase.auth.signInWithOAuth({ provider: 'google' }) apenas.
+Ou implemente linking de contas (mais avançado).
+Alternativa simples: force um único método de login (só Google ou só email) até ter infra para unificação.
+✅ 6. Teste em Produção com Contas Reais
+Nunca teste só em localhost.
+Crie 2–3 contas Gmail reais (ex: fabrisite.teste1@gmail.com) e as adicione como test users no Google Cloud Console (como mencionado anteriormente).
+Valide todo o fluxo: login → redirecionamento → escolha de plano → acesso ao dashboard.
+✅ 7. Mensagem amigável em caso de erro de OAuth
+Se o Google retornar erro (ex: “redirect_uri_mismatch”), mostre algo como:
+
+“Ops! Houve um problema ao conectar com o Google. Verifique as configurações ou tente novamente mais tarde.”
+
+Evite expor detalhes técnicos ao usuário final.
