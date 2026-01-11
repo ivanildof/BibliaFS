@@ -108,6 +108,7 @@ export const users = pgTable("users", {
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   aiRequestsToday: integer("ai_requests_today").default(0),
   aiRequestsResetAt: timestamp("ai_requests_reset_at"),
+  aiRequestsCount: integer("ai_requests_count").default(0), // Total AI requests for free users (20 total limit)
   
   // AI Spending Limits (25% of budget for monthly and annual)
   aiSpendMonth: decimal("ai_spend_month", { precision: 10, scale: 4 }).default("0"),

@@ -117,7 +117,7 @@ if (process.env.STRIPE_SECRET_KEY) {
 }
 
 // AI Rate Limiting Constants
-const FREE_PLAN_AI_LIMIT = 3; // 3 AI requests per day for free users
+const FREE_PLAN_AI_TOTAL_LIMIT = 20; // 20 AI requests total for free users
 const AI_REQUEST_COST = 0.01; // Cost per AI request in USD
 const AI_BUDGET_PERCENTAGE = 0.25; // 25% of subscription budget
 
@@ -128,7 +128,7 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     
     // If no user found, treat as free with no prior usage
     if (!user) {
-      return { allowed: true, remaining: FREE_PLAN_AI_LIMIT };
+      return { allowed: true, remaining: FREE_PLAN_AI_TOTAL_LIMIT };
     }
     
     const plan = user.subscriptionPlan || 'free';
@@ -136,9 +136,6 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     // Premium users (monthly/yearly/premium_plus plans) - check their specific budget limits
     if (plan === 'monthly' || plan === 'yearly' || plan === 'premium_plus') {
       // Each plan has its own 25% budget limit
-      // monthly: R$19.90 * 25% = R$4.97/month
-      // yearly: R$149.90 * 25% = R$37.47/year
-      // premium_plus: R$289.00 * 25% = R$72.25/year
       const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
       const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
       
@@ -165,52 +162,40 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
       
       // Check yearly limit (for yearly and premium_plus plans)
       if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
-        if (plan === 'premium_plus') {
-          return {
-            allowed: false,
-            remaining: 0,
-            message: `Limite de IA do plano Premium Plus atingido (R$${yearlyLimit.toFixed(2)}/ano). O limite será renovado no próximo período.`
-          };
-        } else {
-          return {
-            allowed: false,
-            remaining: 0,
-            message: `Limite de IA do plano anual atingido (R$${yearlyLimit.toFixed(2)}). Faça upgrade para Premium Plus para mais créditos.`
-          };
-        }
+        return {
+          allowed: false,
+          remaining: 0,
+          message: `Limite de IA do plano atingido (R$${yearlyLimit.toFixed(2)}). Faça upgrade para Premium Plus para mais créditos.`
+        };
       }
       
       return { allowed: true, remaining: -1 }; // Still has budget
     }
     
-    // FREE USERS: Check 25% budget limit
-    const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
-    const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
-    const monthlyLimit = user.aiMonthlyBudgetLimit ? Number(user.aiMonthlyBudgetLimit) : 0;
-    const yearlyLimit = user.aiAnnualBudgetLimit ? Number(user.aiAnnualBudgetLimit) : 0;
+    // FREE USERS: Check total question limit (20 questions total)
+    const totalRequests = user.aiRequestsCount || 0;
+    const remaining = FREE_PLAN_AI_TOTAL_LIMIT - totalRequests;
 
-    // Block AI if exceeded 25% monthly limit
-    if (monthlyLimit > 0 && monthlySpend >= monthlyLimit) {
+    if (totalRequests >= FREE_PLAN_AI_TOTAL_LIMIT) {
       return {
         allowed: false,
         remaining: 0,
-        message: `Limite de orçamento mensal de IA atingido (25% do mês). Tente novamente no próximo mês ou adquira um plano superior.`
+        message: "Você atingiu o limite total de 20 perguntas do plano grátis. Adquira um plano Premium para continuar usando a Assistente IA!"
       };
     }
 
-    // Block AI if exceeded 25% yearly limit
-    if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
+    if (remaining <= 5 && remaining > 0) {
       return {
-        allowed: false,
-        remaining: 0,
-        message: `Limite de orçamento anual de IA atingido (25% do ano). Tente novamente no próximo ano ou adquira um plano superior.`
+        allowed: true,
+        remaining,
+        message: `Atenção: Você tem apenas mais ${remaining} perguntas restantes no plano grátis. Considere adquirir um plano Premium para uso ilimitado!`
       };
     }
     
-    return { allowed: true, remaining: FREE_PLAN_AI_LIMIT };
+    return { allowed: true, remaining };
   } catch (error) {
     console.error("[AI Quota] Error checking quota:", error);
-    return { allowed: true, remaining: FREE_PLAN_AI_LIMIT };
+    return { allowed: true, remaining: 0 };
   }
 }
 

@@ -1131,6 +1131,7 @@ export class DatabaseStorage implements IStorage {
     stripeSubscriptionId?: string | null;
     aiRequestsToday?: number;
     aiRequestsResetAt?: Date | null;
+    aiRequestsCount?: number;
   }): Promise<User> {
     const [updated] = await db
       .update(users)
@@ -1145,14 +1146,16 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async incrementAiRequests(userId: string): Promise<{ count: number; resetAt: Date }> {
+  async incrementAiRequests(userId: string): Promise<{ count: number; resetAt: Date; totalCount: number }> {
     const now = new Date();
     const user = await this.getUser(userId);
     
     let count = user?.aiRequestsToday || 0;
     let resetAt = user?.aiRequestsResetAt;
+    let totalCount = user?.aiRequestsCount || 0;
+    const plan = user?.subscriptionPlan || 'free';
 
-    // Reset if it's a new day
+    // Reset daily count if it's a new day
     if (!resetAt || now > resetAt) {
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1164,12 +1167,18 @@ export class DatabaseStorage implements IStorage {
       count++;
     }
 
+    // Only increment total count for FREE users (premium uses budget limits)
+    if (plan === 'free') {
+      totalCount++;
+    }
+
     await this.updateUserSubscription(userId, {
       aiRequestsToday: count,
       aiRequestsResetAt: resetAt,
+      aiRequestsCount: totalCount,
     });
 
-    return { count, resetAt };
+    return { count, resetAt, totalCount };
   }
 
   // ============================================

@@ -136,6 +136,17 @@ export async function runMigrations() {
       ADD COLUMN IF NOT EXISTS ai_requests_reset_at TIMESTAMP
     `);
 
+    // Add total AI requests count for free users (20 questions total limit)
+    await db.execute(sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS ai_requests_count INTEGER DEFAULT 0
+    `);
+    
+    // Ensure no NULL values in ai_requests_count (backfill existing users)
+    await db.execute(sql`
+      UPDATE users SET ai_requests_count = 0 WHERE ai_requests_count IS NULL
+    `);
+
     // Add AI spending tracking columns for 25% budget limit
     await db.execute(sql`
       ALTER TABLE users 
