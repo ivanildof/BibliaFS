@@ -61,6 +61,8 @@ export function NPSDialog() {
     });
   };
 
+  const scoreButtons = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
@@ -71,14 +73,15 @@ export function NPSDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="flex justify-between gap-1">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+          <div className="flex justify-between gap-1 flex-wrap">
+            {scoreButtons.map((num) => (
               <button
                 key={num}
+                type="button"
                 onClick={() => setScore(num)}
-                className={`w-8 h-8 rounded-full text-xs font-bold transition-colors ${
+                className={`w-8 h-8 rounded-full text-xs font-bold transition-all transform hover:scale-110 ${
                   score === num
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary text-primary-foreground shadow-md scale-110"
                     : "bg-muted hover:bg-muted/80 text-muted-foreground"
                 }`}
               >

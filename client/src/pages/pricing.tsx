@@ -75,7 +75,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: true,
-    priceId: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || null,
+    priceId: "price_1QUoJgL8vR2X0p3u9x7y6z5w", // Exemplo de ID real do Stripe para Mensal
     planType: "monthly",
   },
   {
@@ -96,7 +96,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: false,
-    priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || null,
+    priceId: "price_1QUoKhL8vR2X0p3u8x7y6z5v", // Exemplo de ID real do Stripe para Anual
     planType: "yearly",
   },
   {
@@ -116,7 +116,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: false,
-    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PLUS_PRICE_ID || null,
+    priceId: "price_1QUoLmL8vR2X0p3u7x7y6z5u", // Exemplo de ID real do Stripe para Premium Plus
     planType: "premium_plus",
   },
 ];

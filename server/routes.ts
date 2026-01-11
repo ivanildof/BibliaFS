@@ -23,6 +23,7 @@ import {
   insertDailyVerseSchema,
   insertDonationSchema,
   insertSharedLinkSchema,
+  insertFeedbackSchema,
 } from "@shared/schema";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
