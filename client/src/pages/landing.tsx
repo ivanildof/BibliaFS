@@ -303,7 +303,7 @@ export default function Landing() {
           </Badge>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg" data-testid="text-hero-title">
-            Bíblia Online com <span className="text-amber-300">Inteligência Artificial</span> Teológica
+            Bíblia Online: <span className="text-amber-300">Inteligência Artificial</span> Teológica
           </h1>
           
           <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
@@ -341,9 +341,9 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Por que Ler a <span className="gradient-text">Bíblia Sagrada</span> na BíbliaFS?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              A melhor plataforma para estudar a Palavra de Deus online e offline.
-            </p>
+            <h3 className="text-xl text-muted-foreground max-w-2xl mx-auto font-normal">
+              A melhor plataforma para estudar a Palavra de Deus online e offline com recursos de ponta.
+            </h3>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -384,9 +384,9 @@ export default function Landing() {
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
               Recursos de <span className="gradient-text">Estudo Bíblico</span> Avançados
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Tudo o que você precisa para ler a Bíblia Online e offline com profundidade teológica.
-            </p>
+            <h3 className="text-xl text-muted-foreground max-w-2xl mx-auto font-normal">
+              Tudo o que você precisa para ler a Bíblia Online e offline com profundidade teológica e ferramentas modernas.
+            </h3>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -429,11 +429,11 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-primary">Temas de Leitura</span> da Bíblia Incríveis
+              <span className="text-primary">Temas de Leitura</span> da Bíblia Sagrada
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Personalize sua Bíblia Sagrada com temas premium como Sépia e Modo Noturno, ou crie seu próprio estilo de leitura.
-            </p>
+            <h3 className="text-xl text-muted-foreground max-w-2xl mx-auto font-normal">
+              Personalize sua Bíblia Sagrada com temas premium como Sépia e Modo Noturno, melhorando sua experiência de leitura diária.
+            </h3>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -469,10 +469,10 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              Recursos Premium
+              Recursos Premium da <span className="gradient-text">Bíblia Online</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              Tudo está incluso - use grátis e desbloqueie mais quando quiser
+              Tudo está incluso no BíbliaFS - use grátis e desbloqueie mais recursos de estudo bíblico quando quiser.
             </p>
           </div>
           
@@ -517,10 +517,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
-              O Que Dizem Nossos Usuários
+              O Que Dizem Nossos Leitores da <span className="gradient-text">Bíblia Sagrada</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Milhares de pessoas transformaram seu estudo bíblico com BíbliaFS
+              Milhares de pessoas transformaram seu estudo bíblico com a Bíblia Online BíbliaFS.
             </p>
           </div>
           
