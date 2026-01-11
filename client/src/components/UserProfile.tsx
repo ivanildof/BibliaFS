@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, User, Settings, Crown } from "lucide-react";
 import { Link } from "wouter";
 
 export function UserProfile() {
@@ -73,6 +73,12 @@ export function UserProfile() {
           <DropdownMenuItem data-testid="menu-item-profile">
             <User className="h-4 w-4 mr-2" />
             <span>Meu Perfil</span>
+          </DropdownMenuItem>
+        </Link>
+        <Link href="/pricing">
+          <DropdownMenuItem data-testid="menu-item-pricing">
+            <Crown className="h-4 w-4 mr-2" />
+            <span>Assinaturas</span>
           </DropdownMenuItem>
         </Link>
         <Link href="/configurações">
