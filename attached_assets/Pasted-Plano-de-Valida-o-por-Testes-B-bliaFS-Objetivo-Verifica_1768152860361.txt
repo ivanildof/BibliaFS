@@ -1,0 +1,77 @@
+Plano de Validação por Testes – BíbliaFS
+Objetivo: Verificar se todas as funcionalidades declaradas no site estão operacionais, acessíveis, seguras e entregam a experiência prometida ao usuário real.
+
+1. Escopo da Validação
+Validar os seguintes pilares declarados no site:
+
+✅ Funcionamento offline total
+✅ Presença e utilidade do Assistente IA
+✅ Disponibilidade e troca dos 4 temas premium
+✅ Acesso 100% gratuito sem bloqueios ocultos
+✅ Compartilhamento de estudos e planos de leitura
+✅ Experiência responsiva (mobile/desktop)
+✅ Autenticação persistente (se aplicável)
+2. Métodos de Teste
+Tipo de Teste
+Descrição
+Teste Funcional Manual
+Navegação guiada por checklist em todos os fluxos principais
+Teste de Usabilidade com Usuários Reais
+Observação de 5–10 usuários representativos usando o app por 15–30 min
+Teste Offline Simulado
+Desconexão da internet após carregamento inicial; verificação de leitura contínua
+Teste de Acessibilidade Básico
+Verificação de contraste, navegação por teclado e leitor de tela
+Teste de Performance (Frontend)
+Tempo de carregamento inicial, troca de tema, abertura de livros
+Teste de Segurança Básico
+Verificação de vazamento de dados sensíveis, uso seguro de localStorage
+3. Checklist de Validação por Funcionalidade
+3.1. Leitura Bíblica
+Todos os livros da Bíblia estão disponíveis
+Capítulos e versículos carregam corretamente
+Rolagem suave e navegação intuitiva entre livros/capítulos
+Funciona sem internet após primeiro carregamento
+3.2. Assistente IA
+Botão/área de acesso visível na interface
+Aceita perguntas sobre versículos específicos
+Respostas são teologicamente coerentes e respeitosas
+Não exige login obrigatório para uso básico
+Não retorna erros genéricos ou mensagens vazias
+3.3. Temas Visuais
+Os 4 temas estão listados: Clássico, Noite Sagrada, Luz do Dia, Terra Santa
+Troca de tema é instantânea e sem recarregar a página
+Personalização adicional (se prometida) funciona
+Temas mantêm legibilidade (contraste adequado)
+3.4. Gratuidade
+Nenhuma funcionalidade essencial está bloqueada atrás de paywall
+Nenhum pop-up agressivo solicitando pagamento
+Mensagem “100% Gratuito” é verdadeira na prática
+3.5. Compartilhamento e Comunidade
+É possível copiar link de versículo
+Há opção de criar/compartilhar plano de leitura
+Interface de grupo/comunidade (se mencionada) está acessível
+3.6. Experiência Técnica
+Site carrega em < 3s em conexão 4G média
+Funciona em celulares Android e iOS (navegadores Chrome, Safari)
+Não há erros no console do navegador (JavaScript, rede)
+Dados do usuário (tema, progresso) persistem após fechar/reabrir
+3.7. Autenticação (se aplicável)
+Se houver login (Google ou e-mail), o token é salvo no localStorage
+Usuário retorna diretamente ao dashboard após recarregar
+Logout funciona corretamente
+4. Critérios de Aceitação
+O aplicativo será considerado validado com sucesso se:
+
+✅ 100% das funcionalidades críticas (leitura, offline, IA, temas) estiverem operacionais
+✅ Nenhum bloqueio oculto contradiz a promessa de “100% gratuito”
+✅ Pelo menos 80% dos usuários-teste concluírem tarefas sem ajuda (ex: mudar tema, fazer pergunta à IA, ler offline)
+✅ Zero falhas críticas (ex: app trava, não carrega Bíblia, IA inacessível)
+5. Relatório de Validação Esperado
+Após os testes, deve-se produzir um relatório contendo:
+
+Resumo executivo (passou/não passou)
+Lista de bugs ou inconsistências (com gravidade: crítica, alta, média, baixa)
+Feedback qualitativo dos usuários-teste
+Evidências (prints, vídeos curtos, logs)
+Recomendações (ex: melhorar contraste do tema “Noite Sagrada”, esclarecer como usar IA)
