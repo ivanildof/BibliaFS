@@ -143,11 +143,11 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
       let yearlyLimit = 0;
       
       if (plan === 'monthly') {
-        monthlyLimit = 4.97; // 25% of R$19.90
+        monthlyLimit = 2.98; // 25% of ~R$12 (approx budget for ~300 requests)
       } else if (plan === 'yearly') {
-        yearlyLimit = 37.47; // 25% of R$149.90
+        yearlyLimit = 27.50; // 25% of ~R$110 (approx budget for ~2750 requests)
       } else if (plan === 'premium_plus') {
-        yearlyLimit = 72.25; // 25% of R$289.00
+        yearlyLimit = 52.00; // 25% of ~R$208 (approx budget for ~5200 requests)
       }
       
       // Check monthly limit

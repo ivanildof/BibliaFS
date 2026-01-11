@@ -66,7 +66,7 @@ const plans = [
     iconBg: "bg-primary",
     features: [
       "Tudo do Gratuito",
-      "IA Teológica: ~500 perguntas/mês",
+      "IA Teológica: ~300 perguntas/mês",
       "Podcasts integrados",
       "Modo Professor",
       "Áudio narrado",
@@ -88,7 +88,7 @@ const plans = [
     iconBg: "bg-amber-500",
     features: [
       "Tudo do Mensal",
-      "IA Teológica: ~3.750 perguntas/ano",
+      "IA Teológica: ~2.750 perguntas/ano",
       "Economia de R$ 89/ano",
       "Badge exclusivo",
       "Comunidade VIP",
@@ -109,7 +109,7 @@ const plans = [
     iconBg: "bg-purple-600",
     features: [
       "Tudo do Anual",
-      "IA Teológica: ~7.200 perguntas/ano",
+      "IA Teológica: ~5.200 perguntas/ano",
       "Dobro do limite comparado ao Anual",
       "Acesso antecipado a recursos",
       "Suporte VIP 24h",
