@@ -3060,6 +3060,20 @@ Regras:
       let user = await storage.getUser(userId);
       let customerId = user?.stripeCustomerId;
 
+      // Verify customer exists in Stripe (handles test->live migration)
+      if (customerId) {
+        try {
+          await stripe.customers.retrieve(customerId);
+        } catch (e: any) {
+          if (e.code === 'resource_missing') {
+            // Customer doesn't exist in current Stripe mode, create new one
+            customerId = null;
+          } else {
+            throw e;
+          }
+        }
+      }
+
       if (!customerId) {
         const customer = await stripe.customers.create({
           email: user?.email || undefined,
@@ -3294,6 +3308,20 @@ Regras:
 
       const user = await storage.getUser(userId);
       let customerId = user?.stripeCustomerId;
+
+      // Verify customer exists in Stripe (handles test->live migration)
+      if (customerId) {
+        try {
+          await stripe.customers.retrieve(customerId);
+        } catch (e: any) {
+          if (e.code === 'resource_missing') {
+            // Customer doesn't exist in current Stripe mode, create new one
+            customerId = null;
+          } else {
+            throw e;
+          }
+        }
+      }
 
       if (!customerId) {
         const customer = await stripe.customers.create({
