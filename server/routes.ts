@@ -3245,8 +3245,32 @@ Regras:
 
   // Donations Routes (Stripe Integration - from javascript_stripe blueprint)
   
-  // Custom donation checkout session using Stripe product
-  const CUSTOM_DONATION_PRODUCT_ID = "prod_TbyDuA08WlJb79";
+  // Donation amount validation constants (in cents)
+  const PRESET_DONATION_AMOUNTS = [1000, 2500, 5000, 10000]; // R$10, R$25, R$50, R$100
+  const MIN_CUSTOM_DONATION = 500; // R$5.00 minimum
+  const MAX_CUSTOM_DONATION = 100000; // R$1000.00 maximum
+  
+  // Helper function to validate donation amount (security - never trust frontend values)
+  function validateDonationAmount(amountInCents: number): { valid: boolean; error?: string } {
+    if (!amountInCents || typeof amountInCents !== 'number') {
+      return { valid: false, error: "Valor inválido para doação" };
+    }
+    
+    // Check if it's a preset amount
+    if (PRESET_DONATION_AMOUNTS.includes(amountInCents)) {
+      return { valid: true };
+    }
+    
+    // Check if it's within custom range
+    if (amountInCents >= MIN_CUSTOM_DONATION && amountInCents <= MAX_CUSTOM_DONATION) {
+      return { valid: true };
+    }
+    
+    return { 
+      valid: false, 
+      error: `Valor deve ser R$10, R$25, R$50, R$100 ou entre R$5 e R$1000` 
+    };
+  }
   
   app.post("/api/donations/checkout", isAuthenticated, async (req: any, res) => {
     try {
@@ -3260,8 +3284,12 @@ Regras:
       const userId = req.user.claims.sub;
       const userEmail = req.user.claims.email;
       
-      if (!amount || amount <= 0) {
-        return res.status(400).json({ error: "Valor inválido para doação" });
+      // Server-side validation - NEVER trust frontend values
+      const amountInCents = Math.round(Number(amount));
+      const validation = validateDonationAmount(amountInCents);
+      
+      if (!validation.valid) {
+        return res.status(400).json({ error: validation.error });
       }
 
       const user = await storage.getUser(userId);
@@ -3278,12 +3306,19 @@ Regras:
 
       const isRecurring = type === 'recurring';
       const mode = isRecurring ? 'subscription' : 'payment';
+      
+      // PIX is only available for one-time payments (not subscriptions)
+      // Card is always available
+      const paymentMethodTypes: any[] = ['card'];
+      if (!isRecurring) {
+        paymentMethodTypes.push('pix');
+      }
 
-      // Create checkout session with custom donation product
+      // Create checkout session with PIX + Card support
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         mode,
-        payment_method_types: ['card'],
+        payment_method_types: paymentMethodTypes,
         line_items: [{
           price_data: {
             currency: currency || 'brl',
@@ -3291,7 +3326,7 @@ Regras:
               name: 'Doação - BíbliaFS',
               description: destination === 'bible_translation' ? 'Doação para Tradução Bíblica' : 'Doação para Operações do App',
             },
-            unit_amount: Math.round(amount),
+            unit_amount: amountInCents, // Use validated amount
             ...(isRecurring && { recurring: { interval: 'month' } }),
           },
           quantity: 1,
