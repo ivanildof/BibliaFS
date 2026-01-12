@@ -3305,16 +3305,20 @@ Regras:
       }
 
       const isRecurring = type === 'recurring';
-      const mode = isRecurring ? 'subscription' : 'payment';
       
-      // PIX is only available for one-time payments (not subscriptions)
-      // Card is always available
-      const paymentMethodTypes: any[] = ['card'];
-      if (!isRecurring) {
-        paymentMethodTypes.push('pix');
+      // PIX only works for one-time payments, not subscriptions
+      if (isRecurring) {
+        return res.status(400).json({ 
+          error: "Doações recorrentes não estão disponíveis no momento. Por favor, escolha doação única com PIX." 
+        });
       }
+      
+      const mode = 'payment';
+      
+      // Only PIX for donations (no card option)
+      const paymentMethodTypes: any[] = ['pix'];
 
-      // Create checkout session with PIX + Card support
+      // Create checkout session with PIX only
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         mode,
@@ -3327,7 +3331,6 @@ Regras:
               description: destination === 'bible_translation' ? 'Doação para Tradução Bíblica' : 'Doação para Operações do App',
             },
             unit_amount: amountInCents, // Use validated amount
-            ...(isRecurring && { recurring: { interval: 'month' } }),
           },
           quantity: 1,
         }],

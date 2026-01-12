@@ -10,20 +10,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Heart, Loader2, CheckCircle2, CreditCard, QrCode, AlertCircle } from "lucide-react";
+import { Heart, Loader2, CheckCircle2, QrCode } from "lucide-react";
 
 const PRESET_AMOUNTS = [10, 25, 50, 100];
 
 const donationFormSchema = z.object({
   amount: z.number().min(5, "Valor mínimo é R$ 5").max(1000, "Valor máximo é R$ 1000"),
   customAmount: z.string().optional(),
-  type: z.enum(["one_time", "recurring"]),
-  frequency: z.enum(["monthly"]).optional(),
   destination: z.enum(["app_operations", "bible_translation"]),
   isAnonymous: z.boolean().default(false),
   message: z.string().optional(),
@@ -61,14 +58,12 @@ export default function Donate() {
     resolver: zodResolver(donationFormSchema),
     defaultValues: {
       amount: 25,
-      type: "one_time",
       destination: "app_operations",
       isAnonymous: false,
       currency: "brl",
     },
   });
 
-  const donationType = form.watch("type");
   const customAmountStr = form.watch("customAmount");
 
   const createCheckoutSessionMutation = useMutation({
@@ -107,7 +102,7 @@ export default function Donate() {
       const { url, error } = await createCheckoutSessionMutation.mutateAsync({
         amount: Math.round(amount * 100),
         currency: data.currency,
-        type: data.type,
+        type: "one_time",
         destination: data.destination,
         isAnonymous: data.isAnonymous,
         message: data.message,
@@ -184,20 +179,17 @@ export default function Donate() {
           </div>
         </div>
 
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="border-green-500/30 bg-green-500/5">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <div className="flex gap-2">
-                <CreditCard className="h-5 w-5 text-primary mt-0.5" />
-                <QrCode className="h-5 w-5 text-primary mt-0.5" />
-              </div>
+              <QrCode className="h-6 w-6 text-green-600 mt-0.5" />
               <div>
-                <p className="font-medium text-foreground">Formas de pagamento aceitas</p>
+                <p className="font-medium text-foreground">Pagamento via PIX</p>
                 <p className="text-sm text-muted-foreground">
-                  <strong>PIX</strong> (pagamento instantâneo) ou <strong>Cartão de Crédito/Débito</strong>
+                  Pagamento instantâneo, seguro e sem taxas adicionais para você.
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  PIX disponível apenas para doações únicas. Doações recorrentes usam cartão.
+                  Ao clicar em "Doar com PIX", você será redirecionado para uma página segura do Stripe para escanear o QR Code.
                 </p>
               </div>
             </div>
@@ -210,35 +202,6 @@ export default function Donate() {
               <CardTitle>{t.donate.amount}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <Label>{t.donate.one_time} / {t.donate.recurring}</Label>
-                <RadioGroup
-                  value={donationType}
-                  onValueChange={(value) => form.setValue("type", value as "one_time" | "recurring")}
-                  className="flex gap-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="one_time" id="one_time" data-testid="radio-onetime" />
-                    <Label htmlFor="one_time" className="font-normal cursor-pointer">
-                      {t.donate.one_time} (PIX ou Cartão)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="recurring" id="recurring" data-testid="radio-recurring" />
-                    <Label htmlFor="recurring" className="font-normal cursor-pointer">
-                      {t.donate.monthly} (Cartão)
-                    </Label>
-                  </div>
-                </RadioGroup>
-                
-                {donationType === "recurring" && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>Doações recorrentes são cobradas mensalmente via cartão de crédito.</span>
-                  </div>
-                )}
-              </div>
-
               <div className="space-y-3">
                 <Label>Escolha um valor</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -335,28 +298,19 @@ export default function Donate() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-green-600 hover:bg-green-700"
                 disabled={isProcessing || !selectedAmount}
                 data-testid="button-proceed-to-payment"
               >
                 {isProcessing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Preparando pagamento...
+                    Preparando PIX...
                   </>
                 ) : (
                   <>
-                    {donationType === "one_time" ? (
-                      <>
-                        <QrCode className="mr-2 h-4 w-4" />
-                        Doar com PIX ou Cartão
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Doar com Cartão
-                      </>
-                    )}
+                    <QrCode className="mr-2 h-4 w-4" />
+                    Doar com PIX
                   </>
                 )}
               </Button>
