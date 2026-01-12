@@ -10,17 +10,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Heart, Loader2, CheckCircle2, QrCode } from "lucide-react";
+import { Heart, Loader2, CheckCircle2, CreditCard, Shield, Lock } from "lucide-react";
 
 const PRESET_AMOUNTS = [10, 25, 50, 100];
 
 const donationFormSchema = z.object({
   amount: z.number().min(5, "Valor mínimo é R$ 5").max(1000, "Valor máximo é R$ 1000"),
   customAmount: z.string().optional(),
+  type: z.enum(["one_time", "recurring"]),
   destination: z.enum(["app_operations", "bible_translation"]),
   isAnonymous: z.boolean().default(false),
   message: z.string().optional(),
@@ -58,12 +60,14 @@ export default function Donate() {
     resolver: zodResolver(donationFormSchema),
     defaultValues: {
       amount: 25,
+      type: "one_time",
       destination: "app_operations",
       isAnonymous: false,
       currency: "brl",
     },
   });
 
+  const donationType = form.watch("type");
   const customAmountStr = form.watch("customAmount");
 
   const createCheckoutSessionMutation = useMutation({
@@ -102,7 +106,7 @@ export default function Donate() {
       const { url, error } = await createCheckoutSessionMutation.mutateAsync({
         amount: Math.round(amount * 100),
         currency: data.currency,
-        type: "one_time",
+        type: data.type,
         destination: data.destination,
         isAnonymous: data.isAnonymous,
         message: data.message,
@@ -170,9 +174,6 @@ export default function Donate() {
           </div>
           <h1 className="text-3xl font-bold">{t.donate.title}</h1>
           <div className="text-muted-foreground text-base space-y-3 max-w-2xl mx-auto">
-            <p className="font-medium">
-              Sua doação é 100% segura. Utilizamos o Stripe, a plataforma de pagamento mais confiável do mundo.
-            </p>
             <p className="font-semibold text-foreground">
               Faça parte dessa missão. Doe agora e transforme vidas através da Palavra!
             </p>
@@ -182,15 +183,21 @@ export default function Donate() {
         <Card className="border-green-500/30 bg-green-500/5">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <QrCode className="h-6 w-6 text-green-600 mt-0.5" />
+              <Shield className="h-6 w-6 text-green-600 mt-0.5" />
               <div>
-                <p className="font-medium text-foreground">Pagamento via PIX</p>
-                <p className="text-sm text-muted-foreground">
-                  Pagamento instantâneo, seguro e sem taxas adicionais para você.
+                <p className="font-medium text-foreground flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  Pagamento 100% Seguro
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Ao clicar em "Doar com PIX", você será redirecionado para uma página segura do Stripe para escanear o QR Code.
+                <p className="text-sm text-muted-foreground mt-1">
+                  Seus dados de cartão <strong>nunca passam pelo nosso servidor</strong>. O pagamento é processado diretamente pelo Stripe, a plataforma de pagamentos mais segura do mundo, usada por empresas como Amazon e Google.
                 </p>
+                <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                  <li>• Criptografia de ponta a ponta (SSL/TLS)</li>
+                  <li>• Certificação PCI DSS Nível 1 (máxima segurança)</li>
+                  <li>• Valores validados no servidor (impossível alterar)</li>
+                  <li>• Nenhum dado de cartão armazenado</li>
+                </ul>
               </div>
             </div>
           </CardContent>
@@ -202,6 +209,28 @@ export default function Donate() {
               <CardTitle>{t.donate.amount}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <Label>{t.donate.one_time} / {t.donate.recurring}</Label>
+                <RadioGroup
+                  value={donationType}
+                  onValueChange={(value) => form.setValue("type", value as "one_time" | "recurring")}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="one_time" id="one_time" data-testid="radio-onetime" />
+                    <Label htmlFor="one_time" className="font-normal cursor-pointer">
+                      {t.donate.one_time}
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="recurring" id="recurring" data-testid="radio-recurring" />
+                    <Label htmlFor="recurring" className="font-normal cursor-pointer">
+                      {t.donate.monthly}
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
               <div className="space-y-3">
                 <Label>Escolha um valor</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -298,22 +327,27 @@ export default function Donate() {
 
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full"
                 disabled={isProcessing || !selectedAmount}
                 data-testid="button-proceed-to-payment"
               >
                 {isProcessing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Preparando PIX...
+                    Preparando pagamento seguro...
                   </>
                 ) : (
                   <>
-                    <QrCode className="mr-2 h-4 w-4" />
-                    Doar com PIX
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Doar com Cartão
                   </>
                 )}
               </Button>
+              
+              <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1">
+                <Lock className="h-3 w-3" />
+                Você será redirecionado para a página segura do Stripe
+              </p>
             </CardContent>
           </Card>
         </form>
@@ -328,9 +362,6 @@ export default function Donate() {
             </p>
             <p>
               <strong>Tradução bíblica:</strong> Apoia projetos de tradução da Bíblia para idiomas e comunidades que ainda não têm acesso às Escrituras.
-            </p>
-            <p className="text-xs">
-              Processado com segurança através do Stripe. Suas informações de pagamento são protegidas com criptografia de ponta a ponta.
             </p>
           </CardContent>
         </Card>
