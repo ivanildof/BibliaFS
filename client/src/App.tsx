@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,6 +15,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect } from "react";
+import { isNative } from "@/lib/config";
 
 // Pages - Static imports (lazy loading incompatible with wouter)
 import Landing from "@/pages/landing";
@@ -53,6 +54,14 @@ import { NPSDialog } from "@/components/NPSDialog";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
+  const [location, setLocation] = useLocation();
+
+  // On native app, redirect to login if not authenticated and on root
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && isNative && location === "/") {
+      setLocation("/login");
+    }
+  }, [isLoading, isAuthenticated, location, setLocation]);
 
   if (isLoading) {
     return (
@@ -69,7 +78,7 @@ function Router() {
     <Switch>
       {!isAuthenticated ? (
         <>
-          <Route path="/" component={Landing} />
+          <Route path="/" component={isNative ? Login : Landing} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
