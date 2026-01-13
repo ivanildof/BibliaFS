@@ -1,4 +1,4 @@
-package com.myapp.android;
+package com.bibliafullstack.app;
 
 import com.getcapacitor.BridgeActivity;
 
