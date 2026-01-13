@@ -19,18 +19,21 @@ export function useAuth() {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setSupabaseUser(session?.user ?? null);
         setSessionLoading(false);
-        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        // Only invalidate on sign in/out events, not on token refresh
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+          queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        }
       }
     );
 
     return () => subscription.unsubscribe();
   }, [queryClient]);
 
-  const { data: user, isLoading: userLoading } = useQuery<User | null>({
+  const { data: user, isLoading: userLoading, isError: userError } = useQuery<User | null>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       if (!session?.access_token) return null;
@@ -48,6 +51,8 @@ export function useAuth() {
     },
     enabled: !!session?.access_token,
     retry: false,
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
   });
 
   const signOut = async () => {
@@ -55,12 +60,19 @@ export function useAuth() {
     queryClient.clear();
   };
 
+  // Consider loading only during initial session check
+  // Once we have a session, we're authenticated even if user data fetch fails
+  const isLoading = sessionLoading;
+  
+  // User is authenticated if they have a valid Supabase session
+  const isAuthenticated = !!session?.user;
+
   return {
     user,
     supabaseUser,
     session,
-    isLoading: sessionLoading || (!!session && userLoading),
-    isAuthenticated: !!session?.user,
+    isLoading,
+    isAuthenticated,
     signOut,
   };
 }
