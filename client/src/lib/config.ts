@@ -1,16 +1,26 @@
 import { Capacitor } from '@capacitor/core';
 
-const isNative = Capacitor.isNativePlatform();
+function isNativePlatform(): boolean {
+  try {
+    return Capacitor.isNativePlatform();
+  } catch {
+    return false;
+  }
+}
 
-export const API_BASE_URL = isNative 
-  ? (import.meta.env.VITE_APP_URL || 'https://bibliafs.com.br')
-  : '';
+export const isNative = isNativePlatform();
+
+const PRODUCTION_URL = 'https://bibliafs.com.br';
 
 export function getApiUrl(path: string): string {
-  if (path.startsWith('/')) {
-    return `${API_BASE_URL}${path}`;
+  if (isNative) {
+    const base = import.meta.env.VITE_APP_URL || PRODUCTION_URL;
+    if (path.startsWith('/')) {
+      return `${base}${path}`;
+    }
+    return `${base}/${path}`;
   }
-  return `${API_BASE_URL}/${path}`;
+  return path;
 }
 
 export async function apiFetch(
@@ -20,5 +30,3 @@ export async function apiFetch(
   const url = typeof input === 'string' ? getApiUrl(input) : input;
   return fetch(url, init);
 }
-
-export { isNative };
