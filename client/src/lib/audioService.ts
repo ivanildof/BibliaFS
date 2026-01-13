@@ -1,4 +1,5 @@
 // Bible Audio Service - Online/Offline Smart Playback with Supabase Storage
+import { getApiUrl } from "./config";
 
 // Define inline type to avoid circular dependency
 interface OfflineContextType {
@@ -137,7 +138,8 @@ export async function playBibleAudio(
 
     // Online: Use backend API (has server-side cache + OpenAI TTS fallback)
     if (isOnline) {
-      const apiUrl = `/api/bible/audio/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+      const apiPath = `/api/bible/audio/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+      const apiUrl = getApiUrl(apiPath);
       console.log(`[Audio] Streaming via API: ${apiUrl}`);
       
       const token = getAuthToken();
@@ -178,7 +180,8 @@ export async function downloadChapterAudio(
   const bookCode = getBookCode(book);
   
   // Use OpenAI TTS API endpoint (Supabase Storage is empty)
-  const apiUrl = `/api/bible/audio/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+  const apiPath = `/api/bible/audio/${language.toLowerCase()}/${version.toLowerCase()}/${bookCode}/${chapter}`;
+  const apiUrl = getApiUrl(apiPath);
   console.log(`[Audio] Downloading via TTS API: ${apiUrl}`);
   
   const token = getAuthToken();

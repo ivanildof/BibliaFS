@@ -16,6 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useOffline } from "@/contexts/OfflineContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { apiFetch } from "@/lib/config";
 
 // Multilingual Bible Books
 const BIBLE_BOOKS = {
@@ -192,7 +193,7 @@ export default function VersionCompare() {
   // Fallback: fetch from API when SQLite is not available
   const fetchChapterFromAPI = async (versionId: string, abbrev: string, chapter: number) => {
     try {
-      const response = await fetch(`/api/bible/${versionId}/${abbrev}/${chapter}`);
+      const response = await apiFetch(`/api/bible/${versionId}/${abbrev}/${chapter}`);
       if (!response.ok) throw new Error("API fetch failed");
       return await response.json();
     } catch (err) {

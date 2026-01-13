@@ -3,6 +3,7 @@ import { offlineStorage, type OfflineChapter } from "@/lib/offline/offlineStorag
 import { bibleSqlite } from "@/lib/offline/bibleSqlite";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { apiFetch } from "@/lib/config";
 
 interface OfflineContextType {
   isOnline: boolean;
@@ -109,7 +110,7 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
       setIsDownloading(true);
       
       // Fetch chapter data from API
-      const response = await fetch(`/api/bible/${version}/${book}/${chapter}`);
+      const response = await apiFetch(`/api/bible/${version}/${book}/${chapter}`);
       if (!response.ok) {
         throw new Error("Falha ao baixar capítulo");
       }

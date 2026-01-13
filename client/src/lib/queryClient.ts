@@ -1,5 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { supabase } from "./supabase";
+import { getApiUrl } from "./config";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -31,8 +32,9 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const authHeaders = await getAuthHeaders();
+  const fullUrl = getApiUrl(url);
   
-  const res = await fetch(url, {
+  const res = await fetch(fullUrl, {
     method,
     headers: {
       ...authHeaders,
@@ -53,8 +55,10 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const authHeaders = await getAuthHeaders();
+    const url = queryKey.join("/") as string;
+    const fullUrl = getApiUrl(url);
     
-    const res = await fetch(queryKey.join("/") as string, {
+    const res = await fetch(fullUrl, {
       credentials: "include",
       headers: authHeaders,
     });

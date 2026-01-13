@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/config";
 import { Book, Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import { Link } from "wouter";
@@ -52,7 +53,7 @@ export default function Register() {
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterFormData) => {
       // Create account via backend (which creates user and sends OTP)
-      const response = await fetch("/api/auth/register-with-otp", {
+      const response = await apiFetch("/api/auth/register-with-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import * as htmlToImage from "html-to-image";
 import { useRef } from "react";
+import { apiFetch } from "@/lib/config";
 
 interface DailyVerse {
   id: string;
@@ -25,7 +26,7 @@ export function DailyVerse() {
     queryKey: ["/api/daily-verse", Intl.DateTimeFormat().resolvedOptions().timeZone],
     queryFn: async () => {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const response = await fetch(`/api/daily-verse?tz=${encodeURIComponent(tz)}&t=${Date.now()}`);
+      const response = await apiFetch(`/api/daily-verse?tz=${encodeURIComponent(tz)}&t=${Date.now()}`);
       if (!response.ok) throw new Error('Failed to fetch daily verse');
       return response.json();
     },

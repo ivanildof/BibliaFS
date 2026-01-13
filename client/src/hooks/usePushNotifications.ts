@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/config';
 
 interface PushNotificationState {
   isSupported: boolean;
@@ -77,7 +78,7 @@ export function usePushNotifications() {
         return false;
       }
 
-      const vapidResponse = await fetch('/api/notifications/vapid-key');
+      const vapidResponse = await apiFetch('/api/notifications/vapid-key');
       if (!vapidResponse.ok) {
         throw new Error('Push notifications not configured on server');
       }
@@ -97,7 +98,7 @@ export function usePushNotifications() {
         applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
 
-      await fetch('/api/notifications/subscribe', {
+      await apiFetch('/api/notifications/subscribe', {
         method: 'POST',
         body: JSON.stringify({ subscription }),
         headers: { 'Content-Type': 'application/json' },
@@ -137,7 +138,7 @@ export function usePushNotifications() {
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
         if (subscription) {
-          await fetch('/api/notifications/unsubscribe', {
+          await apiFetch('/api/notifications/unsubscribe', {
             method: 'POST',
             body: JSON.stringify({ endpoint: subscription.endpoint }),
             headers: { 'Content-Type': 'application/json' },
@@ -173,7 +174,7 @@ export function usePushNotifications() {
 
   const sendTestNotification = useCallback(async (): Promise<boolean> => {
     try {
-      const response = await fetch('/api/notifications/test', {
+      const response = await apiFetch('/api/notifications/test', {
         method: 'POST',
         credentials: 'include',
       });

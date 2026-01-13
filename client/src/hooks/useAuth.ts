@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/config";
 import type { User } from "@shared/schema";
 import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -34,7 +35,7 @@ export function useAuth() {
     queryFn: async () => {
       if (!session?.access_token) return null;
       
-      const res = await fetch("/api/auth/user", {
+      const res = await apiFetch("/api/auth/user", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },

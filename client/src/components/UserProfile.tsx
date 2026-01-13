@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/config";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -32,7 +33,7 @@ export function UserProfile() {
       await supabase.auth.signOut();
       // Then notify backend (optional, for audit purposes)
       if (session?.access_token) {
-        await fetch("/api/auth/logout", { 
+        await apiFetch("/api/auth/logout", { 
           method: "POST",
           headers: {
             'Authorization': `Bearer ${session.access_token}`,

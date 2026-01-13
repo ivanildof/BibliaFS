@@ -41,6 +41,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient, getAuthHeaders } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { podcastStorage } from "@/lib/offline/podcastStorage";
+import { apiFetch } from "@/lib/config";
 import type { Podcast } from "@shared/schema";
 
 const BIBLE_BOOKS = [
@@ -119,7 +120,7 @@ export default function Podcasts() {
     setDownloadingEpisodes(prev => new Set(prev).add(episode.id));
     try {
       const authHeaders = await getAuthHeaders();
-      const response = await fetch(`/api/bible/audio?book=${episode.bookAbbrev}&chapter=${episode.chapterNumber}`, {
+      const response = await apiFetch(`/api/bible/audio?book=${episode.bookAbbrev}&chapter=${episode.chapterNumber}`, {
         headers: authHeaders,
       });
       if (!response.ok) throw new Error("Failed to fetch audio");
@@ -282,7 +283,7 @@ export default function Podcasts() {
       setIsLoadingAudio(true);
       try {
         const authHeaders = await getAuthHeaders();
-        const response = await fetch(`/api/bible/audio/pt/nvi/${episode.bookAbbrev}/${episode.chapterNumber}`, { credentials: 'include', headers: authHeaders });
+        const response = await apiFetch(`/api/bible/audio/pt/nvi/${episode.bookAbbrev}/${episode.chapterNumber}`, { credentials: 'include', headers: authHeaders });
         if (response.ok) {
           const blob = await response.blob();
           const audioUrl = URL.createObjectURL(blob);

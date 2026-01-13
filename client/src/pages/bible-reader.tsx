@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/config";
 import { 
   Sheet, 
   SheetContent, 
@@ -285,7 +286,7 @@ export default function BibleReader() {
   const saveAudioProgress = async (position: number, duration: number) => {
     if (!selectedBook) return;
     try {
-      fetch("/api/audio/progress", {
+      apiFetch("/api/audio/progress", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -483,7 +484,7 @@ export default function BibleReader() {
     
     try {
       // Buscar informações do livro
-      const response = await fetch(`/api/bible/book-info/${selectedBook}`, {
+      const response = await apiFetch(`/api/bible/book-info/${selectedBook}`, {
         method: "GET",
         credentials: "include",
       });

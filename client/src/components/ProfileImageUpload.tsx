@@ -5,6 +5,7 @@ import { Upload, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/config";
 
 interface ProfileImageUploadProps {
   currentImage?: string | null;
@@ -53,7 +54,7 @@ export function ProfileImageUpload({ currentImage, userName }: ProfileImageUploa
 
         // Upload to server
         try {
-          const response = await fetch("/api/profile/upload-image", {
+          const response = await apiFetch("/api/profile/upload-image", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ imageData: base64 }),
