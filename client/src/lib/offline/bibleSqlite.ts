@@ -64,7 +64,7 @@ class BibleSQLiteService {
       });
 
       console.log("[BibleSQLite] Fetching bible.db...");
-      const response = await fetch("/bible.db");
+      const response = await fetch("./bible.db");
       if (!response.ok) {
         throw new Error(`Failed to fetch bible.db: ${response.status}`);
       }
