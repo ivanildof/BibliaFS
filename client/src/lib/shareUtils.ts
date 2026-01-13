@@ -46,8 +46,9 @@ export function generateVerseShareUrl(
   verse: number,
   version: string
 ): string {
-  const baseUrl = import.meta.env.VITE_APP_URL || "https://bibliafs.com.br";
-  return `${baseUrl}/bible?book=${book}&chapter=${chapter}&verse=${verse}&version=${version}`;
+  // Import dynamically to avoid circular dependency
+  const APP_URL = "https://bibliafs.com.br";
+  return `${APP_URL}/bible?book=${book}&chapter=${chapter}&verse=${verse}&version=${version}`;
 }
 
 export function getWhatsAppShareUrl(text: string): string {

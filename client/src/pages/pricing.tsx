@@ -25,6 +25,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
+import { STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, STRIPE_PREMIUM_PLUS_PRICE_ID } from "@/lib/env-config";
 
 interface SubscriptionStatus {
   plan: string;
@@ -75,7 +76,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: true,
-    priceId: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || "price_1SeNkrLxcUHgdisLFHU2eKzg",
+    priceId: STRIPE_MONTHLY_PRICE_ID,
     planType: "monthly",
   },
   {
@@ -96,7 +97,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: false,
-    priceId: import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || "price_1SeNlfLxcUHgdisLeMyIChFe",
+    priceId: STRIPE_YEARLY_PRICE_ID,
     planType: "yearly",
   },
   {
@@ -116,7 +117,7 @@ const plans = [
     ],
     cta: "Assinar",
     popular: false,
-    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PLUS_PRICE_ID || "price_1SeNmJLxcUHgdisLkccnbgRz",
+    priceId: STRIPE_PREMIUM_PLUS_PRICE_ID,
     planType: "premium_plus",
   },
 ];

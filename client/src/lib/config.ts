@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { APP_URL } from './env-config';
 
 function isNativePlatform(): boolean {
   try {
@@ -10,15 +11,12 @@ function isNativePlatform(): boolean {
 
 export const isNative = isNativePlatform();
 
-const PRODUCTION_URL = 'https://bibliafs.com.br';
-
 export function getApiUrl(path: string): string {
   if (isNative) {
-    const base = import.meta.env.VITE_APP_URL || PRODUCTION_URL;
     if (path.startsWith('/')) {
-      return `${base}${path}`;
+      return `${APP_URL}${path}`;
     }
-    return `${base}/${path}`;
+    return `${APP_URL}/${path}`;
   }
   return path;
 }

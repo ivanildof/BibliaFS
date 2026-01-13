@@ -1,5 +1,6 @@
 // Bible Audio Service - Online/Offline Smart Playback with Supabase Storage
 import { getApiUrl } from "./config";
+import { SUPABASE_URL } from "./env-config";
 
 // Define inline type to avoid circular dependency
 interface OfflineContextType {
@@ -8,7 +9,6 @@ interface OfflineContextType {
 
 // Supabase Storage URL for Bible audio files
 // Format: {SUPABASE_URL}/storage/v1/object/public/bible-audio/{LANG}/{VERSION}/{BOOK}/{CHAPTER}.mp3
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 const AUDIO_STORAGE_BASE = SUPABASE_URL 
   ? `${SUPABASE_URL}/storage/v1/object/public/bible-audio`
   : "";
