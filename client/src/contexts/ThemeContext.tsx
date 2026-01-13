@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { isNative } from "@/lib/config";
 
 type Theme = "light" | "dark";
 type ReadingTheme = "default" | "sepia" | "paper" | "night";
@@ -24,6 +25,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem("theme");
     if (stored === "light" || stored === "dark") return stored;
+    // Default to dark mode on native apps for consistent experience
+    if (isNative) return "dark";
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
