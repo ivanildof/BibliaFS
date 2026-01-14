@@ -18,6 +18,7 @@ interface OfflineContextType {
   isChapterOffline: (book: string, chapter: number, version: string) => boolean;
   getOfflineChapter: (book: string, chapter: number, version: string) => Promise<any | null>;
   getSqliteChapter: (book: string, chapter: number) => Promise<any | null>;
+  getSqliteBooks: () => Promise<any[]>;
   clearAllOffline: () => Promise<void>;
   getStorageStats: () => Promise<any>;
 }
@@ -248,24 +249,45 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
 
   const getOfflineChapter = async (book: string, chapter: number, version: string) => {
     try {
-      // First try IndexedDB (user-downloaded content)
+      // First try IndexedDB (user-downloaded content) - version specific
       const chapterData = await offlineStorage.getChapter(book, chapter, version);
       if (chapterData?.content) {
+        console.log(`[Offline] Loaded ${book} ${chapter} from IndexedDB`);
         return chapterData.content;
       }
       
-      // Fallback to SQLite database (NVI only, full Bible available)
-      if (sqliteReady && (version.toLowerCase() === "nvi" || version.toLowerCase() === "pt_nvi")) {
-        const sqliteData = await bibleSqlite.getChapter(book, chapter);
-        if (sqliteData) {
-          return {
-            book: sqliteData.book,
-            bookName: sqliteData.bookName,
-            chapter: sqliteData.chapter,
-            verses: sqliteData.verses,
-            totalChapters: sqliteData.totalChapters,
-          };
+      // Fallback to SQLite database (built-in NVI Bible, works for any requested version as fallback)
+      // SQLite always returns NVI content when offline, regardless of requested version
+      try {
+        // Initialize SQLite if not ready
+        if (!sqliteReady) {
+          const ready = await bibleSqlite.init();
+          if (ready) {
+            setSqliteReady(true);
+          }
         }
+        
+        if (bibleSqlite.isReady()) {
+          const sqliteData = await bibleSqlite.getChapter(book, chapter);
+          if (sqliteData) {
+            console.log(`[Offline] Loaded ${book} ${chapter} from SQLite (NVI fallback)`);
+            // Format to match API response structure exactly:
+            // {"book":{"name":"...","abbrev":"..."},"chapter":{"number":N},"verses":[...]}
+            return {
+              book: { 
+                name: sqliteData.bookName, 
+                abbrev: sqliteData.book // String, not object (matches API)
+              },
+              chapter: { 
+                number: sqliteData.chapter
+              },
+              verses: sqliteData.verses.map(v => ({ number: v.verse, text: v.text })),
+              totalChapters: sqliteData.totalChapters,
+            };
+          }
+        }
+      } catch (sqliteError) {
+        console.error("[Offline] SQLite fallback failed:", sqliteError);
       }
       
       return null;
@@ -296,6 +318,32 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Error fetching SQLite chapter:", error);
       return null;
+    }
+  };
+
+  const getSqliteBooks = async () => {
+    try {
+      if (!sqliteReady) {
+        const ready = await bibleSqlite.init();
+        if (ready) {
+          setSqliteReady(true);
+        }
+      }
+      
+      if (bibleSqlite.isReady()) {
+        const books = await bibleSqlite.getBooks();
+        // Format to match API response structure - abbrev as { pt: string }
+        return books.map(book => ({
+          name: book.name,
+          abbrev: { pt: book.abbrev }, // Object with pt property to match API
+          chapters: book.chapters,
+          testament: book.testament,
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching SQLite books:", error);
+      return [];
     }
   };
 
@@ -336,6 +384,7 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
         isChapterOffline,
         getOfflineChapter,
         getSqliteChapter,
+        getSqliteBooks,
         clearAllOffline,
         getStorageStats,
       }}

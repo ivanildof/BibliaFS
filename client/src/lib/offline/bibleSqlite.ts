@@ -1,4 +1,5 @@
 import initSqlJs, { Database } from "sql.js";
+import { isNative } from "../config";
 
 const abbrevMapping: Record<string, string> = {
   job: "jó",
@@ -63,8 +64,10 @@ class BibleSQLiteService {
         locateFile: (file) => `https://sql.js.org/dist/${file}`,
       });
 
-      console.log("[BibleSQLite] Fetching bible.db...");
-      const response = await fetch("./bible.db");
+      // Use correct path for Capacitor (assets are served from root)
+      const dbPath = isNative ? "/bible.db" : "./bible.db";
+      console.log(`[BibleSQLite] Fetching bible.db from ${dbPath}...`);
+      const response = await fetch(dbPath);
       if (!response.ok) {
         throw new Error(`Failed to fetch bible.db: ${response.status}`);
       }

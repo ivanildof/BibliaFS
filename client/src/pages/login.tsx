@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { queryClient } from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
 import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -27,6 +28,18 @@ import { motion } from "framer-motion";
 export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { isAuthenticated, isLoading } = useAuth();
+  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false);
+
+  // Redirect to home if user is already authenticated when page loads
+  // This handles the case where user navigates to /login but is already logged in
+  useEffect(() => {
+    // Only redirect if already authenticated on initial load (not after login attempt)
+    // The login mutation handles redirect on successful login
+    if (!isLoading && isAuthenticated && !hasAttemptedLogin) {
+      setLocation("/");
+    }
+  }, [isAuthenticated, isLoading, setLocation, hasAttemptedLogin]);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormData>({
@@ -90,6 +103,7 @@ export default function Login() {
   });
 
   const onSubmit = (data: LoginFormData) => {
+    setHasAttemptedLogin(true);
     loginMutation.mutate(data);
   };
 

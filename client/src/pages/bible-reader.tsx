@@ -89,7 +89,7 @@ import { ShareSheet } from "@/components/ShareSheet";
 export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter } = useOffline();
+  const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter, getSqliteBooks } = useOffline();
   const { readingTheme } = useTheme();
   const currentReadingTheme = readingThemes[readingTheme];
   
@@ -161,11 +161,37 @@ export default function BibleReader() {
   });
   const [highlightPopoverOpen, setHighlightPopoverOpen] = useState(!!queryVerse);
 
-  // Fetch all Bible books
+  // Fetch all Bible books with offline fallback
   const { data: books = [], isLoading: loadingBooks, error: booksError } = useQuery<BibleBook[]>({
     queryKey: ["/api/bible/books"],
-    retry: 3,
+    retry: isOnline ? 3 : 0,
     retryDelay: 1000,
+    queryFn: async () => {
+      // If offline, try SQLite first
+      if (!isOnline) {
+        const sqliteBooks = await getSqliteBooks();
+        if (sqliteBooks.length > 0) {
+          return sqliteBooks as BibleBook[];
+        }
+      }
+      
+      // Try API
+      try {
+        const fullUrl = getApiUrl("/api/bible/books");
+        const response = await fetch(fullUrl);
+        if (!response.ok) {
+          throw new Error("API error");
+        }
+        return response.json();
+      } catch (error) {
+        // Fallback to SQLite if API fails
+        const sqliteBooks = await getSqliteBooks();
+        if (sqliteBooks.length > 0) {
+          return sqliteBooks as BibleBook[];
+        }
+        throw error;
+      }
+    },
   });
 
   // Fetch current chapter with offline fallback and multilingual support
