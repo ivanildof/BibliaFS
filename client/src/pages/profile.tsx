@@ -86,7 +86,7 @@ const levelInfo = {
 };
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("plans");
@@ -156,7 +156,41 @@ export default function Profile() {
     },
   });
 
-  if (!user) return null;
+  // Show loading state while auth is being checked
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto" />
+          <p className="text-muted-foreground">{t.common?.loading || "Carregando..."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <User className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <CardTitle>{t.profile?.title || "Meu Perfil"}</CardTitle>
+            <CardDescription>
+              Faça login para acessar seu perfil
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Link href="/login">
+              <Button size="lg">
+                Entrar
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const currentLevel = levelInfo[user.level as keyof typeof levelInfo] || levelInfo.iniciante;
   const xp = user.experiencePoints || 0;
