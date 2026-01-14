@@ -1,0 +1,86 @@
+1. Visão Geral
+O aplicativo BíbliaFS promete ser uma plataforma completa e inteligente para estudo bíblico, destacando-se por funcionalidades como assistente IA, temas personalizáveis e, principalmente, funcionamento offline total. No entanto, relatos de usuários indicam falhas críticas que impedem o uso básico da aplicação em dispositivos Android, comprometendo diretamente a proposta central do produto.
+
+Este PRD define os requisitos necessários para corrigir as falhas reportadas, garantindo que o aplicativo cumpra suas promessas fundamentais de funcionamento offline, carregamento rápido dos livros/versículos e reprodução de áudio.
+
+2. Problemas Reportados
+2.1. Falha no Modo Offline
+Descrição: O aplicativo não funciona sem conexão à internet.
+Evidência: Mensagem de erro “Erro ao carregar capítulo” aparece mesmo com dados baixados previamente.
+Impacto: Violada a promessa principal do produto (“Offline Total”). Usuários não conseguem estudar em locais sem internet (ônibus, campo, viagens).
+2.2. Impossibilidade de Acessar Livros e Versículos
+Descrição: Ao tentar acessar qualquer livro ou versículo, o aplicativo trava ou exibe mensagem de erro.
+Evidência: Capturas de tela mostram tela de carregamento infinito e mensagens de erro genéricas (“Tente novamente mais tarde”).
+Impacto: O núcleo da aplicação — leitura da Bíblia — está inoperante.
+2.3. Áudio Não Funciona
+Descrição: Botão de áudio (ícone de alto-falante) não reproduz nenhum conteúdo.
+Impacto: Funcionalidade promovida como premium (áudio) está completamente inacessível.
+2.4. Lentidão Extrema no Carregamento
+Descrição: Mesmo com conexão ativa, o carregamento de capítulos é extremamente lento.
+Impacto: Experiência de usuário frustrante; desencoraja o uso contínuo.
+2.5. Problema de Domínio (Web)
+Descrição: O domínio http://bibliafs.com.br/ redireciona incorretamente ou não funciona. O correto é https://bibliafs.com.br/.
+Impacto: Usuários podem ser redirecionados para páginas de erro ou não conseguir acessar o site oficial.
+3. Requisitos de Solução
+3.1. Funcionalidade Offline (Prioridade Máxima)
+Requisito R1: O aplicativo deve carregar e exibir qualquer capítulo da Bíblia sem conexão à internet, após o download inicial.
+Requisito R2: Implementar mecanismo de cache local robusto que armazene todos os livros, capítulos e versículos em formato otimizado.
+Requisito R3: Validar se os dados estão presentes localmente antes de tentar buscar online. Se não estiverem, notificar o usuário para baixar o conteúdo.
+3.2. Correção de Carregamento de Conteúdo
+Requisito R4: Eliminar erros genéricos como “Erro ao carregar capítulo”. Substituir por mensagens específicas (ex: “Capítulo não encontrado”, “Dados corrompidos”, “Conexão perdida”).
+Requisito R5: Otimizar algoritmos de busca e renderização para reduzir tempo de carregamento em até 80%.
+Requisito R6: Garantir que o menu de seleção de livros funcione corretamente e permita navegação direta entre capítulos.
+3.3. Reprodução de Áudio
+Requisito R7: Verificar integração com serviço de áudio (ex: TTS ou arquivos MP3 pré-baixados).
+Requisito R8: Adicionar feedback visual ao usuário quando o áudio estiver sendo carregado ou reproduzido.
+Requisito R9: Permitir pausa, avanço e retrocesso durante a reprodução.
+3.4. Performance e Estabilidade
+Requisito R10: Reduzir tempo médio de carregamento de capítulo para menos de 2 segundos em dispositivos Android de médio porte.
+Requisito R11: Implementar tratamento de exceções para evitar travamentos e loops infinitos.
+Requisito R12: Realizar testes de carga em diferentes modelos de Android (API 24+).
+3.5. Correção de Domínio Web
+Requisito R13: Forçar redirecionamento de http://bibliafs.com.br/ para https://bibliafs.com.br/ via configuração do servidor.
+Requisito R14: Atualizar todos os links internos e externos do site e do app para usar HTTPS.
+4. Critérios de Aceitação
+Para que esta correção seja considerada concluída, o aplicativo deve:
+
+✅ Funcionar totalmente offline, sem erros ao carregar qualquer capítulo.
+✅ Permitir navegação fluida entre livros e versículos em menos de 2 segundos.
+✅ Reproduzir áudio sem falhas, com controle de play/pause/avance.
+✅ Mostrar mensagens de erro claras e úteis ao usuário.
+✅ Redirecionar automaticamente http://bibliafs.com.br/ para https://bibliafs.com.br/.
+
+5. Impacto Negativo se Não Corrigido
+Perda de credibilidade do produto.
+Queda drástica no engajamento e retenção de usuários.
+Possível impacto negativo na reputação da marca e em futuras vendas de planos premium.
+Violação da promessa de valor (“100% Gratuito + Offline Total”).
+6. Recomendações Adicionais
+Teste Beta: Liberar versão corrigida para grupo fechado de usuários antes do rollout geral.
+Monitoramento Contínuo: Implementar ferramentas de monitoramento de erros (ex: Sentry, Firebase Crashlytics) para capturar falhas em produção.
+Comunicação com Usuários: Enviar notificação push ou e-mail informando sobre a correção das falhas e agradecendo pelo feedback.
+7. Cronograma Sugerido
+Etapa
+Duração
+Responsável
+Análise de Bugs
+2 dias
+Engenharia
+Desenvolvimento das Correções
+5 dias
+Dev Mobile + Backend
+Testes Internos
+2 dias
+QA
+Testes Beta com Usuários
+3 dias
+Suporte + QA
+Lançamento da Atualização
+1 dia
+DevOps
+Previsão de Entrega: 27 de Janeiro de 2026
+
+8. Anexos
+Capturas de tela dos erros reportados.
+Relatório de logs (se disponível).
+Lista de dispositivos Android afetados (ex: Samsung Galaxy A52, Moto G9, etc.).
