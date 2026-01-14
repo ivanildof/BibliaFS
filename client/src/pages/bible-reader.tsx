@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
-import { apiFetch } from "@/lib/config";
+import { apiFetch, getApiUrl } from "@/lib/config";
 import { 
   Sheet, 
   SheetContent, 
@@ -188,7 +188,9 @@ export default function BibleReader() {
       }
       
       try {
-        const response = await fetch(url);
+        // Use getApiUrl for native app to convert relative URL to full URL
+        const fullUrl = getApiUrl(url);
+        const response = await fetch(fullUrl);
         if (!response.ok) {
           throw new Error("API error");
         }
@@ -367,7 +369,8 @@ export default function BibleReader() {
     
     try {
       // Generate audio via OpenAI TTS (always works)
-      const backendUrl = `/api/bible/audio/${t.currentLanguage || 'pt'}/${version}/${selectedBook}/${chapter}`;
+      const backendPath = `/api/bible/audio/${t.currentLanguage || 'pt'}/${version}/${selectedBook}/${chapter}`;
+      const backendUrl = getApiUrl(backendPath);
       
       toast({
         title: audioMode === 'book' ? `Gerando áudio - Capítulo ${chapter}...` : "Gerando áudio do capítulo...",
@@ -561,7 +564,8 @@ export default function BibleReader() {
   const playVerseAudio = async (verseNumber: number) => {
     if (!selectedBook || !chapterData) return;
     
-    const url = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verseNumber}`;
+    const urlPath = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verseNumber}`;
+    const url = getApiUrl(urlPath);
     
     setIsLoadingAudio(true);
     setAudioMode('chapter');
@@ -836,13 +840,26 @@ export default function BibleReader() {
   useEffect(() => {
     if (chapterError) {
       console.error(`[Chapter Error] Failed to load ${selectedBook} chapter ${selectedChapter}:`, chapterError);
+      
+      // Show specific error message based on error type
+      const errorMessage = chapterError instanceof Error ? chapterError.message : String(chapterError);
+      let description = t.common.tryAgainLater;
+      
+      if (errorMessage.includes("offline") || errorMessage.includes("Offline")) {
+        description = t.bible.contentNotAvailableOffline + ". " + "Baixe o capítulo quando estiver conectado.";
+      } else if (errorMessage.includes("API error") || errorMessage.includes("Failed to fetch")) {
+        description = isOnline ? "Servidor temporariamente indisponível." : t.bible.contentNotAvailableOffline;
+      } else if (errorMessage.includes("network") || errorMessage.includes("Network")) {
+        description = "Verifique sua conexão com a internet.";
+      }
+      
       toast({
         title: t.bible.errorLoadingChapter,
-        description: t.common.tryAgainLater,
+        description,
         variant: "destructive",
       });
     }
-  }, [chapterError, toast, t, selectedBook, selectedChapter]);
+  }, [chapterError, toast, t, selectedBook, selectedChapter, isOnline]);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -1477,7 +1494,8 @@ export default function BibleReader() {
                           onClick={async () => {
                             stopAllAudio();
                             
-                            const url = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verse.number}`;
+                            const urlPath = `/api/bible/audio/verse/${t.currentLanguage}/${version}/${selectedBook}/${selectedChapter}/${verse.number}`;
+                            const url = getApiUrl(urlPath);
                             
                             toast({
                               title: "Gerando áudio do versículo...",
