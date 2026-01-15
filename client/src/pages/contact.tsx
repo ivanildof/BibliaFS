@@ -46,98 +46,121 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+    <div className="min-h-screen bg-background relative">
+      {/* Background Decorative Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8 space-y-10">
-        <AnimatePresence mode="wait">
-          {!submitted ? (
-            <motion.div 
-              key="form"
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 md:py-20">
+        <div className="text-center space-y-4 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold mb-4"
+          >
+            <Mail className="h-4 w-4" />
+            <span>Fale Conosco</span>
+          </motion.div>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-black tracking-tight text-foreground"
+          >
+            Como podemos <span className="text-primary">ajudar você?</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+          >
+            Tem dúvidas, sugestões ou feedback? Adoraríamos ouvir você! Nossa equipe está pronta para oferecer suporte e ouvir suas ideias.
+          </motion.p>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          {/* Left Column: Info & NPS */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="grid gap-4">
+              {[
+                { 
+                  icon: MessageSquare, 
+                  label: "Suporte Técnico", 
+                  desc: "Dúvidas sobre o funcionamento do app",
+                  color: "bg-blue-500/10 text-blue-600"
+                },
+                { 
+                  icon: Heart, 
+                  label: "Doações & Apoio", 
+                  desc: "Apoie o BíbliaFS gratuitamente",
+                  color: "bg-rose-500/10 text-rose-600"
+                },
+                { 
+                  icon: Clock, 
+                  label: "Tempo de Resposta", 
+                  desc: "Normalmente em até 48 horas úteis",
+                  color: "bg-amber-500/10 text-amber-600"
+                }
+              ].map((item, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                  className="group flex items-center gap-4 p-6 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all shadow-sm"
+                >
+                  <div className={`h-14 w-14 rounded-2xl ${item.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
+                    <item.icon className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">{item.label}</p>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* NPS Card Redesigned */}
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="grid lg:grid-cols-5 gap-10"
+              transition={{ delay: 0.6 }}
             >
-              <div className="lg:col-span-2 space-y-8">
-                <div className="space-y-4">
-                  <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-xl shadow-primary/20">
-                    <Mail className="h-8 w-8 text-white" />
+              <Card className="rounded-[2.5rem] border-none bg-primary text-primary-foreground shadow-2xl shadow-primary/20 overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Heart className="h-32 w-32 -mr-16 -mt-16" />
+                </div>
+                <CardContent className="p-8 space-y-6 relative z-10">
+                  <div className="space-y-2">
+                    <h3 className="font-black text-2xl tracking-tight">Sua voz importa!</h3>
+                    <p className="text-primary-foreground/80 text-sm">
+                      O quanto você recomendaria o BíbliaFS para um amigo? (0-10)
+                    </p>
                   </div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    {t.contact.title}
-                  </h1>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
-                    Tem dúvidas, sugestões ou feedback? Adoraríamos ouvir você! Nossa equipe está aqui para ajudar.
-                  </p>
-                </div>
+                  
+                  <div className="flex justify-between gap-1.5 flex-wrap">
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => {
+                          const event = new CustomEvent('open-nps-score', { detail: { score: num } });
+                          window.dispatchEvent(event);
+                        }}
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl text-sm font-black bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary transition-all transform hover:scale-110 active:scale-95 border border-primary-foreground/20"
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
 
-                <div className="space-y-4">
-                  {[
-                    { icon: MessageSquare, label: "Suporte Técnico", desc: "Consulte nossa página de Ajuda" },
-                    { icon: Heart, label: "Doações", desc: "Apoie o BíbliaFS gratuitamente" },
-                    { icon: Clock, label: "Resposta", desc: "Normalmente em até 48 horas úteis" }
-                  ].map((item, i) => (
-                    <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 + i * 0.1 }}
-                      className="flex items-center gap-4 p-4 rounded-2xl bg-muted/50 backdrop-blur-sm"
-                    >
-                      <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shadow-sm">
-                        <item.icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-sm">{item.label}</p>
-                        <p className="text-xs text-muted-foreground">{item.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <Card className="rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg">
-                  <CardContent className="p-6 space-y-4 text-center">
-                    <div className="flex justify-center">
-                      <ExternalLink className="h-8 w-8 text-primary opacity-50" />
-                    </div>
-                    <p className="text-sm font-medium">Siga nossas redes sociais para atualizações e inspirações diárias.</p>
-                  </CardContent>
-                </Card>
-
-                {/* NPS Survey Card */}
-                <Card className="rounded-2xl border-none bg-primary/5 backdrop-blur-xl shadow-lg overflow-hidden">
-                  <CardContent className="p-6 space-y-6">
-                    <div className="space-y-2 text-center">
-                      <h3 className="font-bold text-lg">Como está sua experiência?</h3>
-                      <p className="text-xs text-muted-foreground">
-                        Em uma escala de 0 a 10, o quanto você recomendaria o BíbliaFS para um amigo?
-                      </p>
-                    </div>
-                    
-                    <div className="flex justify-between gap-1 flex-wrap">
-                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                        <button
-                          key={num}
-                          type="button"
-                          onClick={() => {
-                            const event = new CustomEvent('open-nps-score', { detail: { score: num } });
-                            window.dispatchEvent(event);
-                          }}
-                          className="w-7 h-7 rounded-full text-[10px] font-bold bg-background hover:bg-primary hover:text-primary-foreground transition-all transform hover:scale-110 shadow-sm border border-primary/10"
-                        >
-                          {num}
-                        </button>
-                      ))}
-                    </div>
-
+                  <div className="pt-2">
                     <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="w-full rounded-xl text-xs font-bold"
+                      variant="secondary" 
+                      className="w-full rounded-2xl h-14 font-black shadow-lg"
                       onClick={() => {
                         const event = new CustomEvent('open-nps-dialog');
                         window.dispatchEvent(event);
@@ -145,143 +168,143 @@ export default function Contact() {
                     >
                       Enviar feedback detalhado
                     </Button>
-                    <p className="text-[10px] text-muted-foreground text-center italic">
-                      Sua participação é voluntária e nos ajuda a crescer. 🙏
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="lg:col-span-3">
-                <Card data-testid="card-contact-form" className="rounded-[2.5rem] border-none bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden">
-                  <CardHeader className="bg-primary/5 p-8 md:p-10 border-b border-primary/10">
-                    <CardTitle className="text-2xl font-bold">{t.contact.subtitle}</CardTitle>
-                    <CardDescription className="text-base">
-                      Preencha o formulário abaixo e responderemos o mais breve possível
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8 md:p-10">
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="name" className="text-sm font-bold ml-1">{t.contact.name} *</Label>
-                          <Input
-                            id="name"
-                            placeholder="Seu nome completo"
-                            className="rounded-xl h-12 bg-muted/50 border-none px-4"
-                            {...form.register("name")}
-                            data-testid="input-name"
-                          />
-                          {form.formState.errors.name && (
-                            <p className="text-xs text-destructive font-medium ml-1">{form.formState.errors.name.message}</p>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="text-sm font-bold ml-1">{t.contact.email} *</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="seu@email.com"
-                            className="rounded-xl h-12 bg-muted/50 border-none px-4"
-                            {...form.register("email")}
-                            data-testid="input-email"
-                          />
-                          {form.formState.errors.email && (
-                            <p className="text-xs text-destructive font-medium ml-1">{form.formState.errors.email.message}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="subject" className="text-sm font-bold ml-1">Assunto *</Label>
-                        <Input
-                          id="subject"
-                          placeholder="Sobre o que você gostaria de falar?"
-                          className="rounded-xl h-12 bg-muted/50 border-none px-4"
-                          {...form.register("subject")}
-                          data-testid="input-subject"
-                        />
-                        {form.formState.errors.subject && (
-                          <p className="text-xs text-destructive font-medium ml-1">{form.formState.errors.subject.message}</p>
-                        )}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="message" className="text-sm font-bold ml-1">{t.contact.message} *</Label>
-                        <Textarea
-                          id="message"
-                          placeholder="Escreva sua mensagem detalhadamente aqui..."
-                          className="rounded-2xl min-h-[180px] bg-muted/50 border-none p-4 resize-none"
-                          {...form.register("message")}
-                          data-testid="textarea-message"
-                        />
-                        {form.formState.errors.message && (
-                          <p className="text-xs text-destructive font-medium ml-1">{form.formState.errors.message.message}</p>
-                        )}
-                      </div>
-
-                      <Button 
-                        type="submit" 
-                        className="w-full rounded-xl h-14 text-lg font-bold shadow-lg shadow-primary/20"
-                        data-testid="button-submit-contact"
-                      >
-                        <Send className="h-5 w-5 mr-2" />
-                        {t.contact.send}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="success"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="max-w-xl mx-auto py-20"
-            >
-              <Card className="rounded-[3rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl text-center overflow-hidden">
-                <div className="h-3 w-full bg-primary" />
-                <CardHeader className="pt-12 pb-6">
-                  <div className="flex justify-center mb-8">
-                    <div className="h-24 w-24 rounded-3xl bg-green-500/10 flex items-center justify-center animate-bounce">
-                      <CheckCircle2 className="h-12 w-12 text-green-600" />
-                    </div>
                   </div>
-                  <CardTitle className="text-3xl font-bold">{t.contact.success}</CardTitle>
-                  <CardDescription className="text-lg px-6">
-                    Recebemos sua mensagem e retornaremos em breve. Obrigado pelo contato e por fazer parte da nossa comunidade!
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pb-12 px-10">
-                  <Button 
-                    onClick={() => setSubmitted(false)} 
-                    variant="outline"
-                    className="w-full rounded-2xl h-14 text-lg font-bold"
-                    data-testid="button-send-another"
-                  >
-                    Enviar Outra Mensagem
-                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
 
-        <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border/50">
-          <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
-          <p className="mt-1">
-            Desenvolvido por{" "}
-            <a 
-              href="https://fabrisite.com.br/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium"
-            >
-              FabriSite
-            </a>
-          </p>
+          {/* Right Column: Contact Form */}
+          <div className="lg:col-span-7">
+            <AnimatePresence mode="wait">
+              {!submitted ? (
+                <motion.div
+                  key="form"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                >
+                  <Card className="rounded-[3rem] border-none bg-card/50 backdrop-blur-2xl shadow-2xl border border-border/50 overflow-hidden">
+                    <CardHeader className="p-8 md:p-12 pb-0">
+                      <CardTitle className="text-3xl font-black tracking-tight">Envie sua Mensagem</CardTitle>
+                      <CardDescription className="text-lg">
+                        Preencha os campos abaixo e entraremos em contato.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-8 md:p-12">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <div className="grid md:grid-cols-2 gap-8">
+                          <div className="space-y-3">
+                            <Label htmlFor="name" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
+                            <Input
+                              id="name"
+                              placeholder="Como devemos te chamar?"
+                              className="rounded-2xl h-14 bg-background border-border/50 focus:border-primary transition-all px-6 text-lg"
+                              {...form.register("name")}
+                            />
+                            {form.formState.errors.name && (
+                              <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.name.message}</p>
+                            )}
+                          </div>
+
+                          <div className="space-y-3">
+                            <Label htmlFor="email" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">E-mail de Contato</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              placeholder="exemplo@email.com"
+                              className="rounded-2xl h-14 bg-background border-border/50 focus:border-primary transition-all px-6 text-lg"
+                              {...form.register("email")}
+                            />
+                            {form.formState.errors.email && (
+                              <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.email.message}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label htmlFor="subject" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Assunto</Label>
+                          <Input
+                            id="subject"
+                            placeholder="Sobre o que você gostaria de falar?"
+                            className="rounded-2xl h-14 bg-background border-border/50 focus:border-primary transition-all px-6 text-lg"
+                            {...form.register("subject")}
+                          />
+                          {form.formState.errors.subject && (
+                            <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.subject.message}</p>
+                          )}
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label htmlFor="message" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Sua Mensagem</Label>
+                          <Textarea
+                            id="message"
+                            placeholder="Conte-nos os detalhes..."
+                            className="rounded-3xl min-h-[200px] bg-background border-border/50 focus:border-primary transition-all p-6 text-lg resize-none"
+                            {...form.register("message")}
+                          />
+                          {form.formState.errors.message && (
+                            <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.message.message}</p>
+                          )}
+                        </div>
+
+                        <Button 
+                          type="submit" 
+                          disabled={form.formState.isSubmitting}
+                          className="w-full rounded-[2rem] h-16 text-xl font-black shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <Send className="h-6 w-6 mr-3" />
+                          Enviar agora
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="py-12"
+                >
+                  <Card className="rounded-[4rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl text-center overflow-hidden">
+                    <div className="h-4 w-full bg-green-500" />
+                    <CardHeader className="pt-16 pb-8">
+                      <div className="flex justify-center mb-10">
+                        <div className="h-32 w-32 rounded-[2.5rem] bg-green-500/10 flex items-center justify-center animate-bounce">
+                          <CheckCircle2 className="h-16 w-16 text-green-600" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-4xl font-black">Mensagem Enviada!</CardTitle>
+                      <CardDescription className="text-xl px-12 mt-4">
+                        Recebemos seu contato com sucesso. Nossa equipe analisará sua mensagem e retornaremos em até 48 horas.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-16 px-12">
+                      <Button 
+                        onClick={() => setSubmitted(false)} 
+                        variant="outline"
+                        className="w-full rounded-[2rem] h-16 text-xl font-black border-2"
+                      >
+                        Enviar Outra Mensagem
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <footer className="mt-20 text-center space-y-4 py-12 border-t border-border/50">
+          <div className="flex justify-center items-center gap-6 text-muted-foreground">
+            <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-bold">FabriSite</a>
+            <span className="w-1.5 h-1.5 rounded-full bg-border" />
+            <a href="#" className="hover:text-primary transition-colors font-bold">Termos de Uso</a>
+            <span className="w-1.5 h-1.5 rounded-full bg-border" />
+            <a href="#" className="hover:text-primary transition-colors font-bold">Privacidade</a>
+          </div>
+          <p className="text-sm text-muted-foreground/60 font-medium">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
         </footer>
       </div>
     </div>
