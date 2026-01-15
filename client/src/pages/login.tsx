@@ -65,8 +65,12 @@ export default function Login() {
       
       return authData;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    onSuccess: async () => {
+      // First invalidate, then wait for refetch to complete before redirecting
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      // Ensure the user data is actually in the cache before moving on
+      await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+      
       toast({
         title: "Login realizado!",
         description: "Bem-vindo de volta!",
