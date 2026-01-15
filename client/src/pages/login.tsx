@@ -34,10 +34,10 @@ export default function Login() {
   // Redirect to home if user is already authenticated when page loads
   // This handles the case where user navigates to /login but is already logged in
   useEffect(() => {
-    // Only redirect if already authenticated on initial load (not after login attempt)
-    // The login mutation handles redirect on successful login
     if (!isLoading && isAuthenticated && !hasAttemptedLogin) {
-      setLocation("/");
+      // Small delay to ensure state is synchronized
+      const timer = setTimeout(() => setLocation("/"), 100);
+      return () => clearTimeout(timer);
     }
   }, [isAuthenticated, isLoading, setLocation, hasAttemptedLogin]);
   const [showPassword, setShowPassword] = useState(false);

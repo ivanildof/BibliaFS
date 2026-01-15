@@ -4,9 +4,9 @@ import type { User } from "@shared/schema";
 export function useAuth() {
   const { data: user, isLoading, error } = useQuery<User>({
     queryKey: ["/api/auth/user"],
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    retry: 1,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Force refetch to ensure fresh auth state
   });
 
   return {

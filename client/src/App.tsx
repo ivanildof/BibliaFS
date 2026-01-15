@@ -58,17 +58,18 @@ function Router() {
 
   // On native app, redirect to login if not authenticated and on root
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && isNative && location === "/") {
+    if (!isLoading && !isAuthenticated && isNative && (location === "/" || location === "/perfil")) {
       setLocation("/login");
     }
   }, [isLoading, isAuthenticated, location, setLocation]);
 
+  // Loading state with higher priority/full screen
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">{t.common.loading}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background z-[100] fixed inset-0">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto"></div>
+          <p className="text-muted-foreground font-medium">{t.common.loading}</p>
         </div>
       </div>
     );
