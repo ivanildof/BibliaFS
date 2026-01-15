@@ -252,7 +252,6 @@ function AppContent() {
               <Router />
             </main>
             <BottomNav />
-            <NPSDialog />
           </div>
         </div>
       </SidebarProvider>
