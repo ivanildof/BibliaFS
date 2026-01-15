@@ -24,7 +24,7 @@ import { Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { ShareSheet } from "@/components/ShareSheet";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function Favorites() {
   const { t } = useLanguage();
@@ -207,7 +207,6 @@ export default function Favorites() {
           </div>
 
           <ScrollArea className="h-[calc(100vh-320px)] pr-4 -mr-4">
-            <AnimatePresence mode="wait">
               {/* Bookmarks Tab */}
               <TabsContent value="bookmarks" className="m-0 focus-visible:ring-0">
                 <motion.div 
@@ -345,7 +344,6 @@ export default function Favorites() {
                   )}
                 </motion.div>
               </TabsContent>
-            </AnimatePresence>
           </ScrollArea>
         </Tabs>
       </div>

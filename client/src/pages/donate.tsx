@@ -164,15 +164,15 @@ export default function Donate() {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-4 sm:p-6 md:p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="text-center space-y-4">
           <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <Heart className="h-8 w-8 text-primary fill-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">{t.donate.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t.donate.title}</h1>
           <div className="text-muted-foreground text-base space-y-3 max-w-2xl mx-auto">
             <p className="font-semibold text-foreground">
               Faça parte dessa missão. Doe agora e transforme vidas através da Palavra!
@@ -214,7 +214,7 @@ export default function Donate() {
                 <RadioGroup
                   value={donationType}
                   onValueChange={(value) => form.setValue("type", value as "one_time" | "recurring")}
-                  className="flex gap-4"
+                  className="flex flex-wrap gap-4 sm:gap-6"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="one_time" id="one_time" data-testid="radio-onetime" />
@@ -233,7 +233,7 @@ export default function Donate() {
 
               <div className="space-y-3">
                 <Label>Escolha um valor</Label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
                   {PRESET_AMOUNTS.map((amount) => (
                     <Button
                       key={amount}
@@ -244,7 +244,7 @@ export default function Donate() {
                         form.setValue("amount", amount);
                       }}
                       data-testid={`button-amount-${amount}`}
-                      className="h-16"
+                      className="h-12 sm:h-16 text-sm sm:text-base"
                     >
                       R$ {amount}
                     </Button>

@@ -133,7 +133,7 @@ export default function Contact() {
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                   <Heart className="h-32 w-32 -mr-16 -mt-16" />
                 </div>
-                <CardContent className="p-8 space-y-6 relative z-10">
+                <CardContent className="p-6 sm:p-8 space-y-6 relative z-10">
                   <div className="space-y-2">
                     <h3 className="font-black text-2xl tracking-tight">Sua voz importa!</h3>
                     <p className="text-primary-foreground/80 text-sm">
@@ -141,7 +141,7 @@ export default function Contact() {
                     </p>
                   </div>
                   
-                  <div className="flex justify-between gap-1.5 flex-wrap">
+                  <div className="flex justify-start sm:justify-between gap-2 sm:gap-1.5 flex-wrap">
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <button
                         key={num}
@@ -185,13 +185,13 @@ export default function Contact() {
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
                   <Card className="rounded-[3rem] border-none bg-card/50 backdrop-blur-2xl shadow-2xl border border-border/50 overflow-hidden">
-                    <CardHeader className="p-8 md:p-12 pb-0">
-                      <CardTitle className="text-3xl font-black tracking-tight">Envie sua Mensagem</CardTitle>
-                      <CardDescription className="text-lg">
+                    <CardHeader className="p-6 sm:p-8 md:p-12 pb-0">
+                      <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight">Envie sua Mensagem</CardTitle>
+                      <CardDescription className="text-base sm:text-lg">
                         Preencha os campos abaixo e entraremos em contato.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="p-8 md:p-12">
+                    <CardContent className="p-6 sm:p-8 md:p-12">
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="grid md:grid-cols-2 gap-8">
                           <div className="space-y-3">
@@ -269,18 +269,18 @@ export default function Contact() {
                 >
                   <Card className="rounded-[4rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl text-center overflow-hidden">
                     <div className="h-4 w-full bg-green-500" />
-                    <CardHeader className="pt-16 pb-8">
-                      <div className="flex justify-center mb-10">
-                        <div className="h-32 w-32 rounded-[2.5rem] bg-green-500/10 flex items-center justify-center animate-bounce">
-                          <CheckCircle2 className="h-16 w-16 text-green-600" />
+                    <CardHeader className="pt-12 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-8">
+                      <div className="flex justify-center mb-6 sm:mb-10">
+                        <div className="h-24 sm:h-32 w-24 sm:w-32 rounded-[2.5rem] bg-green-500/10 flex items-center justify-center animate-bounce">
+                          <CheckCircle2 className="h-12 sm:h-16 w-12 sm:w-16 text-green-600" />
                         </div>
                       </div>
-                      <CardTitle className="text-4xl font-black">Mensagem Enviada!</CardTitle>
-                      <CardDescription className="text-xl px-12 mt-4">
+                      <CardTitle className="text-2xl sm:text-4xl font-black">Mensagem Enviada!</CardTitle>
+                      <CardDescription className="text-base sm:text-xl px-4 sm:px-8 mt-4">
                         Recebemos seu contato com sucesso. Nossa equipe analisará sua mensagem e retornaremos em até 48 horas.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pb-16 px-12">
+                    <CardContent className="pb-12 sm:pb-16 px-4 sm:px-8">
                       <Button 
                         onClick={() => setSubmitted(false)} 
                         variant="outline"
@@ -296,15 +296,15 @@ export default function Contact() {
           </div>
         </div>
 
-        <footer className="mt-20 text-center space-y-4 py-12 border-t border-border/50">
-          <div className="flex justify-center items-center gap-6 text-muted-foreground">
+        <footer className="mt-20 text-center space-y-4 py-12 px-4 border-t border-border/50">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-muted-foreground text-sm sm:text-base">
             <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-bold">FabriSite</a>
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Termos de Uso</a>
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Privacidade</a>
           </div>
-          <p className="text-sm text-muted-foreground/60 font-medium">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
+          <p className="text-xs sm:text-sm text-muted-foreground/60 font-medium">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
         </footer>
       </div>
     </div>

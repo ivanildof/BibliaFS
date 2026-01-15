@@ -545,7 +545,7 @@ export default function Groups() {
     
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
           <Button 
             variant="ghost" 
             onClick={() => setSelectedGroup(null)}
@@ -558,9 +558,9 @@ export default function Groups() {
 
           <Card>
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2 text-2xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl flex-wrap">
                     {selectedGroup.name}
                     {selectedGroup.role === "leader" && (
                       <Crown className="h-5 w-5 text-yellow-500" />
@@ -658,12 +658,12 @@ export default function Groups() {
                   </ScrollArea>
 
                   <Form {...messageForm}>
-                    <form onSubmit={messageForm.handleSubmit(onSendMessage)} className="flex gap-2">
+                    <form onSubmit={messageForm.handleSubmit(onSendMessage)} className="flex flex-col sm:flex-row gap-2">
                       <FormField
                         control={messageForm.control}
                         name="content"
                         render={({ field }) => (
-                          <FormItem className="flex-1">
+                          <FormItem className="flex-1 min-w-0">
                             <FormControl>
                               <Input 
                                 placeholder="Digite sua mensagem..." 

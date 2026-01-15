@@ -158,7 +158,7 @@ export default function Community() {
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-post" className="whitespace-nowrap">
+              <Button size="lg" data-testid="button-create-post" className="flex-shrink-0">
                 <Plus className="h-5 w-5 mr-2" />
                 <span className="hidden sm:inline">{t.community.post}</span>
                 <span className="sm:hidden">Post</span>
