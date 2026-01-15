@@ -66,16 +66,20 @@ export default function Login() {
       return authData;
     },
     onSuccess: async () => {
+      // Small delay to ensure Supabase internal state is updated
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       // First invalidate, then wait for refetch to complete before redirecting
       await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      // Ensure the user data is actually in the cache before moving on
       await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
       
       toast({
         title: "Login realizado!",
         description: "Bem-vindo de volta!",
       });
-      setLocation("/");
+      
+      // Use replace instead of push to avoid back-button to login
+      setLocation("/", { replace: true });
     },
     onError: (error: any) => {
       toast({
