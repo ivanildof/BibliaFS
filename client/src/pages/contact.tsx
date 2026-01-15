@@ -107,6 +107,49 @@ export default function Contact() {
                     <p className="text-sm font-medium">Siga nossas redes sociais para atualizações e inspirações diárias.</p>
                   </CardContent>
                 </Card>
+
+                {/* NPS Survey Card */}
+                <Card className="rounded-2xl border-none bg-primary/5 backdrop-blur-xl shadow-lg overflow-hidden">
+                  <CardContent className="p-6 space-y-6">
+                    <div className="space-y-2 text-center">
+                      <h3 className="font-bold text-lg">Como está sua experiência?</h3>
+                      <p className="text-xs text-muted-foreground">
+                        Em uma escala de 0 a 10, o quanto você recomendaria o BíbliaFS para um amigo?
+                      </p>
+                    </div>
+                    
+                    <div className="flex justify-between gap-1 flex-wrap">
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => {
+                            const event = new CustomEvent('open-nps-score', { detail: { score: num } });
+                            window.dispatchEvent(event);
+                          }}
+                          className="w-7 h-7 rounded-full text-[10px] font-bold bg-background hover:bg-primary hover:text-primary-foreground transition-all transform hover:scale-110 shadow-sm border border-primary/10"
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="w-full rounded-xl text-xs font-bold"
+                      onClick={() => {
+                        const event = new CustomEvent('open-nps-dialog');
+                        window.dispatchEvent(event);
+                      }}
+                    >
+                      Enviar feedback detalhado
+                    </Button>
+                    <p className="text-[10px] text-muted-foreground text-center italic">
+                      Sua participação é voluntária e nos ajuda a crescer. 🙏
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
 
               <div className="lg:col-span-3">
