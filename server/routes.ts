@@ -1219,7 +1219,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!podcast) {
         return res.status(404).json({ error: "Podcast não encontrado" });
       }
-      if (podcast.creatorId !== userId) {
+      
+      // Permitir exclusão de podcasts padrão ou podcasts criados pelo usuário
+      const isDefaultPodcast = ['pod-1', 'pod-2', 'pod-3'].includes(podcast.id);
+      if (podcast.creatorId !== userId && !isDefaultPodcast) {
         return res.status(403).json({ error: "Você não tem permissão para excluir este podcast" });
       }
       
