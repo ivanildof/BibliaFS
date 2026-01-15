@@ -286,16 +286,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       entriesToDelete.forEach(t => resetTokens.delete(t));
 
-      // In production, send email with link
-      // For now, log the token (development only)
-      const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${token}`;
-      console.log(`\n📧 [Password Reset] Link para ${email}:`);
-      console.log(`   ${resetLink}\n`);
+      // Generate reset link
+      const baseUrl = process.env.REPLIT_DOMAINS 
+        ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+        : `${req.protocol}://${req.get('host')}`;
+      const resetLink = `${baseUrl}/reset-password?token=${token}`;
+      
+      // Send email using Resend
+      const resendApiKey = process.env.RESEND_API_KEY;
+      let emailSent = false;
+      
+      if (resendApiKey) {
+        try {
+          const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              from: 'BíbliaFS <noreply@bibliafs.com.br>',
+              to: email,
+              subject: 'Recuperação de Senha - BíbliaFS',
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                  <h2 style="color: #333;">Recuperação de Senha 🔐</h2>
+                  <p>Você solicitou a recuperação da sua senha na BíbliaFS.</p>
+                  <p>Clique no botão abaixo para criar uma nova senha:</p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="${resetLink}" 
+                       style="background-color: #667eea; color: white; padding: 14px 28px; 
+                              text-decoration: none; border-radius: 8px; font-weight: bold;
+                              display: inline-block;">
+                      Redefinir Senha
+                    </a>
+                  </div>
+                  <p style="color: #666; font-size: 14px;">
+                    Ou copie e cole este link no seu navegador:<br/>
+                    <a href="${resetLink}" style="color: #667eea; word-break: break-all;">${resetLink}</a>
+                  </p>
+                  <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                    Este link expira em 1 hora.<br/>
+                    Se você não solicitou esta recuperação, ignore este email.
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                  <p style="color: #999; font-size: 11px; text-align: center;">
+                    Que a Palavra de Deus ilumine seus dias! 🙏
+                  </p>
+                </div>
+              `,
+            }),
+          });
+          
+          if (response.ok) {
+            emailSent = true;
+            console.log(`✅ [Password Reset] Email enviado para: ${email}`);
+          } else {
+            const errorData = await response.json();
+            console.error(`❌ [Password Reset] Erro Resend:`, errorData);
+          }
+        } catch (emailError) {
+          console.error(`❌ [Password Reset] Erro ao enviar email:`, emailError);
+        }
+      }
+      
+      if (!emailSent) {
+        console.log(`\n📧 [Password Reset] Link para ${email} (email não enviado - configure RESEND_API_KEY):`);
+        console.log(`   ${resetLink}\n`);
+      }
 
       res.json({ 
         message: "Se este email estiver cadastrado, você receberá um link de recuperação.",
-        // In development, return the link for testing
-        ...(process.env.NODE_ENV !== 'production' && { resetLink })
+        ...(process.env.NODE_ENV !== 'production' && !emailSent && { resetLink })
       });
     } catch (error: any) {
       console.error("Erro ao processar forgot-password:", error);
