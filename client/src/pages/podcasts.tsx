@@ -440,8 +440,35 @@ export default function Podcasts() {
                           <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Leitura Bíblica'}</Badge>
                         </div>
                       </div>
-                      <CardHeader className="pb-4">
-                        <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
+                      <CardHeader className="pb-4 relative">
+                          <div className="absolute top-4 right-4 z-10">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-black/20 backdrop-blur-md border border-white/20 hover:bg-black/40 text-white shadow-xl transition-all duration-300">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="rounded-2xl p-2 border-none bg-card/95 backdrop-blur-xl shadow-2xl">
+                                <DropdownMenuItem 
+                                  className="text-destructive focus:text-destructive focus:bg-destructive/10 flex items-center gap-2 rounded-xl p-3 cursor-pointer transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedPodcast(podcast);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                                    <Trash2 className="h-4 w-4" />
+                                  </div>
+                                  <div className="flex flex-col">
+                                    <span className="font-bold">Excluir Rádio</span>
+                                    <span className="text-[10px] opacity-70">Ação permanente</span>
+                                  </div>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                          <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors pr-10">{podcast.title}</CardTitle>
                         <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
                       </CardHeader>
                       <CardContent className="flex-1 space-y-4">
@@ -804,18 +831,21 @@ export default function Podcasts() {
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent className="rounded-2xl">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta ação não pode ser desfeita. Isso excluirá permanentemente o podcast
-                "{selectedPodcast?.title}" e todos os seus episódios.
+          <AlertDialogContent className="rounded-[2.5rem] border-none bg-card/95 backdrop-blur-2xl shadow-2xl p-8 max-w-sm">
+            <AlertDialogHeader className="space-y-4">
+              <div className="mx-auto h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+                <AlertTriangle className="h-10 w-10 text-destructive animate-pulse" />
+              </div>
+              <AlertDialogTitle className="text-2xl font-black text-center">Excluir Rádio?</AlertDialogTitle>
+              <AlertDialogDescription className="text-center text-base leading-relaxed">
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente o rádio 
+                <span className="block font-bold text-foreground mt-2">"{selectedPodcast?.title}"</span>
+                e todos os seus episódios.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+            <AlertDialogFooter className="flex-col sm:flex-col gap-3 mt-8">
               <AlertDialogAction 
-                className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="w-full rounded-2xl h-14 bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold text-lg shadow-lg shadow-destructive/20"
                 onClick={() => {
                   if (selectedPodcast) {
                     deletePodcastMutation.mutate(selectedPodcast.id);
@@ -823,8 +853,11 @@ export default function Podcasts() {
                 }}
                 disabled={deletePodcastMutation.isPending}
               >
-                {deletePodcastMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : "Excluir"}
+                {deletePodcastMutation.isPending ? <Loader2 className="h-6 w-6 animate-spin" /> : "Sim, Excluir Tudo"}
               </AlertDialogAction>
+              <AlertDialogCancel className="w-full rounded-2xl h-14 border-none bg-secondary hover:bg-secondary/80 font-bold text-lg m-0 transition-colors">
+                Manter Rádio
+              </AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
