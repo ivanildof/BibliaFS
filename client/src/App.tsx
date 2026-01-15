@@ -58,7 +58,8 @@ function Router() {
 
   // On native app, redirect to login if not authenticated and on root
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && isNative && (location === "/" || location === "/perfil")) {
+    const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
+    if (!isLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
       // Wait for a bit to allow Supabase to recover session
       const timer = setTimeout(() => {
         if (!isAuthenticated) {

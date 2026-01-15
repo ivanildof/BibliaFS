@@ -169,21 +169,23 @@ export default function Profile() {
   }
 
   // Show login prompt if not authenticated
-  if (!user) {
+  if (!user && !isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardHeader className="text-center">
-            <User className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <CardTitle>{t.profile?.title || "Meu Perfil"}</CardTitle>
-            <CardDescription>
-              Faça login para acessar seu perfil
+        <Card className="max-w-md w-full rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-2xl">
+          <CardHeader className="text-center pt-8">
+            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <User className="h-10 w-10 text-primary" />
+            </div>
+            <CardTitle className="text-2xl font-black">{t.profile?.title || "Meu Perfil"}</CardTitle>
+            <CardDescription className="text-base px-6">
+              Faça login para acessar suas conquistas, planos de leitura e configurações personalizadas.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex justify-center">
-            <Link href="/login">
-              <Button size="lg">
-                Entrar
+          <CardContent className="flex justify-center pb-12 px-8">
+            <Link href="/login" className="w-full">
+              <Button size="lg" className="w-full h-14 rounded-2xl font-black text-lg shadow-xl shadow-primary/20">
+                Entrar agora
               </Button>
             </Link>
           </CardContent>
