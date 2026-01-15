@@ -331,7 +331,7 @@ export const translations: Record<Language, Translations> = {
       progress: 'Progresso',
       prayers: 'Orações',
       aiStudy: 'Estudo com IA',
-      podcasts: 'Podcasts',
+      podcasts: 'BíbliaFS Rádio',
       teacherMode: 'Modo Professor',
       settings: 'Configurações',
       compareVersions: 'Comparar Versões',

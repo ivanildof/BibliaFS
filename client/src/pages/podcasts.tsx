@@ -345,7 +345,7 @@ export default function Podcasts() {
                 BíbliaFS Rádio
               </h1>
               <p className="text-lg text-muted-foreground">
-                Podcasts cristãos integrados ao seu estudo
+                Conteúdos cristãos integrados ao seu estudo
               </p>
             </div>
           </div>
