@@ -291,11 +291,15 @@ export default function Settings() {
     if (selectedTheme === "custom") {
       const hsl = hexToHSL(customColor);
       root.style.setProperty("--primary", hsl);
+      root.style.setProperty("--sidebar-primary", hsl);
+      root.style.setProperty("--sidebar-accent-foreground", hsl);
     } else {
       const theme = predefinedThemes.find(t => t.id === selectedTheme);
       if (theme) {
         const primaryHSL = hexToHSL(theme.primary);
         root.style.setProperty("--primary", primaryHSL);
+        root.style.setProperty("--sidebar-primary", primaryHSL);
+        root.style.setProperty("--sidebar-accent-foreground", primaryHSL);
       }
     }
   }, [selectedTheme, customColor]);

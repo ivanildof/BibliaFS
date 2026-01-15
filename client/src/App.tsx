@@ -197,20 +197,22 @@ function AppContent() {
         root.style.setProperty("--primary", hsl);
         root.style.setProperty("--sidebar-primary", hsl);
         root.style.setProperty("--sidebar-accent-foreground", hsl);
+        root.style.setProperty("--primary-foreground", "0 0% 100%");
       } else {
         // Predefined themes - MUST match settings.tsx!
-        const predefinedThemes: Record<string, string> = {
-          classico: "#5711D9",
-          noite_sagrada: "#9D44C0",
-          luz_do_dia: "#00A0E3",
-          terra_santa: "#8B4513",
+        const predefinedThemes: Record<string, {primary: string, foreground: string}> = {
+          classico: { primary: "#5711D9", foreground: "0 0% 100%" },
+          noite_sagrada: { primary: "#9D44C0", foreground: "0 0% 100%" },
+          luz_do_dia: { primary: "#00A0E3", foreground: "0 0% 100%" },
+          terra_santa: { primary: "#8B4513", foreground: "0 0% 100%" },
         };
         
-        const themeColor = predefinedThemes[user.selectedTheme] || predefinedThemes.classico;
-        const hsl = hexToHSL(themeColor);
+        const theme = predefinedThemes[user.selectedTheme] || predefinedThemes.classico;
+        const hsl = hexToHSL(theme.primary);
         root.style.setProperty("--primary", hsl);
         root.style.setProperty("--sidebar-primary", hsl);
         root.style.setProperty("--sidebar-accent-foreground", hsl);
+        root.style.setProperty("--primary-foreground", theme.foreground);
       }
     }
   }, [user?.selectedTheme, user?.customTheme]);
