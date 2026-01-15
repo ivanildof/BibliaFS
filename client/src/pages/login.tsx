@@ -22,7 +22,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-import logoImage from "@assets/Biblia_FS_1766520633441.png";
+import logoImage from "../assets/logo-new.png";
 import { motion } from "framer-motion";
 
 export default function Login() {

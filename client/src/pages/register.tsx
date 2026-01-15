@@ -30,7 +30,7 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-import logoImage from "@assets/Biblia_FS_1766520633441.png";
+import logoImage from "../assets/logo-new.png";
 import { motion } from "framer-motion";
 
 export default function Register() {

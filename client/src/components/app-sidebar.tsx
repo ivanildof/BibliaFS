@@ -33,7 +33,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect } from "react";
-import logoImage from "@assets/Biblia_FS_1766520633441.png";
+import logoImage from "../assets/logo-new.png";
 
 export function AppSidebar() {
   const [location] = useLocation();

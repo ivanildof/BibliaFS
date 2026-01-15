@@ -31,7 +31,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { Link } from "wouter";
-import logoImage from "@assets/Biblia_FS_1766520633441.png";
+import logoImage from "../assets/logo-new.png";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
