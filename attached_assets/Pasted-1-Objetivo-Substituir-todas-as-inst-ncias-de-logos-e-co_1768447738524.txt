@@ -1,0 +1,69 @@
+1. Objetivo
+Substituir todas as instâncias de logos e ícones utilizadas no aplicativo BíbliaFS (web, Android e iOS) por uma nova identidade visual alinhada à marca atualizada, garantindo conformidade com as especificações técnicas de cada plataforma e dispositivo, além de manter consistência visual e funcionalidade em todos os pontos de contato com o usuário.
+
+2. Escopo
+2.1. O que está incluído:
+Substituição da logo principal em todas as telas do aplicativo (web, mobile e dashboard).
+Atualização do favicon do site (bibliafs.com.br).
+Geração e implantação dos ícones de aplicativo para:
+Android (todos os tamanhos exigidos pelo Google Play e launcher)
+iOS (App Store + ícones internos para diferentes dispositivos)
+PWA / Web App (manifest.json, apple-touch-icon, etc.)
+Atualização de ícones secundários (ex: ícone de perfil, menu lateral, botões de ação) caso façam parte da identidade visual.
+Validação visual em todos os ambientes após a substituição.
+2.2. O que NÃO está incluído:
+Alterações na estrutura de código ou lógica do aplicativo.
+Mudanças no layout além da substituição dos elementos visuais mencionados.
+Criação da nova logo (assume-se que a logo final já foi fornecida em formato vetorial – SVG/PDF – e em PNG com fundo transparente).
+3. Requisitos Técnicos
+3.1. Favicon (Web)
+Formato: .ico e .png
+Tamanhos mínimos:
+16x16, 32x32, 48x48, 64x64 (para .ico)
+192x192, 512x512 (para PWA manifest)
+Localização: <head> do HTML + manifest.json
+3.2. Ícones Android
+Formato: .png com fundo transparente
+Tamanhos (em mipmap ou drawable):
+mdpi: 48×48
+hdpi: 72×72
+xhdpi: 96×96
+xxhdpi: 144×144
+xxxhdpi: 192×192
+Ícone de notificação (se aplicável): 24×24 (escala proporcional)
+Adaptive Icon (recomendado): camadas foreground e background em SVG ou PNG
+3.3. Ícones iOS
+Formato: .png
+Tamanhos:
+iPhone: 60×60, 120×120, 180×180
+iPad: 76×76, 152×152, 167×167
+App Store: 1024×1024
+Spotlight: 40×40, 80×80
+Settings: 29×29, 58×58
+3.4. Logo no Aplicativo (Web e Mobile)
+Deve ser fornecida em:
+Versão horizontal (para header)
+Versão quadrada/simbólica (para avatar, splash screen)
+Formatos: SVG (preferencial), PNG com fundo transparente
+Resoluções: mínimo 512×512 px (PNG)
+4. Critérios de Aceitação
+Todas as logos antigas foram removidas de todos os ambientes.
+Nova logo aparece corretamente em:
+Tela de login
+Dashboard
+Menu lateral
+Perfil do usuário
+Splash screen (mobile)
+Favicon é exibido corretamente no navegador (desktop e mobile).
+Ícones do app são exibidos sem distorção em todos os dispositivos testados.
+Não há regressões de layout (ex: sobreposição, corte, alinhamento incorreto).
+App passa nos requisitos de publicação do Google Play e App Store (se aplicável).
+5. Entregáveis
+Pacote completo de ícones conforme especificações acima.
+Atualização implantada em ambiente de staging para validação.
+Relatório de validação visual em dispositivos reais (Android, iOS, desktop).
+Documento com localização de todos os arquivos substituídos no repositório.
+6. Considerações Adicionais
+A identidade visual deve respeitar as cores e estilo definidos previamente (temas personalizáveis, preferência por design premium).
+Priorizar desempenho: otimizar tamanho dos arquivos sem perda de qualidade.
+Manter compatibilidade com modo claro/escuro, se aplicável.
