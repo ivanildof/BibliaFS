@@ -988,16 +988,21 @@ export default function Settings() {
                     ))}
                   </div>
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full rounded-xl py-6"
-                    onClick={() => {
-                      const event = new CustomEvent('open-nps-dialog');
-                      window.dispatchEvent(event);
-                    }}
-                  >
-                    Enviar feedback detalhado
-                  </Button>
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground text-center">
+                      Sua participação é voluntária e nos ajuda a crescer. 🙏
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      className="w-full rounded-xl py-6"
+                      onClick={() => {
+                        const event = new CustomEvent('open-nps-dialog');
+                        window.dispatchEvent(event);
+                      }}
+                    >
+                      Enviar feedback detalhado
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
