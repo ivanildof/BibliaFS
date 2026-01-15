@@ -120,34 +120,34 @@ export default function Login() {
         className="w-full max-w-md relative z-10"
       >
         <Card className="border-none shadow-2xl rounded-3xl backdrop-blur-sm bg-card/90">
-          <CardHeader className="text-center space-y-4 pt-8">
+          <CardHeader className="text-center space-y-2 pt-6">
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
               className="mx-auto"
             >
-              <img src={logoImage} alt="BíbliaFS Logo" className="w-20 h-20 object-cover rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300" />
+              <img src={logoImage} alt="BíbliaFS Logo" className="w-16 h-16 object-cover rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300" />
             </motion.div>
-            <CardTitle className="text-3xl font-extrabold tracking-tight">Bem-vindo</CardTitle>
-            <CardDescription className="text-base font-medium">
+            <CardTitle className="text-2xl font-extrabold tracking-tight">Bem-vindo</CardTitle>
+            <CardDescription className="text-sm font-medium">
               Acesse sua conta para continuar sua jornada
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-8 pb-8">
+          <CardContent className="px-8 pb-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold text-sm">Email</FormLabel>
+                      <FormLabel className="font-bold text-xs">Email</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
                           placeholder="seu@email.com"
-                          className="h-14 rounded-2xl bg-muted/50 border-primary/5 focus-visible:ring-primary text-lg"
+                          className="h-11 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary text-base"
                           data-testid="input-email"
                           {...field}
                         />
@@ -161,26 +161,26 @@ export default function Login() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold text-sm">Senha</FormLabel>
+                      <FormLabel className="font-bold text-xs">Senha</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
                             placeholder="Sua senha"
-                            className="h-14 rounded-2xl bg-muted/50 border-primary/5 focus-visible:ring-primary text-lg pr-12"
+                            className="h-11 rounded-xl bg-muted/50 border-primary/5 focus-visible:ring-primary text-base pr-10"
                             data-testid="input-password"
                             {...field}
                           />
                           <button
                             type="button"
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                             onClick={() => setShowPassword(!showPassword)}
                             data-testid="button-toggle-password"
                           >
                             {showPassword ? (
-                              <EyeOff className="h-5 w-5" />
+                              <EyeOff className="h-4 w-4" />
                             ) : (
-                              <Eye className="h-5 w-5" />
+                              <Eye className="h-4 w-4" />
                             )}
                           </button>
                         </div>
@@ -192,7 +192,7 @@ export default function Login() {
                 <div className="flex justify-end">
                   <Link 
                     href="/forgot-password" 
-                    className="text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+                    className="text-xs font-bold text-primary hover:text-primary/80 transition-colors"
                     data-testid="link-forgot-password"
                   >
                     Esqueceu sua senha?
@@ -200,13 +200,13 @@ export default function Login() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
+                  className="w-full h-12 rounded-xl font-bold text-base shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
                   disabled={loginMutation.isPending}
                   data-testid="button-login"
                 >
                   {loginMutation.isPending ? (
                     <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Entrando...
                     </>
                   ) : (
@@ -214,11 +214,11 @@ export default function Login() {
                   )}
                 </Button>
                 
-                <div className="relative py-4">
+                <div className="relative py-2">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-border/50" />
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
+                  <div className="relative flex justify-center text-[10px] uppercase">
                     <span className="bg-card px-2 text-muted-foreground font-medium">
                       Ou continue com
                     </span>
@@ -228,12 +228,12 @@ export default function Login() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full h-14 rounded-2xl font-bold text-lg border-primary/10 hover:bg-muted/50 transition-all flex items-center justify-center gap-3"
+                  className="w-full h-11 rounded-xl font-bold text-base border-primary/10 hover:bg-muted/50 transition-all flex items-center justify-center gap-2"
                   onClick={() => googleLoginMutation.mutate()}
                   disabled={googleLoginMutation.isPending}
                   data-testid="button-google-login"
                 >
-                  <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                       fill="#4285F4"
@@ -256,8 +256,8 @@ export default function Login() {
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-6 px-8 pb-10 bg-muted/20 rounded-b-3xl border-t border-border/50">
-            <p className="text-sm text-center text-muted-foreground pt-6 font-medium">
+          <CardFooter className="flex flex-col gap-4 px-8 pb-6 bg-muted/20 rounded-b-3xl border-t border-border/50">
+            <p className="text-xs text-center text-muted-foreground pt-4 font-medium">
               Não tem uma conta?{" "}
               <Link href="/register" className="text-primary font-bold hover:underline underline-offset-4" data-testid="link-register">
                 Criar uma conta grátis
