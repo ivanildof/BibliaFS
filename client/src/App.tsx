@@ -129,6 +129,7 @@ function Router() {
           <Route path="/configurações" component={Settings} />
           <Route path="/settings" component={Settings} />
           <Route path="/perfil" component={Profile} />
+          <Route path="/profile" component={Profile} />
           <Route path="/offline" component={Offline} />
           <Route path="/donate" component={Donate} />
           <Route path="/doar" component={Donate} />

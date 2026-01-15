@@ -194,6 +194,9 @@ export default function Profile() {
     );
   }
 
+  // Double check if user is still null even if isLoading is false (unexpected but possible)
+  if (!user) return null;
+
   const currentLevel = levelInfo[user.level as keyof typeof levelInfo] || levelInfo.iniciante;
   const xp = user.experiencePoints || 0;
   const xpProgress = ((xp - currentLevel.minXP) / (currentLevel.maxXP - currentLevel.minXP)) * 100;
