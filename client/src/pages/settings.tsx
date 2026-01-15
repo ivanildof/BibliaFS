@@ -400,6 +400,10 @@ export default function Settings() {
               <Shield className="h-4 w-4" />
               <span className="hidden sm:inline font-medium">Privacidade</span>
             </TabsTrigger>
+            <TabsTrigger value="feedback" className="flex items-center gap-2 py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-feedback">
+              <Send className="h-4 w-4" />
+              <span className="hidden sm:inline font-medium">Feedback</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="appearance" className="space-y-6">
@@ -946,6 +950,55 @@ export default function Settings() {
                 >
                   Falar com Suporte
                 </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="feedback" className="space-y-6">
+            <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Send className="h-5 w-5" />
+                  Avaliar BíbliaFS
+                </CardTitle>
+                <CardDescription>
+                  Sua opinião é muito importante para nós. Conte-nos como está sendo sua experiência.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10">
+                  <h3 className="text-lg font-semibold mb-2">Como está sua experiência?</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Em uma escala de 0 a 10, o quanto você recomendaria o BíbliaFS para um amigo?
+                  </p>
+                  
+                  <div className="flex justify-between gap-1 flex-wrap mb-8">
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => {
+                          const event = new CustomEvent('open-nps-score', { detail: { score: num } });
+                          window.dispatchEvent(event);
+                        }}
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full text-xs sm:text-sm font-bold bg-muted hover:bg-primary hover:text-primary-foreground transition-all transform hover:scale-110 shadow-sm"
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+
+                  <Button 
+                    variant="outline" 
+                    className="w-full rounded-xl py-6"
+                    onClick={() => {
+                      const event = new CustomEvent('open-nps-dialog');
+                      window.dispatchEvent(event);
+                    }}
+                  >
+                    Enviar feedback detalhado
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

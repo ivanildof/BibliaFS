@@ -24,19 +24,20 @@ export function NPSDialog() {
   const [comment, setComment] = useState("");
 
   useEffect(() => {
-    if (!user) return;
-
-    // Check if user has been registered for at least 7 days
-    const createdAt = new Date(user.createdAt || new Date());
-    const now = new Date();
-    const diffDays = Math.ceil((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-
-    const hasResponded = localStorage.getItem(`nps_responded_${user.id}`);
-
-    if (diffDays >= 7 && !hasResponded) {
+    const handleOpen = () => setOpen(true);
+    const handleOpenWithScore = (e: any) => {
+      setScore(e.detail.score);
       setOpen(true);
-    }
-  }, [user]);
+    };
+
+    window.addEventListener('open-nps-dialog', handleOpen);
+    window.addEventListener('open-nps-score', handleOpenWithScore);
+
+    return () => {
+      window.removeEventListener('open-nps-dialog', handleOpen);
+      window.removeEventListener('open-nps-score', handleOpenWithScore);
+    };
+  }, []);
 
   const feedbackMutation = useMutation({
     mutationFn: async (data: { type: string; score?: number; comment?: string }) => {
