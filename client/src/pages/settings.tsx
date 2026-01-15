@@ -402,7 +402,7 @@ export default function Settings() {
             </TabsTrigger>
             <TabsTrigger value="feedback" className="flex items-center gap-2 py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-feedback">
               <Send className="h-4 w-4" />
-              <span className="hidden sm:inline font-medium">Feedback</span>
+              <span className="font-medium">Feedback</span>
             </TabsTrigger>
           </TabsList>
 
@@ -959,7 +959,7 @@ export default function Settings() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Send className="h-5 w-5" />
-                  Avaliar BíbliaFS
+                  Feedback
                 </CardTitle>
                 <CardDescription>
                   Sua opinião é muito importante para nós. Conte-nos como está sendo sua experiência.
