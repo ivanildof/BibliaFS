@@ -1137,8 +1137,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (let chapter = 1; chapter <= bookInfo.chapters; chapter++) {
         episodes.push({
           id: `ep-${bookInfo.abbrev.pt}-${chapter}-${Date.now()}`,
-          title: `${bookInfo.name} - Capítulo ${chapter}`,
-          description: `Leitura completa do capítulo ${chapter} de ${bookInfo.name}`,
+          title: `${bookInfo.name} ${chapter}`,
+          description: `Leitura narrada de ${bookInfo.name} capítulo ${chapter}`,
           audioData: "", // Audio will be generated on-demand when user plays
           duration: 0, // Will be updated when audio is generated
           publishedAt: new Date().toISOString(),
@@ -1149,9 +1149,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const podcastData = {
         title: title.trim().substring(0, 200),
-        description: description ? description.substring(0, 1000) : `Podcast com leitura narrada de ${bookInfo.name} - ${bookInfo.chapters} capítulos`,
+        description: description ? description.substring(0, 1000) : `Leitura narrada de ${bookInfo.name} - ${bookInfo.chapters} capítulos`,
         author: req.user.claims.username || "BíbliaFS",
-        category: (category || "Leitura Bíblica").substring(0, 50),
+        category: (category || "BíbliaFS Rádio").substring(0, 50),
         creatorId: userId,
         bibleBook: bookInfo.name,
         bibleChapter: null, // null means all chapters

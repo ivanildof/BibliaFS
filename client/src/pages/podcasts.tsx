@@ -360,7 +360,7 @@ export default function Podcasts() {
             <DialogContent className="rounded-2xl">
               <DialogHeader>
                 <DialogTitle>Criar Novo Podcast</DialogTitle>
-                <DialogDescription>Escolha um livro da Bíblia para gerar episódios automaticamente.</DialogDescription>
+                <DialogDescription>Escolha um livro da Bíblia para gerar episódios baseados na leitura bíblica narrada.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
@@ -431,13 +431,13 @@ export default function Podcasts() {
                         {podcast.imageUrl ? (
                           <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Headphones className="h-16 w-16 text-primary/40" />
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+                            <Radio className="h-16 w-16 text-primary/40" />
                           </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                          <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                          <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Leitura Bíblica'}</Badge>
                         </div>
                       </div>
                       <CardHeader className="pb-4">
