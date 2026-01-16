@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -16,13 +17,29 @@ import {
   BookOpen,
   Smartphone,
   Monitor,
-  Tablet
+  Tablet,
+  ArrowLeft,
+  ChevronUp
 } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function About() {
   const { t } = useLanguage();
+  const [, setLocation] = useLocation();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   
   const legalPages = [
     {
@@ -95,6 +112,18 @@ export default function About() {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8 space-y-10">
+        <div className="flex justify-start mb-6">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="rounded-xl gap-2 hover:bg-primary/10 transition-colors"
+            onClick={() => setLocation("/")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+        </div>
+
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
@@ -357,6 +386,25 @@ export default function About() {
           </p>
         </footer>
       </div>
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <Button
+              size="icon"
+              className="h-12 w-12 rounded-full shadow-2xl shadow-primary/40 hover-elevate active-elevate-2"
+              onClick={scrollToTop}
+            >
+              <ChevronUp className="h-6 w-6" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
