@@ -276,7 +276,11 @@ export default function Profile() {
                 <Button 
                   variant="ghost" 
                   className="w-full justify-start text-destructive hover:text-destructive" 
-                  onClick={() => window.location.href = '/api/logout'}
+                  onClick={async () => {
+                    const { supabase } = await import("@/lib/supabase");
+                    await supabase.auth.signOut();
+                    window.location.href = "/";
+                  }}
                   data-testid="menu-logout"
                 >
                   <LogOut className="h-4 w-4 mr-3" />
@@ -504,7 +508,11 @@ export default function Profile() {
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-destructive hover:text-destructive" 
-                        onClick={() => window.location.href = '/api/logout'}
+                        onClick={async () => {
+                          const { supabase } = await import("@/lib/supabase");
+                          await supabase.auth.signOut();
+                          window.location.href = "/";
+                        }}
                         data-testid="menu-logout"
                       >
                         <LogOut className="h-4 w-4 mr-3" />
