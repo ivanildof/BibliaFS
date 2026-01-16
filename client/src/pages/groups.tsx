@@ -804,48 +804,56 @@ export default function Groups() {
                           <p className="text-sm">Crie um convite para adicionar membros</p>
                         </div>
                       ) : (
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           {groupInvites.map((invite) => (
                             <div 
                               key={invite.id} 
-                              className="flex items-center justify-between p-3 rounded-lg border"
+                              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 rounded-2xl border bg-card/50 shadow-sm"
                               data-testid={`invite-${invite.id}`}
                             >
-                              <div>
-                                <div className="flex items-center gap-2">
+                              <div className="space-y-1.5 flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-3">
                                   {invite.invitedEmail && (
-                                    <div className="flex items-center gap-1 text-sm">
-                                      <Mail className="h-3 w-3" />
-                                      {invite.invitedEmail}
+                                    <div className="flex items-center gap-2 text-sm font-semibold">
+                                      <Mail className="h-4 w-4 text-primary/70" />
+                                      <span className="truncate max-w-[180px] xs:max-w-none">{invite.invitedEmail}</span>
                                     </div>
                                   )}
                                   {invite.invitedPhone && (
-                                    <div className="flex items-center gap-1 text-sm">
-                                      <Phone className="h-3 w-3" />
-                                      {invite.invitedPhone}
+                                    <div className="flex items-center gap-2 text-sm font-semibold">
+                                      <Phone className="h-4 w-4 text-primary/70" />
+                                      <span>{invite.invitedPhone}</span>
                                     </div>
                                   )}
                                 </div>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Código: <span className="font-mono font-bold">{invite.inviteCode}</span>
-                                </p>
+                                <div className="flex items-center gap-2">
+                                  <div className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/60 bg-muted px-2 py-0.5 rounded-md">
+                                    Código: <span className="font-mono text-primary">{invite.inviteCode}</span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Badge variant={invite.status === "pending" ? "outline" : invite.status === "accepted" ? "default" : "secondary"}>
-                                  {invite.status === "pending" ? "Pendente" : invite.status === "accepted" ? "Aceito" : "Expirado"}
-                                </Badge>
-                                <Button 
-                                  size="icon" 
-                                  variant="ghost"
-                                  onClick={() => copyInviteCode(invite.inviteCode)}
-                                  data-testid={`button-copy-${invite.id}`}
-                                >
-                                  {copiedCode === invite.inviteCode ? (
-                                    <Check className="h-4 w-4 text-green-500" />
-                                  ) : (
-                                    <Copy className="h-4 w-4" />
-                                  )}
-                                </Button>
+                              <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                                <div className="flex items-center gap-2">
+                                  <Badge 
+                                    variant={invite.status === "pending" ? "outline" : invite.status === "accepted" ? "default" : "secondary"}
+                                    className="capitalize font-bold text-[10px] tracking-tight"
+                                  >
+                                    {invite.status === "pending" ? "Pendente" : invite.status === "accepted" ? "Aceito" : "Expirado"}
+                                  </Badge>
+                                  <Button 
+                                    size="icon" 
+                                    variant="ghost"
+                                    className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary transition-all"
+                                    onClick={() => copyInviteCode(invite.inviteCode)}
+                                    data-testid={`button-copy-${invite.id}`}
+                                  >
+                                    {copiedCode === invite.inviteCode ? (
+                                      <Check className="h-4 w-4 text-green-500" />
+                                    ) : (
+                                      <Copy className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           ))}
