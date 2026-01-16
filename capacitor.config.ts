@@ -5,9 +5,21 @@ const config: CapacitorConfig = {
   appName: 'BíbliaFS',
   webDir: 'dist/public',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    // Allow connections to the API server
+    allowNavigation: [
+      'https://bibliafs.com.br/*',
+      'https://*.supabase.co/*',
+      'https://olvumxgyoazdftdyasmx.supabase.co/*'
+    ]
+  },
+  plugins: {
+    CapacitorHttp: {
+      enabled: true
+    }
   },
   android: {
+    allowMixedContent: false,
     buildOptions: {
       keystorePath: undefined,
       keystorePassword: undefined,
