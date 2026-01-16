@@ -176,14 +176,14 @@ function ReadingThemeCard() {
             <Label
               key={theme.id}
               htmlFor={`reading-${theme.id}`}
-              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 cursor-pointer hover-elevate transition-colors [&:has([data-state=checked])]:border-primary`}
+              className={`flex flex-col items-center gap-3 rounded-2xl border-2 p-4 cursor-pointer hover-elevate transition-all [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5`}
             >
-              <div className={`w-full h-20 rounded-lg ${theme.bg} ${theme.text} flex items-center justify-center font-serif text-sm border`}>
-                "Porque Deus amou..."
+              <div className={`w-full h-24 rounded-xl ${theme.bg} ${theme.text} flex items-center justify-center font-serif text-sm border shadow-inner p-4 text-center overflow-hidden leading-tight`}>
+                "Porque Deus amou o mundo..."
               </div>
-              <div className="text-center">
-                <p className="font-medium text-sm">{theme.name}</p>
-                <p className="text-xs text-muted-foreground">{theme.description}</p>
+              <div className="text-center space-y-1">
+                <p className="font-bold text-sm tracking-tight">{theme.name}</p>
+                <p className="text-[10px] leading-tight text-muted-foreground font-medium px-1">{theme.description}</p>
               </div>
               <RadioGroupItem value={theme.id} id={`reading-${theme.id}`} className="sr-only" />
             </Label>
