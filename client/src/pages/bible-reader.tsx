@@ -1066,11 +1066,11 @@ export default function BibleReader() {
       {/* Top Header - Icons only */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" data-testid="button-search-open">
-                  <Search className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 shadow-sm" data-testid="button-search-open">
+                  <Search className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
@@ -1184,8 +1184,8 @@ export default function BibleReader() {
 
             <Sheet open={isBooksOpen} onOpenChange={setIsBooksOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" data-testid="button-menu">
-                  <MoreVertical className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 shadow-sm" data-testid="button-menu">
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
@@ -1245,7 +1245,7 @@ export default function BibleReader() {
 
             <Sheet open={isChaptersOpen} onOpenChange={setIsChaptersOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" data-testid="button-version">
+                <Button variant="outline" size="sm" className="rounded-xl h-10 px-4 shadow-sm font-semibold text-sm min-w-[60px]" data-testid="button-version">
                   {VERSIONS.find(v => v.value === version)?.label || "NVI"}
                 </Button>
               </SheetTrigger>
