@@ -22,7 +22,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Search,
-  MoreVertical,
   ChevronLeft,
   ChevronRight,
   Loader2,
@@ -1184,8 +1183,9 @@ export default function BibleReader() {
 
             <Sheet open={isBooksOpen} onOpenChange={setIsBooksOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 shadow-sm" data-testid="button-menu">
-                  <MoreVertical className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="rounded-xl h-10 px-3 shadow-sm gap-1.5" data-testid="button-menu">
+                  <Book className="h-4 w-4" />
+                  <span className="text-xs font-medium">Livros</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
