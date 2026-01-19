@@ -112,14 +112,6 @@ export default function Register() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="absolute -top-12 left-0">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary gap-2 transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              Voltar ao início
-            </Button>
-          </Link>
-        </div>
         <Card className="border-none shadow-2xl rounded-3xl backdrop-blur-sm bg-card/90">
           <CardHeader className="text-center space-y-2 pt-6">
             <motion.div 
@@ -300,6 +292,14 @@ export default function Register() {
                 <SiGoogle className="h-4 w-4 text-[#4285F4]" />
                 Google
               </Button>
+              <div className="pt-1 flex justify-center">
+                <Link href="/">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary gap-2 transition-colors text-[10px] h-auto py-1 px-2">
+                    <ArrowLeft className="h-3 w-3" />
+                    Voltar ao início
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             <p className="text-xs text-center text-muted-foreground font-medium">
