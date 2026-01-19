@@ -16,7 +16,6 @@ ALTER TABLE post_likes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE post_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE offline_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE audio_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
 
 -- 2. Políticas para a tabela 'users'
@@ -53,9 +52,6 @@ CREATE POLICY "User podcast subscriptions access" ON podcast_subscriptions FOR A
 
 -- Offline Content
 CREATE POLICY "User offline content access" ON offline_content FOR ALL USING (user_id = auth.uid());
-
--- Audio Progress
-CREATE POLICY "User audio progress access" ON audio_progress FOR ALL USING (user_id = auth.uid());
 
 -- Group Members (O usuário pode ver seus próprios registros de membro)
 CREATE POLICY "User group memberships access" ON group_members FOR ALL USING (user_id = auth.uid());
