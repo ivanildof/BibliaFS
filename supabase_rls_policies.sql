@@ -1,4 +1,4 @@
--- Script de Segurança (RLS) para BíbliaFS
+-- Script de Segurança (RLS) para BíbliaFS (Versão Corrigida com Cast de Tipos)
 -- Execute este script no SQL Editor do seu projeto Supabase
 
 -- 1. Habilitar RLS em todas as tabelas de dados pessoais
@@ -19,52 +19,51 @@ ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
 
 -- 2. Políticas para a tabela 'users'
--- Permite que o usuário veja e edite apenas seu próprio perfil
-CREATE POLICY "Users can view own profile" ON users FOR SELECT USING (id = auth.uid());
-CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING (id = auth.uid());
+-- Cast explicativo: auth.uid() retorna UUID, a tabela usa VARCHAR (id)
+CREATE POLICY "Users can view own profile" ON users FOR SELECT USING (id = auth.uid()::text);
+CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING (id = auth.uid()::text);
 
--- 3. Políticas genéricas para tabelas com 'user_id'
--- Formato: Usuários podem Ver, Inserir, Atualizar e Deletar apenas seus próprios dados
+-- 3. Políticas para tabelas com 'user_id' (Isolamento de dados)
 
 -- Bookmarks
-CREATE POLICY "User bookmarks access" ON bookmarks FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User bookmarks access" ON bookmarks FOR ALL USING (user_id = auth.uid()::text);
 
 -- Notes
-CREATE POLICY "User notes access" ON notes FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User notes access" ON notes FOR ALL USING (user_id = auth.uid()::text);
 
 -- Highlights
-CREATE POLICY "User highlights access" ON highlights FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User highlights access" ON highlights FOR ALL USING (user_id = auth.uid()::text);
 
 -- Prayers
-CREATE POLICY "User prayers access" ON prayers FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User prayers access" ON prayers FOR ALL USING (user_id = auth.uid()::text);
 
 -- Reading Plans
-CREATE POLICY "User reading plans access" ON reading_plans FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User reading plans access" ON reading_plans FOR ALL USING (user_id = auth.uid()::text);
 
 -- User Achievements
-CREATE POLICY "User achievements access" ON user_achievements FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User achievements access" ON user_achievements FOR ALL USING (user_id = auth.uid()::text);
 
 -- Bible Settings
-CREATE POLICY "User bible settings access" ON bible_settings FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User bible settings access" ON bible_settings FOR ALL USING (user_id = auth.uid()::text);
 
 -- Podcast Subscriptions
-CREATE POLICY "User podcast subscriptions access" ON podcast_subscriptions FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User podcast subscriptions access" ON podcast_subscriptions FOR ALL USING (user_id = auth.uid()::text);
 
 -- Offline Content
-CREATE POLICY "User offline content access" ON offline_content FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "User offline content access" ON offline_content FOR ALL USING (user_id = auth.uid()::text);
 
--- Group Members (O usuário pode ver seus próprios registros de membro)
-CREATE POLICY "User group memberships access" ON group_members FOR ALL USING (user_id = auth.uid());
+-- Group Members
+CREATE POLICY "User group memberships access" ON group_members FOR ALL USING (user_id = auth.uid()::text);
 
--- 4. Políticas para Comunidade (Posts, Likes, Comentários)
--- Posts: Todos podem ver, mas só o dono pode editar/deletar
+-- 4. Políticas para Comunidade (Visibilidade Pública + Edição Privada)
+-- Posts
 CREATE POLICY "Everyone can view community posts" ON community_posts FOR SELECT USING (true);
-CREATE POLICY "Users can manage own posts" ON community_posts FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage own posts" ON community_posts FOR ALL USING (user_id = auth.uid()::text);
 
--- Likes: Todos podem ver, mas só o dono pode dar/remover like
+-- Likes
 CREATE POLICY "Everyone can view post likes" ON post_likes FOR SELECT USING (true);
-CREATE POLICY "Users can manage own likes" ON post_likes FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage own likes" ON post_likes FOR ALL USING (user_id = auth.uid()::text);
 
--- Comments: Todos podem ver, mas só o dono pode editar/deletar
+-- Comments
 CREATE POLICY "Everyone can view post comments" ON post_comments FOR SELECT USING (true);
-CREATE POLICY "Users can manage own comments" ON post_comments FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage own comments" ON post_comments FOR ALL USING (user_id = auth.uid()::text);
