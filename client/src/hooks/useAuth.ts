@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { apiFetch } from "@/lib/config";
+import { getAuthHeaders } from "@/lib/queryClient";
 import type { User } from "@shared/schema";
 import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -12,21 +13,54 @@ export function useAuth() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setSupabaseUser(session?.user ?? null);
+    const initSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // If we have a session, verify it's still valid by trying to refresh
+      if (session) {
+        const now = Date.now();
+        const expiresAt = (session.expires_at || 0) * 1000;
+        
+        // If token is expired or about to expire, refresh it
+        if (expiresAt < now + 60000) {
+          const { data: refreshData } = await supabase.auth.refreshSession();
+          if (refreshData.session) {
+            setSession(refreshData.session);
+            setSupabaseUser(refreshData.session.user);
+          } else {
+            // Refresh failed, session is invalid
+            await supabase.auth.signOut();
+            setSession(null);
+            setSupabaseUser(null);
+          }
+        } else {
+          setSession(session);
+          setSupabaseUser(session.user);
+        }
+      }
       setSessionLoading(false);
-    });
+    };
+    
+    initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setSupabaseUser(session?.user ?? null);
-        setSessionLoading(false);
-        // Only invalidate on sign in/out events, not on token refresh
-        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      async (event, session) => {
+        if (event === 'TOKEN_REFRESHED' && session) {
+          setSession(session);
+          setSupabaseUser(session.user);
+        } else if (event === 'SIGNED_IN' && session) {
+          setSession(session);
+          setSupabaseUser(session.user);
           queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        } else if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setSupabaseUser(null);
+          queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        } else {
+          setSession(session);
+          setSupabaseUser(session?.user ?? null);
         }
+        setSessionLoading(false);
       }
     );
 
@@ -36,21 +70,33 @@ export function useAuth() {
   const { data: user, isLoading: userLoading, isError: userError } = useQuery<User | null>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
-      if (!session?.access_token) return null;
+      const authHeaders = await getAuthHeaders();
+      if (!authHeaders.Authorization) return null;
       
       const res = await apiFetch("/api/auth/user", {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: authHeaders,
       });
       
-      if (res.status === 401) return null;
+      if (res.status === 401) {
+        // Token might have expired, try to refresh session
+        const { data: refreshData } = await supabase.auth.refreshSession();
+        if (!refreshData.session) {
+          await supabase.auth.signOut();
+          return null;
+        }
+        // Retry with new token
+        const newHeaders = await getAuthHeaders();
+        const retryRes = await apiFetch("/api/auth/user", { headers: newHeaders });
+        if (!retryRes.ok) return null;
+        return retryRes.json();
+      }
       if (!res.ok) throw new Error("Failed to fetch user");
       
       return res.json();
     },
-    enabled: !!session?.access_token,
-    retry: false,
+    enabled: !!session,
+    retry: 1,
+    retryDelay: 1000,
     staleTime: 30000,
     refetchOnWindowFocus: false,
   });
