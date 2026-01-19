@@ -80,10 +80,16 @@ function Router() {
   // Loading state with higher priority/full screen
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background z-[100] fixed inset-0">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="text-muted-foreground font-medium">{t.common.loading}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#6B21F0] z-[100] fixed inset-0">
+        <div className="text-center space-y-6">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full animate-pulse" />
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent relative shadow-xl"></div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-white text-xl font-bold tracking-tight">BíbliaFS</h2>
+            <p className="text-white/70 font-medium animate-pulse">{t.common.loading}...</p>
+          </div>
         </div>
       </div>
     );
@@ -225,10 +231,16 @@ function AppContent() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">{t.common.loading}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#6B21F0] z-[100] fixed inset-0">
+        <div className="text-center space-y-6">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full animate-pulse" />
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent relative shadow-xl"></div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-white text-xl font-bold tracking-tight">BíbliaFS</h2>
+            <p className="text-white/70 font-medium animate-pulse">{t.common.loading}...</p>
+          </div>
         </div>
       </div>
     );
