@@ -1,0 +1,338 @@
+-background-highest: var(--default-surface-color-500);
+    --background-overlay: 
+ color-mix(in srgb, var(--default-surface-color-600) 63%, transparent);
+    --foreground-default: var(--default-text-color-1500);
+    --foreground-dimmer: var(--default-text-color-900);
+    --foreground-dimmest: var(--default-text-color-300);
+    --outline-dimmest: var(--default-surface-color-800);
+    --outline-dimmer: var(--default-surface-color-1200);
+    --outline-default: var(--default-surface-color-1600);
+    --outline-stronger: var(--default-surface-color-1600);
+    --outline-strongest: var(--default-surface-color-1600);
+    --accent-primary-dimmest: var(--primary-surface-color--1400);
+    --accent-primary-dimmer: var(--primary-surface-color--1000);
+    --accent-primary-default: var(--primary-surface-color-000);
+    --accent-primary-stronger: var(--primary-surface-color--100);
+    --accent-primary-strongest: var(--primary-surface-color-200);
+    --accent-positive-dimmest: var(--positive-surface-color-000);
+    --accent-positive-dimmer: var(--positive-surface-color-100);
+    --accent-positive-default: var(--positive-surface-color-200);
+    --accent-positive-stronger: var(--positive-surface-color-400);
+    --accent-positive-strongest: var(--positive-surface-color-600);
+    --accent-negative-dimmest: var(--destructive-surface-color-000);
+    --accent-negative-dimmer: var(--destructive-surface-color-100);
+    --accent-negative-default: var(--destructive-surface-color-200);
+    --accent-negative-stronger: var(--destructive-surface-color-400);
+    --accent-negative-strongest: var(--destructive-surface-color-600);
+}
+<style>
+* {
+    scrollbar-color: var(--background-highest) var(--background-default);
+}
+body {
+    background-color: var(--interactive-background);
+}
+body {
+    background-color: var(--background-root);
+    color: var(--foreground-default);
+    font-size: var(--font-size-default);
+    font-family: var(--font-family-default);
+    --interactive-background: var(--background-default);
+    --interactive-background--active: var(--background-higher);
+    --interactive-border: var(--outline-dimmer);
+    --interactive-border--hover: var(--outline-default);
+}
+html, body {
+    min-height: 100%;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+user agent stylesheet
+body {
+    display: block;
+    margin: 8px;
+}
+style attribute {
+    app-region: unset;
+    --cf-show: 1;
+}
+<style>
+.replit-ui-theme-root {
+    --default-surface-color-100: hsl(210deg, 3.85%, 98%);
+    --default-surface-color-200: hsl(210deg, 3.85%, 96.3653729%);
+    --default-surface-color-300: hsl(210deg, 3.85%, 94.7307458%);
+    --default-surface-color-400: hsl(210deg, 3.85%, 93.0961187%);
+    --default-surface-color-500: hsl(210deg, 3.85%, 91.4614916%);
+    --default-surface-color-600: hsl(210deg, 3.85%, 89.8268645%);
+    --default-surface-color-700: hsl(210deg, 3.85%, 88.1922374%);
+    --default-surface-color-800: hsl(210deg, 3.85%, 86.5576103%);
+    --default-surface-color-900: hsl(210deg, 3.85%, 84.9229832%);
+    --default-surface-color-1000: hsl(210deg, 3.85%, 83.2883561%);
+    --default-surface-color-1100: hsl(210deg, 3.85%, 81.653729%);
+    --default-surface-color-1200: hsl(210deg, 3.85%, 80.0191019%);
+    --default-surface-color-1300: hsl(210deg, 3.85%, 78.38447479999999%);
+    --default-surface-color-1400: hsl(210deg, 3.85%, 76.7498477%);
+    --default-surface-color-1500: hsl(210deg, 3.85%, 75.1152206%);
+    --default-surface-color-1600: hsl(210deg, 3.85%, 73.4805935%);
+    --default-surface-color-000: hsl(210deg, 3.85%, 99.6346271%);
+    --default-text-color-100: hsl(222deg, 5%, 46.3%);
+    --default-text-color-200: hsl(222deg, 5%, 43.15%);
+    --default-text-color-300: hsl(222deg, 5%, 40%);
+    --default-text-color-400: hsl(222deg, 5%, 36.85%);
+    --default-text-color-500: hsl(222deg, 5%, 33.7%);
+    --default-text-color-600: hsl(222deg, 5%, 30.549999999999997%);
+    --default-text-color-700: hsl(222deg, 5%, 27.75%);
+    --default-text-color-800: hsl(222deg, 5%, 24.950000000000003%);
+    --default-text-color-900: hsl(222deg, 5%, 22.15%);
+    --default-text-color-1000: hsl(222deg, 5%, 19.35%);
+    --default-text-color-1100: hsl(222deg, 5%, 16.549999999999997%);
+    --default-text-color-1200: hsl(222deg, 5%, 13.75%);
+    --default-text-color-1300: hsl(222deg, 5%, 11.299999999999997%);
+    --default-text-color-1400: hsl(222deg, 5%, 8.849999999999998%);
+    --default-text-color-1500: hsl(222deg, 5%, 5.700000000000003%);
+    --default-text-color-1600: hsl(222deg, 5%, 1.5%);
+    --default-text-color-000: hsl(222deg, 5%, 49.45%);
+    --default-text-color--100: hsl(222deg, 5%, 52.6%);
+    --default-text-color--200: hsl(222deg, 5%, 55.75%);
+    --default-text-color--300: hsl(222deg, 5%, 58.900000000000006%);
+    --default-text-color--400: hsl(222deg, 5%, 62.05%);
+    --default-text-color--500: hsl(222deg, 5%, 65.2%);
+    --default-text-color--600: hsl(222deg, 5%, 68.35%);
+    --default-text-color--700: hsl(222deg, 5%, 71.5%);
+    --default-text-color--800: hsl(222deg, 5%, 74.65%);
+    --default-text-color--900: hsl(222deg, 5%, 78.15%);
+    --default-text-color--1000: hsl(222deg, 5%, 81.65%);
+    --default-text-color--1100: hsl(222deg, 5%, 85.15%);
+    --default-text-color--1200: hsl(222deg, 5%, 88.65%);
+    --default-text-color--1300: hsl(222deg, 5%, 92.15%);
+    --default-text-color--1400: hsl(222deg, 5%, 95.65%);
+    --default-text-color--1500: hsl(222deg, 5%, 99.15%);
+    --text-input-surface-color-100: hsl(210deg, 3.85%, 98.7%);
+Show all properties (593 more)
+}
+<style>
+.replit-ui-theme-root {
+    --background-root: #EBECED;
+    --background-default: #FCFCFC;
+    --background-higher: #F0F1F2;
+    --background-highest: #E4E5E6;
+    --background-overlay: #F0F1F2A0;
+    --foreground-default: #07080A;
+    --foreground-dimmer: #3D4047;
+    --foreground-dimmest: #5C5F66;
+    --outline-dimmest: #D2D4D6;
+    --outline-dimmer: #C0C3C4;
+    --outline-default: #AFB1B3;
+    --outline-stronger: #98999C;
+    --outline-strongest: #74767A;
+    --accent-primary-dimmest: #B2D9FF;
+    --accent-primary-dimmer: #6BB5FF;
+    --accent-primary-default: #0F87FF;
+    --accent-primary-stronger: #005CB8;
+    --accent-primary-strongest: #004182;
+    --accent-positive-dimmest: #7AEB8D;
+    --accent-positive-dimmer: #3CC954;
+    --accent-positive-default: #00A11B;
+    --accent-positive-stronger: #036E15;
+    --accent-positive-strongest: #004D0D;
+    --accent-negative-dimmest: #FFC7C7;
+    --accent-negative-dimmer: #FF9494;
+    --accent-negative-default: #FA4B4B;
+    --accent-negative-stronger: #C20A0A;
+    --accent-negative-strongest: #8A0000;
+    --brand-accent-dimmest: #FECCB3;
+    --brand-accent-dimmer: #FE9C6C;
+    --brand-accent-default: #EC4E02;
+    --brand-accent-stronger: #BB3E02;
+    --brand-accent-strongest: #7E2A01;
+    --accent-red-dimmest: #FFC7C7;
+    --accent-red-dimmer: #FF9494;
+    --accent-red-default: #FA4B4B;
+    --accent-red-stronger: #C20A0A;
+    --accent-red-strongest: #8A0000;
+    --accent-orange-dimmest: #FFCC99;
+    --accent-orange-dimmer: #FF9933;
+    --accent-orange-default: #D96D00;
+    --accent-orange-stronger: #964B00;
+    --accent-orange-strongest: #693400;
+    --accent-yellow-dimmest: #EBD66E;
+    --accent-yellow-dimmer: #CFB015;
+    --accent-yellow-default: #A68A00;
+    --accent-yellow-stronger: #736000;
+    --accent-yellow-strongest: #4F4200;
+    --accent-lime-dimmest: #C0E378;
+    --accent-lime-dimmer: #93C926;
+Show all properties (51 more)
+}
+:root {
+    --marketing-surface-max-width: 1390px;
+}
+:root {
+    --marketing-surface-max-width: 1390px;
+    --below-the-fold-max-size: 900px;
+}
+:root {
+    --Gallery--shadow-color: var(--foreground-dimmest);
+    --animation-duration: .5s;
+    --animation-delay: .1s;
+}
+:root {
+    --StaggerView--index: 0;
+    --StaggerView--animation-duration: .5s;
+    --StaggerView--animation-delay: .1s;
+    --StaggerView--distance: 20px;
+}
+:root {
+    --header-z-index: 1002;
+}
+:root {
+    --border-width: 1px;
+    --depth: 0;
+    --surface-color: none;
+    --text-color: none;
+    --secondary-text-color: none;
+    --tertiary-text-color: none;
+    --placeholder-text-color: none;
+    --opposite-contrast-text-color: none;
+    --opposite-contrast-secondary-text-color: none;
+    --opposite-contrast-tertiary-text-color: none;
+    --opposite-contrast-placeholder-text-color: none;
+    --surface-border-color-subtle: none;
+    --surface-border-color-regular: none;
+    --surface-border-color-strong: none;
+    --text-color-to-use-in-classes: none;
+    --secondary-text-color-to-use-in-classes: none;
+    --tertiary-text-color-to-use-in-classes: none;
+    --placeholder-text-color-to-use-in-classes: none;
+    --opposite-contrast-surface-border-color-subtle: none;
+    --opposite-contrast-surface-border-color-regular: none;
+    --opposite-contrast-surface-border-color-strong: none;
+    --surface-border-color-subtle-to-use-in-classes: none;
+    --surface-border-color-regular-to-use-in-classes: none;
+    --surface-border-color-strong-to-use-in-classes: none;
+}
+:root {
+    --default-surface-color-100: #fafafa;
+    --default-surface-color-200: #f5f6f6;
+    --default-surface-color-300: #f1f2f2;
+    --default-surface-color-400: #ededee;
+    --default-surface-color-500: #e8e9ea;
+    --default-surface-color-600: #e4e5e6;
+    --default-surface-color-700: #e0e1e2;
+    --default-surface-color-800: #dbddde;
+    --default-surface-color-900: #d7d9da;
+    --default-surface-color-1000: #d3d4d6;
+    --default-surface-color-1100: #ced0d2;
+    --default-surface-color-1200: #caccce;
+    --default-surface-color-1300: #c6c8ca;
+    --default-surface-color-1400: #c1c4c6;
+    --default-surface-color-1500: #bdc0c2;
+    --default-surface-color-1600: #b9bbbe;
+    --default-surface-color-000: #fefefe;
+    --default-text-color-100: #70747c;
+    --default-text-color-200: #696c74;
+    --default-text-color-300: #61646b;
+    --default-text-color-400: #595c63;
+    --default-text-color-500: #52545a;
+    --default-text-color-600: #4a4c52;
+    --default-text-color-700: #43454a;
+    --default-text-color-800: #3c3e43;
+    --default-text-color-900: #36373b;
+    --default-text-color-1000: #2f3034;
+    --default-text-color-1100: #28292c;
+    --default-text-color-1200: #212225;
+    --default-text-color-1300: #1b1c1e;
+    --default-text-color-1400: #151618;
+    --default-text-color-1500: #0e0e0f;
+    --default-text-color-1600: #040404;
+    --default-text-color-000: #787c84;
+    --default-text-color--100: #80848c;
+    --default-text-color--200: #898c94;
+    --default-text-color--300: #91949b;
+    --default-text-color--400: #999ca3;
+    --default-text-color--500: #a2a4ab;
+    --default-text-color--600: #aaadb2;
+    --default-text-color--700: #b3b5ba;
+    --default-text-color--800: #bbbdc2;
+    --default-text-color--900: #c4c6ca;
+    --default-text-color--1000: #cecfd3;
+    --default-text-color--1100: #d7d8db;
+    --default-text-color--1200: #e1e1e4;
+    --default-text-color--1300: #eaebec;
+    --default-text-color--1400: #f3f4f4;
+    --default-text-color--1500: #fdfdfd;
+    --text-input-surface-color-100: #fcfcfc;
+Show all properties (593 more)
+}
+:root {
+    --border-radius-1: 1px;
+    --border-radius-2: 2px;
+    --border-radius-4: 4px;
+    --border-radius-6: 6px;
+    --border-radius-8: 8px;
+    --border-radius-12: 12px;
+    --border-radius-16: 16px;
+    --border-radius-default: var(--border-radius-4);
+    --border-radius-container: var(--border-radius-6);
+    --border-radius-round: 1028px;
+    --space-1: 1px;
+    --space-2: 2px;
+    --space-4: 4px;
+    --space-6: 6px;
+    --space-8: 8px;
+    --space-12: 12px;
+    --space-16: 16px;
+    --space-24: 24px;
+    --space-32: 32px;
+    --space-40: 40px;
+    --space-48: 48px;
+    --space-56: 56px;
+    --space-64: 64px;
+    --space-80: 80px;
+    --space-96: 96px;
+    --space-128: 128px;
+    --space-256: 256px;
+    --space-default: var(--space-8);
+    --shadow-0: 0px 4px 8px 0px rgba(2, 2, 3, .07);
+    --shadow-1: 0px 4px 8px 0px rgba(2, 2, 3, .16);
+    --shadow-2: 0px 8px 16px 0px rgba(2, 2, 3, .32);
+    --shadow-3: 0px 16px 32px 0px rgba(2, 2, 3, .48);
+    --shadow-default: var(--shadow-1);
+    --font-family-default: "IBM Plex Sans", sans-serif;
+    --font-family-code: "ReplitHack", monospace;
+    --font-size-small: 12px;
+    --font-size-default: 14px;
+    --font-size-subhead-default: 16px;
+    --font-size-subhead-big: 20px;
+    --font-size-header-default: 24px;
+    --font-size-header-big: 32px;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 600;
+    --line-height-small: 1.5;
+    --line-height-default: 1.6;
+    --line-height-subhead-default: 1.375;
+    --line-height-subhead-big: 1.4;
+    --line-height-header-default: 1.333;
+    --line-height-header-big: 1.25;
+Show all properties (36 more)
+}
+:root {
+    --column-number: 12;
+}
+<style>
+::-webkit-scrollbar {
+    background-color: var(--background-default);
+    width: 12px;
+}
+<style>
+::-webkit-scrollbar-thumb {
+    background-color: var(--background-highest);
+}
+<style>
+::-webkit-scrollbar-track {
+    background-color: var(--background-default);
+}

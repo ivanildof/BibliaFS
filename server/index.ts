@@ -32,7 +32,9 @@ app.use(helmet({
         "https://*.supabase.co", 
         "wss://*.supabase.co", 
         "https://api.openai.com",
-        "https://sql.js.org"
+        "https://sql.js.org",
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com"
       ],
       frameSrc: [
         "'self'", 
