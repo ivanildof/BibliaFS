@@ -40,12 +40,14 @@ app.use(helmet({
         "https://hooks.stripe.com",
         "https://checkout.stripe.com"
       ],
+      frameAncestors: ["'self'", "https://*.replit.dev", "https://*.replit.com", "https://replit.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: isProduction ? [] : null,
     },
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
+  frameguard: false,
 }));
 
 // Rate limiting ONLY for API endpoints (not static assets)
