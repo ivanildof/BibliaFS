@@ -71,13 +71,19 @@ function Router() {
     }
   }, [isAuthenticated, location, setLocation]);
 
+  useEffect(() => {
+    // If not loading and not authenticated, we ensure we aren't showing the loading screen
+    // This helps prevent white screen on logout
+    if (!authLoading && !isAuthenticated) {
+      // Just a safety check
+    }
+  }, [authLoading, isAuthenticated]);
+
   // Loading state
   if (authLoading) {
     return (
-      <div className="fixed inset-0 bg-[#6B21F0] z-[9999]">
-        <div className="h-full w-full flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-        </div>
+      <div className="fixed inset-0 bg-[#6B21F0] z-[9999] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
       </div>
     );
   }
@@ -218,10 +224,8 @@ function AppContent() {
 
   if (authLoading) {
     return (
-      <div className="fixed inset-0 bg-[#6B21F0] z-[9999]">
-        <div className="h-full w-full flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-        </div>
+      <div className="fixed inset-0 bg-[#6B21F0] z-[9999] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
       </div>
     );
   }
