@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
+import { isNative } from "@/lib/config";
 import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
@@ -92,10 +93,15 @@ export default function Login() {
 
   const googleLoginMutation = useMutation({
     mutationFn: async () => {
+      // Use the production URL for OAuth redirect (required for Capacitor apps)
+      const redirectUrl = isNative 
+        ? "https://bibliafs.com.br/" 
+        : `${window.location.origin}/`;
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: redirectUrl,
         }
       });
       if (error) throw error;
