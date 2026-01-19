@@ -18,28 +18,78 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function getAuthHeaders(): Promise<Record<string, string>> {
-  try {
-    // Try to get current session first
-    let { data: { session } } = await supabase.auth.getSession();
-    
-    // If no session or token is close to expiry, try to refresh
-    if (session?.expires_at) {
-      const expiresAt = session.expires_at * 1000; // Convert to milliseconds
-      const now = Date.now();
-      const fiveMinutes = 5 * 60 * 1000;
+// Token cache to prevent race conditions
+let cachedToken: string | null = null;
+let tokenExpiresAt: number = 0;
+let refreshPromise: Promise<string | null> | null = null;
+
+async function getValidToken(): Promise<string | null> {
+  const now = Date.now();
+  const bufferTime = 60 * 1000; // 1 minute buffer before expiry
+  
+  // If token is still valid, return cached version
+  if (cachedToken && tokenExpiresAt > now + bufferTime) {
+    return cachedToken;
+  }
+  
+  // If already refreshing, wait for that promise
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+  
+  // Start a new refresh
+  refreshPromise = (async () => {
+    try {
+      // First try to get existing session
+      const { data: { session } } = await supabase.auth.getSession();
       
-      // If token expires in less than 5 minutes, refresh it
-      if (expiresAt - now < fiveMinutes) {
-        const { data: refreshData } = await supabase.auth.refreshSession();
-        if (refreshData?.session) {
-          session = refreshData.session;
+      if (session?.access_token && session.expires_at) {
+        const expiresAt = session.expires_at * 1000;
+        
+        // If session is valid and not near expiry, use it
+        if (expiresAt > now + bufferTime) {
+          cachedToken = session.access_token;
+          tokenExpiresAt = expiresAt;
+          return cachedToken;
+        }
+        
+        // Otherwise, refresh the session
+        const { data: refreshData, error } = await supabase.auth.refreshSession();
+        if (refreshData?.session?.access_token && !error) {
+          cachedToken = refreshData.session.access_token;
+          tokenExpiresAt = (refreshData.session.expires_at || 0) * 1000;
+          return cachedToken;
         }
       }
+      
+      // No valid session
+      cachedToken = null;
+      tokenExpiresAt = 0;
+      return null;
+    } finally {
+      refreshPromise = null;
     }
-    
-    if (session?.access_token) {
-      return { Authorization: `Bearer ${session.access_token}` };
+  })();
+  
+  return refreshPromise;
+}
+
+// Listen to auth state changes to update cache
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.access_token) {
+    cachedToken = session.access_token;
+    tokenExpiresAt = (session.expires_at || 0) * 1000;
+  } else {
+    cachedToken = null;
+    tokenExpiresAt = 0;
+  }
+});
+
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  try {
+    const token = await getValidToken();
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
     }
   } catch (error) {
     console.warn("[Auth] Error getting auth headers:", error);
