@@ -60,13 +60,7 @@ function Router() {
   useEffect(() => {
     const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
     if (!authLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
-      // Wait for a bit to allow Supabase to recover session
-      const timer = setTimeout(() => {
-        if (!isAuthenticated) {
-          setLocation("/login", { replace: true });
-        }
-      }, 1000);
-      return () => clearTimeout(timer);
+      setLocation("/login", { replace: true });
     }
   }, [authLoading, isAuthenticated, location, setLocation]);
 

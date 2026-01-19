@@ -67,17 +67,16 @@ export default function Login() {
       return authData;
     },
     onSuccess: async () => {
-      // First invalidate, then wait for refetch to complete before redirecting
+      // Invalidate and refetch auth query
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
       
+      // Navigate immediately
+      setLocation("/", { replace: true });
+
       toast({
         title: "Login realizado!",
         description: "Bem-vindo de volta!",
       });
-      
-      // Use replace instead of push to avoid back-button to login
-      setLocation("/", { replace: true });
     },
     onError: (error: any) => {
       toast({
