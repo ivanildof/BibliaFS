@@ -67,12 +67,9 @@ export default function Login() {
       return authData;
     },
     onSuccess: async () => {
-      // Small delay to ensure Supabase internal state is updated
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
       // First invalidate, then wait for refetch to complete before redirecting
-      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
       
       toast({
         title: "Login realizado!",
