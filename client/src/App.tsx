@@ -52,17 +52,23 @@ import Achievements from "@/pages/achievements";
 import { NPSDialog } from "@/components/NPSDialog";
 
 function Router() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
   const [location, setLocation] = useLocation();
 
   // On native app, redirect to login if not authenticated and on root
   useEffect(() => {
     const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
-    if (!authLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
-      setLocation("/login", { replace: true });
+    if (!isLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
+      // Wait for a bit to allow Supabase to recover session
+      const timer = setTimeout(() => {
+        if (!isAuthenticated) {
+          setLocation("/login", { replace: true });
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [authLoading, isAuthenticated, location, setLocation]);
+  }, [isLoading, isAuthenticated, location, setLocation]);
 
   // If we are authenticated but on login/register, move to home
   useEffect(() => {
@@ -71,19 +77,14 @@ function Router() {
     }
   }, [isAuthenticated, location, setLocation]);
 
-  useEffect(() => {
-    // If not loading and not authenticated, we ensure we aren't showing the loading screen
-    // This helps prevent white screen on logout
-    if (!authLoading && !isAuthenticated) {
-      // Just a safety check
-    }
-  }, [authLoading, isAuthenticated]);
-
-  // Loading state
-  if (authLoading) {
+  // Loading state with higher priority/full screen
+  if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-[#6B21F0] z-[9999] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background z-[100] fixed inset-0">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto"></div>
+          <p className="text-muted-foreground font-medium">{t.common.loading}</p>
+        </div>
       </div>
     );
   }
@@ -183,7 +184,7 @@ function hexToHSL(hex: string): string {
 }
 
 function AppContent() {
-  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
   
   // Apply user's saved theme from backend
@@ -222,10 +223,13 @@ function AppContent() {
     "--sidebar-width-icon": "3rem",
   };
 
-  if (authLoading) {
+  if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-[#6B21F0] z-[9999] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t.common.loading}</p>
+        </div>
       </div>
     );
   }
@@ -237,14 +241,10 @@ function AppContent() {
           <AppSidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shrink-0">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-2">
-                <SidebarTrigger data-testid="button-sidebar-toggle" />
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 mr-1">
-                  <LanguageSelector />
-                  <ThemeToggle />
-                </div>
+                <LanguageSelector />
+                <ThemeToggle />
                 <UserProfile />
               </div>
             </header>

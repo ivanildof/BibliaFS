@@ -279,7 +279,7 @@ export default function Profile() {
                   onClick={async () => {
                     const { supabase } = await import("@/lib/supabase");
                     await supabase.auth.signOut();
-                    window.location.href = "/login";
+                    window.location.href = "/";
                   }}
                   data-testid="menu-logout"
                 >
@@ -511,7 +511,7 @@ export default function Profile() {
                         onClick={async () => {
                           const { supabase } = await import("@/lib/supabase");
                           await supabase.auth.signOut();
-                          window.location.href = "/login";
+                          window.location.href = "/";
                         }}
                         data-testid="menu-logout"
                       >

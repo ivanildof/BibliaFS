@@ -21,7 +21,6 @@ import {
   Sparkles,
   Check,
   ArrowRight,
-  ArrowUp,
   Menu,
   Star,
   Zap,
@@ -678,18 +677,8 @@ export default function Landing() {
             </div>
           </div>
           
-          <div className="pt-8 border-t border-purple-200/50 dark:border-purple-800/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>© 2026 BíbliaFS. Todos os direitos reservados. Desenvolvido por <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">FabriSite</a>.</p>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full shadow-lg hover:bg-primary hover:text-white transition-all duration-300"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              data-testid="button-back-to-top"
-              title="Voltar ao topo"
-            >
-              <ArrowUp className="h-4 w-4" />
-            </Button>
+          <div className="pt-8 border-t border-purple-200/50 dark:border-purple-800/30 text-center text-sm text-muted-foreground">
+            <p>© 2026 BíbliaFS. Todos os direitos reservados. Desenvolvido por FabriSite.</p>
           </div>
         </div>
       </footer>

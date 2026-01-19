@@ -4620,19 +4620,5 @@ Formato da resposta:
 
   const httpServer = createServer(app);
 
-  // Fallback for SPA
-  app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/api")) return next();
-    res.sendFile(path.resolve(process.cwd(), "client/dist/index.html"), (err) => {
-      if (err) {
-        // In dev mode, let Vite handle it
-        if (process.env.NODE_ENV !== "production") {
-          return next();
-        }
-        res.status(404).send("Not Found");
-      }
-    });
-  });
-
   return httpServer;
 }

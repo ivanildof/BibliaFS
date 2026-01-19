@@ -47,19 +47,16 @@ export default function Favorites() {
     version: "nvi"
   });
   
-  const { data: bookmarks = [], isLoading: loadingBookmarks, error: bookmarksError } = useQuery<Bookmark[]>({
+  const { data: bookmarks = [], isLoading: loadingBookmarks } = useQuery<Bookmark[]>({
     queryKey: ["/api/bible/bookmarks"],
-    retry: 1,
   });
 
-  const { data: highlights = [], isLoading: loadingHighlights, error: highlightsError } = useQuery<Highlight[]>({
+  const { data: highlights = [], isLoading: loadingHighlights } = useQuery<Highlight[]>({
     queryKey: ["/api/bible/highlights"],
-    retry: 1,
   });
 
-  const { data: notes = [], isLoading: loadingNotes, error: notesError } = useQuery<Note[]>({
+  const { data: notes = [], isLoading: loadingNotes } = useQuery<Note[]>({
     queryKey: ["/api/notes"],
-    retry: 1,
   });
 
   const deleteBookmarkMutation = useMutation({
@@ -139,36 +136,8 @@ export default function Favorites() {
 
   if (loadingBookmarks || loadingHighlights || loadingNotes) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background/50 backdrop-blur-sm">
-        <div className="text-center space-y-6 p-8">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
-            <Loader2 className="h-16 w-16 animate-spin text-primary relative" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold text-foreground">Carregando seus tesouros...</h3>
-            <p className="text-muted-foreground max-w-[250px] mx-auto text-sm">Estamos preparando sua coleção personalizada de versículos e notas.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const hasError = bookmarksError || highlightsError || notesError;
-
-  if (hasError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen p-6 text-center space-y-4">
-        <div className="bg-destructive/10 p-4 rounded-full">
-          <Heart className="h-12 w-12 text-destructive opacity-50" />
-        </div>
-        <h2 className="text-2xl font-bold">Ops! Algo deu errado</h2>
-        <p className="text-muted-foreground max-w-md">
-          Não conseguimos carregar seus favoritos no momento. Verifique sua conexão.
-        </p>
-        <Button onClick={() => window.location.reload()} variant="outline" className="rounded-xl">
-          Tentar Novamente
-        </Button>
+      <div className="flex items-center justify-center h-screen bg-background/50 backdrop-blur-sm">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -209,34 +178,32 @@ export default function Favorites() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Custom Modern Tabs List */}
           <div className="flex justify-center mb-8">
-            <div className="w-full max-w-sm px-4">
-              <TabsList className="flex h-14 w-full items-center justify-between rounded-full bg-white dark:bg-zinc-900 p-1.5 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-black/5 dark:border-white/5">
-                <TabsTrigger 
-                  value="bookmarks" 
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300"
-                >
-                  <BookmarkIcon className="h-4 w-4 shrink-0" />
-                  <span className="font-bold text-xs sm:text-sm">{t.favorites.bookmarks}</span>
-                  <Badge variant="outline" className="hidden sm:flex ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredBookmarks.length}</Badge>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="highlights" 
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300"
-                >
-                  <Highlighter className="h-4 w-4 shrink-0" />
-                  <span className="font-bold text-xs sm:text-sm">{t.favorites.highlights}</span>
-                  <Badge variant="outline" className="hidden sm:flex ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredHighlights.length}</Badge>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="notes" 
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300"
-                >
-                  <FileText className="h-4 w-4 shrink-0" />
-                  <span className="font-bold text-xs sm:text-sm">{t.favorites.notes}</span>
-                  <Badge variant="outline" className="hidden sm:flex ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredNotes.length}</Badge>
-                </TabsTrigger>
-              </TabsList>
-            </div>
+            <TabsList className="inline-flex h-14 items-center justify-center rounded-2xl bg-muted/40 p-1.5 backdrop-blur-md border border-white/10 shadow-lg">
+              <TabsTrigger 
+                value="bookmarks" 
+                className="flex items-center gap-3 px-6 h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
+              >
+                <BookmarkIcon className="h-4 w-4" />
+                <span className="font-semibold text-sm">{t.favorites.bookmarks}</span>
+                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80">{filteredBookmarks.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="highlights" 
+                className="flex items-center gap-3 px-6 h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
+              >
+                <Highlighter className="h-4 w-4" />
+                <span className="font-semibold text-sm">{t.favorites.highlights}</span>
+                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80">{filteredHighlights.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="notes" 
+                className="flex items-center gap-3 px-6 h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
+              >
+                <FileText className="h-4 w-4" />
+                <span className="font-semibold text-sm">{t.favorites.notes}</span>
+                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80">{filteredNotes.length}</Badge>
+              </TabsTrigger>
+            </TabsList>
           </div>
 
           <ScrollArea className="h-[calc(100vh-320px)] pr-4 -mr-4">

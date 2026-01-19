@@ -352,10 +352,8 @@ export default function Settings() {
     saveThemeMutation.mutate(themeData);
   };
 
-  const handleLogout = async () => {
-    const { supabase } = await import("@/lib/supabase");
-    await supabase.auth.signOut();
-    window.location.href = "/login";
+  const handleLogout = () => {
+    window.location.href = "/api/logout";
   };
 
   return (
