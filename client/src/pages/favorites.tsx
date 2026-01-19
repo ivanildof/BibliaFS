@@ -47,16 +47,19 @@ export default function Favorites() {
     version: "nvi"
   });
   
-  const { data: bookmarks = [], isLoading: loadingBookmarks } = useQuery<Bookmark[]>({
+  const { data: bookmarks = [], isLoading: loadingBookmarks, error: bookmarksError } = useQuery<Bookmark[]>({
     queryKey: ["/api/bible/bookmarks"],
+    retry: 1,
   });
 
-  const { data: highlights = [], isLoading: loadingHighlights } = useQuery<Highlight[]>({
+  const { data: highlights = [], isLoading: loadingHighlights, error: highlightsError } = useQuery<Highlight[]>({
     queryKey: ["/api/bible/highlights"],
+    retry: 1,
   });
 
-  const { data: notes = [], isLoading: loadingNotes } = useQuery<Note[]>({
+  const { data: notes = [], isLoading: loadingNotes, error: notesError } = useQuery<Note[]>({
     queryKey: ["/api/notes"],
+    retry: 1,
   });
 
   const deleteBookmarkMutation = useMutation({
@@ -136,8 +139,36 @@ export default function Favorites() {
 
   if (loadingBookmarks || loadingHighlights || loadingNotes) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background/50 backdrop-blur-sm">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-screen bg-background/50 backdrop-blur-sm">
+        <div className="text-center space-y-6 p-8">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
+            <Loader2 className="h-16 w-16 animate-spin text-primary relative" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-foreground">Carregando seus tesouros...</h3>
+            <p className="text-muted-foreground max-w-[250px] mx-auto text-sm">Estamos preparando sua coleção personalizada de versículos e notas.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const hasError = bookmarksError || highlightsError || notesError;
+
+  if (hasError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen p-6 text-center space-y-4">
+        <div className="bg-destructive/10 p-4 rounded-full">
+          <Heart className="h-12 w-12 text-destructive opacity-50" />
+        </div>
+        <h2 className="text-2xl font-bold">Ops! Algo deu errado</h2>
+        <p className="text-muted-foreground max-w-md">
+          Não conseguimos carregar seus favoritos no momento. Verifique sua conexão.
+        </p>
+        <Button onClick={() => window.location.reload()} variant="outline" className="rounded-xl">
+          Tentar Novamente
+        </Button>
       </div>
     );
   }
