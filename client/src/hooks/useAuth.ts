@@ -102,8 +102,15 @@ export function useAuth() {
   });
 
   const signOut = async () => {
+    // Clear state first to prevent flash
+    setSession(null);
+    setSupabaseUser(null);
+    // Then sign out from Supabase
     await supabase.auth.signOut();
+    // Clear queries after sign out
     queryClient.clear();
+    // Navigate to login
+    window.location.href = "/login";
   };
 
   // Consider loading only during initial session check
