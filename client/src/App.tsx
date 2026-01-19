@@ -77,22 +77,9 @@ function Router() {
     }
   }, [isAuthenticated, location, setLocation]);
 
-  // Loading state with higher priority/full screen
+  // Loading state
   if (authLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#6B21F0] z-[100] fixed inset-0">
-        <div className="text-center space-y-6">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full animate-pulse" />
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent relative shadow-xl"></div>
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-white text-xl font-bold tracking-tight">BíbliaFS</h2>
-            <p className="text-white/70 font-medium animate-pulse">{t.common.loading}...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -230,20 +217,7 @@ function AppContent() {
   };
 
   if (authLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#6B21F0] z-[100] fixed inset-0">
-        <div className="text-center space-y-6">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full animate-pulse" />
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent relative shadow-xl"></div>
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-white text-xl font-bold tracking-tight">BíbliaFS</h2>
-            <p className="text-white/70 font-medium animate-pulse">{t.common.loading}...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (isAuthenticated) {
