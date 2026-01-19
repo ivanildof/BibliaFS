@@ -208,33 +208,35 @@ export default function Favorites() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Custom Modern Tabs List */}
-          <div className="flex justify-center mb-8 px-2 overflow-x-auto no-scrollbar">
-            <TabsList className="inline-flex h-14 items-center justify-center rounded-full bg-white dark:bg-zinc-900 p-1.5 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-black/5 dark:border-white/5 min-w-fit">
-              <TabsTrigger 
-                value="bookmarks" 
-                className="flex items-center gap-2 px-6 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300 whitespace-nowrap"
-              >
-                <BookmarkIcon className="h-4 w-4" />
-                <span className="font-bold text-sm">{t.favorites.bookmarks}</span>
-                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredBookmarks.length}</Badge>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="highlights" 
-                className="flex items-center gap-2 px-6 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300 whitespace-nowrap"
-              >
-                <Highlighter className="h-4 w-4" />
-                <span className="font-bold text-sm">{t.favorites.highlights}</span>
-                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredHighlights.length}</Badge>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="notes" 
-                className="flex items-center gap-2 px-6 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300 whitespace-nowrap"
-              >
-                <FileText className="h-4 w-4" />
-                <span className="font-bold text-sm">{t.favorites.notes}</span>
-                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredNotes.length}</Badge>
-              </TabsTrigger>
-            </TabsList>
+          <div className="flex justify-center mb-8">
+            <div className="w-full max-w-sm px-4">
+              <TabsList className="flex h-14 w-full items-center justify-between rounded-full bg-white dark:bg-zinc-900 p-1.5 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-black/5 dark:border-white/5">
+                <TabsTrigger 
+                  value="bookmarks" 
+                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300"
+                >
+                  <BookmarkIcon className="h-4 w-4 shrink-0" />
+                  <span className="font-bold text-xs sm:text-sm">{t.favorites.bookmarks}</span>
+                  <Badge variant="outline" className="hidden sm:flex ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredBookmarks.length}</Badge>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="highlights" 
+                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300"
+                >
+                  <Highlighter className="h-4 w-4 shrink-0" />
+                  <span className="font-bold text-xs sm:text-sm">{t.favorites.highlights}</span>
+                  <Badge variant="outline" className="hidden sm:flex ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredHighlights.length}</Badge>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="notes" 
+                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_14px_0_rgba(107,33,240,0.39)] transition-all duration-300"
+                >
+                  <FileText className="h-4 w-4 shrink-0" />
+                  <span className="font-bold text-xs sm:text-sm">{t.favorites.notes}</span>
+                  <Badge variant="outline" className="hidden sm:flex ml-1 px-1.5 h-5 border-current opacity-80 rounded-full bg-transparent">{filteredNotes.length}</Badge>
+                </TabsTrigger>
+              </TabsList>
+            </div>
           </div>
 
           <ScrollArea className="h-[calc(100vh-320px)] pr-4 -mr-4">
