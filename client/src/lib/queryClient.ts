@@ -19,9 +19,30 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function getAuthHeaders(): Promise<Record<string, string>> {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    return { Authorization: `Bearer ${session.access_token}` };
+  try {
+    // Try to get current session first
+    let { data: { session } } = await supabase.auth.getSession();
+    
+    // If no session or token is close to expiry, try to refresh
+    if (session?.expires_at) {
+      const expiresAt = session.expires_at * 1000; // Convert to milliseconds
+      const now = Date.now();
+      const fiveMinutes = 5 * 60 * 1000;
+      
+      // If token expires in less than 5 minutes, refresh it
+      if (expiresAt - now < fiveMinutes) {
+        const { data: refreshData } = await supabase.auth.refreshSession();
+        if (refreshData?.session) {
+          session = refreshData.session;
+        }
+      }
+    }
+    
+    if (session?.access_token) {
+      return { Authorization: `Bearer ${session.access_token}` };
+    }
+  } catch (error) {
+    console.warn("[Auth] Error getting auth headers:", error);
   }
   return {};
 }
@@ -79,10 +100,12 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 5, // 5 minutes for fresh data
       gcTime: 1000 * 60 * 30, // 30 minutes cache retention
-      retry: false,
+      retry: 2, // Retry up to 2 times for transient failures
+      retryDelay: (attemptIndex) => Math.min(1000 * (attemptIndex + 1), 3000),
     },
     mutations: {
-      retry: false,
+      retry: 1,
+      retryDelay: 1000,
     },
   },
 });
