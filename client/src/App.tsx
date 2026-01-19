@@ -73,7 +73,13 @@ function Router() {
 
   // Loading state
   if (authLoading) {
-    return null;
+    return (
+      <div className="fixed inset-0 bg-[#6B21F0] z-[9999]">
+        <div className="h-full w-full flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -211,7 +217,13 @@ function AppContent() {
   };
 
   if (authLoading) {
-    return null;
+    return (
+      <div className="fixed inset-0 bg-[#6B21F0] z-[9999]">
+        <div className="h-full w-full flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+        </div>
+      </div>
+    );
   }
 
   if (isAuthenticated) {

@@ -67,12 +67,11 @@ export default function Login() {
       return authData;
     },
     onSuccess: async () => {
-      // Invalidate and refetch auth query
+      // Navigate immediately while cache is invalidating in background
+      setLocation("/", { replace: true });
+      
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       
-      // Navigate immediately
-      setLocation("/", { replace: true });
-
       toast({
         title: "Login realizado!",
         description: "Bem-vindo de volta!",
