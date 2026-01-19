@@ -241,10 +241,14 @@ function AppContent() {
           <AppSidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shrink-0">
-              <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-2">
-                <LanguageSelector />
-                <ThemeToggle />
+                <SidebarTrigger data-testid="button-sidebar-toggle" />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mr-1">
+                  <LanguageSelector />
+                  <ThemeToggle />
+                </div>
                 <UserProfile />
               </div>
             </header>
