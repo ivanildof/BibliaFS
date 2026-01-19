@@ -1,14 +1,191 @@
-const CACHE_NAME = 'bibliasf-push-v1';
+const CACHE_NAME = 'bibliasf-v2';
+const STATIC_CACHE = 'bibliasf-static-v2';
+const DYNAMIC_CACHE = 'bibliasf-dynamic-v2';
+
+const STATIC_ASSETS = [
+  '/',
+  '/manifest.json',
+  '/favicon.ico',
+  '/favicon.png',
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png',
+  '/apple-touch-icon.png',
+  '/bible.db'
+];
+
+const CACHE_EXPIRATION = 7 * 24 * 60 * 60 * 1000;
 
 self.addEventListener('install', (event) => {
   console.log('[ServiceWorker] Install');
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(STATIC_CACHE)
+      .then((cache) => {
+        console.log('[ServiceWorker] Pre-caching static assets');
+        return cache.addAll(STATIC_ASSETS.filter(url => url !== '/bible.db'));
+      })
+      .then(() => self.skipWaiting())
+      .catch((error) => {
+        console.error('[ServiceWorker] Pre-cache failed:', error);
+        return self.skipWaiting();
+      })
+  );
 });
+
+const BIBLE_CACHE_NAME = 'bibliasf-bible-v1';
 
 self.addEventListener('activate', (event) => {
   console.log('[ServiceWorker] Activate');
-  event.waitUntil(clients.claim());
+  const validCaches = [STATIC_CACHE, DYNAMIC_CACHE, CACHE_NAME, BIBLE_CACHE_NAME];
+  event.waitUntil(
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => !validCaches.includes(name))
+            .map((name) => {
+              console.log('[ServiceWorker] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      })
+      .then(() => clients.claim())
+  );
 });
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  if (url.pathname.startsWith('/api/bible/')) {
+    event.respondWith(bibleApiCache(request));
+    return;
+  }
+
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if (request.destination === 'image' || 
+      url.pathname.endsWith('.js') || 
+      url.pathname.endsWith('.css') ||
+      url.pathname.endsWith('.woff2') ||
+      url.pathname.endsWith('.woff')) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  event.respondWith(staleWhileRevalidate(request));
+});
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) {
+    return cached;
+  }
+  
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(STATIC_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    console.error('[ServiceWorker] Cache first failed:', error);
+    return new Response('Offline', { status: 503 });
+  }
+}
+
+async function networkFirst(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    const cached = await caches.match(request);
+    if (cached) {
+      return cached;
+    }
+    
+    if (request.mode === 'navigate') {
+      const fallback = await caches.match('/');
+      if (fallback) {
+        return fallback;
+      }
+    }
+    
+    return new Response(JSON.stringify({ 
+      error: 'Você está offline. Por favor, verifique sua conexão.',
+      offline: true 
+    }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function staleWhileRevalidate(request) {
+  const cached = await caches.match(request);
+  
+  const fetchPromise = fetch(request)
+    .then((response) => {
+      if (response.ok) {
+        const cache = caches.open(DYNAMIC_CACHE);
+        cache.then((c) => c.put(request, response.clone()));
+      }
+      return response;
+    })
+    .catch(() => cached);
+  
+  return cached || fetchPromise;
+}
+
+async function bibleApiCache(request) {
+  const cached = await caches.match(request);
+  
+  if (cached) {
+    fetch(request)
+      .then(async (response) => {
+        if (response.ok) {
+          const cache = await caches.open(BIBLE_CACHE_NAME);
+          await cache.put(request, response);
+        }
+      })
+      .catch(() => {});
+    
+    return cached;
+  }
+  
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(BIBLE_CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    return new Response(JSON.stringify({ 
+      error: 'Este capítulo não está disponível offline. Conecte-se à internet para baixá-lo.',
+      offline: true 
+    }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
 
 self.addEventListener('push', (event) => {
   console.log('[ServiceWorker] Push received');
@@ -16,8 +193,8 @@ self.addEventListener('push', (event) => {
   let data = {
     title: 'BíbliaFS',
     body: 'Você tem uma nova notificação',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
+    icon: '/android-chrome-192x192.png',
+    badge: '/favicon-32x32.png',
     tag: 'bibliasf-notification',
     data: {}
   };
@@ -32,8 +209,8 @@ self.addEventListener('push', (event) => {
   
   const options = {
     body: data.body,
-    icon: data.icon || '/icons/icon-192x192.png',
-    badge: data.badge || '/icons/badge-72x72.png',
+    icon: data.icon || '/android-chrome-192x192.png',
+    badge: data.badge || '/favicon-32x32.png',
     tag: data.tag || 'bibliasf-notification',
     vibrate: [100, 50, 100],
     data: data.data || {},
@@ -86,4 +263,10 @@ self.addEventListener('notificationclick', (event) => {
 
 self.addEventListener('notificationclose', (event) => {
   console.log('[ServiceWorker] Notification closed');
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

@@ -1,0 +1,83 @@
+Documento de Requisitos do Produto (PRD)
+Produto: BíbliaFS
+Versão: 1.0 – Correções de Estabilidade e Performance
+Data: 20 de janeiro de 2026
+Responsável: FabriSite / Ivanildo
+Domínio: https://bibliafs.com.br (preferência por HTTPS)
+
+1. Objetivo
+Corrigir falhas críticas que impactam negativamente a experiência do usuário no aplicativo BíbliaFS, incluindo:
+
+Erros de responsividade em dispositivos móveis e desktops;
+Lentidão na abertura de páginas e carregamento de conteúdo;
+Páginas retornando erro 404 (Not Found);
+Problemas gerais de performance e estabilidade.
+O objetivo é entregar uma versão funcional, rápida e confiável, especialmente otimizada para dispositivos Android, com suporte offline completo e navegação fluida.
+
+2. Problemas Identificados
+ID
+Descrição do Problema
+Impacto
+P01
+Layout quebrado ou mal dimensionado em telas menores (responsividade)
+Alta frustração do usuário, abandono
+P02
+Demora excessiva ao clicar em links ou botões (até vários segundos)
+Perda de engajamento
+P03
+Conteúdo demora a aparecer mesmo após a página carregar
+Sensação de instabilidade
+P04
+Páginas retornam erro 404 (ex: rotas inexistentes ou mal configuradas)
+Quebra total da jornada do usuário
+P05
+Ausência de fallback para conexão offline (principalmente em Android)
+Impede uso básico do app sem internet
+3. Requisitos Funcionais
+3.1. Correção de Responsividade
+Todas as páginas devem ser totalmente responsivas (mobile-first).
+Testes obrigatórios em:
+Android (Chrome, Samsung Internet)
+iOS (Safari)
+Desktop (Chrome, Firefox, Edge)
+3.2. Otimização de Performance
+Tempo máximo de resposta ao clique: ≤ 800ms.
+Carregamento inicial da página (First Contentful Paint): ≤ 2s em rede 3G simulada.
+Implementar lazy loading para imagens, áudios e seções não visíveis.
+Minificar e agrupar assets (CSS, JS).
+3.3. Correção de Rotas e Erros 404
+Revisar todas as rotas do frontend (React/Vue/etc.) e backend (Supabase ou outro).
+Garantir que:
+Links internos apontem para URLs válidas.
+Página 404 personalizada com botão “Voltar ao início”.
+Redirecionamentos 301/302 corretos para URLs antigas (se houver migração).
+3.4. Suporte Offline Aprimorado (especialmente Android)
+Armazenar livros, versículos e metadados em cache via Service Worker.
+Permitir acesso offline a:
+Leitura de textos bíblicos
+Reprodução de áudios previamente baixados
+Exibir mensagem clara quando o recurso não estiver disponível offline.
+3.5. Persistência de Autenticação
+Manter login ativo mesmo após fechar/reabrir o navegador.
+Utilizar localStorage ou secure cookies com token JWT (já esperado pelo usuário).
+4. Requisitos Não Funcionais
+Compatibilidade: Android 8+ (prioridade), iOS 12+, navegadores modernos.
+Segurança: Forçar HTTPS em todo o domínio (bibliafs.com.br).
+Monitoramento: Integrar ferramenta de logging (ex: Sentry) para capturar erros 404, JS crashes e lentidão.
+Testes: Realizar testes reais em dispositivos físicos Android antes do deploy.
+5. Critérios de Aceitação
+Nenhuma página retorna erro 404 em navegação normal.
+Todos os elementos são visíveis e utilizáveis em celulares (testado em 3 modelos Android).
+Tempo médio de carregamento de página < 2s (em rede 3G simulada).
+Funcionalidades principais (leitura, áudio) funcionam offline após primeiro uso.
+Usuário logado permanece autenticado após reiniciar o navegador.
+6. Entregáveis
+Versão corrigida do frontend/backend.
+Relatório de testes de performance e compatibilidade.
+Documentação das rotas corrigidas.
+Atualização do Service Worker para offline.
+Página 404 personalizada.
+7. Observações
+Este PRD complementa outros já solicitados (ex: áudio offline, temas, planos anuais).
+Priorize correções críticas antes de novas funcionalidades.
+O domínio bibliafs.com.br deve redirecionar automaticamente para HTTPS.
