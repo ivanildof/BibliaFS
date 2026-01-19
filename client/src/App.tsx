@@ -52,14 +52,14 @@ import Achievements from "@/pages/achievements";
 import { NPSDialog } from "@/components/NPSDialog";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [location, setLocation] = useLocation();
 
   // On native app, redirect to login if not authenticated and on root
   useEffect(() => {
     const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
-    if (!isLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
+    if (!authLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
       // Wait for a bit to allow Supabase to recover session
       const timer = setTimeout(() => {
         if (!isAuthenticated) {
@@ -68,7 +68,7 @@ function Router() {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [isLoading, isAuthenticated, location, setLocation]);
+  }, [authLoading, isAuthenticated, location, setLocation]);
 
   // If we are authenticated but on login/register, move to home
   useEffect(() => {
@@ -78,7 +78,7 @@ function Router() {
   }, [isAuthenticated, location, setLocation]);
 
   // Loading state with higher priority/full screen
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#6B21F0] z-[100] fixed inset-0">
         <div className="text-center space-y-6">
@@ -190,7 +190,7 @@ function hexToHSL(hex: string): string {
 }
 
 function AppContent() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
   const { t } = useLanguage();
   
   // Apply user's saved theme from backend
@@ -229,7 +229,7 @@ function AppContent() {
     "--sidebar-width-icon": "3rem",
   };
 
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#6B21F0] z-[100] fixed inset-0">
         <div className="text-center space-y-6">
