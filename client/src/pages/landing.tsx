@@ -679,7 +679,7 @@ export default function Landing() {
           </div>
           
           <div className="pt-8 border-t border-purple-200/50 dark:border-purple-800/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>© 2026 BíbliaFS. Todos os direitos reservados. Desenvolvido por FabriSite.</p>
+            <p>© 2026 BíbliaFS. Todos os direitos reservados. Desenvolvido por <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">FabriSite</a>.</p>
             <Button
               variant="outline"
               size="icon"
