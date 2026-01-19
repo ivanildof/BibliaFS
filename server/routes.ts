@@ -212,10 +212,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/bible.db", (req, res) => {
     // Try multiple locations for the bible.db file
     const possiblePaths = [
-      path.resolve(process.cwd(), "client/public/bible.db"),
       path.resolve(process.cwd(), "dist/public/bible.db"),
-      path.resolve(currentDir, "../client/public/bible.db"),
+      path.resolve(process.cwd(), "client/public/bible.db"),
       path.resolve(currentDir, "../dist/public/bible.db"),
+      path.resolve(currentDir, "../client/public/bible.db"),
     ];
     
     for (const filePath of possiblePaths) {
