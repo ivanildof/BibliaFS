@@ -26,19 +26,36 @@ export function NPSDialog() {
   useEffect(() => {
     const handleOpen = () => setOpen(true);
     const handleOpenWithScore = (e: any) => {
-      console.log("[NPSDialog] Event received with score:", e.detail?.score);
-      if (e.detail?.score !== undefined) {
-        setScore(e.detail.score);
+      const receivedScore = e.detail?.score;
+      console.log("[NPSDialog] Event received with score:", receivedScore);
+      if (receivedScore !== undefined && receivedScore !== null) {
+        setScore(Number(receivedScore));
         setOpen(true);
+      }
+    };
+
+    // Global listener for cross-platform compatibility (APK/PWA)
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const scoreBtn = target.closest('[data-nps-score]');
+      if (scoreBtn) {
+        const score = scoreBtn.getAttribute('data-nps-score');
+        if (score !== null) {
+          console.log("[NPSDialog] Global capture score:", score);
+          setScore(Number(score));
+          setOpen(true);
+        }
       }
     };
 
     window.addEventListener('open-nps-dialog', handleOpen);
     window.addEventListener('open-nps-score', handleOpenWithScore);
+    document.addEventListener('click', handleGlobalClick);
 
     return () => {
       window.removeEventListener('open-nps-dialog', handleOpen);
       window.removeEventListener('open-nps-score', handleOpenWithScore);
+      document.removeEventListener('click', handleGlobalClick);
     };
   }, []);
 
