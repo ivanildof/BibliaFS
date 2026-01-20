@@ -49,9 +49,6 @@ import Groups from "@/pages/groups";
 import VersionCompare from "@/pages/version-compare";
 import Achievements from "@/pages/achievements";
 
-import { NPSDialog } from "@/components/NPSDialog";
-
-function Router() {
   const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
   const [location, setLocation] = useLocation();
@@ -267,11 +264,6 @@ function App() {
       <ThemeProvider>
         <LanguageProvider>
           <OfflineProvider>
-            <TooltipProvider>
-              <AppContent />
-              <NPSDialog />
-              <Toaster />
-            </TooltipProvider>
           </OfflineProvider>
         </LanguageProvider>
       </ThemeProvider>
