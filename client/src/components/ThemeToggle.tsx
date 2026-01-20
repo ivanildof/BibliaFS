@@ -16,9 +16,9 @@ export function ThemeToggle() {
       <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-primary/5 dark:from-primary/20 dark:to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       <div className="relative z-10 flex items-center justify-center">
         {theme === "light" ? (
-          <Moon className="h-5 w-5" />
+          <Moon className="h-5 w-5 text-indigo-500" />
         ) : (
-          <Sun className="h-5 w-5" />
+          <Sun className="h-5 w-5 text-yellow-500" />
         )}
       </div>
       <span className="sr-only">Alternar tema</span>

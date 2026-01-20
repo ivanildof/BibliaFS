@@ -274,7 +274,7 @@ function SidebarTrigger({
       {...props}
     >
       <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-primary/5 dark:from-primary/20 dark:to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <PanelLeftIcon className="relative z-10" />
+      <PanelLeftIcon className="relative z-10 text-primary" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
