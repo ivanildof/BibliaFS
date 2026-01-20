@@ -296,6 +296,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const resendApiKey = process.env.RESEND_API_KEY;
       let emailSent = false;
       
+      // Verification logic: bibliafs.com.br must be verified on Resend.
+      // If not, we fallback to console and also inform user.
       if (resendApiKey) {
         try {
           const response = await fetch('https://api.resend.com/emails', {
@@ -305,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Authorization': `Bearer ${resendApiKey}`,
             },
             body: JSON.stringify({
-              from: 'BíbliaFS <noreply@bibliafs.com.br>',
+              from: 'BíbliaFS <suporte@bibliafs.com.br>', // Changed to match possible verified sender
               to: email,
               subject: 'Recuperação de Senha - BíbliaFS',
               html: `
@@ -344,6 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } else {
             const errorData = await response.json();
             console.error(`❌ [Password Reset] Erro Resend:`, errorData);
+            // If domain not verified, we can't do much here except log and fallback
           }
         } catch (emailError) {
           console.error(`❌ [Password Reset] Erro ao enviar email:`, emailError);
