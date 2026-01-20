@@ -1,0 +1,129 @@
+index-CIyoFPfB.js:694 wasm streaming compile failed: CompileError: WebAssembly.instantiateStreaming(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: 
+wt @ index-CIyoFPfB.js:694
+await in wt
+(anonymous) @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:695
+s @ index-CIyoFPfB.js:694
+loadDatabase @ index-CIyoFPfB.js:695
+init @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:702
+setTimeout
+O @ index-CIyoFPfB.js:702
+requestIdleCallback
+k @ index-CIyoFPfB.js:702
+await in k
+(anonymous) @ index-CIyoFPfB.js:702
+Vx @ index-CIyoFPfB.js:40
+_d @ index-CIyoFPfB.js:40
+JS @ index-CIyoFPfB.js:40
+ul @ index-CIyoFPfB.js:38
+u9 @ index-CIyoFPfB.js:40
+Al @ index-CIyoFPfB.js:40
+J5 @ index-CIyoFPfB.js:40
+C @ index-CIyoFPfB.js:25
+B @ index-CIyoFPfB.js:25Understand this error
+index-CIyoFPfB.js:694 falling back to ArrayBuffer instantiation
+wt @ index-CIyoFPfB.js:694
+await in wt
+(anonymous) @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:695
+s @ index-CIyoFPfB.js:694
+loadDatabase @ index-CIyoFPfB.js:695
+init @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:702
+setTimeout
+O @ index-CIyoFPfB.js:702
+requestIdleCallback
+k @ index-CIyoFPfB.js:702
+await in k
+(anonymous) @ index-CIyoFPfB.js:702
+Vx @ index-CIyoFPfB.js:40
+_d @ index-CIyoFPfB.js:40
+JS @ index-CIyoFPfB.js:40
+ul @ index-CIyoFPfB.js:38
+u9 @ index-CIyoFPfB.js:40
+Al @ index-CIyoFPfB.js:40
+J5 @ index-CIyoFPfB.js:40
+C @ index-CIyoFPfB.js:25
+B @ index-CIyoFPfB.js:25Understand this error
+index-CIyoFPfB.js:694 failed to asynchronously prepare wasm: CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: 
+Te @ index-CIyoFPfB.js:694
+await in Te
+wt @ index-CIyoFPfB.js:694
+await in wt
+(anonymous) @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:695
+s @ index-CIyoFPfB.js:694
+loadDatabase @ index-CIyoFPfB.js:695
+init @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:702
+setTimeout
+O @ index-CIyoFPfB.js:702
+requestIdleCallback
+k @ index-CIyoFPfB.js:702
+await in k
+(anonymous) @ index-CIyoFPfB.js:702
+Vx @ index-CIyoFPfB.js:40
+_d @ index-CIyoFPfB.js:40
+JS @ index-CIyoFPfB.js:40
+ul @ index-CIyoFPfB.js:38
+u9 @ index-CIyoFPfB.js:40
+Al @ index-CIyoFPfB.js:40
+J5 @ index-CIyoFPfB.js:40
+C @ index-CIyoFPfB.js:25
+B @ index-CIyoFPfB.js:25Understand this error
+index-CIyoFPfB.js:694 Aborted(CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: )
+Se @ index-CIyoFPfB.js:694
+Te @ index-CIyoFPfB.js:694
+await in Te
+wt @ index-CIyoFPfB.js:694
+await in wt
+(anonymous) @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:695
+s @ index-CIyoFPfB.js:694
+loadDatabase @ index-CIyoFPfB.js:695
+init @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:702
+setTimeout
+O @ index-CIyoFPfB.js:702
+requestIdleCallback
+k @ index-CIyoFPfB.js:702
+await in k
+(anonymous) @ index-CIyoFPfB.js:702
+Vx @ index-CIyoFPfB.js:40
+_d @ index-CIyoFPfB.js:40
+JS @ index-CIyoFPfB.js:40
+ul @ index-CIyoFPfB.js:38
+u9 @ index-CIyoFPfB.js:40
+Al @ index-CIyoFPfB.js:40
+J5 @ index-CIyoFPfB.js:40
+C @ index-CIyoFPfB.js:25
+B @ index-CIyoFPfB.js:25Understand this error
+index-CIyoFPfB.js:695 [BibleSQLite] Error loading database: Error: CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: 
+    at l.onAbort (index-CIyoFPfB.js:694:64424)
+    at Se (index-CIyoFPfB.js:694:77318)
+    at Te (index-CIyoFPfB.js:694:77782)
+    at async index-CIyoFPfB.js:695:22832
+loadDatabase @ index-CIyoFPfB.js:695
+await in loadDatabase
+init @ index-CIyoFPfB.js:695
+(anonymous) @ index-CIyoFPfB.js:702
+setTimeout
+O @ index-CIyoFPfB.js:702
+requestIdleCallback
+k @ index-CIyoFPfB.js:702
+await in k
+(anonymous) @ index-CIyoFPfB.js:702
+Vx @ index-CIyoFPfB.js:40
+_d @ index-CIyoFPfB.js:40
+JS @ index-CIyoFPfB.js:40
+ul @ index-CIyoFPfB.js:38
+u9 @ index-CIyoFPfB.js:40
+Al @ index-CIyoFPfB.js:40
+J5 @ index-CIyoFPfB.js:40
+C @ index-CIyoFPfB.js:25
+B @ index-CIyoFPfB.js:25Understand this error
+index-CIyoFPfB.js:694 Uncaught (in promise) RuntimeError: Aborted(CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: ). Build with -sASSERTIONS for more info.
+    at Se (index-CIyoFPfB.js:694:77357)
+    at Te (index-CIyoFPfB.js:694:77782)
+    at async index-CIyoFPfB.js:695:22832

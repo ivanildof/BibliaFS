@@ -295,11 +295,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!supabaseAdmin) {
         throw new Error("Supabase Admin client not initialized");
       }
+      
+      // In production, redirectTo must match exactly one of the allowed Redirect URLs in Supabase dashboard
+      const redirectTo = `${baseUrl}/reset-password`;
+      console.log(`[Forgot Password] BaseURL: ${baseUrl}, RedirectTo: ${redirectTo}`);
+
       const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
         type: 'recovery',
         email: email,
         options: {
-          redirectTo: `${baseUrl}/reset-password`
+          redirectTo: redirectTo
         }
       });
 

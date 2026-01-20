@@ -19,7 +19,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: isProduction 
-        ? ["'self'", "https://js.stripe.com", "https://m.stripe.network"]
+        ? ["'self'", "'unsafe-eval'", "'unsafe-hashes'", "https://js.stripe.com", "https://m.stripe.network"]
         : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://m.stripe.network"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
