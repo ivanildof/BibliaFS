@@ -293,7 +293,7 @@ export default function Register() {
                 Google
               </Button>
 
-              <Link href="https://bibliafs.com.br" className="w-full block">
+              <Link href="/" className="w-full block">
                 <Button
                   type="button"
                   variant="ghost"

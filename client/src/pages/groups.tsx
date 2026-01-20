@@ -1377,7 +1377,7 @@ export default function Groups() {
             </p>
           </div>
           
-          <div className="flex gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button 
               variant="outline" 
               size="lg" 

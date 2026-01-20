@@ -269,7 +269,7 @@ export default function Login() {
                 </Button>
 
                 <div className="pt-2">
-                  <Link href="https://bibliafs.com.br" className="w-full">
+                  <Link href="/" className="w-full">
                     <Button
                       type="button"
                       variant="ghost"
