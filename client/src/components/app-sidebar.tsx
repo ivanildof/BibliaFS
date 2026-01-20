@@ -143,7 +143,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/configurações"} data-testid="link-sidebar-settings">
                   <Link href="/configurações">
-                    <Settings className="h-4 w-4 text-gray-500" />
+                    <Settings className="h-4 w-4 text-primary" />
                     <span>{t.nav.settings}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -151,7 +151,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/about"} data-testid="link-sidebar-about">
                   <Link href="/about">
-                    <Info className="h-4 w-4 text-blue-400" />
+                    <Info className="h-4 w-4 text-emerald-500" />
                     <span>{t.sections.about}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -159,7 +159,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/contact"} data-testid="link-sidebar-feedback">
                   <Link href="/contact">
-                    <MessageSquare className="h-4 w-4 text-emerald-400" />
+                    <MessageSquare className="h-4 w-4 text-pink-500" />
                     <span>Feedback</span>
                   </Link>
                 </SidebarMenuButton>
