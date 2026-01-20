@@ -269,6 +269,7 @@ function App() {
           <OfflineProvider>
             <TooltipProvider>
               <AppContent />
+              <NPSDialog />
               <Toaster />
             </TooltipProvider>
           </OfflineProvider>

@@ -147,6 +147,7 @@ export default function Contact() {
                         key={num}
                         type="button"
                         data-nps-score={num}
+                        data-testid={`nps-score-${num}`}
                         onClick={() => {
                           const event = new CustomEvent('open-nps-score', { detail: { score: num } });
                           window.dispatchEvent(event);
