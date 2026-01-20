@@ -29,7 +29,7 @@ export function LanguageSelector() {
           className="h-10 w-10 rounded-xl bg-background/50 dark:bg-card/40 backdrop-blur-sm border-primary/20 dark:border-primary/30 hover:border-primary/50 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary transition-all shadow-sm active-elevate-2 group relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-primary/5 dark:from-primary/20 dark:to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Globe className="h-5 w-5 relative z-10" />
+          <Globe className="h-5 w-5 relative z-10 text-cyan-500" />
           <span className="sr-only">Select Language</span>
         </Button>
       </DropdownMenuTrigger>
