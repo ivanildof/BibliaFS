@@ -7,10 +7,11 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
+      variant="outline"
       size="icon"
       onClick={toggleTheme}
       data-testid="button-theme-toggle"
+      className="h-10 w-10 rounded-xl bg-background/50 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:text-primary transition-all shadow-sm active-elevate-2"
     >
       {theme === "light" ? (
         <Moon className="h-5 w-5" />
