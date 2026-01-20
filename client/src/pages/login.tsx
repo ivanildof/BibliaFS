@@ -267,6 +267,18 @@ export default function Login() {
                   </svg>
                   Google
                 </Button>
+
+                <div className="pt-2">
+                  <Link href="https://bibliafs.com.br" className="w-full">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="w-full h-11 rounded-xl font-bold text-sm text-muted-foreground hover:text-primary transition-all"
+                    >
+                      Voltar para Landing Page
+                    </Button>
+                  </Link>
+                </div>
               </form>
             </Form>
           </CardContent>

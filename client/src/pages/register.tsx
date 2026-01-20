@@ -292,6 +292,16 @@ export default function Register() {
                 <SiGoogle className="h-4 w-4 text-[#4285F4]" />
                 Google
               </Button>
+
+              <Link href="https://bibliafs.com.br" className="w-full block">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full h-10 rounded-xl font-bold text-xs text-muted-foreground hover:text-primary transition-all"
+                >
+                  Voltar para Landing Page
+                </Button>
+              </Link>
             </div>
 
             <p className="text-xs text-center text-muted-foreground font-medium">

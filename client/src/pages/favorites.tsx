@@ -176,35 +176,35 @@ export default function Favorites() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          {/* Custom Modern Tabs List */}
-          <div className="flex justify-center mb-8">
-            <TabsList className="inline-flex h-14 items-center justify-center rounded-2xl bg-muted/40 p-1.5 backdrop-blur-md border border-white/10 shadow-lg">
-              <TabsTrigger 
-                value="bookmarks" 
-                className="flex items-center gap-3 px-6 h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
-              >
-                <BookmarkIcon className="h-4 w-4" />
-                <span className="font-semibold text-sm">{t.favorites.bookmarks}</span>
-                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80">{filteredBookmarks.length}</Badge>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="highlights" 
-                className="flex items-center gap-3 px-6 h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
-              >
-                <Highlighter className="h-4 w-4" />
-                <span className="font-semibold text-sm">{t.favorites.highlights}</span>
-                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80">{filteredHighlights.length}</Badge>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="notes" 
-                className="flex items-center gap-3 px-6 h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
-              >
-                <FileText className="h-4 w-4" />
-                <span className="font-semibold text-sm">{t.favorites.notes}</span>
-                <Badge variant="outline" className="ml-1 px-1.5 h-5 border-current opacity-80">{filteredNotes.length}</Badge>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+        {/* Custom Modern Tabs List */}
+        <div className="flex justify-center mb-8 w-full overflow-hidden">
+          <TabsList className="inline-flex h-14 md:h-14 h-auto items-center justify-center rounded-2xl bg-muted/40 p-1.5 backdrop-blur-md border border-white/10 shadow-lg w-full md:w-auto flex-wrap md:flex-nowrap">
+            <TabsTrigger 
+              value="bookmarks" 
+              className="flex-1 md:flex-none flex items-center gap-2 md:gap-3 px-3 md:px-6 h-10 md:h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 min-w-0"
+            >
+              <BookmarkIcon className="h-4 w-4 shrink-0" />
+              <span className="font-semibold text-xs md:text-sm truncate">{t.favorites.bookmarks}</span>
+              <Badge variant="outline" className="hidden xs:flex ml-1 px-1 h-4 md:h-5 border-current opacity-80 text-[10px]">{filteredBookmarks.length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="highlights" 
+              className="flex-1 md:flex-none flex items-center gap-2 md:gap-3 px-3 md:px-6 h-10 md:h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 min-w-0"
+            >
+              <Highlighter className="h-4 w-4 shrink-0" />
+              <span className="font-semibold text-xs md:text-sm truncate">{t.favorites.highlights}</span>
+              <Badge variant="outline" className="hidden xs:flex ml-1 px-1 h-4 md:h-5 border-current opacity-80 text-[10px]">{filteredHighlights.length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="notes" 
+              className="flex-1 md:flex-none flex items-center gap-2 md:gap-3 px-3 md:px-6 h-10 md:h-11 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 min-w-0"
+            >
+              <FileText className="h-4 w-4 shrink-0" />
+              <span className="font-semibold text-xs md:text-sm truncate">{t.favorites.notes}</span>
+              <Badge variant="outline" className="hidden xs:flex ml-1 px-1 h-4 md:h-5 border-current opacity-80 text-[10px]">{filteredNotes.length}</Badge>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
           <ScrollArea className="h-[calc(100vh-320px)] pr-4 -mr-4">
               {/* Bookmarks Tab */}
