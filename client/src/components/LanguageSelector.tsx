@@ -26,9 +26,10 @@ export function LanguageSelector() {
           variant="outline" 
           size="icon" 
           data-testid="button-language-selector"
-          className="h-10 w-10 rounded-xl bg-background/50 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:text-primary transition-all shadow-sm active-elevate-2"
+          className="h-10 w-10 rounded-xl bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/50 hover:bg-primary/10 hover:text-primary transition-all shadow-sm active-elevate-2 group relative overflow-hidden"
         >
-          <Globe className="h-5 w-5" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Globe className="h-5 w-5 relative z-10" />
           <span className="sr-only">Select Language</span>
         </Button>
       </DropdownMenuTrigger>
