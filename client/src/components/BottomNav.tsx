@@ -13,12 +13,12 @@ export function BottomNav() {
   const [location] = useLocation();
   const { t } = useLanguage();
 
-  const navItems: NavItem[] = [
-    { title: t.nav.home, url: '/', icon: Home, testId: 'nav-home' },
-    { title: t.nav.bible, url: '/bible-reader', icon: BookOpen, testId: 'nav-bible' },
-    { title: t.nav.plans, url: '/plans', icon: Book, testId: 'nav-plans' },
-    { title: t.nav.progress, url: '/progress', icon: Trophy, testId: 'nav-progress' },
-    { title: t.nav.you, url: '/perfil', icon: User, testId: 'nav-you' },
+  const navItems = [
+    { title: t.nav.home, url: '/', icon: Home, color: 'text-blue-500', testId: 'nav-home' },
+    { title: t.nav.bible, url: '/bible-reader', icon: BookOpen, color: 'text-emerald-500', testId: 'nav-bible' },
+    { title: t.nav.plans, url: '/plans', icon: Book, color: 'text-amber-500', testId: 'nav-plans' },
+    { title: t.nav.progress, url: '/progress', icon: Trophy, color: 'text-yellow-500', testId: 'nav-progress' },
+    { title: t.nav.you, url: '/perfil', icon: User, color: 'text-purple-500', testId: 'nav-you' },
   ];
 
   return (
@@ -37,7 +37,7 @@ export function BottomNav() {
               href={item.url}
               className={`flex flex-col items-center justify-center gap-1 px-3 py-2 min-w-[4rem] transition-colors ${
                 isActive
-                  ? 'text-primary'
+                  ? item.color
                   : 'text-muted-foreground hover:text-foreground'
               }`}
               data-testid={item.testId}
