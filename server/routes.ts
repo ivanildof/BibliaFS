@@ -292,6 +292,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : `${req.protocol}://${req.get('host')}`;
       
       // Use Supabase for password reset instead of custom logic
+      if (!supabaseAdmin) {
+        throw new Error("Supabase Admin client not initialized");
+      }
       const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
         type: 'recovery',
         email: email,
