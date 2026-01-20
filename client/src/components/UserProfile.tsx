@@ -72,19 +72,19 @@ export function UserProfile() {
         <DropdownMenuSeparator />
         <Link href="/perfil">
           <DropdownMenuItem data-testid="menu-item-profile">
-            <User className="h-4 w-4 mr-2" />
+            <User className="h-4 w-4 mr-2 text-blue-500" />
             <span>Meu Perfil</span>
           </DropdownMenuItem>
         </Link>
         <Link href="/pricing">
           <DropdownMenuItem data-testid="menu-item-pricing">
-            <Crown className="h-4 w-4 mr-2" />
+            <Crown className="h-4 w-4 mr-2 text-yellow-500" />
             <span>Assinaturas</span>
           </DropdownMenuItem>
         </Link>
         <Link href="/configurações">
           <DropdownMenuItem data-testid="menu-item-settings">
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="h-4 w-4 mr-2 text-primary" />
             <span>Configurações</span>
           </DropdownMenuItem>
         </Link>
