@@ -99,16 +99,24 @@ export function InstallPrompt() {
                 </p>
 
                 {platform === 'ios' ? (
-                  <div className="space-y-3 bg-muted/50 p-3 rounded-2xl text-xs border border-border/50">
-                    <p className="font-semibold flex items-center gap-2">
-                      Como instalar no iOS:
+                  <div className="space-y-4 bg-primary/5 p-4 rounded-2xl border border-primary/10">
+                    <p className="font-bold text-sm text-primary flex items-center gap-2">
+                      Passos para instalar no iPhone:
                     </p>
-                    <ol className="list-decimal list-inside space-y-1">
-                      <li className="flex items-center gap-2">
-                        Toque no ícone de <Share className="h-3 w-3 text-blue-500 inline" /> Compartilhar
-                      </li>
-                      <li>Role para baixo e selecione "Adicionar à Tela de Início"</li>
-                    </ol>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary shrink-0">1</div>
+                        <p className="text-sm">Toque no botão <Share className="h-4 w-4 text-blue-500 inline mx-1" /> (Compartilhar) na barra inferior do Safari.</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary shrink-0">2</div>
+                        <p className="text-sm">Role a lista para baixo e toque em <span className="font-bold">"Adicionar à Tela de Início"</span>.</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary shrink-0">3</div>
+                        <p className="text-sm">Toque em <span className="font-bold text-primary">"Adicionar"</span> no canto superior direito.</p>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <Button 
