@@ -4603,16 +4603,25 @@ Formato da resposta:
     }
   });
 
-  // Feedback routes
-  app.post("/api/feedback", isAuthenticated, async (req: any, res) => {
+  // Feedback routes - Allow anonymous feedback if not authenticated
+  app.post("/api/feedback", async (req: any, res) => {
     try {
-      const data = insertFeedbackSchema.parse({
-        ...req.body,
-        userId: req.user.claims.sub
+      const { type, score, comment } = req.body;
+      const userId = req.user?.claims?.sub || null; // Optional userId if authenticated
+
+      if (!type) {
+        return res.status(400).json({ message: "Tipo de feedback é obrigatório" });
+      }
+
+      const feedback = await storage.createFeedback({
+        userId,
+        type,
+        score: score !== undefined ? score : null,
+        comment: comment || null,
       });
-      const feedback = await storage.createFeedback(data);
+
       res.json(feedback);
-    } catch (error) {
+    } catch (error: any) {
       console.error("[Feedback] Error:", error);
       res.status(500).json({ message: "Erro ao enviar feedback" });
     }

@@ -41,6 +41,8 @@ export function NPSDialog() {
 
   const feedbackMutation = useMutation({
     mutationFn: async (data: { type: string; score?: number; comment?: string }) => {
+      // If user is not logged in, we still want to allow feedback
+      // The backend endpoint might require authentication, let's check
       return await apiRequest("POST", "/api/feedback", data);
     },
     onSuccess: () => {
@@ -48,9 +50,22 @@ export function NPSDialog() {
         title: "Obrigado pelo seu feedback!",
         description: "Sua opinião nos ajuda a melhorar o BíbliaFS.",
       });
-      localStorage.setItem(`nps_responded_${user?.id}`, "true");
+      if (user) {
+        localStorage.setItem(`nps_responded_${user.id}`, "true");
+      } else {
+        localStorage.setItem(`nps_responded_anonymous`, "true");
+      }
       setOpen(false);
+      setScore(null);
+      setComment("");
     },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao enviar feedback",
+        description: error.message || "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   });
 
   const handleSubmit = () => {
