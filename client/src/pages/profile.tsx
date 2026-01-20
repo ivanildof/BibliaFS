@@ -244,31 +244,31 @@ export default function Profile() {
                 <Separator />
                 <Link href="/help">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
-                    <HelpCircle className="h-4 w-4 mr-3" />
+                    <HelpCircle className="h-4 w-4 mr-3 text-blue-500" />
                     Ajuda e Suporte
                   </Button>
                 </Link>
                 <Link href="/about">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
-                    <Info className="h-4 w-4 mr-3" />
+                    <Info className="h-4 w-4 mr-3 text-emerald-500" />
                     Sobre o BíbliaFS
                   </Button>
                 </Link>
                 <Link href="/terms">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
-                    <FileTextIcon className="h-4 w-4 mr-3" />
+                    <FileTextIcon className="h-4 w-4 mr-3 text-amber-500" />
                     Termos de Uso
                   </Button>
                 </Link>
                 <Link href="/privacy">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                    <Shield className="h-4 w-4 mr-3" />
+                    <Shield className="h-4 w-4 mr-3 text-violet-500" />
                     Política de Privacidade
                   </Button>
                 </Link>
                 <Link href="/contact">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
-                    <Mail className="h-4 w-4 mr-3" />
+                    <Mail className="h-4 w-4 mr-3 text-pink-500" />
                     Fale Conosco
                   </Button>
                 </Link>
@@ -476,31 +476,31 @@ export default function Profile() {
                       <Separator />
                       <Link href="/help">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-help">
-                          <HelpCircle className="h-4 w-4 mr-3" />
+                          <HelpCircle className="h-4 w-4 mr-3 text-blue-500" />
                           Ajuda e Suporte
                         </Button>
                       </Link>
                       <Link href="/about">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-about">
-                          <Info className="h-4 w-4 mr-3" />
+                          <Info className="h-4 w-4 mr-3 text-emerald-500" />
                           Sobre o BíbliaFS
                         </Button>
                       </Link>
                       <Link href="/terms">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-terms">
-                          <FileTextIcon className="h-4 w-4 mr-3" />
+                          <FileTextIcon className="h-4 w-4 mr-3 text-amber-500" />
                           Termos de Uso
                         </Button>
                       </Link>
                       <Link href="/privacy">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                          <Shield className="h-4 w-4 mr-3" />
+                          <Shield className="h-4 w-4 mr-3 text-violet-500" />
                           Política de Privacidade
                         </Button>
                       </Link>
                       <Link href="/contact">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-contact">
-                          <Mail className="h-4 w-4 mr-3" />
+                          <Mail className="h-4 w-4 mr-3 text-pink-500" />
                           Fale Conosco
                         </Button>
                       </Link>
