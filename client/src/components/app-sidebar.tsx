@@ -34,6 +34,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect } from "react";
 import logoImage from "../assets/logo-new.png";
+import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
   const [location] = useLocation();
@@ -49,24 +50,24 @@ export function AppSidebar() {
   }, [location, isMobile, setOpenMobile]);
 
   const menuItems = [
-    { title: t.nav.home, url: "/", icon: Home },
-    { title: t.nav.bible, url: "/bible-reader", icon: BookOpen },
-    { title: t.favorites.title, url: "/favorites", icon: Bookmark },
-    { title: t.nav.plans, url: "/plans", icon: Book },
-    { title: t.nav.progress, url: "/progress", icon: Trophy },
-    { title: t.nav.prayers, url: "/prayers", icon: MessageSquare },
+    { title: t.nav.home, url: "/", icon: Home, color: "text-blue-500" },
+    { title: t.nav.bible, url: "/bible-reader", icon: BookOpen, color: "text-emerald-500" },
+    { title: t.favorites.title, url: "/favorites", icon: Bookmark, color: "text-rose-500" },
+    { title: t.nav.plans, url: "/plans", icon: Book, color: "text-amber-500" },
+    { title: t.nav.progress, url: "/progress", icon: Trophy, color: "text-yellow-500" },
+    { title: t.nav.prayers, url: "/prayers", icon: MessageSquare, color: "text-violet-500" },
   ];
 
   const studyItems = [
-    { title: t.nav.compareVersions, url: "/compare", icon: Columns },
-    { title: "Conquistas", url: "/achievements", icon: Trophy },
-    { title: t.nav.discover, url: "/community", icon: Users },
-    { title: t.nav.studyGroups, url: "/groups", icon: UsersRound },
-    { title: t.nav.podcasts, url: "/podcasts", icon: Headphones },
+    { title: t.nav.compareVersions, url: "/compare", icon: Columns, color: "text-indigo-500" },
+    { title: "Conquistas", url: "/achievements", icon: Trophy, color: "text-yellow-500" },
+    { title: t.nav.discover, url: "/community", icon: Users, color: "text-cyan-500" },
+    { title: t.nav.studyGroups, url: "/groups", icon: UsersRound, color: "text-orange-500" },
+    { title: t.nav.podcasts, url: "/podcasts", icon: Headphones, color: "text-pink-500" },
   ];
 
   const teacherItems = [
-    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap },
+    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap, color: "text-primary" },
   ];
 
   return (
@@ -90,7 +91,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1) || 'home'}`}>
                     <Link href={item.url}>
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className={cn("h-4 w-4", item.color)} />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -108,7 +109,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1)}`}>
                     <Link href={item.url}>
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className={cn("h-4 w-4", item.color)} />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -126,7 +127,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location === item.url} data-testid={`link-sidebar-${item.url.slice(1)}`}>
                     <Link href={item.url}>
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className={cn("h-4 w-4", item.color)} />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -142,7 +143,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/configurações"} data-testid="link-sidebar-settings">
                   <Link href="/configurações">
-                    <Settings className="h-4 w-4" />
+                    <Settings className="h-4 w-4 text-gray-500" />
                     <span>{t.nav.settings}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -150,7 +151,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/about"} data-testid="link-sidebar-about">
                   <Link href="/about">
-                    <Info className="h-4 w-4" />
+                    <Info className="h-4 w-4 text-blue-400" />
                     <span>{t.sections.about}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -158,7 +159,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location === "/contact"} data-testid="link-sidebar-feedback">
                   <Link href="/contact">
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4 text-emerald-400" />
                     <span>Feedback</span>
                   </Link>
                 </SidebarMenuButton>
