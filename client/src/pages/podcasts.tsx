@@ -44,6 +44,7 @@ import { useToast } from "@/hooks/use-toast";
 import { podcastStorage } from "@/lib/offline/podcastStorage";
 import { apiFetch } from "@/lib/config";
 import type { Podcast } from "@shared/schema";
+import { AudioPlayer } from "@/components/bible-reader/audio-player";
 
 const BIBLE_BOOKS = [
   "Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio",
@@ -925,7 +926,7 @@ export default function Podcasts() {
               title={currentEpisode.title}
               currentTime={currentTime}
               duration={duration}
-              onSeek={(val) => {
+              onSeek={(val: number) => {
                 if (audioRef.current) audioRef.current.currentTime = val;
               }}
             />
