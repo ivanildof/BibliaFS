@@ -26,8 +26,11 @@ export function NPSDialog() {
   useEffect(() => {
     const handleOpen = () => setOpen(true);
     const handleOpenWithScore = (e: any) => {
-      setScore(e.detail.score);
-      setOpen(true);
+      console.log("[NPSDialog] Event received with score:", e.detail?.score);
+      if (e.detail?.score !== undefined) {
+        setScore(e.detail.score);
+        setOpen(true);
+      }
     };
 
     window.addEventListener('open-nps-dialog', handleOpen);
