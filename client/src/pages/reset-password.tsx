@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Book, Loader2, Eye, EyeOff, CheckCircle, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
+import { supabase } from "@/lib/supabase";
 
 const resetPasswordSchema = z.object({
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
@@ -32,7 +33,9 @@ export default function ResetPassword() {
   const [passwordReset, setPasswordReset] = useState(false);
 
   const params = new URLSearchParams(searchString);
-  const token = params.get("token");
+  const accessToken = params.get("access_token");
+  const refreshToken = params.get("refresh_token");
+  const type = params.get("type");
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -44,11 +47,12 @@ export default function ResetPassword() {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async (data: ResetPasswordFormData) => {
-      const response = await apiRequest("POST", "/api/auth/reset-password", {
-        token,
-        password: data.password,
+      // Use Supabase directly to update password since we are redirected with tokens
+      const { error } = await supabase.auth.updateUser({
+        password: data.password
       });
-      return response.json();
+      if (error) throw error;
+      return { success: true };
     },
     onSuccess: () => {
       setPasswordReset(true);
@@ -67,18 +71,11 @@ export default function ResetPassword() {
   });
 
   const onSubmit = (data: ResetPasswordFormData) => {
-    if (!token) {
-      toast({
-        title: "Link inválido",
-        description: "O link de recuperação é inválido ou expirou.",
-        variant: "destructive",
-      });
-      return;
-    }
     resetPasswordMutation.mutate(data);
   };
 
-  if (!token) {
+  // If no access token but redirected from recovery, show error
+  if (!accessToken && type === 'recovery') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
         <Card className="w-full max-w-md">
@@ -92,12 +89,12 @@ export default function ResetPassword() {
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex flex-col gap-4">
-            <Link href="/forgot-password" className="w-full">
+            <Link href="/forgot-password" title="Solicitar novo link" className="w-full">
               <Button className="w-full" data-testid="button-request-new">
                 Solicitar novo link
               </Button>
             </Link>
-            <Link href="/login" className="w-full">
+            <Link href="/login" title="Voltar para o login" className="w-full">
               <Button variant="ghost" className="w-full" data-testid="button-back-login">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar para o login

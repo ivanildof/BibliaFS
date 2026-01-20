@@ -290,78 +290,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const baseUrl = process.env.REPLIT_DOMAINS 
         ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
         : `${req.protocol}://${req.get('host')}`;
-      const resetLink = `${baseUrl}/reset-password?token=${token}`;
       
-      // Send email using Resend
-      const resendApiKey = process.env.RESEND_API_KEY;
-      let emailSent = false;
-      
-      // Verification logic: bibliafs.com.br must be verified on Resend.
-      // If not, we fallback to console and also inform user.
-      if (resendApiKey) {
-        try {
-          const response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${resendApiKey}`,
-            },
-            body: JSON.stringify({
-              from: 'BíbliaFS <suporte@bibliafs.com.br>', // Changed to match possible verified sender
-              to: email,
-              subject: 'Recuperação de Senha - BíbliaFS',
-              html: `
-                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-                  <h2 style="color: #333;">Recuperação de Senha 🔐</h2>
-                  <p>Você solicitou a recuperação da sua senha na BíbliaFS.</p>
-                  <p>Clique no botão abaixo para criar uma nova senha:</p>
-                  <div style="text-align: center; margin: 30px 0;">
-                    <a href="${resetLink}" 
-                       style="background-color: #667eea; color: white; padding: 14px 28px; 
-                              text-decoration: none; border-radius: 8px; font-weight: bold;
-                              display: inline-block;">
-                      Redefinir Senha
-                    </a>
-                  </div>
-                  <p style="color: #666; font-size: 14px;">
-                    Ou copie e cole este link no seu navegador:<br/>
-                    <a href="${resetLink}" style="color: #667eea; word-break: break-all;">${resetLink}</a>
-                  </p>
-                  <p style="color: #999; font-size: 12px; margin-top: 30px;">
-                    Este link expira em 1 hora.<br/>
-                    Se você não solicitou esta recuperação, ignore este email.
-                  </p>
-                  <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                  <p style="color: #999; font-size: 11px; text-align: center;">
-                    Que a Palavra de Deus ilumine seus dias! 🙏
-                  </p>
-                </div>
-              `,
-            }),
-          });
-          
-          if (response.ok) {
-            emailSent = true;
-            console.log(`✅ [Password Reset] Email enviado para: ${email}`);
-          } else {
-            const errorData = await response.json();
-            console.error(`❌ [Password Reset] Erro Resend:`, errorData);
-            // If domain not verified, we can't do much here except log and fallback
-          }
-        } catch (emailError) {
-          console.error(`❌ [Password Reset] Erro ao enviar email:`, emailError);
+      // Use Supabase for password reset instead of custom logic
+      const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'recovery',
+        email: email,
+        options: {
+          redirectTo: `${baseUrl}/reset-password`
         }
-      }
-      
-      if (!emailSent) {
-        console.log(`\n📧 [Password Reset] Link para ${email} (email não enviado - configure RESEND_API_KEY):`);
-        console.log(`   ${resetLink}\n`);
+      });
+
+      if (resetError) {
+        console.error("[Forgot Password] Supabase Error:", resetError);
+        return res.status(400).json({ message: "Erro ao solicitar recuperação de senha" });
       }
 
-      res.json({ 
-        message: "Se este email estiver cadastrado, você receberá um link de recuperação.",
-        ...(process.env.NODE_ENV !== 'production' && !emailSent && { resetLink })
-      });
+      console.log(`✅ [Password Reset] Link gerado via Supabase para: ${email}`);
+      return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
     } catch (error: any) {
       console.error("Erro ao processar forgot-password:", error);
       res.status(500).json({ message: "Erro ao processar solicitação" });
