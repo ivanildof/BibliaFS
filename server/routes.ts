@@ -286,34 +286,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       entriesToDelete.forEach(t => resetTokens.delete(t));
 
-      // Generate reset link
-      const baseUrl = process.env.REPLIT_DOMAINS 
-        ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-        : `${req.protocol}://${req.get('host')}`;
+      // Generate reset link - use production domain for redirect
+      const baseUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://bibliafs.com.br'
+        : process.env.REPLIT_DOMAINS 
+          ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+          : `${req.protocol}://${req.get('host')}`;
       
-      // Use Supabase for password reset instead of custom logic
+      // Use Supabase resetPasswordForEmail to send email automatically
       if (!supabaseAdmin) {
         throw new Error("Supabase Admin client not initialized");
       }
       
       // In production, redirectTo must match exactly one of the allowed Redirect URLs in Supabase dashboard
+      // Configure in Supabase: https://bibliafs.com.br/**
       const redirectTo = `${baseUrl}/reset-password`;
       console.log(`[Forgot Password] BaseURL: ${baseUrl}, RedirectTo: ${redirectTo}`);
 
-      const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
-        type: 'recovery',
-        email: email,
-        options: {
-          redirectTo: redirectTo
-        }
+      // Use resetPasswordForEmail which SENDS the email automatically (not just generates link)
+      const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectTo
       });
 
       if (resetError) {
         console.error("[Forgot Password] Supabase Error:", resetError);
-        return res.status(400).json({ message: "Erro ao solicitar recuperação de senha" });
+        // Don't expose error details to prevent email enumeration
+        return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
       }
 
-      console.log(`✅ [Password Reset] Link gerado via Supabase para: ${email}`);
+      console.log(`✅ [Password Reset] Email enviado via Supabase para: ${email}`);
       return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
     } catch (error: any) {
       console.error("Erro ao processar forgot-password:", error);
