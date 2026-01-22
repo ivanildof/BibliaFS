@@ -1203,9 +1203,9 @@ export default function BibleReader() {
                   <SheetTitle>Livros da Bíblia</SheetTitle>
                 </SheetHeader>
                 <Tabs defaultValue="nt" className="mt-4">
-                  <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-xl">
-                    <TabsTrigger value="ot" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all font-bold text-xs">Antigo ({oldTestament.length})</TabsTrigger>
-                    <TabsTrigger value="nt" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all font-bold text-xs">Novo ({newTestament.length})</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-1 rounded-xl">
+                    <TabsTrigger value="ot" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary transition-all font-semibold text-xs">Antigo ({oldTestament.length})</TabsTrigger>
+                    <TabsTrigger value="nt" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary transition-all font-semibold text-xs">Novo ({newTestament.length})</TabsTrigger>
                   </TabsList>
                   <TabsContent value="ot" className="mt-4">
                     <ScrollArea className="h-[60vh]">
@@ -1269,10 +1269,10 @@ export default function BibleReader() {
                   <SheetTitle>Navegar</SheetTitle>
                 </SheetHeader>
                 <Tabs defaultValue="chapters" className="mt-4">
-                  <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-xl">
-                    <TabsTrigger value="chapters" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all font-bold">Capítulos</TabsTrigger>
-                    <TabsTrigger value="books" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all font-bold">Livros</TabsTrigger>
-                    <TabsTrigger value="version" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all font-bold">Versão</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3 bg-muted/30 p-1 rounded-xl">
+                    <TabsTrigger value="chapters" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-semibold">Capítulos</TabsTrigger>
+                    <TabsTrigger value="books" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-semibold">Livros</TabsTrigger>
+                    <TabsTrigger value="version" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-semibold">Versão</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="chapters" className="mt-4">
@@ -1301,9 +1301,9 @@ export default function BibleReader() {
                   
                   <TabsContent value="books" className="mt-4">
                     <Tabs defaultValue="nt" className="mt-2">
-                      <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-xl">
-                        <TabsTrigger value="ot" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all font-bold text-xs">Antigo ({oldTestament.length})</TabsTrigger>
-                        <TabsTrigger value="nt" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all font-bold text-xs">Novo ({newTestament.length})</TabsTrigger>
+                      <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-1 rounded-xl">
+                        <TabsTrigger value="ot" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary transition-all font-semibold text-xs">Antigo ({oldTestament.length})</TabsTrigger>
+                        <TabsTrigger value="nt" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary transition-all font-semibold text-xs">Novo ({newTestament.length})</TabsTrigger>
                       </TabsList>
                       <TabsContent value="ot" className="mt-4">
                         <ScrollArea className="h-[50vh]">
