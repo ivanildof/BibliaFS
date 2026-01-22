@@ -1395,7 +1395,7 @@ export default function BibleReader() {
           <>
             {/* Book Name - Large Centered */}
             <h1 
-              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2" 
+              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-[#000000]" 
               data-testid="text-book-name"
             >
               {t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
@@ -1403,7 +1403,7 @@ export default function BibleReader() {
             
             {/* Chapter Number - Gigantic Centered */}
             <div 
-              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8" 
+              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-[#000000]" 
               data-testid="text-chapter-number"
             >
               {chapterData.chapter.number}
@@ -1769,7 +1769,7 @@ export default function BibleReader() {
             
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-primary/5 text-primary"
+              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-primary/5 text-[#000000]"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
