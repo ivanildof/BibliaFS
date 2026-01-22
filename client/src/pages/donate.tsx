@@ -27,6 +27,15 @@ const donationFormSchema = z.object({
   isAnonymous: z.boolean().default(false),
   message: z.string().optional(),
   currency: z.string().default("brl"),
+}).refine((data) => {
+  if (data.customAmount) {
+    const val = parseFloat(data.customAmount);
+    return val >= 5 && val <= 1000;
+  }
+  return true;
+}, {
+  message: "Valor deve estar entre R$ 5 e R$ 1000",
+  path: ["customAmount"]
 });
 
 type DonationForm = z.infer<typeof donationFormSchema>;
