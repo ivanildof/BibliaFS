@@ -3374,8 +3374,8 @@ Regras:
           },
           quantity: 1,
         }],
-        success_url: `${req.headers.origin}/doar?success=true`,
-        cancel_url: `${req.headers.origin}/doar?canceled=true`,
+        success_url: `${req.headers.origin || process.env.VITE_APP_URL || 'https://bibliaffs.replit.app'}/doar?success=true`,
+        cancel_url: `${req.headers.origin || process.env.VITE_APP_URL || 'https://bibliaffs.replit.app'}/doar?canceled=true`,
         metadata: { 
           userId, 
           type: 'donation',
