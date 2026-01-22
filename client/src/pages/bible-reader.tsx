@@ -1714,7 +1714,7 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full"
+              className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
               onClick={toggleAudio}
               disabled={!selectedBook || isLoadingAudio}
               data-testid="button-toggle-audio"
@@ -1724,7 +1724,7 @@ export default function BibleReader() {
               ) : isPlayingAudio ? (
                 <VolumeX className="h-5 w-5 text-primary" />
               ) : (
-                <Volume2 className="h-5 w-5" />
+                <Volume2 className="h-5 w-5 text-primary" />
               )}
             </Button>
 
@@ -1733,21 +1733,36 @@ export default function BibleReader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full"
+                className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
                 onClick={async () => {
-                  if (isChapterOffline(selectedBook, selectedChapter, version)) {
-                    await deleteChapter(selectedBook, selectedChapter, version);
-                  } else {
-                    await downloadChapter(selectedBook, selectedChapter, version);
+                  try {
+                    if (isChapterOffline(selectedBook, selectedChapter, version)) {
+                      await deleteChapter(selectedBook, selectedChapter, version);
+                      toast({
+                        title: "Removido",
+                        description: "Capítulo removido do modo offline",
+                      });
+                    } else {
+                      // Usar a função que lida com o progresso e download real
+                      await downloadChapterAudioFile();
+                    }
+                  } catch (error: any) {
+                    toast({
+                      title: "Erro",
+                      description: error.message || "Falha na operação offline",
+                      variant: "destructive"
+                    });
                   }
                 }}
-                disabled={!selectedBook}
+                disabled={!selectedBook || downloadingAudio}
                 data-testid="button-toggle-offline"
               >
-                {isChapterOffline(selectedBook, selectedChapter, version) ? (
+                {downloadingAudio ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                ) : isChapterOffline(selectedBook, selectedChapter, version) ? (
                   <CloudOff className="h-5 w-5 text-primary" />
                 ) : (
-                  <Cloud className="h-5 w-5" />
+                  <Cloud className="h-5 w-5 text-primary" />
                 )}
               </Button>
             )}
