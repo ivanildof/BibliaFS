@@ -20,11 +20,14 @@ export function InstallPrompt() {
       || document.referrer.includes('android-app://');
 
     if (isStandalone) return;
-
+    
     // Platform detection
     const ua = window.navigator.userAgent.toLowerCase();
     const isIOS = /iphone|ipad|ipod/.test(ua);
     const isAndroid = /android/.test(ua);
+    
+    // Disable for Android as requested
+    if (isAndroid) return;
     
     if (isIOS) setPlatform('ios');
     else if (isAndroid) setPlatform('android');
