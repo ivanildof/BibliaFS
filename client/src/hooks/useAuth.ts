@@ -2,8 +2,26 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { apiFetch } from "@/lib/config";
+import { persistentStorage } from "@/lib/persistentStorage";
 import type { User } from "@shared/schema";
 import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
+
+async function restoreSessionFromIndexedDB(): Promise<void> {
+  try {
+    const storageKey = 'bibliaffs-auth-token';
+    const localValue = localStorage.getItem(storageKey);
+    
+    if (!localValue) {
+      const idbValue = await persistentStorage.getItem(storageKey);
+      if (idbValue) {
+        console.log('[Auth] Restoring session from IndexedDB');
+        localStorage.setItem(storageKey, idbValue);
+      }
+    }
+  } catch (error) {
+    console.warn('[Auth] Failed to restore session from IndexedDB:', error);
+  }
+}
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
@@ -12,18 +30,22 @@ export function useAuth() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initSession = async () => {
+      await restoreSessionFromIndexedDB();
+      
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setSupabaseUser(session?.user ?? null);
       setSessionLoading(false);
-    });
+    };
+    
+    initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setSupabaseUser(session?.user ?? null);
         setSessionLoading(false);
-        // Only invalidate on sign in/out events, not on token refresh
         if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
           queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
         }
@@ -57,6 +79,8 @@ export function useAuth() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    await persistentStorage.removeItem('bibliaffs-auth-token');
+    localStorage.removeItem('bibliaffs-auth-token');
     queryClient.clear();
   };
 
