@@ -1702,12 +1702,12 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full"
+              className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
               onClick={goToPreviousChapter}
               disabled={!selectedBook || (booksArray.length > 0 && selectedBook === booksArray[0]?.abbrev?.pt && selectedChapter === 1)}
               data-testid="button-previous-chapter"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5 text-primary" />
             </Button>
 
             {/* Audio Button */}
@@ -1769,7 +1769,7 @@ export default function BibleReader() {
             
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-sm font-medium min-w-[100px] text-center hover-elevate px-3 py-2 rounded-full transition-colors"
+              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-primary/5 text-primary"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
@@ -1778,12 +1778,12 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full"
+              className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
               onClick={goToNextChapter}
               disabled={!currentBook || (booksArray.length > 0 && selectedBook === booksArray[booksArray.length - 1]?.abbrev?.pt && selectedChapter === currentBook?.chapters)}
               data-testid="button-next-chapter"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5 text-primary" />
             </Button>
           </div>
         </div>
