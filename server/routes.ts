@@ -3357,6 +3357,18 @@ Regras:
       const isRecurring = type === 'recurring';
       const mode = isRecurring ? 'subscription' : 'payment';
 
+      // Build valid base URL (Android apps may not send proper origin header)
+      const getValidBaseUrl = () => {
+        const origin = req.headers.origin;
+        // Check if origin is valid URL with https scheme
+        if (origin && typeof origin === 'string' && origin.startsWith('https://')) {
+          return origin;
+        }
+        // Fallback to environment variable or hardcoded production URL
+        return process.env.VITE_APP_URL || 'https://bibliaffs.replit.app';
+      };
+      const baseUrl = getValidBaseUrl();
+
       // Create checkout session with card only (secure - Stripe handles all card data)
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -3374,8 +3386,8 @@ Regras:
           },
           quantity: 1,
         }],
-        success_url: `${req.headers.origin || process.env.VITE_APP_URL || 'https://bibliaffs.replit.app'}/doar?success=true`,
-        cancel_url: `${req.headers.origin || process.env.VITE_APP_URL || 'https://bibliaffs.replit.app'}/doar?canceled=true`,
+        success_url: `${baseUrl}/doar?success=true`,
+        cancel_url: `${baseUrl}/doar?canceled=true`,
         metadata: { 
           userId, 
           type: 'donation',
