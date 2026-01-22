@@ -1068,8 +1068,13 @@ export default function BibleReader() {
           <div className="flex items-center gap-2">
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 shadow-sm" data-testid="button-search-open">
-                  <Search className="h-4 w-4" />
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="rounded-xl h-10 w-10 shadow-sm bg-card border-primary/20 hover:bg-primary/10 transition-all hover:scale-105" 
+                  data-testid="button-search-open"
+                >
+                  <Search className="h-4 w-4 text-primary" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
@@ -1183,9 +1188,14 @@ export default function BibleReader() {
 
             <Sheet open={isBooksOpen} onOpenChange={setIsBooksOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-xl h-10 px-3 shadow-sm gap-1.5" data-testid="button-menu">
-                  <Book className="h-4 w-4" />
-                  <span className="text-xs font-medium">Livros</span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-xl h-10 px-3 shadow-sm gap-1.5 bg-card border-primary/20 hover:bg-primary/10 transition-all hover:scale-105" 
+                  data-testid="button-menu"
+                >
+                  <Book className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-bold text-primary">Livros</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="bottom" className="h-[80vh]">
@@ -1245,7 +1255,12 @@ export default function BibleReader() {
 
             <Sheet open={isChaptersOpen} onOpenChange={setIsChaptersOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-xl h-10 px-4 shadow-sm font-semibold text-sm min-w-[60px]" data-testid="button-version">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-xl h-10 px-4 shadow-sm font-bold text-sm min-w-[60px] bg-card border-primary/20 hover:bg-primary/10 transition-all hover:scale-105 text-primary" 
+                  data-testid="button-version"
+                >
                   {VERSIONS.find(v => v.value === version)?.label || "NVI"}
                 </Button>
               </SheetTrigger>
