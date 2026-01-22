@@ -273,7 +273,7 @@ export default function Donate() {
                         data-testid="input-custom-amount"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Quem decide o valor é você (mínimo R$ 1)
+                        Sua generosidade não tem limites. Escolha o valor que sentir no coração (mínimo R$ 1).
                       </p>
                     </div>
                   )}
