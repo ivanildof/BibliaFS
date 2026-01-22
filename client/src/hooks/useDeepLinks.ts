@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
-import { Browser } from '@capacitor/browser';
 import { isNative } from '@/lib/config';
 import { supabase } from '@/lib/supabase';
 
@@ -50,11 +49,6 @@ export function useDeepLinks(onAuthCallback?: () => void) {
         }
         
         if (authSuccess) {
-          try {
-            await Browser.close();
-          } catch (e) {
-            console.log('[DeepLink] Browser already closed or not open');
-          }
           onAuthCallback?.();
         }
       } catch (error) {
@@ -63,10 +57,6 @@ export function useDeepLinks(onAuthCallback?: () => void) {
     };
 
     App.addListener('appUrlOpen', handleDeepLink);
-    
-    Browser.addListener('browserFinished', () => {
-      console.log('[DeepLink] Browser closed by user');
-    });
 
     App.getLaunchUrl().then((result) => {
       if (result?.url) {
@@ -77,7 +67,6 @@ export function useDeepLinks(onAuthCallback?: () => void) {
 
     return () => {
       App.removeAllListeners();
-      Browser.removeAllListeners();
     };
   }, [onAuthCallback]);
 }

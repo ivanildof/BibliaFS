@@ -13,7 +13,6 @@ import { queryClient } from "@/lib/queryClient";
 import { supabase, getSupabase } from "@/lib/supabase";
 import { isNative } from "@/lib/config";
 import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
-import { Browser } from '@capacitor/browser';
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -95,25 +94,16 @@ export default function Login() {
   const googleLoginMutation = useMutation({
     mutationFn: async () => {
       const redirectUrl = isNative 
-        ? "bibliaffs://auth/callback" 
+        ? "https://bibliafs.com.br/" 
         : `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
-          skipBrowserRedirect: isNative,
         }
       });
       if (error) throw error;
-      
-      if (isNative && data?.url) {
-        await Browser.open({ 
-          url: data.url,
-          presentationStyle: 'popover'
-        });
-      }
-      
       return data;
     },
     onError: (error: any) => {
@@ -128,25 +118,16 @@ export default function Login() {
   const appleLoginMutation = useMutation({
     mutationFn: async () => {
       const redirectUrl = isNative 
-        ? "bibliaffs://auth/callback" 
+        ? "https://bibliafs.com.br/" 
         : `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
           redirectTo: redirectUrl,
-          skipBrowserRedirect: isNative,
         }
       });
       if (error) throw error;
-      
-      if (isNative && data?.url) {
-        await Browser.open({ 
-          url: data.url,
-          presentationStyle: 'popover'
-        });
-      }
-      
       return data;
     },
     onError: (error: any) => {
