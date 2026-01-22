@@ -1395,7 +1395,7 @@ export default function BibleReader() {
           <>
             {/* Book Name - Large Centered */}
             <h1 
-              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-[#000000]" 
+              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-[#1a1a1a]" 
               data-testid="text-book-name"
             >
               {t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
@@ -1403,7 +1403,7 @@ export default function BibleReader() {
             
             {/* Chapter Number - Gigantic Centered */}
             <div 
-              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-[#000000]" 
+              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-[#1a1a1a]" 
               data-testid="text-chapter-number"
             >
               {chapterData.chapter.number}
@@ -1702,29 +1702,29 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full hover:bg-amber-500/10 transition-all hover:scale-110 active:scale-95"
               onClick={goToPreviousChapter}
               disabled={!selectedBook || (booksArray.length > 0 && selectedBook === booksArray[0]?.abbrev?.pt && selectedChapter === 1)}
               data-testid="button-previous-chapter"
             >
-              <ChevronLeft className="h-5 w-5 text-primary" />
+              <ChevronLeft className="h-5 w-5 text-amber-600" />
             </Button>
 
             {/* Audio Button */}
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full hover:bg-emerald-500/10 transition-all hover:scale-110 active:scale-95"
               onClick={toggleAudio}
               disabled={!selectedBook || isLoadingAudio}
               data-testid="button-toggle-audio"
             >
               {isLoadingAudio ? (
-                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
               ) : isPlayingAudio ? (
-                <VolumeX className="h-5 w-5 text-primary" />
+                <VolumeX className="h-5 w-5 text-emerald-600" />
               ) : (
-                <Volume2 className="h-5 w-5 text-primary" />
+                <Volume2 className="h-5 w-5 text-emerald-600" />
               )}
             </Button>
 
@@ -1733,7 +1733,7 @@ export default function BibleReader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
+                className="rounded-full hover:bg-blue-500/10 transition-all hover:scale-110 active:scale-95"
                 onClick={async () => {
                   try {
                     if (isChapterOffline(selectedBook, selectedChapter, version)) {
@@ -1743,7 +1743,6 @@ export default function BibleReader() {
                         description: "Capítulo removido do modo offline",
                       });
                     } else {
-                      // Usar a função que lida com o progresso e download real
                       await downloadChapterAudioFile();
                     }
                   } catch (error: any) {
@@ -1758,18 +1757,18 @@ export default function BibleReader() {
                 data-testid="button-toggle-offline"
               >
                 {downloadingAudio ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
                 ) : isChapterOffline(selectedBook, selectedChapter, version) ? (
-                  <CloudOff className="h-5 w-5 text-primary" />
+                  <CloudOff className="h-5 w-5 text-blue-600" />
                 ) : (
-                  <Cloud className="h-5 w-5 text-primary" />
+                  <Cloud className="h-5 w-5 text-blue-600" />
                 )}
               </Button>
             )}
             
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-primary/5 text-[#000000]"
+              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-muted/50 text-[#1a1a1a]"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
@@ -1778,12 +1777,12 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-primary/10 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full hover:bg-amber-500/10 transition-all hover:scale-110 active:scale-95"
               onClick={goToNextChapter}
               disabled={!currentBook || (booksArray.length > 0 && selectedBook === booksArray[booksArray.length - 1]?.abbrev?.pt && selectedChapter === currentBook?.chapters)}
               data-testid="button-next-chapter"
             >
-              <ChevronRight className="h-5 w-5 text-primary" />
+              <ChevronRight className="h-5 w-5 text-amber-600" />
             </Button>
           </div>
         </div>
