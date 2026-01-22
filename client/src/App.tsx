@@ -44,6 +44,7 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
+import AuthCallback from "@/pages/auth-callback";
 import NotFound from "@/pages/not-found";
 import Groups from "@/pages/groups";
 import VersionCompare from "@/pages/version-compare";
@@ -95,6 +96,7 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/auth/callback" component={AuthCallback} />
           <Route path="/planos" component={Pricing} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/terms" component={Terms} />
@@ -109,6 +111,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/auth/callback" component={AuthCallback} />
           <Route path="/bible" component={BibleReader} />
           <Route path="/bible-reader" component={BibleReader} />
           <Route path="/compare" component={VersionCompare} />
