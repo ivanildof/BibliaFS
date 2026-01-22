@@ -45,7 +45,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="bibliaffs" android:host="auth" android:pathPrefix="/callback" />
+                <data android:scheme="bibliafs" android:host="login-callback" />
             </intent-filter>
 
         </activity>

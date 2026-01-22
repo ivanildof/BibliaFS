@@ -94,7 +94,7 @@ export default function Login() {
   const googleLoginMutation = useMutation({
     mutationFn: async () => {
       const redirectUrl = isNative 
-        ? "bibliaffs://auth/callback" 
+        ? "bibliafs://login-callback" 
         : `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -118,7 +118,7 @@ export default function Login() {
   const appleLoginMutation = useMutation({
     mutationFn: async () => {
       const redirectUrl = isNative 
-        ? "bibliaffs://auth/callback" 
+        ? "bibliafs://login-callback" 
         : `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signInWithOAuth({
