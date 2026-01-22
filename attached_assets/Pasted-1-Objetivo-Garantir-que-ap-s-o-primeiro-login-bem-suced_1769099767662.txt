@@ -1,0 +1,41 @@
+1. Objetivo
+Garantir que, após o primeiro login bem-sucedido — seja por e-mail/senha ou por conta do Google — o usuário permaneça autenticado mesmo após fechar completamente o aplicativo e reabri-lo, exceto quando explicitamente realizar logout por meio do botão “Sair”.
+
+2. Contexto Atual
+Atualmente, ao instalar o aplicativo BíbliaFS em dispositivos Android, realizar login (por qualquer método) e fechar o app (inclusive pelo gerenciador de tarefas), o sistema exige novo login na próxima abertura. Isso compromete a experiência do usuário, especialmente considerando o uso offline esperado da aplicação.
+
+3. Problema a Resolver
+A sessão do usuário não é persistida corretamente após o encerramento total do aplicativo.
+Não há distinção clara entre “fechar o app” e “sair da conta”.
+O comportamento atual força reconexão desnecessária, mesmo quando o usuário não deseja sair.
+4. Requisitos Funcionais
+RF1 – Persistência de Autenticação
+Após login bem-sucedido (e-mail/senha ou Google), o token de autenticação deve ser armazenado de forma segura no dispositivo (ex: Secure Shared Preferences ou EncryptedSharedPreferences no Android).
+Esse token deve ser usado para restaurar automaticamente a sessão na inicialização subsequente do app.
+RF2 – Logout Explícito
+Somente ao tocar no botão “Sair” (presente no menu/perfil do app) o token de autenticação deve ser removido do armazenamento local.
+Após o logout, o app deve redirecionar o usuário para a tela de login.
+RF3 – Compatibilidade com Métodos de Login
+A solução deve funcionar de forma idêntica para:
+Login com e-mail e senha (via Supabase Auth)
+Login com conta do Google (via Supabase + Google OAuth)
+RF4 – Segurança
+O token de sessão não deve ser armazenado em localStorage webview (caso haja uso de WebView), mas sim no armazenamento nativo seguro do Android.
+Em caso de falha na validação do token (expiração, revogação, etc.), o app deve redirecionar automaticamente para a tela de login.
+5. Requisitos Não Funcionais
+Desempenho: A verificação da sessão na inicialização deve ser rápida (< 500ms).
+Usabilidade: O usuário não deve perceber a verificação de sessão — a transição para o dashboard deve ser fluida se estiver logado.
+Privacidade: Nenhum dado sensível além do token de sessão deve ser armazenado localmente sem criptografia.
+6. Critérios de Aceitação
+Usuário faz login (Google ou e-mail/senha) → fecha o app totalmente → abre novamente → é direcionado diretamente ao dashboard.
+Usuário clica em “Sair” → é redirecionado à tela de login → ao reabrir o app, continua na tela de login.
+Após expiração natural do token (ex: 7 dias), o app redireciona automaticamente para login.
+Comportamento idêntico em todos os dispositivos Android compatíveis com o app.
+7. Considerações Técnicas
+Utilizar o SDK oficial do Supabase para Flutter/React Native (conforme stack atual) com suporte a persistSession.
+Garantir que o Supabase.auth.getSession() seja chamado na inicialização e valide o estado de autenticação.
+No Android, priorizar armazenamento criptografado (EncryptedSharedPreferences) para evitar vazamento de tokens.
+8. Impacto Esperado
+Melhoria significativa na experiência do usuário.
+Redução de fricção no uso diário, especialmente em modo offline.
+Alinhamento com padrões de UX modernos (ex: WhatsApp, Gmail, Spotify mantêm sessão ativa até logout
