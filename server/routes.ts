@@ -3310,6 +3310,13 @@ Regras:
   
   app.post("/api/donations/checkout", isAuthenticated, async (req: any, res) => {
     try {
+      console.log('[Donation] Received request body:', JSON.stringify(req.body));
+      console.log('[Donation] Headers:', JSON.stringify({
+        origin: req.headers.origin,
+        referer: req.headers.referer,
+        'user-agent': req.headers['user-agent']
+      }));
+      
       if (!stripe) {
         return res.status(503).json({ 
           error: "Sistema de doações não configurado. Configure STRIPE_SECRET_KEY nas variáveis de ambiente." 
@@ -3320,11 +3327,16 @@ Regras:
       const userId = req.user.claims.sub;
       const userEmail = req.user.claims.email;
       
+      console.log('[Donation] Parsed values:', { amount, currency, type, destination, userId, userEmail });
+      
       // Server-side validation - NEVER trust frontend values
       const amountInCents = Math.round(Number(amount));
+      console.log('[Donation] Amount in cents:', amountInCents);
+      
       const validation = validateDonationAmount(amountInCents);
       
       if (!validation.valid) {
+        console.log('[Donation] Validation failed:', validation.error);
         return res.status(400).json({ error: validation.error });
       }
 
@@ -3358,22 +3370,18 @@ Regras:
       const mode = isRecurring ? 'subscription' : 'payment';
 
       // Build valid base URL (Android apps may not send proper origin header)
-      const getValidBaseUrl = () => {
-        const origin = req.headers.origin;
-        // Check if origin is valid URL with https scheme
-        if (origin && typeof origin === 'string' && origin.startsWith('https://')) {
-          return origin;
-        }
-        // Fallback to environment variable or hardcoded production URL
-        return process.env.VITE_APP_URL || 'https://bibliaffs.replit.app';
-      };
-      const baseUrl = getValidBaseUrl();
-
-      // Create checkout session with card only (secure - Stripe handles all card data)
-      const session = await stripe.checkout.sessions.create({
+      const origin = req.headers.origin;
+      console.log('[Donation] Request headers origin:', origin);
+      console.log('[Donation] VITE_APP_URL env:', process.env.VITE_APP_URL);
+      
+      // Always use production URL for Android to ensure valid https URL
+      const baseUrl = 'https://bibliafs.com.br';
+      console.log('[Donation] Using baseUrl:', baseUrl);
+      
+      const sessionConfig = {
         customer: customerId,
-        mode,
-        payment_method_types: ['card'],
+        mode: mode as 'subscription' | 'payment',
+        payment_method_types: ['card' as const],
         line_items: [{
           price_data: {
             currency: currency || 'brl',
@@ -3396,11 +3404,24 @@ Regras:
           isAnonymous: isAnonymous ? 'true' : 'false',
           message: message || '',
         },
-      });
+      };
+      
+      console.log('[Donation] Session config:', JSON.stringify(sessionConfig, null, 2));
+
+      // Create checkout session with card only (secure - Stripe handles all card data)
+      const session = await stripe.checkout.sessions.create(sessionConfig as any);
+      
+      console.log('[Donation] Session created successfully:', session.id);
 
       res.json({ url: session.url, sessionId: session.id });
     } catch (error: any) {
-      console.error("Erro ao criar checkout session de doação:", error);
+      console.error("[Donation] Stripe error details:", {
+        message: error.message,
+        type: error.type,
+        code: error.code,
+        param: error.param,
+        raw: error.raw
+      });
       res.status(500).json({ error: "Falha ao criar sessão de checkout: " + error.message });
     }
   });

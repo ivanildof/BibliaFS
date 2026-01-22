@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 import { isNative } from '@/lib/config';
 import { supabase } from '@/lib/supabase';
 
@@ -13,6 +14,7 @@ export function useDeepLinks(onAuthCallback?: () => void) {
 
       try {
         const urlObj = new URL(url);
+        let authSuccess = false;
         
         if (urlObj.hash && urlObj.hash.includes('access_token')) {
           const hashParams = new URLSearchParams(urlObj.hash.substring(1));
@@ -30,7 +32,7 @@ export function useDeepLinks(onAuthCallback?: () => void) {
               console.error('[DeepLink] Error setting session:', error);
             } else {
               console.log('[DeepLink] Session set successfully');
-              onAuthCallback?.();
+              authSuccess = true;
             }
           }
         } else if (urlObj.searchParams.has('code')) {
@@ -42,9 +44,18 @@ export function useDeepLinks(onAuthCallback?: () => void) {
               console.error('[DeepLink] Error exchanging code:', error);
             } else {
               console.log('[DeepLink] Code exchanged successfully');
-              onAuthCallback?.();
+              authSuccess = true;
             }
           }
+        }
+        
+        if (authSuccess) {
+          try {
+            await Browser.close();
+          } catch (e) {
+            console.log('[DeepLink] Browser already closed or not open');
+          }
+          onAuthCallback?.();
         }
       } catch (error) {
         console.error('[DeepLink] Error processing URL:', error);
@@ -52,6 +63,10 @@ export function useDeepLinks(onAuthCallback?: () => void) {
     };
 
     App.addListener('appUrlOpen', handleDeepLink);
+    
+    Browser.addListener('browserFinished', () => {
+      console.log('[DeepLink] Browser closed by user');
+    });
 
     App.getLaunchUrl().then((result) => {
       if (result?.url) {
@@ -62,6 +77,7 @@ export function useDeepLinks(onAuthCallback?: () => void) {
 
     return () => {
       App.removeAllListeners();
+      Browser.removeAllListeners();
     };
   }, [onAuthCallback]);
 }
