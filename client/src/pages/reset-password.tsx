@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Book, Loader2, Eye, EyeOff, CheckCircle, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 const resetPasswordSchema = z.object({
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
@@ -48,7 +48,7 @@ export default function ResetPassword() {
   const resetPasswordMutation = useMutation({
     mutationFn: async (data: ResetPasswordFormData) => {
       // Use Supabase directly to update password since we are redirected with tokens
-      const { error } = await supabase.auth.updateUser({
+      const { error } = await getSupabase().auth.updateUser({
         password: data.password
       });
       if (error) throw error;

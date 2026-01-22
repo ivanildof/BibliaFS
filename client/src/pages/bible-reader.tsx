@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { apiFetch, getApiUrl } from "@/lib/config";
 import { 
   Sheet, 
@@ -402,7 +402,7 @@ export default function BibleReader() {
         description: "Isso pode levar 20-40 segundos. Aguarde!",
       });
       
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await getSupabase().auth.getSession();
       const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
       
       const response = await fetch(backendUrl, {
@@ -601,7 +601,7 @@ export default function BibleReader() {
     });
     
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await getSupabase().auth.getSession();
       const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
       
       const controller = new AbortController();
@@ -1546,7 +1546,7 @@ export default function BibleReader() {
                             setPlayingVerseNumber(verse.number);
                             
                             try {
-                              const { data: { session } } = await supabase.auth.getSession();
+                              const { data: { session } } = await getSupabase().auth.getSession();
                               const headers: Record<string, string> = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
                               
                               const controller = new AbortController();

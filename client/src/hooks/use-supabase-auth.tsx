@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { supabase } from "@/lib/supabase";
+import { initSupabase, getSupabase } from "@/lib/supabase";
+import { clearAllAuthStorage } from "@/lib/persistentStorage";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -22,25 +23,37 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let subscription: { unsubscribe: () => void } | null = null;
+
+    const init = async () => {
+      const supabase = await initSupabase();
+      
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-    });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+      const { data } = supabase.auth.onAuthStateChange(
+        (_event, session) => {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      );
+      subscription = data.subscription;
+    };
 
-    return () => subscription.unsubscribe();
+    init();
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
+    const supabase = getSupabase();
     await supabase.auth.signOut();
+    await clearAllAuthStorage();
     setUser(null);
     setSession(null);
   };

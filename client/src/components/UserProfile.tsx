@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
+import { clearAllAuthStorage } from "@/lib/persistentStorage";
 import { apiFetch } from "@/lib/config";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -29,8 +30,9 @@ export function UserProfile() {
 
   const handleLogout = async () => {
     try {
-      // Logout from Supabase (this clears the session from localStorage)
-      await supabase.auth.signOut();
+      // Logout from Supabase (this clears the session from localStorage and IndexedDB)
+      await getSupabase().auth.signOut();
+      await clearAllAuthStorage();
       // Then notify backend (optional, for audit purposes)
       if (session?.access_token) {
         await apiFetch("/api/auth/logout", { 

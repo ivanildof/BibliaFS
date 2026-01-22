@@ -1,18 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './env-config';
-import { persistentStorage } from './persistentStorage';
+import { persistentStorage, syncLocalStorageToIndexedDB, hydrateLocalStorageFromIndexedDB } from './persistentStorage';
 
 const customStorage = {
   getItem: (key: string): string | null => {
-    const value = localStorage.getItem(key);
-    if (value) return value;
-    
-    persistentStorage.getItem(key).then(idbValue => {
-      if (idbValue && !localStorage.getItem(key)) {
-        localStorage.setItem(key, idbValue);
-      }
-    }).catch(() => {});
-    
     return localStorage.getItem(key);
   },
   setItem: (key: string, value: string): void => {
@@ -29,16 +20,60 @@ const customStorage = {
   }
 };
 
-export const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-      storage: customStorage,
-      storageKey: 'bibliaffs-auth-token',
-    },
+let supabaseInstance: SupabaseClient | null = null;
+let initPromise: Promise<SupabaseClient> | null = null;
+let hydrationDone = false;
+
+function createSupabaseClient(): SupabaseClient {
+  const client = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        storage: customStorage,
+      },
+    }
+  );
+
+  client.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      syncLocalStorageToIndexedDB();
+    }
+  });
+
+  return client;
+}
+
+export async function initSupabase(): Promise<SupabaseClient> {
+  if (supabaseInstance) return supabaseInstance;
+  
+  if (initPromise) return initPromise;
+  
+  initPromise = (async () => {
+    if (!hydrationDone) {
+      await hydrateLocalStorageFromIndexedDB();
+      hydrationDone = true;
+    }
+    supabaseInstance = createSupabaseClient();
+    return supabaseInstance;
+  })();
+  
+  return initPromise;
+}
+
+export function getSupabase(): SupabaseClient {
+  if (!supabaseInstance) {
+    console.warn('[Supabase] getSupabase called before initSupabase - creating client without hydration');
+    supabaseInstance = createSupabaseClient();
   }
-);
+  return supabaseInstance;
+}
+
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    return getSupabase()[prop as keyof SupabaseClient];
+  }
+});

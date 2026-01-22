@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import { supabase } from "@/lib/supabase";
+import { supabase, getSupabase } from "@/lib/supabase";
 import { apiFetch, isNative } from "@/lib/config";
 import { Book, Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { SiGoogle } from "react-icons/si";

@@ -37,8 +37,8 @@ export const persistentStorage = {
         request.onsuccess = () => resolve(request.result ?? null);
       });
     } catch (error) {
-      console.warn('[PersistentStorage] IndexedDB getItem failed, falling back to localStorage:', error);
-      return localStorage.getItem(key);
+      console.warn('[PersistentStorage] IndexedDB getItem failed:', error);
+      return null;
     }
   },
   
@@ -54,8 +54,7 @@ export const persistentStorage = {
         request.onsuccess = () => resolve();
       });
     } catch (error) {
-      console.warn('[PersistentStorage] IndexedDB setItem failed, falling back to localStorage:', error);
-      localStorage.setItem(key, value);
+      console.warn('[PersistentStorage] IndexedDB setItem failed:', error);
     }
   },
   
@@ -71,26 +70,89 @@ export const persistentStorage = {
         request.onsuccess = () => resolve();
       });
     } catch (error) {
-      console.warn('[PersistentStorage] IndexedDB removeItem failed, falling back to localStorage:', error);
-      localStorage.removeItem(key);
+      console.warn('[PersistentStorage] IndexedDB removeItem failed:', error);
+    }
+  },
+
+  async getAllKeys(): Promise<string[]> {
+    try {
+      const db = await getDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE_NAME, 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.getAllKeys();
+        
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result.map(k => String(k)));
+      });
+    } catch (error) {
+      console.warn('[PersistentStorage] IndexedDB getAllKeys failed:', error);
+      return [];
+    }
+  },
+
+  async clearAll(): Promise<void> {
+    try {
+      const db = await getDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.clear();
+        
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+    } catch (error) {
+      console.warn('[PersistentStorage] IndexedDB clearAll failed:', error);
     }
   }
 };
 
-export async function migrateLocalStorageToIndexedDB(): Promise<void> {
+export async function hydrateLocalStorageFromIndexedDB(): Promise<void> {
   try {
-    const localStorageKeys = Object.keys(localStorage).filter(key => 
-      key.startsWith('sb-') || key.includes('supabase')
-    );
+    const keys = await persistentStorage.getAllKeys();
+    const supabaseKeys = keys.filter(key => key.startsWith('sb-'));
     
-    for (const key of localStorageKeys) {
-      const value = localStorage.getItem(key);
-      if (value) {
-        await persistentStorage.setItem(key, value);
-        console.log(`[Migration] Migrated ${key} to IndexedDB`);
+    for (const key of supabaseKeys) {
+      const localValue = localStorage.getItem(key);
+      if (!localValue) {
+        const idbValue = await persistentStorage.getItem(key);
+        if (idbValue) {
+          console.log(`[Hydration] Restoring ${key} from IndexedDB to localStorage`);
+          localStorage.setItem(key, idbValue);
+        }
       }
     }
   } catch (error) {
-    console.warn('[Migration] Failed to migrate localStorage to IndexedDB:', error);
+    console.warn('[Hydration] Failed to hydrate localStorage from IndexedDB:', error);
+  }
+}
+
+export async function syncLocalStorageToIndexedDB(): Promise<void> {
+  try {
+    const keys = Object.keys(localStorage).filter(key => key.startsWith('sb-'));
+    
+    for (const key of keys) {
+      const value = localStorage.getItem(key);
+      if (value) {
+        await persistentStorage.setItem(key, value);
+      }
+    }
+  } catch (error) {
+    console.warn('[Sync] Failed to sync localStorage to IndexedDB:', error);
+  }
+}
+
+export async function clearAllAuthStorage(): Promise<void> {
+  try {
+    const keys = Object.keys(localStorage).filter(key => key.startsWith('sb-'));
+    for (const key of keys) {
+      localStorage.removeItem(key);
+    }
+    
+    await persistentStorage.clearAll();
+    console.log('[Auth] Cleared all auth storage');
+  } catch (error) {
+    console.warn('[Auth] Failed to clear all auth storage:', error);
   }
 }
