@@ -20,7 +20,7 @@ import { Heart, Loader2, CheckCircle2, CreditCard, Shield, Lock } from "lucide-r
 const PRESET_AMOUNTS = [10, 25, 50, 100];
 
 const donationFormSchema = z.object({
-  amount: z.number().min(5, "Valor mínimo é R$ 5").max(1000, "Valor máximo é R$ 1000"),
+  amount: z.number().min(1, "Valor mínimo é R$ 1").max(1000000, "Valor máximo é R$ 1.000.000"),
   customAmount: z.string().optional(),
   type: z.enum(["one_time", "recurring"]),
   destination: z.enum(["app_operations", "bible_translation"]),
@@ -30,11 +30,11 @@ const donationFormSchema = z.object({
 }).refine((data) => {
   if (data.customAmount) {
     const val = parseFloat(data.customAmount);
-    return val >= 5 && val <= 1000;
+    return val >= 1;
   }
   return true;
 }, {
-  message: "Valor deve estar entre R$ 5 e R$ 1000",
+  message: "Valor deve ser pelo menos R$ 1",
   path: ["customAmount"]
 });
 
@@ -94,19 +94,10 @@ export default function Donate() {
         ? parseFloat(customAmountStr) 
         : selectedAmount || data.amount;
 
-      if (!amount || amount < 5) {
+      if (!amount || amount < 1) {
         toast({
           title: "Erro",
-          description: "Valor mínimo para doação é R$ 5",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (amount > 1000) {
-        toast({
-          title: "Erro",
-          description: "Valor máximo para doação é R$ 1000",
+          description: "Valor mínimo para doação é R$ 1",
           variant: "destructive",
         });
         return;
@@ -275,15 +266,14 @@ export default function Donate() {
                     <div className="space-y-1">
                       <Input
                         type="number"
-                        placeholder="Digite o valor (R$ 5 - R$ 1000)"
-                        min="5"
-                        max="1000"
+                        placeholder="Digite o valor"
+                        min="1"
                         step="0.01"
                         {...form.register("customAmount")}
                         data-testid="input-custom-amount"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Valor mínimo: R$ 5 | Valor máximo: R$ 1000
+                        Quem decide o valor é você (mínimo R$ 1)
                       </p>
                     </div>
                   )}
