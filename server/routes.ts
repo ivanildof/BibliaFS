@@ -3283,8 +3283,8 @@ Regras:
   
   // Donation amount validation constants (in cents)
   const PRESET_DONATION_AMOUNTS = [1000, 2500, 5000, 10000]; // R$10, R$25, R$50, R$100
-  const MIN_CUSTOM_DONATION = 500; // R$5.00 minimum
-  const MAX_CUSTOM_DONATION = 100000; // R$1000.00 maximum
+  const MIN_CUSTOM_DONATION = 100; // R$1.00 minimum
+  const MAX_CUSTOM_DONATION = 100000000; // R$1.000.000.00 maximum
   
   // Helper function to validate donation amount (security - never trust frontend values)
   function validateDonationAmount(amountInCents: number): { valid: boolean; error?: string } {
@@ -3304,7 +3304,7 @@ Regras:
     
     return { 
       valid: false, 
-      error: `Valor deve ser R$10, R$25, R$50, R$100 ou entre R$5 e R$1000` 
+      error: `Valor deve ser no mínimo R$1` 
     };
   }
   
