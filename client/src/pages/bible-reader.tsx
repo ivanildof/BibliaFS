@@ -1695,9 +1695,9 @@ export default function BibleReader() {
         />
       )}
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation - Premium Style */}
       <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-30 px-4">
-        <div className="max-w-md mx-auto bg-background/95 backdrop-blur border rounded-full shadow-lg px-4 py-2">
+        <div className="max-w-md mx-auto bg-background/95 backdrop-blur-md border border-primary/20 rounded-full shadow-2xl px-4 py-2 ring-1 ring-primary/5">
           <div className="flex items-center justify-center gap-2">
             <Button
               variant="ghost"
