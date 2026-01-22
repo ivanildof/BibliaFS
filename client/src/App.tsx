@@ -14,8 +14,9 @@ import { UserProfile } from "@/components/UserProfile";
 import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { isNative } from "@/lib/config";
+import { useDeepLinks } from "@/hooks/useDeepLinks";
 
 // Pages
 import Landing from "@/pages/landing";
@@ -170,6 +171,13 @@ function hexToHSL(hex: string): string {
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
+  
+  const handleAuthCallback = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    window.location.href = '/';
+  }, []);
+  
+  useDeepLinks(handleAuthCallback);
   
   useEffect(() => {
     if (user?.selectedTheme) {
