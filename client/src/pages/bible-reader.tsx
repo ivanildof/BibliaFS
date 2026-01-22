@@ -1395,7 +1395,7 @@ export default function BibleReader() {
           <>
             {/* Book Name - Large Centered */}
             <h1 
-              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-[#1a1a1a]" 
+              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-[#4a4a4a]" 
               data-testid="text-book-name"
             >
               {t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
@@ -1403,7 +1403,7 @@ export default function BibleReader() {
             
             {/* Chapter Number - Gigantic Centered */}
             <div 
-              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-[#1a1a1a]" 
+              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-[#4a4a4a]/60" 
               data-testid="text-chapter-number"
             >
               {chapterData.chapter.number}
@@ -1441,7 +1441,7 @@ export default function BibleReader() {
                           {verse.number}
                         </sup>
                         <p 
-                          className="verse-text flex-1 font-serif text-base md:text-lg leading-relaxed" 
+                          className="verse-text flex-1 font-serif text-base md:text-lg leading-relaxed text-[#333333] dark:text-slate-300" 
                           data-testid={`verse-text-${verse.number}`}
                         >
                           {verse.text}
@@ -1768,7 +1768,7 @@ export default function BibleReader() {
             
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-muted/50 text-[#1a1a1a]"
+              className="text-sm font-bold min-w-[100px] text-center hover-elevate px-4 py-2 rounded-full transition-all hover:bg-muted/50 text-[#4a4a4a]"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
