@@ -29,7 +29,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="bibliafs.com.br" />
+                <data android:scheme="https" android:host="bibliafs.com.br" android:pathPrefix="/auth/callback" />
             </intent-filter>
 
             <!-- Deep link for OAuth callback from bibliaffs.replit.app -->

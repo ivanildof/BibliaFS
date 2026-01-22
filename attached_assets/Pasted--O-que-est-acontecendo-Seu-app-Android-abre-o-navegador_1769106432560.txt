@@ -1,0 +1,119 @@
+ O que está acontecendo?
+Seu app Android abre o navegador do sistema (Chrome, etc.) para fazer login.
+
+Após o login, redireciona para https://bibliafs.com.br/auth/callback.
+
+Mas seu app nativo (APK) não recebe nem salva essa sessão.
+Ao reabrir o app, ele não sabe que o usuário já está logado, então pede login novamente.
+
+🔑 O problema: você está usando autenticação web, mas não está integrando a sessão de volta ao app Android.
+
+✅ Solução: Use Custom Tabs + Deep Linking ou Supabase Auth no próprio app
+
+Opção 1: Mantenha o fluxo web, mas use Deep Links (recomendado para APK simples)
+
+Passo 1: Configure um Deep Link no AndroidManifest.xml
+Adicione isso dentro da <activity> principal do seu app:
+
+xml:
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="https" android:host="bibliafs.com.br" android:pathPrefix="/auth/callback" />
+</intent-filter>
+
+
+Isso faz com que, após o login, o Android abra seu app em vez do navegador.
+
+Passo 2: No seu app, capture a URL de retorno
+No código (ex: MainActivity.java ou MainActivity.kt):
+
+kotlin:
+
+override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    val uri = intent?.data
+    if (uri != null && uri.toString().contains("access_token")) {
+        // Extraia o token e salve localmente
+        val accessToken = uri.getQueryParameter("access_token")
+        val refreshToken = uri.getQueryParameter("refresh_token")
+        
+        // Salve no SharedPreferences
+        val prefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString("access_token", accessToken)
+            .putString("refresh_token", refreshToken)
+            .apply()
+    }
+}
+
+Passo 3: Ao iniciar o app, verifique se há tokens salvos
+kotlin:
+
+val prefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
+val accessToken = prefs.getString("access_token", null)
+
+if (accessToken != null) {
+    // Vá direto para o dashboard
+    startActivity(Intent(this, DashboardActivity::class.java))
+} else {
+    // Mostre a tela de login
+}
+
+Opção 2: Use o SDK do Supabase diretamente no app Android (melhor abordagem)
+Se seu app é feito com React Native, Flutter, ou mesmo Kotlin/Java, você pode usar o Supabase Auth diretamente no app, sem abrir o navegador.
+
+Exemplo com Kotlin (Android Nativo):
+Adicione a dependência no build.gradle:
+
+gradle:
+implementation 'io.github.jan-tennert.supabase:gotrue-kt:2.0.0'
+
+Faça login diretamente:
+
+kotlin:
+val supabase = SupabaseClient("https://olvumxgyoazdftdyasmx.supabase.co", "SEU_ANON_KEY")
+val auth = supabase.auth
+
+// Login com Google (via Custom Tab embutido)
+auth.signInWithOAuth(
+    provider = Provider.GOOGLE,
+    redirectUrl = "bibliafs://login-callback"
+)
+
+Configure o redirectUrl personalizado (bibliafs://...) e capture no app.
+Isso mantém tudo dentro do app e salva a sessão automaticamente.
+
+Opção 3: Se for um PWA (Progressive Web App) empacotado como APK
+Se você gerou o APK usando PWA Builder ou Capacitor, então:
+
+Certifique-se de que o localStorage está funcionando.
+O Supabase salva a sessão automaticamente no localStorage — mas alguns wrappers bloqueiam isso.
+✅ Solução: No Capacitor, adicione no capacitor.config.ts:
+
+ts:
+{
+  server: {
+    androidScheme: 'https'
+  }
+}
+
+Isso permite que o localStorage funcione corretamente no Android.
+
+💡 Dica final: Por que funciona na web, mas não no APK?
+Na web, o navegador salva cookies e localStorage → sessão persistente.
+No APK (se for um WebView ou PWA), o armazenamento pode ser limpo ao fechar, ou o contexto é diferente.
+🛠 A solução definitiva é garantir que o token seja salvo no armazenamento persistente do Android (SharedPreferences, Secure Storage, etc.).
+
+
+Resumo das ações
+Situação
+Solução
+App abre navegador externo
+Use Deep Links para voltar ao app e salvar tokens
+App é PWA/WebView
+Habilite androidScheme: 'https' no Capacitor ou verifique o localStorage
+App nativo (Kotlin/Flutter)
+Use o SDK do Supabase diretamente no app
+
