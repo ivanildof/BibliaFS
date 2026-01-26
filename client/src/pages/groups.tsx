@@ -34,8 +34,27 @@ import {
   CheckCircle2,
   AlertCircle,
   FileText,
-  ChevronRight
+  ChevronRight,
+  MoreVertical,
+  Pencil,
+  Trash2
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -188,6 +207,9 @@ export default function Groups() {
   const [isDiscussionDialogOpen, setIsDiscussionDialogOpen] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState<GroupDiscussion | null>(null);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
+  const [groupToDelete, setGroupToDelete] = useState<Group | null>(null);
 
   const { data: allGroups = [], isLoading: loadingAll } = useQuery<Group[]>({
     queryKey: ["/api/groups"],
@@ -306,6 +328,53 @@ export default function Groups() {
     onError: (error: Error) => {
       toast({
         title: "Erro ao criar grupo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateGroupMutation = useMutation({
+    mutationFn: async ({ groupId, data }: { groupId: string; data: GroupFormData }): Promise<Group> => {
+      const res = await apiRequest("PATCH", `/api/groups/${groupId}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      setIsEditDialogOpen(false);
+      setEditingGroup(null);
+      form.reset();
+      toast({
+        title: "Grupo atualizado!",
+        description: "As alterações foram salvas com sucesso.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao atualizar grupo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteGroupMutation = useMutation({
+    mutationFn: async (groupId: string) => {
+      return await apiRequest("DELETE", `/api/groups/${groupId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      setGroupToDelete(null);
+      toast({
+        title: "Grupo excluído",
+        description: "O grupo foi removido com sucesso.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao excluir grupo",
         description: error.message,
         variant: "destructive",
       });
@@ -506,7 +575,33 @@ export default function Groups() {
   });
 
   const onSubmit = (data: GroupFormData) => {
-    createMutation.mutate(data);
+    if (editingGroup) {
+      updateGroupMutation.mutate({ groupId: editingGroup.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  const handleEditGroup = (group: Group, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingGroup(group);
+    form.reset({
+      name: group.name,
+      description: group.description || "",
+      isPublic: group.isPublic,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (group: Group, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setGroupToDelete(group);
+  };
+
+  const confirmDeleteGroup = () => {
+    if (groupToDelete) {
+      deleteGroupMutation.mutate(groupToDelete.id);
+    }
   };
 
   const onSendMessage = (data: MessageFormData) => {
@@ -1462,11 +1557,41 @@ export default function Groups() {
                           <div className="p-3.5 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
                             <Users className="h-7 w-7 text-primary" />
                           </div>
-                          <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider">
-                            {group.role === "leader" ? (
-                              <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
-                            ) : "Membro"}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            {group.role === "leader" && (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 rounded-xl"
+                                    data-testid={`button-group-menu-${group.id}`}
+                                  >
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={(e) => handleEditGroup(group, e)} data-testid={`button-edit-group-${group.id}`}>
+                                    <Pencil className="h-4 w-4 mr-2" />
+                                    Editar Grupo
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={(e) => handleDeleteClick(group, e)} 
+                                    className="text-destructive focus:text-destructive"
+                                    data-testid={`button-delete-group-${group.id}`}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Excluir Grupo
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            )}
+                            <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                              {group.role === "leader" ? (
+                                <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
+                              ) : "Membro"}
+                            </Badge>
+                          </div>
                         </div>
                         <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors leading-tight">
                           {group.name}
@@ -1688,6 +1813,137 @@ export default function Groups() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Group Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          setIsEditDialogOpen(false);
+          setEditingGroup(null);
+          form.reset();
+        }
+      }}>
+        <DialogContent className="rounded-[2.5rem] border-0 glass">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-primary" />
+              Editar Grupo
+            </DialogTitle>
+            <DialogDescription>
+              Altere as informações do seu grupo de estudo
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Nome do Grupo</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: Estudo de Salmos"
+                        className="h-14 rounded-2xl text-base"
+                        data-testid="input-edit-group-name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Descreva o propósito do grupo..."
+                        className="rounded-2xl min-h-[100px] text-base resize-none"
+                        data-testid="input-edit-group-description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between p-4 bg-muted/50 rounded-2xl">
+                    <div className="space-y-0.5">
+                      <FormLabel className="font-bold flex items-center gap-2">
+                        {field.value ? <Globe className="h-4 w-4 text-primary" /> : <Lock className="h-4 w-4" />}
+                        Grupo {field.value ? "Público" : "Privado"}
+                      </FormLabel>
+                      <p className="text-sm text-muted-foreground">
+                        {field.value ? "Qualquer pessoa pode encontrar e entrar" : "Apenas com convite"}
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        data-testid="switch-edit-is-public"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter className="pt-4">
+                <Button 
+                  type="submit" 
+                  disabled={updateGroupMutation.isPending}
+                  className="w-full h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20"
+                  data-testid="button-update-group"
+                >
+                  {updateGroupMutation.isPending ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : (
+                    <Check className="h-5 w-5 mr-2" />
+                  )}
+                  Salvar Alterações
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!groupToDelete} onOpenChange={(open) => !open && setGroupToDelete(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-destructive" />
+              Excluir Grupo
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o grupo <span className="font-semibold">"{groupToDelete?.name}"</span>? 
+              Esta ação não pode ser desfeita e todos os dados do grupo (mensagens, membros, convites) serão removidos permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteGroup}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
+              data-testid="button-confirm-delete-group"
+            >
+              {deleteGroupMutation.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              Excluir Grupo
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

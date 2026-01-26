@@ -202,10 +202,11 @@ export default function Teacher() {
   const [contentBlocks, setContentBlocks] = useState<Array<{title: string; content: string}>>([]);
   const [newBlockTitle, setNewBlockTitle] = useState("");
   const [newBlockContent, setNewBlockContent] = useState("");
-  const [questions, setQuestions] = useState<Array<{question: string; answer: string}>>([]);
+  const [questions, setQuestions] = useState<Array<{question: string; answers: string[]}>>([]);
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
   const [expandedAnswerIndex, setExpandedAnswerIndex] = useState<number | null>(null);
+  const [newAnswerForQuestion, setNewAnswerForQuestion] = useState<{[key: number]: string}>({});
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [currentTab, setCurrentTab] = useState<"lessons" | "assistant">("lessons");
   const [assistantMessages, setAssistantMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
@@ -263,7 +264,8 @@ export default function Teacher() {
 
   const addQuestion = () => {
     if (newQuestion.trim()) {
-      setQuestions([...questions, { question: newQuestion.trim(), answer: newAnswer.trim() || "Resposta será preenchida aqui" }]);
+      const initialAnswers = newAnswer.trim() ? [newAnswer.trim()] : [];
+      setQuestions([...questions, { question: newQuestion.trim(), answers: initialAnswers }]);
       setNewQuestion("");
       setNewAnswer("");
     }
@@ -271,6 +273,22 @@ export default function Teacher() {
 
   const removeQuestion = (index: number) => {
     setQuestions(questions.filter((_, i) => i !== index));
+  };
+
+  const addAnswerToQuestion = (questionIndex: number) => {
+    const answerText = newAnswerForQuestion[questionIndex]?.trim();
+    if (answerText) {
+      const updatedQuestions = [...questions];
+      updatedQuestions[questionIndex].answers.push(answerText);
+      setQuestions(updatedQuestions);
+      setNewAnswerForQuestion({ ...newAnswerForQuestion, [questionIndex]: "" });
+    }
+  };
+
+  const removeAnswerFromQuestion = (questionIndex: number, answerIndex: number) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[questionIndex].answers = updatedQuestions[questionIndex].answers.filter((_, i) => i !== answerIndex);
+    setQuestions(updatedQuestions);
   };
 
   useEffect(() => {
@@ -437,8 +455,8 @@ export default function Teacher() {
         contentBlocks,
         questions: questions.map((q, i) => ({
           id: `q-${i}`,
-          question: typeof q === 'string' ? q : q.question,
-          answer: typeof q === 'string' ? "" : q.answer,
+          question: q.question,
+          answers: q.answers,
           options: [],
           correctAnswer: -1,
         })),
@@ -483,8 +501,8 @@ export default function Teacher() {
         contentBlocks,
         questions: questions.map((q, i) => ({
           id: `q-${i}`,
-          question: typeof q === 'string' ? q : q.question,
-          answer: typeof q === 'string' ? "" : q.answer,
+          question: q.question,
+          answers: q.answers,
           options: [],
           correctAnswer: -1,
         })),
@@ -534,9 +552,12 @@ export default function Teacher() {
     setObjectives(lesson.objectives || []);
     setContentBlocks((lesson as any).contentBlocks || []);
     setQuestions((lesson.questions || []).map((q: any) => {
-      if (typeof q === 'string') return { question: q, answer: "" };
-      if (q.question) return { question: q.question, answer: q.answer || "" };
-      return { question: "", answer: "" };
+      if (typeof q === 'string') return { question: q, answers: [] };
+      if (q.question) {
+        const existingAnswers = q.answers || (q.answer ? [q.answer] : []);
+        return { question: q.question, answers: existingAnswers };
+      }
+      return { question: "", answers: [] };
     }));
     setEditingLessonId(lesson.id);
     setIsCreateDialogOpen(true);
@@ -865,14 +886,14 @@ export default function Teacher() {
                         </Button>
                       </div>
                       {questions.length > 0 && (
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                           {questions.map((q, i) => (
                             <li key={i} className="p-3 bg-muted rounded-lg space-y-2">
                               <div className="flex items-start gap-2">
                                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold flex-shrink-0 mt-0.5">
                                   {i + 1}
                                 </span>
-                                <div className="flex-1 space-y-1">
+                                <div className="flex-1 space-y-2">
                                   <p className="text-sm font-medium">{q.question}</p>
                                   <Button
                                     type="button"
@@ -882,11 +903,49 @@ export default function Teacher() {
                                     className="text-xs h-6"
                                     data-testid={`button-toggle-answer-${i}`}
                                   >
-                                    {expandedAnswerIndex === i ? "Ocultar Resposta" : "Ver Resposta"}
+                                    {expandedAnswerIndex === i ? "Ocultar Respostas" : `Ver Respostas (${q.answers.length})`}
                                   </Button>
                                   {expandedAnswerIndex === i && (
-                                    <div className="p-2 bg-background rounded text-sm mt-2 border-l-2 border-primary">
-                                      {q.answer}
+                                    <div className="space-y-2 mt-2">
+                                      {q.answers.length > 0 ? (
+                                        q.answers.map((answer, answerIdx) => (
+                                          <div key={answerIdx} className="p-2 bg-background rounded text-sm border-l-2 border-primary flex items-start gap-2">
+                                            <span className="text-xs text-muted-foreground flex-shrink-0 pt-0.5">R{answerIdx + 1}:</span>
+                                            <span className="flex-1">{answer}</span>
+                                            <Button
+                                              type="button"
+                                              size="icon"
+                                              variant="ghost"
+                                              onClick={() => removeAnswerFromQuestion(i, answerIdx)}
+                                              className="h-5 w-5 flex-shrink-0"
+                                              data-testid={`button-remove-answer-${i}-${answerIdx}`}
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <p className="text-xs text-muted-foreground italic">Nenhuma resposta adicionada ainda</p>
+                                      )}
+                                      <div className="flex gap-2 mt-2">
+                                        <Textarea
+                                          placeholder="Adicionar nova resposta..."
+                                          value={newAnswerForQuestion[i] || ""}
+                                          onChange={(e) => setNewAnswerForQuestion({ ...newAnswerForQuestion, [i]: e.target.value })}
+                                          className="min-h-16 text-sm"
+                                          data-testid={`textarea-new-answer-${i}`}
+                                        />
+                                        <Button
+                                          type="button"
+                                          size="icon"
+                                          variant="outline"
+                                          onClick={() => addAnswerToQuestion(i)}
+                                          className="flex-shrink-0"
+                                          data-testid={`button-add-answer-${i}`}
+                                        >
+                                          <Plus className="h-4 w-4" />
+                                        </Button>
+                                      </div>
                                     </div>
                                   )}
                                 </div>
