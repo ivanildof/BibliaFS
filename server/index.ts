@@ -51,10 +51,11 @@ if (isProduction) {
   // In development, set permissive headers for Replit preview
   // MUST run before any other middleware to ensure headers are set first
   app.use((req, res, next) => {
-    // Explicitly override any previously set security headers
-    res.setHeader('X-Frame-Options', 'ALLOWALL');
-    // We use setHeader which overwrites. We ensure no other CSP is present.
-    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.replit.dev https://*.replit.com https://replit.com;");
+    // Completely disable security headers that might block iframes in dev
+    res.removeHeader('X-Frame-Options');
+    res.removeHeader('Content-Security-Policy');
+    
+    // Explicitly set permissive headers for Replit
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
