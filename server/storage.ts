@@ -1325,6 +1325,11 @@ export class DatabaseStorage implements IStorage {
     return !!member;
   }
 
+  async updateGroupMemberRole(groupId: string, memberId: string, role: string): Promise<void> {
+    const { groupMembers } = await import("@shared/schema");
+    await db.update(groupMembers).set({ role }).where(eq(groupMembers.id, memberId));
+  }
+
   async getUserGroups(userId: string): Promise<any[]> {
     const { groups, groupMembers } = await import("@shared/schema");
     return await db

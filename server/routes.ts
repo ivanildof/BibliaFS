@@ -3859,7 +3859,7 @@ Responda em português do Brasil.`
         return res.status(403).json({ message: "Apenas o líder pode alterar cargos" });
       }
 
-      await storage.updateGroupMemberRole(memberId, role);
+      await storage.updateGroupMemberRole(groupId, memberId, role);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -3876,7 +3876,16 @@ Responda em português do Brasil.`
         return res.status(403).json({ message: "Apenas o líder pode remover membros" });
       }
 
-      await storage.removeGroupMember(memberId);
+      // No storage.ts, o método removeGroupMember espera (groupId, memberUserId)
+      // Precisamos do userId do membro, não o ID da linha na tabela members
+      const members = await storage.getGroupMembers(groupId);
+      const member = members.find(m => m.id === memberId);
+      
+      if (!member) {
+        return res.status(404).json({ message: "Membro não encontrado" });
+      }
+
+      await storage.removeGroupMember(groupId, member.userId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -3888,18 +3897,11 @@ Responda em português do Brasil.`
       const { code } = req.body;
       const userId = req.user.id;
       
-      const invite = await storage.getInviteByCode(code);
-      if (!invite || invite.status !== "pending") {
-        return res.status(400).json({ message: "Convite inválido ou já utilizado" });
+      const result = await storage.acceptInvite(code, userId);
+      if (!result.success) {
+        return res.status(400).json({ message: result.error });
       }
 
-      await storage.addGroupMember({
-        groupId: invite.groupId,
-        userId: userId,
-        role: "member",
-      });
-
-      await storage.updateInviteStatus(invite.id, "accepted");
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ message: error.message });

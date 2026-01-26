@@ -670,7 +670,7 @@ export default function Groups() {
                       Editar
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="rounded-[2rem]">
                     <DialogHeader>
                       <DialogTitle>Editar Grupo</DialogTitle>
                     </DialogHeader>
@@ -683,7 +683,7 @@ export default function Groups() {
                             <FormItem>
                               <FormLabel>Nome do Grupo</FormLabel>
                               <FormControl>
-                                <Input {...field} data-testid="input-edit-name" />
+                                <Input {...field} data-testid="input-edit-name" className="rounded-xl" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -696,7 +696,7 @@ export default function Groups() {
                             <FormItem>
                               <FormLabel>Descrição</FormLabel>
                               <FormControl>
-                                <Textarea {...field} data-testid="input-edit-description" />
+                                <Textarea {...field} data-testid="input-edit-description" className="rounded-xl" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -706,7 +706,7 @@ export default function Groups() {
                           control={editForm.control}
                           name="isPublic"
                           render={({ field }) => (
-                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                            <FormItem className="flex items-center justify-between rounded-xl border p-4">
                               <div className="space-y-0.5">
                                 <FormLabel className="text-base">Grupo Público</FormLabel>
                                 <FormDescription>Permite que qualquer pessoa encontre e entre no grupo.</FormDescription>
@@ -718,7 +718,7 @@ export default function Groups() {
                           )}
                         />
                         <DialogFooter>
-                          <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group">
+                          <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group" className="rounded-xl">
                             {updateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                             Salvar Alterações
                           </Button>
@@ -734,16 +734,16 @@ export default function Groups() {
                       Excluir
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="rounded-[2rem]">
                     <DialogHeader>
                       <DialogTitle>Excluir Grupo?</DialogTitle>
                       <DialogDescription>
                         Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo serão perdidos.
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete">Cancelar</Button>
-                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete">
+                    <DialogFooter className="flex gap-2">
+                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete" className="rounded-xl flex-1">Cancelar</Button>
+                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete" className="rounded-xl flex-1">
                         {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                         Confirmar Exclusão
                       </Button>
@@ -919,16 +919,19 @@ export default function Groups() {
                           {isLeader && member.userId !== user?.id && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Settings className="h-4 w-4" />
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-primary/10">
+                                  <Settings className="h-4 w-4 text-primary" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => updateMemberRoleMutation.mutate({ memberId: member.id, role: member.role === "moderator" ? "member" : "moderator" })}>
+                              <DropdownMenuContent align="end" className="rounded-xl">
+                                <DropdownMenuItem 
+                                  className="cursor-pointer"
+                                  onClick={() => updateMemberRoleMutation.mutate({ memberId: member.id, role: member.role === "moderator" ? "member" : "moderator" })}
+                                >
                                   {member.role === "moderator" ? "Remover Moderador" : "Tornar Moderador"}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
-                                  className="text-destructive"
+                                  className="text-destructive cursor-pointer"
                                   onClick={() => removeMemberMutation.mutate(member.id)}
                                 >
                                   Remover do Grupo
@@ -1631,9 +1634,8 @@ export default function Groups() {
                       value="discover" 
                       className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
                       data-testid="tab-discover"
-                      title="Explore grupos públicos criados pela comunidade que você pode entrar livremente"
                     >
-                      Descobrir ({publicGroups.length})
+                      Descobrir Novos Grupos ({publicGroups.length})
                     </TabsTrigger>
           </TabsList>
 
