@@ -50,14 +50,24 @@ if (isProduction) {
 } else {
   // In development, set permissive headers for Replit preview
   // MUST run before any other middleware to ensure headers are set first
-  app.use((_req, res, next) => {
-    // Remove X-Frame-Options completely to allow iframe embedding
-    res.removeHeader('X-Frame-Options');
-    // Set a minimal CSP that only specifies frame-ancestors to avoid conflicts with default Replit environment headers
+  app.use((req, res, next) => {
+    // Explicitly override any previously set security headers
+    res.setHeader('X-Frame-Options', 'ALLOWALL');
+    // We use setHeader which overwrites. We ensure no other CSP is present.
     res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.replit.dev https://*.replit.com https://replit.com;");
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    // Diagnostic log (internal only)
+    if (req.path === '/debug-csp') {
+      return res.json({
+        csp: res.getHeader('Content-Security-Policy'),
+        xfo: res.getHeader('X-Frame-Options'),
+        env: process.env.NODE_ENV,
+        isDev: !isProduction
+      });
+    }
     next();
   });
 }
