@@ -313,6 +313,7 @@ export default function Groups() {
     }
   }, [selectedGroup, editForm]);
 
+  const messageForm = useForm<MessageFormData>({
     resolver: zodResolver(messageSchema),
     defaultValues: {
       content: "",
