@@ -119,126 +119,82 @@ export function UpdatePopup() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative w-[calc(100%-32px)] max-w-[320px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden mx-4"
+            className="relative w-[calc(100%-48px)] max-w-[280px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden mx-6"
             onClick={(e) => e.stopPropagation()}
             data-testid="update-popup"
           >
-            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br from-[#6c5dd3] to-[#ff9e6d]" />
+            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-br from-[#6c5dd3] to-[#ff9e6d]" />
             
             <button
               onClick={handleDismiss}
-              className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/20 hover-elevate active-elevate-2 transition-colors"
+              className="absolute top-2 right-2 z-10 p-1 rounded-full bg-white/20 hover-elevate active-elevate-2 transition-colors"
               data-testid="button-close-update"
             >
-              <X className="w-4 h-4 text-white" />
+              <X className="w-3.5 h-3.5 text-white" />
             </button>
 
-            <div className="relative pt-6 px-5 pb-5">
-              <motion.div
-                animate={{ 
-                  y: [0, -4, 0],
-                  rotate: [0, 3, -3, 0]
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="w-16 h-16 mx-auto mb-3 rounded-xl bg-white shadow-lg flex items-center justify-center"
-              >
-                <Download className="w-8 h-8 text-[#6c5dd3]" />
-              </motion.div>
-
-              <h2 className="text-center text-lg font-extrabold text-gray-900 dark:text-white mb-1">
-                Nova Versão Disponível
-              </h2>
-              <p className="text-center text-gray-500 dark:text-gray-400 text-xs mb-4">
-                Uma atualização está pronta para você
-              </p>
-
-              <div className="flex justify-center gap-3 mb-4">
-                <div className="text-center px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 flex-1">
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">Atual</p>
-                  <p className="text-sm font-extrabold text-gray-700 dark:text-gray-300">
-                    v{updateInfo.currentVersion}
-                  </p>
+            <div className="relative pt-4 px-4 pb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
+                  <Download className="w-5 h-5 text-[#6c5dd3]" />
                 </div>
-                <div className="flex items-center text-gray-400">
-                  <span className="text-xl">→</span>
-                </div>
-                <div className="text-center px-3 py-2 rounded-lg bg-gradient-to-br from-[#6c5dd3]/10 to-[#ff9e6d]/10 border border-[#6c5dd3]/20 flex-1">
-                  <p className="text-[10px] text-[#6c5dd3] mb-0.5">Nova</p>
-                  <p className="text-sm font-extrabold text-[#6c5dd3]">
-                    v{updateInfo.latestVersion}
+                <div className="text-left">
+                  <h2 className="text-sm font-extrabold text-gray-900 dark:text-white leading-tight">
+                    Nova Versão
+                  </h2>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                    v{updateInfo.latestVersion} disponível
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-2 mb-4">
-                {updateInfo.releaseNotes.slice(0, 2).map((note, index) => {
+              <div className="space-y-1.5 mb-4">
+                {updateInfo.releaseNotes.slice(0, 1).map((note, index) => {
                   const IconComponent = iconMap[note.icon];
                   return (
                     <div
                       key={index}
-                      className="flex items-start gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50"
+                      className="flex items-start gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800"
                     >
-                      <div className="p-1.5 rounded-md bg-gradient-to-br from-[#6c5dd3]/20 to-[#ff9e6d]/20 shrink-0">
-                        <IconComponent className="w-3.5 h-3.5 text-[#6c5dd3]" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-xs text-gray-900 dark:text-white leading-tight">
-                          {note.title}
-                        </p>
-                        <p className="text-[10px] text-gray-500 dark:text-gray-400 line-clamp-1">
-                          {note.description}
-                        </p>
-                      </div>
+                      <IconComponent className="w-3 h-3 text-[#6c5dd3] mt-0.5 shrink-0" />
+                      <p className="text-[10px] text-gray-600 dark:text-gray-300 leading-snug">
+                        <span className="font-bold">{note.title}:</span> {note.description}
+                      </p>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="flex items-center justify-center gap-2 mb-4 px-3 py-2 rounded-full bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                <Shield className="w-3.5 h-3.5 text-green-600" />
-                <span className="text-[10px] font-medium text-green-700 dark:text-green-400">
-                  Google Play Store
-                </span>
-              </div>
-
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 <Button
                   onClick={handleUpdate}
                   disabled={isLoading}
-                  className="w-full h-10 rounded-xl bg-gradient-to-r from-[#6c5dd3] to-[#ff9e6d] text-white font-bold shadow-md text-sm"
+                  className="h-9 rounded-lg bg-gradient-to-r from-[#6c5dd3] to-[#ff9e6d] text-white font-bold shadow-sm text-[11px] px-2"
                   data-testid="button-update-now"
                 >
                   {isLoading ? (
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                      className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full"
                     />
                   ) : (
-                    <>
-                      <Download className="w-4 h-4 mr-2" />
-                      Atualizar Agora
-                    </>
+                    "Atualizar"
                   )}
                 </Button>
 
                 <Button
                   onClick={handleDismiss}
                   variant="ghost"
-                  className="w-full h-9 text-gray-500 dark:text-gray-400 text-xs"
+                  className="h-9 text-gray-500 dark:text-gray-400 text-[11px] px-2"
                   data-testid="button-remind-later"
                 >
-                  <Clock className="w-3.5 h-3.5 mr-2" />
-                  Lembrar Mais Tarde
+                  Depois
                 </Button>
               </div>
 
-              <div className="mt-3 text-center text-[10px] text-gray-400 dark:text-gray-500">
-                <p>Tamanho: {updateInfo.downloadSize} • Gratuito</p>
+              <div className="text-center text-[9px] text-gray-400 dark:text-gray-500">
+                <p>Tamanho: {updateInfo.downloadSize} • Seguro</p>
               </div>
             </div>
           </motion.div>
