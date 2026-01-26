@@ -30,33 +30,10 @@ const iconMap = {
 export function UpdatePopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>({
-    currentVersion: "2.0.0",
-    latestVersion: "2.1.0",
-    releaseNotes: [
-      {
-        title: "Modo Offline Aprimorado",
-        description: "Agora você pode baixar livros inteiros para ler sem internet.",
-        icon: "zap"
-      },
-      {
-        title: "Novos Temas de Leitura",
-        description: "Adicionamos os temas 'Papel Envelhecido' e 'Sépia' para maior conforto.",
-        icon: "sparkles"
-      },
-      {
-        title: "Correções de Estabilidade",
-        description: "Melhoramos o desempenho do streaming de áudio.",
-        icon: "shield-check"
-      }
-    ],
-    downloadSize: "12 MB",
-    critical: false
-  });
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
 
   useEffect(() => {
-    // Forçamos a visibilidade para demonstração
-    setIsVisible(true);
+    checkForUpdates();
   }, []);
 
   const checkForUpdates = async () => {
@@ -132,7 +109,7 @@ export function UpdatePopup() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative w-full max-w-[320px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-[calc(100%-32px)] max-w-[320px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden mx-4"
             onClick={(e) => e.stopPropagation()}
             data-testid="update-popup"
           >
