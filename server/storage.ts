@@ -1282,12 +1282,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteGroup(id: string, leaderId: string): Promise<boolean> {
-    const { groups } = await import("@shared/schema");
+    const { groups, groupMembers, groupMessages, groupInvites } = await import("@shared/schema");
     const [existing] = await db.select().from(groups).where(eq(groups.id, id));
     if (!existing || existing.leaderId !== leaderId) return false;
     
-    await db.delete(groups).where(eq(groups.id, id));
-    return true;
+    return await db.transaction(async (tx) => {
+      // Deletar convites relacionados
+      await tx.delete(groupInvites).where(eq(groupInvites.groupId, id));
+      // Deletar mensagens relacionadas
+      await tx.delete(groupMessages).where(eq(groupMessages.groupId, id));
+      // Deletar membros relacionados
+      await tx.delete(groupMembers).where(eq(groupMembers.groupId, id));
+      // Finalmente deletar o grupo
+      await tx.delete(groups).where(eq(groups.id, id));
+      return true;
+    });
   }
 
   async getGroupMembers(groupId: string): Promise<any[]> {
