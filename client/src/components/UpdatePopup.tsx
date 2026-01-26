@@ -28,9 +28,33 @@ const iconMap = {
 export function UpdatePopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>({
+    currentVersion: "2.0.0",
+    latestVersion: "2.1.0",
+    releaseNotes: [
+      {
+        title: "Modo Offline Aprimorado",
+        description: "Agora você pode baixar livros inteiros para ler sem internet.",
+        icon: "zap"
+      },
+      {
+        title: "Novos Temas de Leitura",
+        description: "Adicionamos os temas 'Papel Envelhecido' e 'Sépia' para maior conforto.",
+        icon: "sparkles"
+      },
+      {
+        title: "Correções de Estabilidade",
+        description: "Melhoramos o desempenho do streaming de áudio.",
+        icon: "shield-check"
+      }
+    ],
+    downloadSize: "12 MB",
+    critical: false
+  });
 
   useEffect(() => {
+    // Forçamos a visibilidade para demonstração
+    setIsVisible(true);
     checkForUpdates();
   }, []);
 
