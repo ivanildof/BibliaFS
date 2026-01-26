@@ -1330,6 +1330,11 @@ export class DatabaseStorage implements IStorage {
     await db.update(groupMembers).set({ role }).where(eq(groupMembers.id, memberId));
   }
 
+  async updateInviteStatus(inviteId: string, status: string): Promise<void> {
+    const { groupInvites } = await import("@shared/schema");
+    await db.update(groupInvites).set({ status }).where(eq(groupInvites.id, inviteId));
+  }
+
   async getUserGroups(userId: string): Promise<any[]> {
     const { groups, groupMembers } = await import("@shared/schema");
     return await db

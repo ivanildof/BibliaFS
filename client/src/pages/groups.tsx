@@ -651,11 +651,11 @@ export default function Groups() {
     return (
       <div className="min-h-screen bg-background relative overflow-hidden">
         <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 relative z-10">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
             <Button 
               variant="ghost" 
               onClick={() => setSelectedGroup(null)}
-              className="rounded-full hover-elevate"
+              className="rounded-full hover-elevate w-full sm:w-auto justify-start sm:justify-center"
               data-testid="button-back"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -663,16 +663,17 @@ export default function Groups() {
             </Button>
 
             {isLeader && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="rounded-xl" data-testid="button-edit-group">
-                      Editar
+                    <Button variant="outline" size="sm" className="rounded-xl flex-1 sm:flex-none border-primary/20 text-primary hover:bg-primary/5" data-testid="button-edit-group">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Editar Grupo
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="rounded-[2rem]">
+                  <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
                     <DialogHeader>
-                      <DialogTitle>Editar Grupo</DialogTitle>
+                      <DialogTitle className="text-2xl font-display font-bold">Editar Grupo</DialogTitle>
                     </DialogHeader>
                     <Form {...editForm}>
                       <form onSubmit={editForm.handleSubmit((data) => updateMutation.mutate(data))} className="space-y-4">
@@ -683,7 +684,7 @@ export default function Groups() {
                             <FormItem>
                               <FormLabel>Nome do Grupo</FormLabel>
                               <FormControl>
-                                <Input {...field} data-testid="input-edit-name" className="rounded-xl" />
+                                <Input {...field} data-testid="input-edit-name" className="rounded-xl h-12" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -696,7 +697,7 @@ export default function Groups() {
                             <FormItem>
                               <FormLabel>Descrição</FormLabel>
                               <FormControl>
-                                <Textarea {...field} data-testid="input-edit-description" className="rounded-xl" />
+                                <Textarea {...field} data-testid="input-edit-description" className="rounded-xl min-h-[100px]" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -706,10 +707,10 @@ export default function Groups() {
                           control={editForm.control}
                           name="isPublic"
                           render={({ field }) => (
-                            <FormItem className="flex items-center justify-between rounded-xl border p-4">
+                            <FormItem className="flex items-center justify-between rounded-xl border p-4 bg-muted/30">
                               <div className="space-y-0.5">
                                 <FormLabel className="text-base">Grupo Público</FormLabel>
-                                <FormDescription>Permite que qualquer pessoa encontre e entre no grupo.</FormDescription>
+                                <FormDescription>Visível para toda a comunidade.</FormDescription>
                               </div>
                               <FormControl>
                                 <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-edit-public" />
@@ -718,7 +719,7 @@ export default function Groups() {
                           )}
                         />
                         <DialogFooter>
-                          <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group" className="rounded-xl">
+                          <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group" className="rounded-xl h-12 w-full font-bold">
                             {updateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                             Salvar Alterações
                           </Button>
@@ -730,20 +731,20 @@ export default function Groups() {
 
                 <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="destructive" size="sm" className="rounded-xl" data-testid="button-delete-group">
+                    <Button variant="destructive" size="sm" className="rounded-xl flex-1 sm:flex-none shadow-lg shadow-destructive/20" data-testid="button-delete-group">
                       Excluir
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="rounded-[2rem]">
+                  <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
                     <DialogHeader>
-                      <DialogTitle>Excluir Grupo?</DialogTitle>
-                      <DialogDescription>
-                        Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo serão perdidos.
+                      <DialogTitle className="text-2xl font-display font-bold text-destructive">Excluir Grupo?</DialogTitle>
+                      <DialogDescription className="text-base pt-2">
+                        Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo serão perdidos para sempre.
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="flex gap-2">
-                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete" className="rounded-xl flex-1">Cancelar</Button>
-                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete" className="rounded-xl flex-1">
+                    <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-4">
+                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete" className="rounded-xl h-12 flex-1 order-2 sm:order-1">Cancelar</Button>
+                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete" className="rounded-xl h-12 flex-1 order-1 sm:order-2 font-bold">
                         {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                         Confirmar Exclusão
                       </Button>
