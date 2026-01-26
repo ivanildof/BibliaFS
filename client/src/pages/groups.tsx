@@ -544,37 +544,42 @@ export default function Groups() {
     const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator";
     
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 relative z-10">
           <Button 
             variant="ghost" 
             onClick={() => setSelectedGroup(null)}
-            className="mb-4"
+            className="mb-6 rounded-full hover-elevate"
             data-testid="button-back"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar aos grupos
           </Button>
 
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+          <Card className="border-0 glass rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="pb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl flex-wrap">
+                  <CardTitle className="flex items-center gap-3 text-2xl sm:text-3xl font-display font-bold">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Users className="h-6 w-6" />
+                    </div>
                     {selectedGroup.name}
                     {selectedGroup.role === "leader" && (
-                      <Crown className="h-5 w-5 text-yellow-500" />
+                      <div className="p-1 rounded-full bg-amber-500/10" title="Líder">
+                        <Crown className="h-5 w-5 text-amber-500" />
+                      </div>
                     )}
                   </CardTitle>
-                  <CardDescription className="mt-1">
+                  <CardDescription className="mt-2 text-base font-medium">
                     {selectedGroup.description || "Grupo de estudo bíblico"}
                   </CardDescription>
                 </div>
-                <Badge variant={selectedGroup.isPublic ? "secondary" : "outline"}>
+                <Badge variant="secondary" className="rounded-full px-4 py-1.5 bg-primary/10 text-primary border-0 font-bold">
                   {selectedGroup.isPublic ? (
-                    <><Globe className="h-3 w-3 mr-1" /> Público</>
+                    <><Globe className="h-3.5 w-3.5 mr-1.5" /> Público</>
                   ) : (
-                    <><Lock className="h-3 w-3 mr-1" /> Privado</>
+                    <><Lock className="h-3.5 w-3.5 mr-1.5" /> Privado</>
                   )}
                 </Badge>
               </div>
@@ -582,23 +587,23 @@ export default function Groups() {
 
             <CardContent>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="w-full justify-start mb-4 flex-wrap gap-1 h-auto">
-                  <TabsTrigger value="chat" data-testid="tab-chat">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Discussão
+                <TabsList className="w-full justify-start mb-8 p-1 bg-muted/50 rounded-2xl gap-1">
+                  <TabsTrigger value="chat" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-chat">
+                    <MessageCircle className="h-3.5 w-3.5 mr-2" />
+                    Chat
                   </TabsTrigger>
-                  <TabsTrigger value="members" data-testid="tab-members">
-                    <Users className="h-4 w-4 mr-2" />
+                  <TabsTrigger value="members" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-members">
+                    <Users className="h-3.5 w-3.5 mr-2" />
                     Membros ({groupMembers.length})
                   </TabsTrigger>
                   {isLeaderOrMod && (
-                    <TabsTrigger value="invites" data-testid="tab-invites">
-                      <UserPlus className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="invites" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-invites">
+                      <UserPlus className="h-3.5 w-3.5 mr-2" />
                       Convites
                     </TabsTrigger>
                   )}
-                  <TabsTrigger value="discussions" data-testid="tab-discussions">
-                    <GraduationCap className="h-4 w-4 mr-2" />
+                  <TabsTrigger value="discussions" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-discussions">
+                    <GraduationCap className="h-3.5 w-3.5 mr-2" />
                     Estudos ({groupDiscussions.length})
                   </TabsTrigger>
                 </TabsList>

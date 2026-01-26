@@ -622,15 +622,20 @@ export default function Teacher() {
           
           <Dialog open={isCreateDialogOpen} onOpenChange={(open) => open ? setIsCreateDialogOpen(true) : handleCloseDialog()}>
             <DialogTrigger asChild>
-              <Button size="lg" className="rounded-2xl h-14 px-8 shadow-xl shadow-primary/20" data-testid="button-create-lesson" onClick={() => setIsCreateDialogOpen(true)}>
+              <Button size="lg" className="rounded-2xl h-14 px-8 shadow-xl shadow-primary/20 hover-elevate" data-testid="button-create-lesson" onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="h-6 w-6 mr-2" />
                 {t.teacherMode.new_lesson}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl rounded-3xl border-none bg-card/95 backdrop-blur-2xl">
-              <DialogHeader>
-                <DialogTitle>{editingLessonId ? "Editar Aula" : "Criar Nova Aula"}</DialogTitle>
-                <DialogDescription>
+            <DialogContent className="max-w-3xl rounded-[2.5rem] border-0 glass max-h-[90vh] overflow-y-auto">
+              <DialogHeader className="pb-4">
+                <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-primary/10">
+                    <GraduationCap className="h-6 w-6 text-primary" />
+                  </div>
+                  {editingLessonId ? "Editar Aula" : "Criar Nova Aula"}
+                </DialogTitle>
+                <DialogDescription className="text-base font-medium">
                   Monte uma aula completa com objetivos, perguntas e recursos
                 </DialogDescription>
               </DialogHeader>
@@ -933,13 +938,13 @@ export default function Teacher() {
         {/* Tabs */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as "lessons" | "assistant")} className="mb-10">
-            <TabsList className="grid w-full max-w-md grid-cols-2 mb-10 bg-muted/50 p-1.5 rounded-2xl h-auto">
-              <TabsTrigger value="lessons" data-testid="tab-lessons" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all py-4 text-base font-bold">
-                <BookOpen className="h-5 w-5 mr-2" />
+            <TabsList className="grid w-full max-w-md grid-cols-2 mb-10 bg-muted/50 p-1 bg-muted/50 rounded-2xl gap-1 h-auto">
+              <TabsTrigger value="lessons" data-testid="tab-lessons" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold">
+                <BookOpen className="h-4 w-4 mr-2" />
                 Minhas Aulas
               </TabsTrigger>
-              <TabsTrigger value="assistant" data-testid="tab-assistant" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all py-4 text-base font-bold">
-                <Brain className="h-5 w-5 mr-2" />
+              <TabsTrigger value="assistant" data-testid="tab-assistant" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold">
+                <Brain className="h-4 w-4 mr-2" />
                 Assistente IA
               </TabsTrigger>
             </TabsList>
