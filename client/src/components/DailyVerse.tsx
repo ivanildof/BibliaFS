@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Share2, Copy, Download } from "lucide-react";
+import { Share2, Copy, Download, Quote } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import * as htmlToImage from "html-to-image";
 import { useRef } from "react";
 import { apiFetch } from "@/lib/config";
+import { motion } from "framer-motion";
 
 interface DailyVerse {
   id: string;
@@ -30,8 +30,8 @@ export function DailyVerse() {
       if (!response.ok) throw new Error('Failed to fetch daily verse');
       return response.json();
     },
-    staleTime: 0, // Disable cache to ensure fresh data on mount
-    gcTime: 1000 * 60 * 60, // Keep in background cache for 1 hour
+    staleTime: 0,
+    gcTime: 1000 * 60 * 60,
   });
 
   const handleCopyText = async () => {
@@ -83,54 +83,68 @@ export function DailyVerse() {
 
   if (isLoading) {
     return (
-      <Card className="p-8 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-pulse">
-        <div className="space-y-4">
+      <div className="verse-hero p-10 animate-pulse">
+        <div className="relative z-10 space-y-4">
           <div className="h-6 bg-muted rounded w-48 mx-auto" />
-          <div className="h-20 bg-muted rounded" />
+          <div className="h-24 bg-muted rounded" />
           <div className="h-4 bg-muted rounded w-32 mx-auto" />
         </div>
-      </Card>
+      </div>
     );
   }
 
   if (!verse) return null;
 
   return (
-    <div className="space-y-4">
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-foreground" data-testid="text-daily-verse-title">
-          {t.dailyVerse.verse_of_the_day}
-        </h2>
-        {verse.theme && (
-          <p className="text-sm text-muted-foreground capitalize">
-            {verse.theme}
-          </p>
-        )}
-      </div>
-
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4 }}
+      className="space-y-4"
+    >
       <div ref={cardRef} data-testid="card-daily-verse">
-        <Card className="p-8 bg-gradient-to-br from-primary/5 via-background to-accent/5 border-2 border-primary/20">
-          <div className="space-y-6 text-center">
-            <blockquote className="text-xl md:text-2xl font-serif leading-relaxed text-foreground" data-testid="text-verse-content">
+        <div className="verse-hero p-8 sm:p-10 shadow-lg">
+          <div className="relative z-10 space-y-6 text-center max-w-2xl mx-auto">
+            <div className="flex items-center justify-center gap-2">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-500/50" />
+              <Quote className="h-5 w-5 text-amber-600 dark:text-amber-400 rotate-180" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-amber-700 dark:text-amber-400" data-testid="text-daily-verse-title">
+                {t.dailyVerse.verse_of_the_day}
+              </span>
+              <Quote className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-500/50" />
+            </div>
+
+            {verse.theme && (
+              <p className="text-sm text-muted-foreground capitalize font-medium">
+                {verse.theme}
+              </p>
+            )}
+
+            <blockquote className="font-serif text-xl sm:text-2xl md:text-3xl leading-relaxed text-foreground font-medium" data-testid="text-verse-content">
               "{verse.text}"
             </blockquote>
             
-            <p className="text-base font-semibold text-primary" data-testid="text-verse-reference">
-              — {verse.reference}
-            </p>
+            <div className="flex items-center justify-center gap-3">
+              <div className="h-px w-8 bg-primary/30" />
+              <p className="text-base font-semibold text-primary" data-testid="text-verse-reference">
+                {verse.reference}
+              </p>
+              <div className="h-px w-8 bg-primary/30" />
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
 
-      <div className="flex justify-center gap-2 px-6 sm:px-0 flex-wrap">
+      <div className="flex justify-center gap-2 px-4 sm:px-0">
         <Button
           variant="outline"
           size="sm"
           onClick={handleCopyText}
           data-testid="button-copy-verse"
-          className="text-xs sm:text-sm"
+          className="rounded-full text-xs sm:text-sm shadow-sm"
         >
-          <Copy className="w-4 h-4 mr-1 sm:mr-2" />
+          <Copy className="w-4 h-4 mr-1.5" />
           <span className="hidden sm:inline">{t.dailyVerse.copy}</span>
           <span className="sm:hidden">Copiar</span>
         </Button>
@@ -140,9 +154,9 @@ export function DailyVerse() {
           size="sm"
           onClick={handleDownloadImage}
           data-testid="button-download-verse"
-          className="text-xs sm:text-sm"
+          className="rounded-full text-xs sm:text-sm shadow-sm"
         >
-          <Download className="w-4 h-4 mr-1 sm:mr-2" />
+          <Download className="w-4 h-4 mr-1.5" />
           <span className="hidden sm:inline">{t.dailyVerse.download_image}</span>
           <span className="sm:hidden">Baixar</span>
         </Button>
@@ -152,13 +166,13 @@ export function DailyVerse() {
           size="sm"
           onClick={handleCopyText}
           data-testid="button-share-verse"
-          className="text-xs sm:text-sm"
+          className="rounded-full text-xs sm:text-sm shadow-sm"
         >
-          <Share2 className="w-4 h-4 mr-1 sm:mr-2" />
+          <Share2 className="w-4 h-4 mr-1.5" />
           <span className="hidden sm:inline">{t.dailyVerse.share}</span>
           <span className="sm:hidden">Compartilhar</span>
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }
