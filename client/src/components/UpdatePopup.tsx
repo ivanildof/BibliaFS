@@ -56,7 +56,6 @@ export function UpdatePopup() {
   useEffect(() => {
     // Forçamos a visibilidade para demonstração
     setIsVisible(true);
-    checkForUpdates();
   }, []);
 
   const checkForUpdates = async () => {
