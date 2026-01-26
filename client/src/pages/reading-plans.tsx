@@ -167,10 +167,6 @@ export default function ReadingPlans() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Decorative Blur Elements */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-6 sm:py-8 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -188,14 +184,14 @@ export default function ReadingPlans() {
           
           <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-lg">
+              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-md hover-elevate">
                 <Plus className="h-5 w-5 mr-2" />
                 {t.plans.startPlan}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl border-none bg-card/95 backdrop-blur-2xl">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl border-0 glass">
               <DialogHeader>
-                <DialogTitle className="text-2xl">Criar Plano de Leitura</DialogTitle>
+                <DialogTitle className="text-2xl font-bold">Criar Plano de Leitura</DialogTitle>
                 <DialogDescription className="text-base">
                   Escolha um modelo pré-definido ou crie um plano customizado
                 </DialogDescription>
@@ -203,8 +199,8 @@ export default function ReadingPlans() {
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-6">
                 <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-2xl">
-                  <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm">Modelos</TabsTrigger>
-                  <TabsTrigger value="custom" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm">Customizado</TabsTrigger>
+                  <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold">Modelos</TabsTrigger>
+                  <TabsTrigger value="custom" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold">Customizado</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="templates" className="space-y-6 mt-6">

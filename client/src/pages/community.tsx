@@ -261,20 +261,20 @@ export default function Community() {
         </div>
 
         {/* Stats Banner */}
-        <Card className="mb-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+        <Card className="mb-8 glass border-0 rounded-2xl">
           <CardContent className="pt-6">
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
-                <div className="text-3xl font-bold text-primary">{posts.length}</div>
-                <p className="text-sm text-muted-foreground">Publicações</p>
+                <div className="text-3xl font-bold text-primary" data-testid="text-total-posts">{posts.length}</div>
+                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Publicações</p>
               </div>
               <div>
                 <div className="text-3xl font-bold">127</div>
-                <p className="text-sm text-muted-foreground">Membros Ativos</p>
+                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Membros</p>
               </div>
               <div>
                 <div className="text-3xl font-bold">1.2k</div>
-                <p className="text-sm text-muted-foreground">Conexões</p>
+                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Conexões</p>
               </div>
             </div>
           </CardContent>
@@ -301,49 +301,49 @@ export default function Community() {
           ) : (
             <>
               {/* AI Suggestion Card */}
-              <Card className="bg-gradient-to-r from-purple-500/10 to-purple-500/5 border-purple-500/20">
-                <CardHeader>
+              <Card className="bg-gradient-to-r from-violet-500/10 to-violet-500/5 border-violet-500/20 rounded-2xl">
+                <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-purple-600" />
-                    <h3 className="font-semibold">Sugestão da IA</h3>
+                    <Sparkles className="h-4 w-4 text-violet-600" />
+                    <h3 className="font-bold text-sm">Sugestão da IA</h3>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <p className="text-xs text-muted-foreground mb-4 font-medium">
                     Conecte-se com outros que estão estudando temas similares:
                   </p>
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback>MS</AvatarFallback>
+                    <Avatar className="h-10 w-10 border-2 border-background">
+                      <AvatarFallback className="bg-violet-500 text-white font-bold">MS</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">Maria Silva</p>
-                      <p className="text-xs text-muted-foreground">Estudando Provérbios</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate">Maria Silva</p>
+                      <p className="text-[10px] text-muted-foreground font-medium">Estudando Provérbios</p>
                     </div>
-                    <Button size="sm" variant="outline">Conectar</Button>
+                    <Button size="sm" variant="outline" className="rounded-full px-4 h-8 text-xs font-bold">Conectar</Button>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Posts */}
               {posts.map((post) => (
-                <Card key={post.id} className="hover-elevate" data-testid={`card-post-${post.id}`}>
-                  <CardHeader>
+                <Card key={post.id} className="border-0 glass rounded-2xl hover-elevate overflow-hidden" data-testid={`card-post-${post.id}`}>
+                  <CardHeader className="pb-2">
                     <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
                         <AvatarImage src={post.user?.profileImageUrl} />
-                        <AvatarFallback className="bg-primary text-primary-foreground">
+                        <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white font-bold">
                           {post.user?.firstName?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold">{post.user?.firstName} {post.user?.lastName}</p>
-                          <Badge variant="secondary" className="text-xs">
+                          <p className="font-bold text-sm truncate">{post.user?.firstName} {post.user?.lastName}</p>
+                          <Badge variant="secondary" className="text-[10px] font-bold px-2 py-0 h-4 bg-primary/10 text-primary border-0">
                             {post.user?.level}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-[10px] text-muted-foreground font-medium">
                           {formatDistanceToNow(new Date(post.createdAt!), {
                             addSuffix: true,
                             locale: ptBR
@@ -353,30 +353,31 @@ export default function Community() {
                     </div>
                   </CardHeader>
 
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 pt-2">
                     {/* Verse */}
-                    <div className="border-l-4 border-l-primary pl-4 py-2 bg-muted/30 rounded-r">
+                    <div className="relative overflow-hidden p-4 bg-muted/30 rounded-2xl">
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
                       <div className="flex items-center gap-2 mb-2">
-                        <BookOpen className="h-4 w-4 text-primary" />
-                        <span className="font-semibold text-sm">{post.verseReference}</span>
+                        <BookOpen className="h-3.5 w-3.5 text-primary" />
+                        <span className="font-bold text-xs text-primary">{post.verseReference}</span>
                       </div>
-                      <p className="font-serif text-base leading-relaxed italic">
-                        {post.verseText}
+                      <p className="font-serif text-base sm:text-lg leading-relaxed italic text-foreground/90">
+                        "{post.verseText}"
                       </p>
                     </div>
 
                     {/* User's Note */}
-                    <p className="text-sm leading-relaxed">{post.note}</p>
+                    <p className="text-sm leading-relaxed text-foreground/80 font-medium">{post.note}</p>
                   </CardContent>
 
-                  <Separator />
+                  <Separator className="opacity-50" />
 
-                  <CardFooter className="pt-4">
-                    <div className="flex items-center gap-4 w-full">
+                  <CardFooter className="py-2 px-2">
+                    <div className="flex items-center gap-1 w-full">
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="flex-1"
+                        className="flex-1 rounded-xl h-9 font-bold text-xs"
                         onClick={() => toggleLikeMutation.mutate({ 
                           postId: post.id, 
                           isLiked: post.isLikedByCurrentUser || false 
@@ -385,14 +386,14 @@ export default function Community() {
                         data-testid={`button-like-post-${post.id}`}
                       >
                         <Heart 
-                          className={`h-4 w-4 mr-2 ${post.isLikedByCurrentUser ? 'fill-red-500 text-red-500' : ''}`} 
+                          className={`h-4 w-4 mr-2 ${post.isLikedByCurrentUser ? 'fill-rose-500 text-rose-500' : 'text-muted-foreground'}`} 
                         />
                         {post.likeCount || 0}
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="flex-1"
+                        className="flex-1 rounded-xl h-9 font-bold text-xs text-muted-foreground"
                         data-testid="button-comment-post"
                       >
                         <MessageCircle className="h-4 w-4 mr-2" />
@@ -401,7 +402,7 @@ export default function Community() {
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="flex-1"
+                        className="flex-1 rounded-xl h-9 font-bold text-xs text-muted-foreground"
                         data-testid="button-share-post"
                       >
                         <Share2 className="h-4 w-4 mr-2" />
