@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -181,7 +181,56 @@ export default function Groups() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [activeTab, setActiveTab] = useState<"chat" | "members" | "invites" | "discussions">("chat");
-  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: GroupFormData) => {
+      const res = await apiRequest("PATCH", `/api/groups/${selectedGroup?.id}`, data);
+      return res.json();
+    },
+    onSuccess: (updatedGroup: Group) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      setSelectedGroup({ ...selectedGroup!, ...updatedGroup });
+      setIsEditDialogOpen(false);
+      toast({
+        title: "Grupo atualizado!",
+        description: "As informações do grupo foram salvas.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao atualizar grupo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      setSelectedGroup(null);
+      setIsDeleteDialogOpen(false);
+      toast({
+        title: "Grupo excluído",
+        description: "O grupo foi removido permanentemente.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao excluir grupo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const [isJoinByCodeDialogOpen, setIsJoinByCodeDialogOpen] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -244,7 +293,26 @@ export default function Groups() {
     },
   });
 
-  const messageForm = useForm<MessageFormData>({
+  const editForm = useForm<GroupFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: selectedGroup?.name || "",
+      description: selectedGroup?.description || "",
+      isPublic: selectedGroup?.isPublic || false,
+    },
+  });
+
+  // Update edit form values when group changes
+  useEffect(() => {
+    if (selectedGroup) {
+      editForm.reset({
+        name: selectedGroup.name,
+        description: selectedGroup.description || "",
+        isPublic: selectedGroup.isPublic,
+      });
+    }
+  }, [selectedGroup, editForm]);
+
     resolver: zodResolver(messageSchema),
     defaultValues: {
       content: "",
@@ -541,20 +609,114 @@ export default function Groups() {
 
   // Group detail view
   if (selectedGroup) {
+    const isLeader = selectedGroup.role === "leader";
     const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator";
     
     return (
       <div className="min-h-screen bg-background relative overflow-hidden">
         <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 relative z-10">
-          <Button 
-            variant="ghost" 
-            onClick={() => setSelectedGroup(null)}
-            className="mb-6 rounded-full hover-elevate"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar aos grupos
-          </Button>
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedGroup(null)}
+              className="rounded-full hover-elevate"
+              data-testid="button-back"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar aos grupos
+            </Button>
+
+            {isLeader && (
+              <div className="flex gap-2">
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="rounded-xl">
+                      Editar
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Editar Grupo</DialogTitle>
+                    </DialogHeader>
+                    <Form {...editForm}>
+                      <form onSubmit={editForm.handleSubmit((data) => updateMutation.mutate(data))} className="space-y-4">
+                        <FormField
+                          control={editForm.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nome do Grupo</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={editForm.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Descrição</FormLabel>
+                              <FormControl>
+                                <Textarea {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={editForm.control}
+                          name="isPublic"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">Grupo Público</FormLabel>
+                                <FormDescription>Permite que qualquer pessoa encontre e entre no grupo.</FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <DialogFooter>
+                          <Button type="submit" disabled={updateMutation.isPending}>
+                            {updateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                            Salvar Alterações
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="destructive" size="sm" className="rounded-xl">
+                      Excluir
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Excluir Grupo?</DialogTitle>
+                      <DialogDescription>
+                        Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo serão perdidos.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancelar</Button>
+                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending}>
+                        {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                        Confirmar Exclusão
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
+          </div>
 
           <Card className="border-0 glass rounded-[2.5rem] overflow-hidden">
             <CardHeader className="pb-6">
@@ -1406,13 +1568,14 @@ export default function Groups() {
             >
               Meus Grupos ({myGroups.length})
             </TabsTrigger>
-            <TabsTrigger 
-              value="discover" 
-              className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
-              data-testid="tab-discover"
-            >
-              Descobrir ({publicGroups.length})
-            </TabsTrigger>
+                    <TabsTrigger 
+                      value="discover" 
+                      className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
+                      data-testid="tab-discover"
+                      title="Explore grupos públicos criados pela comunidade que você pode entrar livremente"
+                    >
+                      Descobrir ({publicGroups.length})
+                    </TabsTrigger>
           </TabsList>
 
           <TabsContent value="my-groups" className="mt-0">
