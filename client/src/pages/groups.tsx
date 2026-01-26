@@ -34,8 +34,16 @@ import {
   CheckCircle2,
   AlertCircle,
   FileText,
-  ChevronRight
+  ChevronRight,
+  Settings,
+  MoreVertical
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -181,6 +189,7 @@ export default function Groups() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [activeTab, setActiveTab] = useState<"chat" | "members" | "invites" | "discussions">("chat");
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -484,6 +493,32 @@ export default function Groups() {
         description: error.message,
         variant: "destructive",
       });
+    },
+  });
+
+  const removeMemberMutation = useMutation({
+    mutationFn: async (memberId: string) => {
+      return await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/members/${memberId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "members"] });
+      toast({ title: "Membro removido" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Erro ao remover membro", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateMemberRoleMutation = useMutation({
+    mutationFn: async ({ memberId, role }: { memberId: string; role: string }) => {
+      return await apiRequest("PATCH", `/api/groups/${selectedGroup?.id}/members/${memberId}`, { role });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "members"] });
+      toast({ title: "Cargo atualizado" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Erro ao atualizar cargo", description: error.message, variant: "destructive" });
     },
   });
 
@@ -875,10 +910,33 @@ export default function Groups() {
                           <p className="font-medium">{member.userName || "Usuário"}</p>
                           <p className="text-sm text-muted-foreground">{member.userEmail}</p>
                         </div>
-                        <Badge variant={member.role === "leader" ? "default" : "secondary"}>
-                          {member.role === "leader" && <Crown className="h-3 w-3 mr-1" />}
-                          {member.role === "leader" ? "Líder" : member.role === "moderator" ? "Moderador" : "Membro"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={member.role === "leader" ? "default" : "secondary"}>
+                            {member.role === "leader" && <Crown className="h-3 w-3 mr-1" />}
+                            {member.role === "leader" ? "Líder" : member.role === "moderator" ? "Moderador" : "Membro"}
+                          </Badge>
+                          
+                          {isLeader && member.userId !== user?.id && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <Settings className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => updateMemberRoleMutation.mutate({ memberId: member.id, role: member.role === "moderator" ? "member" : "moderator" })}>
+                                  {member.role === "moderator" ? "Remover Moderador" : "Tornar Moderador"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  className="text-destructive"
+                                  onClick={() => removeMemberMutation.mutate(member.id)}
+                                >
+                                  Remover do Grupo
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

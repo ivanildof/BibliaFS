@@ -3848,6 +3848,64 @@ Responda em português do Brasil.`
     }
   });
 
+  app.patch("/api/groups/:groupId/members/:memberId", isAuthenticated, async (req: any, res) => {
+    try {
+      const { groupId, memberId } = req.params;
+      const { role } = req.body;
+      const userId = req.user.id;
+
+      const group = await storage.getGroup(groupId);
+      if (!group || group.leaderId !== userId) {
+        return res.status(403).json({ message: "Apenas o líder pode alterar cargos" });
+      }
+
+      await storage.updateGroupMemberRole(memberId, role);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/groups/:groupId/members/:memberId", isAuthenticated, async (req: any, res) => {
+    try {
+      const { groupId, memberId } = req.params;
+      const userId = req.user.id;
+
+      const group = await storage.getGroup(groupId);
+      if (!group || group.leaderId !== userId) {
+        return res.status(403).json({ message: "Apenas o líder pode remover membros" });
+      }
+
+      await storage.removeGroupMember(memberId);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/invites/accept", isAuthenticated, async (req: any, res) => {
+    try {
+      const { code } = req.body;
+      const userId = req.user.id;
+      
+      const invite = await storage.getInviteByCode(code);
+      if (!invite || invite.status !== "pending") {
+        return res.status(400).json({ message: "Convite inválido ou já utilizado" });
+      }
+
+      await storage.addGroupMember({
+        groupId: invite.groupId,
+        userId: userId,
+        role: "member",
+      });
+
+      await storage.updateInviteStatus(invite.id, "accepted");
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Join group
   app.post("/api/groups/:id/join", isAuthenticated, async (req: any, res) => {
     try {
