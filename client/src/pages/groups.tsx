@@ -1691,51 +1691,50 @@ export default function Groups() {
                           <div className="p-3.5 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
                             <Users className="h-7 w-7 text-primary" />
                           </div>
-                            <div className="flex items-center gap-1" data-group-menu>
+                            <div className="flex items-center gap-2" data-group-menu>
                               <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-200 rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
                                 {group.role === "leader" ? (
                                   <><Crown className="h-3 w-3 mr-1 text-amber-500" /> Líder</>
                                 ) : "Membro"}
                               </Badge>
-                              {group.role === "leader" && (
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button 
-                                      variant="outline" 
-                                      size="icon" 
-                                      className="h-8 w-8 rounded-full bg-amber-100 border-amber-300 hover:bg-amber-200 no-default-hover-elevate focus:ring-0 focus-visible:ring-0 shadow-sm"
-                                      onClick={(e) => e.stopPropagation()}
-                                      data-testid="button-group-options"
-                                    >
-                                      <MoreVertical className="h-5 w-5 text-amber-700" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl z-[100]">
-                                    <DropdownMenuItem 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedGroup(group);
-                                        setIsEditDialogOpen(true);
-                                      }}
-                                      className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
-                                    >
-                                      <Settings className="h-4 w-4" />
-                                      Editar Grupo
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedGroup(group);
-                                        setIsDeleteDialogOpen(true);
-                                      }}
-                                      className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
-                                    >
-                                      <LogOut className="h-4 w-4" />
-                                      Excluir Grupo
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              )}
+                              <div className="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold text-xs">!</div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="icon" 
+                                    className="h-8 w-8 rounded-full bg-amber-100 border-amber-300 hover:bg-amber-200 no-default-hover-elevate focus:ring-0 focus-visible:ring-0 shadow-md"
+                                    onClick={(e) => e.stopPropagation()}
+                                    data-testid="button-group-options"
+                                  >
+                                    <MoreVertical className="h-5 w-5 text-amber-700" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl z-[100]">
+                                  <DropdownMenuItem 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedGroup(group);
+                                      setIsEditDialogOpen(true);
+                                    }}
+                                    className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
+                                  >
+                                    <Settings className="h-4 w-4" />
+                                    Editar Grupo
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedGroup(group);
+                                      setIsDeleteDialogOpen(true);
+                                    }}
+                                    className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
+                                  >
+                                    <LogOut className="h-4 w-4" />
+                                    Excluir Grupo
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                         </div>
                         <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors leading-tight">
