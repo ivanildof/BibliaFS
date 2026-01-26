@@ -1,0 +1,242 @@
+Notificação de Atualização com Design Premium (Android Nativo)
+1. Informações Gerais
+Item
+Detalhe
+Título
+Popup de Atualização com Design Premium
+Plataforma
+Android Nativo (APK)
+Versão do PRD
+1.0
+Data
+27 de janeiro de 2026
+Prioridade
+Alta
+Status
+Aprovado para Desenvolvimento
+2. Objetivo
+Implementar um popup elegante e não intrusivo que seja exibido automaticamente ao abrir o aplicativo quando uma nova versão estiver disponível na Google Play Store, incentivando o usuário a atualizar com uma experiência visual premium, mantendo a confiança e transparência sobre o processo.
+3. Escopo
+✅ Incluído:
+Verificação automática de versão ao iniciar o app
+Comparação entre versionCode atual e da Play Store
+Exibição de popup com design premium (gradientes, animações suaves, sombras)
+Informações claras: versão atual vs. nova versão, tamanho do download
+Lista de novidades com ícones e descrições
+Badge de segurança destacando "Atualização segura pela Play Store"
+Botões de ação: "Atualizar Agora" e "Lembrar Mais Tarde"
+Armazenamento local para não exibir novamente por 24h após recusa
+Totalmente responsivo (mobile < 360px até tablet > 768px)
+Animações sutis para melhor UX (ícone flutuante, loading spinner)
+❌ Excluído:
+iOS, Web, PWA
+Venda de assinaturas ou planos pagos
+Atualização automática sem intervenção do usuário
+Notificações push para atualizações
+Forçar atualização (usuário sempre pode escolher "Lembrar Mais Tarde")
+4. Requisitos Funcionais
+ID
+Requisito
+Descrição
+RF-01
+Verificação ao iniciar
+Ao abrir o app, verificar automaticamente versão na Play Store
+RF-02
+Comparação de versões
+Comparar versionCode local com o da Play Store
+RF-03
+Exibição condicional
+Mostrar popup apenas se versão estiver desatualizada E última recusa > 24h
+RF-04
+Informações de versão
+Exibir versão atual, nova versão e tamanho do download
+RF-05
+Lista de novidades
+Mostrar até 3 principais melhorias da nova versão
+RF-06
+Botão "Atualizar Agora"
+Redirecionar para página do app na Play Store
+RF-07
+Botão "Lembrar Mais Tarde"
+Fechar popup e não exibir novamente por 24h
+RF-08
+Armazenamento de preferências
+Salvar timestamp da última recusa no SharedPreferences
+RF-09
+Feedback visual
+Mostrar loading spinner ao clicar em "Atualizar Agora"
+RF-10
+Fechar manualmente
+Permitir fechar via botão "X" (mesmo comportamento que "Lembrar Mais Tarde")
+5. Requisitos Não Funcionais
+Categoria
+Requisito
+UX/UI
+Design premium com gradientes suaves, sombras profundas e micro-interações
+Performance
+Verificação de versão < 2s; popup não deve bloquear carregamento do app
+Responsividade
+Layout adaptável para telas de 320px a 768px+
+Acessibilidade
+Contraste mínimo 4.5:1; suporte a TalkBack
+Conectividade
+Funcionar apenas com internet; não falhar offline
+Segurança
+Validar URL da Play Store oficial; nunca redirecionar para fontes não confiáveis
+Compatibilidade
+Android 5.0+ (API 21+)
+6. Design/UI do Popup
+6.1. Estrutura Visual
+123456789101112131415161718192021222324252627282930
+6.2. Paleta de Cores
+Elemento
+Cor
+Uso
+Primária
+#6c5dd3 → #ff9e6d
+Gradiente para botão principal e elementos destacados
+Fundo
+#ffffff
+Fundo do popup
+Sombra
+rgba(0,0,0,0.3)
+Profundidade do popup
+Texto principal
+#1e293b
+Títulos e conteúdo
+Texto secundário
+#64748b
+Descrições e metadados
+Badge segurança
+#4ade80 (verde)
+Destaque para segurança
+Close button
+rgba(108,93,211,0.08)
+Fundo translúcido
+6.3. Tipografia
+Elemento
+Fonte
+Tamanho
+Peso
+Título
+System default
+20-28px (responsivo)
+800 (extrabold)
+Subtítulo
+System default
+15-16px
+400 (regular)
+Versões
+System default
+24-32px
+800
+Botões
+System default
+14-16px
+700 (bold)
+Rodapé
+System default
+13px
+400
+6.4. Micro-interações
+Elemento
+Animação
+Duração
+Popup
+Slide up + fade in
+400ms
+Ícone central
+Rotação contínua + flutuação
+Infinito
+Botão primário
+Elevação + brilho
+300ms
+Close button
+Rotação ao hover
+300ms
+Cards de versão
+Elevação suave ao hover
+200ms
+Loading spinner
+Rotação contínua
+Infinito
+7. Fluxo de Usuário
+mermaid
+
+8. Mensagens de Transparência
+Mensagem
+Localização
+Objetivo
+"Atualização é gratuita"
+Rodapé do popup
+Eliminar preocupação com custos
+"Mantém todos os seus dados salvos"
+Rodapé do popup
+Garantir segurança dos dados
+"Tempo estimado: 1-2 minutos"
+Rodapé do popup
+Gerenciar expectativas
+"Atualização segura pela Google Play Store"
+Badge destacado
+Construir confiança
+"Lembrar Mais Tarde"
+Botão secundário
+Respeitar escolha do usuário
+9. Implementação Técnica (Resumo)
+Componente
+Tecnologia
+Responsabilidade
+Verificação de versão
+Kotlin + Retrofit/OkHttp
+Buscar versionCode da Play Store
+Armazenamento
+SharedPreferences
+Salvar timestamp de última recusa
+UI do popup
+DialogFragment + XML
+Layout responsivo com animações
+Redirecionamento
+Intent.ACTION_VIEW
+Abrir Play Store oficial
+Animações
+Lottie ou ViewPropertyAnimator
+Ícone flutuante, loading spinner
+10. Métricas de Sucesso
+Métrica
+Meta
+Ferramenta de Medição
+Taxa de atualização após popup
+> 45%
+Firebase Analytics
+Tempo médio para atualizar
+< 48h
+Crashlytics + custom events
+Taxa de recusa ("Lembrar Mais Tarde")
+< 35%
+Firebase Analytics
+Satisfação do usuário (pesquisa pós-atualização)
+> 4.2/5.0
+Google Play Console
+Performance da verificação
+< 2s
+Android Profiler
+11. Considerações de Privacidade e Segurança
+⚠️ Importante:
+Nunca coletar dados pessoais durante a verificação de versão
+Usar apenas endpoints públicos da Play Store (sem scraping agressivo)
+Validar sempre a URL oficial: market://details?id=com.seuapp.bibliafs
+Fallback para URL HTTPS oficial se intent market:// não funcionar
+Não armazenar informações sensíveis no SharedPreferences
+12. Roadmap Futuro (Opcional)
+Fase
+Funcionalidade
+Prioridade
+Fase 2
+Integração com In-App Updates API (Google Play Core)
+Média
+Fase 3
+Notificação push para atualizações críticas de segurança
+Baixa
+Fase 4
+Forçar atualização apenas para versões incompatíveis (ex.: API quebrada)
+Baixa
