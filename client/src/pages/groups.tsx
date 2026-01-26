@@ -1697,19 +1697,19 @@ export default function Groups() {
                                 <><Crown className="h-3 w-3 mr-1 text-amber-500" /> Líder</>
                               ) : "Membro"}
                             </Badge>
-                            <div className="relative z-[1000] mt-1">
+                            <div className="relative z-[1000]">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button 
                                     variant="outline" 
                                     size="icon" 
-                                    className="h-11 w-11 rounded-full bg-amber-500 text-white hover:bg-amber-600 border-2 border-white shadow-2xl flex items-center justify-center relative z-[9999]"
+                                    className="h-8 w-8 rounded-full bg-amber-100 border-amber-300 hover:bg-amber-200 no-default-hover-elevate focus:ring-0 focus-visible:ring-0 shadow-sm flex items-center justify-center relative z-[9999]"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                     }}
                                     data-testid="button-group-options"
                                   >
-                                    <MoreVertical className="h-7 w-7 text-white" />
+                                    <MoreVertical className="h-5 w-5 text-amber-700" />
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl z-[10000]">
