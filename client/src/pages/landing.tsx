@@ -30,7 +30,7 @@ import {
   Book,
   ExternalLink
 } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import logoImage from "../assets/logo-new.png";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
@@ -135,6 +135,7 @@ function useScrollReveal() {
 
 export default function Landing() {
   const { t } = useLanguage();
+  const [, setLocation] = useLocation();
 
   const features = [
     {
@@ -219,7 +220,7 @@ export default function Landing() {
           <div className="hidden sm:block">
             <Button 
               size="sm"
-              onClick={() => window.location.href = "/login"}
+              onClick={() => setLocation("/login")}
               data-testid="button-login-header"
               className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg"
             >
@@ -266,14 +267,14 @@ export default function Landing() {
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <a 
+                  <Link 
                     href="/login" 
                     className="cursor-pointer flex items-center text-primary font-medium"
                     data-testid="link-login-mobile"
                   >
                     <LogIn className="h-4 w-4 mr-2" />
                     Entrar
-                  </a>
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -314,7 +315,7 @@ export default function Landing() {
             <Button 
               size="lg"
               className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 border-0 shadow-xl font-bold glow-gold"
-              onClick={() => window.location.href = "/register"}
+              onClick={() => setLocation("/register")}
               data-testid="button-start-free"
             >
               Começar Grátis
@@ -620,7 +621,7 @@ export default function Landing() {
             <Button 
               size="lg"
               className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 hover:from-amber-300 hover:to-amber-400 shadow-xl font-bold glow-gold"
-              onClick={() => window.location.href = "/api/register"}
+              onClick={() => setLocation("/register")}
               data-testid="button-cta-start"
             >
               Cadastre-se Grátis
