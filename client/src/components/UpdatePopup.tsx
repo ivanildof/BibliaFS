@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, Clock, Shield, Sparkles, Bug, Zap } from "lucide-react";
+import { X, Download, Clock, Shield, Sparkles, Bug, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.bibliafullstack.app";
@@ -13,7 +13,7 @@ interface UpdateInfo {
   latestVersion: string;
   downloadSize: string;
   releaseNotes: {
-    icon: "sparkles" | "bug" | "zap";
+    icon: "sparkles" | "bug" | "zap" | "shield-check";
     title: string;
     description: string;
   }[];
@@ -23,6 +23,7 @@ const iconMap = {
   sparkles: Sparkles,
   bug: Bug,
   zap: Zap,
+  "shield-check": ShieldCheck,
 };
 
 export function UpdatePopup() {
