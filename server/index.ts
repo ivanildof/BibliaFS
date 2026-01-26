@@ -15,39 +15,10 @@ app.set('trust proxy', 1);
 const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: isProduction 
-        ? ["'self'", "'unsafe-eval'", "'unsafe-hashes'", "https://js.stripe.com", "https://m.stripe.network"]
-        : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://m.stripe.network"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-      imgSrc: ["'self'", "data:", "https:", "blob:", "https://*.stripe.com"],
-      mediaSrc: ["'self'", "blob:"],
-      connectSrc: [
-        "'self'", 
-        "https://api.stripe.com", 
-        "https://m.stripe.network",
-        "https://*.supabase.co", 
-        "wss://*.supabase.co", 
-        "https://api.openai.com",
-        "https://sql.js.org"
-      ],
-      frameSrc: [
-        "'self'", 
-        "https://js.stripe.com", 
-        "https://hooks.stripe.com",
-        "https://checkout.stripe.com"
-      ],
-      frameAncestors: isProduction ? ["'self'"] : ["'self'", "https://*.replit.dev", "https://*.replit.com"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: isProduction ? [] : null,
-    },
-  },
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  frameguard: isProduction ? { action: 'sameorigin' } : false,
+  frameguard: false,
 }));
 
 // Rate limiting ONLY for API endpoints (not static assets)
