@@ -14,12 +14,43 @@ app.set('trust proxy', 1);
 // Security headers with Helmet
 const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
 
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false,
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  frameguard: false,
-}));
+if (isProduction) {
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-hashes'", "https://js.stripe.com", "https://m.stripe.network"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+        imgSrc: ["'self'", "data:", "https:", "blob:", "https://*.stripe.com"],
+        mediaSrc: ["'self'", "blob:"],
+        connectSrc: [
+          "'self'", 
+          "https://api.stripe.com", 
+          "https://m.stripe.network",
+          "https://*.supabase.co", 
+          "wss://*.supabase.co", 
+          "https://api.openai.com",
+          "https://sql.js.org"
+        ],
+        frameSrc: [
+          "'self'", 
+          "https://js.stripe.com", 
+          "https://hooks.stripe.com",
+          "https://checkout.stripe.com"
+        ],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    frameguard: { action: 'sameorigin' },
+  }));
+} else {
+  // Disable Helmet in development to ensure Replit preview works
+  // Headers are handled manually if needed
+}
 
 // Rate limiting ONLY for API endpoints (not static assets)
 const apiLimiter = rateLimit({
