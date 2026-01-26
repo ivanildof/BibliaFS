@@ -1692,10 +1692,15 @@ export default function Groups() {
                             <Users className="h-7 w-7 text-primary" />
                           </div>
                           <div className="flex items-center gap-2" data-group-menu>
-                            <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                            <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider relative">
                               {group.role === "leader" ? (
                                 <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
                               ) : "Membro"}
+                              {group.role === "leader" && (
+                                <div className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white animate-pulse shadow-lg">
+                                  <Plus className="h-3 w-3 rotate-45" />
+                                </div>
+                              )}
                             </Badge>
                             {group.role === "leader" && (
                               <DropdownMenu>
