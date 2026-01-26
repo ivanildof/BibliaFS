@@ -53,8 +53,7 @@ if (isProduction) {
   app.use((_req, res, next) => {
     // Remove X-Frame-Options completely to allow iframe embedding
     res.removeHeader('X-Frame-Options');
-    // Set CSP with permissive frame-ancestors for Replit preview
-    // Ensure the header is properly formatted and doesn't contain invalid sources
+    // Set a minimal CSP that only specifies frame-ancestors to avoid conflicts with default Replit environment headers
     res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.replit.dev https://*.replit.com https://replit.com;");
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
