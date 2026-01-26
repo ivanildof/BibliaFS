@@ -285,7 +285,8 @@ export default function Teacher() {
       let message = "Você atingiu o limite de conversas.";
       
       if (userPlan === "free") {
-        message = "Você atingiu o limite de 3 conversas por dia. Assine um plano premium para mais conversas.";
+        // Mensagem clara: limite permanente, precisa assinar
+        message = "Você esgotou suas 20 perguntas gratuitas. Para continuar usando a IA, assine um de nossos planos.";
       } else if (userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") {
         message = "Você atingiu o limite mensal de conversas. Faça upgrade para Premium Plus.";
       } else if (userPlan === "premium_plus") {
@@ -322,34 +323,32 @@ export default function Teacher() {
         throw new Error("Resposta vazia do assistente - tente novamente");
       }
       
-      // Update conversation counter and plan info for all users
-      if (data.conversationsUsed !== undefined) {
+      // Update conversation counter and plan info for free users
+      if (data.plan) {
+        setUserPlan(data.plan);
+      }
+      
+      // Only track limits for FREE users (premium has unlimited via budget)
+      if (data.plan === "free" && data.conversationsUsed !== undefined) {
         setConversationsUsed(data.conversationsUsed);
-        if (data.conversationsLimit) {
+        if (data.conversationsLimit && data.conversationsLimit > 0) {
           setConversationsLimit(data.conversationsLimit);
         }
-        if (data.plan) {
-          setUserPlan(data.plan);
+        
+        // Check if limit reached for FREE users
+        if (data.limitReached) {
+          setLimitReached(true);
         }
         
-        // Show warning at 75% of limit
-        if (data.conversationsLimit && data.conversationsUsed >= Math.floor(data.conversationsLimit * 0.75)) {
+        // Show warning at 75% of limit for FREE users only
+        if (data.conversationsLimit && data.conversationsLimit > 0 && 
+            data.conversationsUsed >= Math.floor(data.conversationsLimit * 0.75)) {
           if (!showLimitWarning) {
             setShowLimitWarning(true);
             const remaining = data.conversationsLimit - data.conversationsUsed;
-            let upgradeMessage = "";
-            
-            if (data.plan === "free") {
-              upgradeMessage = "Assine um plano premium para mais conversas.";
-            } else if (data.plan === "monthly" || data.plan === "annual" || data.plan === "yearly") {
-              upgradeMessage = "Faça upgrade para Premium Plus para aumentar seu limite.";
-            } else if (data.plan === "premium_plus") {
-              upgradeMessage = "Entre em contato para um plano customizado.";
-            }
-            
             toast({
-              title: `Próximo do limite (${remaining} conversas restantes)`,
-              description: upgradeMessage,
+              title: `Próximo do limite (${remaining} perguntas restantes)`,
+              description: "Assine um plano premium para continuar usando a IA após esgotar suas perguntas gratuitas.",
             });
           }
         }
@@ -608,12 +607,12 @@ export default function Teacher() {
           className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12"
         >
           <div>
-            <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent flex items-center gap-4" data-testid="text-page-title">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-2xl shadow-primary/20">
+            <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-foreground flex items-center gap-4" data-testid="text-page-title">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary shadow-xl shadow-primary/20">
                 <GraduationCap className="h-7 w-7 text-white" />
               </div>
               {t.teacherMode.title}
-              <Sparkles className="h-6 w-6 text-primary animate-pulse" />
+              <Sparkles className="h-6 w-6 text-accent animate-pulse" />
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl">
               Crie aulas inspiradoras, gerencie seus alunos e potencialize seu ensino com IA

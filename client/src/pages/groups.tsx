@@ -560,7 +560,7 @@ export default function Groups() {
             <CardHeader className="pb-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="flex items-center gap-3 text-2xl sm:text-3xl font-display font-bold">
+                  <CardTitle className="flex items-center gap-3 text-2xl sm:text-3xl font-display font-bold text-foreground">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                       <Users className="h-6 w-6" />
                     </div>
