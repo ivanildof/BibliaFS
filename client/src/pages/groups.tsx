@@ -1692,7 +1692,7 @@ export default function Groups() {
                             <Users className="h-7 w-7 text-primary" />
                           </div>
                             <div className="flex items-center gap-1" data-group-menu>
-                              <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                              <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-200 rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
                                 {group.role === "leader" ? (
                                   <><Crown className="h-3 w-3 mr-1 text-amber-500" /> Líder</>
                                 ) : "Membro"}
@@ -1701,12 +1701,13 @@ export default function Groups() {
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button 
-                                      variant="ghost" 
+                                      variant="outline" 
                                       size="icon" 
-                                      className="h-7 w-7 rounded-full hover:bg-primary/10 no-default-hover-elevate focus:ring-0 focus-visible:ring-0"
+                                      className="h-8 w-8 rounded-full bg-amber-100 border-amber-300 hover:bg-amber-200 no-default-hover-elevate focus:ring-0 focus-visible:ring-0 shadow-sm"
                                       onClick={(e) => e.stopPropagation()}
+                                      data-testid="button-group-options"
                                     >
-                                      <MoreVertical className="h-4 w-4" />
+                                      <MoreVertical className="h-5 w-5 text-amber-700" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl z-[100]">
