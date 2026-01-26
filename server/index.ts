@@ -49,8 +49,12 @@ if (isProduction) {
   }));
 } else {
   // In development, set permissive headers for Replit preview
+  // MUST run before any other middleware to ensure headers are set first
   app.use((_req, res, next) => {
+    // Remove X-Frame-Options completely to allow iframe embedding
     res.removeHeader('X-Frame-Options');
+    // Set CSP with permissive frame-ancestors for Replit preview
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.replit.dev https://*.replit.com https://replit.com");
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');

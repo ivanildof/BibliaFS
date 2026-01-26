@@ -1,0 +1,866 @@
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+VM623:8 [Coframe] Replit Enterprise watcher loaded
+stallwart.build.js:1 stallwart: failed ping 1
+Bibliafs:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+Bibliafs:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+Bibliafs:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ae3220d21b9d3649.js:2 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ae3220d21b9d3649.js:2 Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+ae3220d21b9d3649.js:2 [LaunchDarkly] LaunchDarkly client initialized
+ae3220d21b9d3649.js:2 [ai-chat] Creating connection with chat proxy enabled
+(anonymous) @ ae3220d21b9d3649.js:2
+(anonymous) @ 3daa4d0c8ab8c2cc.js:2
+uV @ ed1e693c96a75807.js:2
+iH @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2p%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+Framing 'https://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/' violates the following Content Security Policy directive: "frame-ancestors 'self'". The request has been blocked.
+
+Bibliafs:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+Captura_de_tela_2026-01-26_191620_1769465821265.png:1  GET https://replit.com/@fabrisite1/attached_assets/Captura_de_tela_2026-01-26_191620_1769465821265.png 404 (Not Found)
+Image
+z @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+Captura_de_tela_2026-01-26_190855_1769465341634.png:1  GET https://replit.com/@fabrisite1/attached_assets/Captura_de_tela_2026-01-26_190855_1769465341634.png 404 (Not Found)
+Image
+z @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+attached_assets/Captura_de_tela_2026-01-26_192444_1769466307281.png:1  GET https://replit.com/@fabrisite1/attached_assets/Captura_de_tela_2026-01-26_192444_1769466307281.png 404 (Not Found)
+Image
+z @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+uq @ ed1e693c96a75807.js:2
+uY @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Argv%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+Framing 'https://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/' violates the following Content Security Policy directive: "frame-ancestors 'self'". The request has been blocked.
+
