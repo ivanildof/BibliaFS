@@ -37,6 +37,16 @@ export function UpdatePopup() {
   }, []);
 
   const checkForUpdates = async () => {
+    // Não mostrar na Web (identificamos pelo UserAgent ou se não for um ambiente PWA/Android)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                        (window.navigator as any).standalone || 
+                        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Se for Web puro (não PWA e não Mobile), não mostra
+    if (!isStandalone && !/Android/i.test(navigator.userAgent)) {
+      return;
+    }
+
     const dismissedAt = localStorage.getItem(STORAGE_KEY);
     if (dismissedAt) {
       const dismissedTime = parseInt(dismissedAt, 10);
