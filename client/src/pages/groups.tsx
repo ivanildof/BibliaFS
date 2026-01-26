@@ -1678,7 +1678,11 @@ export default function Groups() {
                   >
                     <Card 
                       className="group relative overflow-hidden border-none bg-card/40 backdrop-blur-sm hover:bg-card/60 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-3xl cursor-pointer"
-                      onClick={() => setSelectedGroup(group)} 
+                      onClick={(e) => {
+                        // Prevent navigation if clicking the menu
+                        if ((e.target as HTMLElement).closest('[data-group-menu]')) return;
+                        setSelectedGroup(group);
+                      }} 
                       data-testid={`card-group-${group.id}`}
                     >
                       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/80 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -1687,11 +1691,46 @@ export default function Groups() {
                           <div className="p-3.5 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
                             <Users className="h-7 w-7 text-primary" />
                           </div>
-                          <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider">
-                            {group.role === "leader" ? (
-                              <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
-                            ) : "Membro"}
-                          </Badge>
+                          <div className="flex items-center gap-2" data-group-menu>
+                            <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                              {group.role === "leader" ? (
+                                <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
+                              ) : "Membro"}
+                            </Badge>
+                            {group.role === "leader" && (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-primary/10 no-default-hover-elevate">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl">
+                                  <DropdownMenuItem 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedGroup(group);
+                                      setIsEditDialogOpen(true);
+                                    }}
+                                    className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
+                                  >
+                                    <Settings className="h-4 w-4" />
+                                    Editar Grupo
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedGroup(group);
+                                      setIsDeleteDialogOpen(true);
+                                    }}
+                                    className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
+                                  >
+                                    <LogOut className="h-4 w-4" />
+                                    Excluir Grupo
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            )}
+                          </div>
                         </div>
                         <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors leading-tight">
                           {group.name}
