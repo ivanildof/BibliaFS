@@ -1691,51 +1691,51 @@ export default function Groups() {
                           <div className="p-3.5 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
                             <Users className="h-7 w-7 text-primary" />
                           </div>
-                          <div className="flex items-center gap-2" data-group-menu>
-                            <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wider relative">
-                              {group.role === "leader" ? (
-                                <><Crown className="h-3 w-3 mr-1.5 text-amber-500" /> Líder</>
-                              ) : "Membro"}
+                            <div className="flex items-center gap-1" data-group-menu>
+                              <Badge variant="secondary" className="bg-primary/5 text-primary border-none rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                                {group.role === "leader" ? (
+                                  <><Crown className="h-3 w-3 mr-1 text-amber-500" /> Líder</>
+                                ) : "Membro"}
+                              </Badge>
                               {group.role === "leader" && (
-                                <div className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white animate-pulse shadow-lg">
-                                  <Plus className="h-3 w-3 rotate-45" />
-                                </div>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-7 w-7 rounded-full hover:bg-primary/10 no-default-hover-elevate focus:ring-0 focus-visible:ring-0"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl z-[100]">
+                                    <DropdownMenuItem 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedGroup(group);
+                                        setIsEditDialogOpen(true);
+                                      }}
+                                      className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
+                                    >
+                                      <Settings className="h-4 w-4" />
+                                      Editar Grupo
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedGroup(group);
+                                        setIsDeleteDialogOpen(true);
+                                      }}
+                                      className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
+                                    >
+                                      <LogOut className="h-4 w-4" />
+                                      Excluir Grupo
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               )}
-                            </Badge>
-                            {group.role === "leader" && (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-primary/10 no-default-hover-elevate">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl">
-                                  <DropdownMenuItem 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedGroup(group);
-                                      setIsEditDialogOpen(true);
-                                    }}
-                                    className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
-                                  >
-                                    <Settings className="h-4 w-4" />
-                                    Editar Grupo
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedGroup(group);
-                                      setIsDeleteDialogOpen(true);
-                                    }}
-                                    className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
-                                  >
-                                    <LogOut className="h-4 w-4" />
-                                    Excluir Grupo
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </div>
+                            </div>
                         </div>
                         <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors leading-tight">
                           {group.name}
