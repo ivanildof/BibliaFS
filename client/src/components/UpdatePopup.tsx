@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.bibliafullstack.app";
 const STORAGE_KEY = "bibliasf_update_dismissed_at";
 const DISMISS_DURATION_MS = 24 * 60 * 60 * 1000;
-const CURRENT_APP_VERSION = "2.0.0";
+const CURRENT_APP_VERSION = "1.0.4";
 
 interface UpdateInfo {
   currentVersion: string;
