@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import { getLevelByXp, getXpProgressInLevel } from "@/lib/gamification-levels";
 
 interface Achievement {
   id: string;
@@ -46,18 +47,33 @@ export function GamificationBanner() {
 
   const streak = user.readingStreak || 0;
   const xp = user.experiencePoints || 0;
-  const level = user.level || "iniciante";
 
-  const levelConfig: Record<string, { name: string; minXP: number; maxXP: number; gradient: string; icon: typeof Star }> = {
-    iniciante: { name: "Iniciante", minXP: 0, maxXP: 100, gradient: "from-slate-400 to-slate-500", icon: Star },
-    crescendo: { name: "Crescendo", minXP: 100, maxXP: 500, gradient: "from-emerald-400 to-emerald-600", icon: Sparkles },
-    discipulo: { name: "Discípulo", minXP: 500, maxXP: 2000, gradient: "from-blue-400 to-blue-600", icon: Crown },
-    professor: { name: "Professor", minXP: 2000, maxXP: 10000, gradient: "from-blue-800 to-slate-800", icon: Trophy },
+  // Use detailed 50-level system - imported at top of file
+  const detailedLevel = getLevelByXp(xp);
+  const xpProgress = getXpProgressInLevel(xp, detailedLevel.level);
+  
+  // Color gradients based on level tiers (soft navy blue palette)
+  const getLevelGradient = (level: number) => {
+    if (level <= 5) return "from-slate-400 to-slate-500";
+    if (level <= 10) return "from-emerald-400 to-emerald-600";
+    if (level <= 20) return "from-blue-400 to-blue-600";
+    if (level <= 30) return "from-amber-400 to-amber-600";
+    if (level <= 40) return "from-slate-500 to-slate-700";
+    return "from-amber-500 to-amber-700";
   };
-
-  const currentLevel = levelConfig[level] || levelConfig.iniciante;
-  const progressToNextLevel = Math.min(100, ((xp - currentLevel.minXP) / (currentLevel.maxXP - currentLevel.minXP)) * 100);
-  const LevelIcon = currentLevel.icon;
+  
+  const getLevelIcon = (level: number) => {
+    if (level <= 5) return Star;
+    if (level <= 10) return Sparkles;
+    if (level <= 20) return Crown;
+    if (level <= 30) return Crown;
+    if (level <= 40) return Trophy;
+    return Trophy;
+  };
+  
+  const progressToNextLevel = xpProgress.percent;
+  const LevelIcon = getLevelIcon(detailedLevel.level);
+  const currentLevelGradient = getLevelGradient(detailedLevel.level);
 
   const unlockedCount = userAchievements?.filter(a => a.isUnlocked).length || 0;
   const totalAchievements = userAchievements?.length || 0;
@@ -92,12 +108,12 @@ export function GamificationBanner() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className={`p-2.5 rounded-xl bg-gradient-to-br ${currentLevel.gradient} shadow-md`}>
+          <div className={`p-2.5 rounded-xl bg-gradient-to-br ${currentLevelGradient} shadow-md`}>
             <LevelIcon className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
-              <p className="font-semibold text-sm text-foreground truncate" data-testid="text-level-name">{currentLevel.name}</p>
+              <p className="font-semibold text-sm text-foreground truncate" data-testid="text-level-name">{detailedLevel.title}</p>
               <span className="text-[10px] text-muted-foreground font-medium">{xp} XP</span>
             </div>
             <Progress value={progressToNextLevel} className="h-1.5 mt-1" />

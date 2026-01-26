@@ -38,6 +38,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect } from "react";
 import logoImage from "../assets/logo-new.png";
 import { cn } from "@/lib/utils";
+import { getLevelByXp, getXpProgressInLevel } from "@/lib/gamification-levels";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 
@@ -54,19 +55,33 @@ export function AppSidebar() {
   }, [location, isMobile, setOpenMobile]);
 
   const xp = user?.experiencePoints || 0;
-  const level = user?.level || "iniciante";
   const streak = user?.readingStreak || 0;
 
-  const levelConfig: Record<string, { name: string; minXP: number; maxXP: number; color: string; icon: typeof Star }> = {
-    iniciante: { name: "Iniciante", minXP: 0, maxXP: 100, color: "from-slate-400 to-slate-500", icon: Star },
-    crescendo: { name: "Crescendo", minXP: 100, maxXP: 500, color: "from-emerald-400 to-emerald-600", icon: Sparkles },
-    discipulo: { name: "Discípulo", minXP: 500, maxXP: 2000, color: "from-blue-400 to-blue-600", icon: Crown },
-    professor: { name: "Professor", minXP: 2000, maxXP: 10000, color: "from-blue-800 to-slate-800", icon: GraduationCap },
+  // Use detailed 50-level system - imported at top of file
+  const detailedLevel = getLevelByXp(xp);
+  const xpProgress = getXpProgressInLevel(xp, detailedLevel.level);
+  
+  // Color gradients based on level tiers (soft navy blue palette)
+  const getLevelGradient = (level: number) => {
+    if (level <= 5) return "from-slate-400 to-slate-500";
+    if (level <= 10) return "from-emerald-400 to-emerald-600";
+    if (level <= 20) return "from-blue-400 to-blue-600";
+    if (level <= 30) return "from-amber-400 to-amber-600";
+    if (level <= 40) return "from-slate-500 to-slate-700";
+    return "from-amber-500 to-amber-700";
   };
-
-  const currentLevel = levelConfig[level] || levelConfig.iniciante;
-  const progressToNextLevel = Math.min(100, ((xp - currentLevel.minXP) / (currentLevel.maxXP - currentLevel.minXP)) * 100);
-  const LevelIcon = currentLevel.icon;
+  
+  const getLevelIcon = (level: number) => {
+    if (level <= 5) return Star;
+    if (level <= 10) return Sparkles;
+    if (level <= 20) return Crown;
+    if (level <= 30) return Crown;
+    if (level <= 40) return GraduationCap;
+    return GraduationCap;
+  };
+  
+  const progressToNextLevel = xpProgress.percent;
+  const LevelIcon = getLevelIcon(detailedLevel.level);
 
   const journeyItems = [
     { title: t.nav.home, url: "/", icon: Home, color: "text-slate-600" },
@@ -117,10 +132,10 @@ export function AppSidebar() {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-foreground truncate">{user.firstName || "Estudante"}</p>
                 <div className="flex items-center gap-1.5">
-                  <div className={cn("p-0.5 rounded bg-gradient-to-br", currentLevel.color)}>
+                  <div className={cn("p-0.5 rounded bg-gradient-to-br", getLevelGradient(detailedLevel.level))}>
                     <LevelIcon className="h-2.5 w-2.5 text-white" />
                   </div>
-                  <span className="text-[10px] text-muted-foreground font-medium">{currentLevel.name}</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">{detailedLevel.title}</span>
                 </div>
               </div>
               {streak > 0 && (

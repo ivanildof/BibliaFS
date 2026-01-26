@@ -55,36 +55,7 @@ import { Link } from "wouter";
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { ReadingPlan, Highlight, Note, Bookmark, Prayer, Achievement as AchievementType } from "@shared/schema";
 
-const levelInfo = {
-  iniciante: { 
-    name: "Iniciante", 
-    next: "Crescendo", 
-    minXP: 0, 
-    maxXP: 100,
-    color: "text-gray-600"
-  },
-  crescendo: { 
-    name: "Crescendo", 
-    next: "Discípulo", 
-    minXP: 100, 
-    maxXP: 500,
-    color: "text-blue-600"
-  },
-  discipulo: { 
-    name: "Discípulo", 
-    next: "Professor", 
-    minXP: 500, 
-    maxXP: 1000,
-    color: "text-blue-600"
-  },
-  professor: { 
-    name: "Professor", 
-    next: "Máximo", 
-    minXP: 1000, 
-    maxXP: 1000,
-    color: "text-gold-600"
-  },
-};
+import { getLevelByXp, getXpProgressInLevel, GAMIFICATION_LEVELS } from "@/lib/gamification-levels";
 
 export default function Profile() {
   const { user, isLoading } = useAuth();
@@ -198,9 +169,11 @@ export default function Profile() {
   // Double check if user is still null even if isLoading is false (unexpected but possible)
   if (!user) return null;
 
-  const currentLevel = levelInfo[user.level as keyof typeof levelInfo] || levelInfo.iniciante;
   const xp = user.experiencePoints || 0;
-  const xpProgress = ((xp - currentLevel.minXP) / (currentLevel.maxXP - currentLevel.minXP)) * 100;
+  const currentLevel = getLevelByXp(xp);
+  const xpProgressInfo = getXpProgressInLevel(xp, currentLevel.level);
+  const isMaxLevel = currentLevel.level >= 50;
+  const nextLevel = isMaxLevel ? currentLevel : GAMIFICATION_LEVELS[currentLevel.level];
 
   const activePlans = readingPlans.filter(p => !p.isCompleted);
   const completedPlans = readingPlans.filter(p => p.isCompleted);
@@ -361,8 +334,8 @@ export default function Profile() {
                       Professor
                     </Badge>
                   )}
-                  <Badge variant="secondary" className={currentLevel.color}>
-                    {currentLevel.name}
+                  <Badge variant="secondary" className="bg-primary/10 text-primary">
+                    Nível {currentLevel.level} - {currentLevel.title}
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mb-4">{user.email}</p>
@@ -529,16 +502,23 @@ export default function Profile() {
             <div className="mt-6 pt-6 border-t">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">
-                  {t.progress.level} {currentLevel.name}
+                  {t.progress.level} {currentLevel.title}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {xp} / {currentLevel.maxXP} {t.progress.xp}
+                  {isMaxLevel ? `${xp} ${t.progress.xp} (Máximo)` : `${xpProgressInfo.current} / ${xpProgressInfo.needed} ${t.progress.xp}`}
                 </span>
               </div>
-              <Progress value={Math.min(xpProgress, 100)} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">
-                Próximo nível: {currentLevel.next}
-              </p>
+              <Progress value={Math.min(xpProgressInfo.percent, 100)} className="h-2" />
+              {!isMaxLevel && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Próximo nível: {nextLevel.title}
+                </p>
+              )}
+              {isMaxLevel && (
+                <p className="text-xs text-primary font-medium mt-1">
+                  Nível máximo alcançado!
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
