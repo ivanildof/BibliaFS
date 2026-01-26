@@ -48,8 +48,14 @@ if (isProduction) {
     frameguard: { action: 'sameorigin' },
   }));
 } else {
-  // Disable Helmet in development to ensure Replit preview works
-  // Headers are handled manually if needed
+  // In development, set permissive headers for Replit preview
+  app.use((_req, res, next) => {
+    res.removeHeader('X-Frame-Options');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
 }
 
 // Rate limiting ONLY for API endpoints (not static assets)
