@@ -52,6 +52,7 @@ import Achievements from "@/pages/achievements";
 
 import { NPSDialog } from "@/components/NPSDialog";
 import { InstallPrompt } from "@/components/install-prompt/InstallPrompt";
+import { UpdatePopup } from "@/components/UpdatePopup";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -261,6 +262,7 @@ function App() {
               <AppContent />
               <InstallPrompt />
               <NPSDialog />
+              <UpdatePopup />
               <Toaster />
             </TooltipProvider>
           </OfflineProvider>

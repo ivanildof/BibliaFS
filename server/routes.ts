@@ -258,6 +258,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(404).json({ error: "bible.db not found" });
   });
 
+  // App version check endpoint for update popup
+  // LATEST_VERSION: Update this when releasing a new version to Play Store
+  const LATEST_VERSION = process.env.APP_LATEST_VERSION || "2.1.0";
+  
+  app.get("/api/app/version", (req, res) => {
+    const currentVersion = req.query.current as string;
+    
+    if (!currentVersion) {
+      return res.json({
+        currentVersion: LATEST_VERSION,
+        latestVersion: LATEST_VERSION,
+        updateAvailable: false,
+        downloadSize: "~18 MB",
+        releaseNotes: []
+      });
+    }
+    
+    const updateAvailable = compareVersions(LATEST_VERSION, currentVersion) > 0;
+    
+    res.json({
+      currentVersion,
+      latestVersion: LATEST_VERSION,
+      updateAvailable,
+      downloadSize: "~18 MB",
+      releaseNotes: [
+        { icon: "sparkles", title: "Design Premium", description: "Novo visual com cores suaves e elegantes" },
+        { icon: "zap", title: "Modo Offline", description: "Leia a Bíblia sem internet" },
+        { icon: "bug", title: "Correções", description: "Melhorias de estabilidade e performance" },
+      ]
+    });
+  });
+  
+  // Compare semantic versions (returns 1 if a > b, -1 if a < b, 0 if equal)
+  function compareVersions(a: string, b: string): number {
+    const partsA = a.split('.').map(Number);
+    const partsB = b.split('.').map(Number);
+    
+    for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+      const numA = partsA[i] || 0;
+      const numB = partsB[i] || 0;
+      if (numA > numB) return 1;
+      if (numA < numB) return -1;
+    }
+    return 0;
+  }
+
   // Run database migrations
   await runMigrations();
   
