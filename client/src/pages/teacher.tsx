@@ -285,12 +285,13 @@ export default function Teacher() {
       let message = "Você atingiu o limite de conversas.";
       
       if (userPlan === "free") {
-        // Mensagem clara: limite permanente, precisa assinar
         message = "Você esgotou suas 20 perguntas gratuitas. Para continuar usando a IA, assine um de nossos planos.";
-      } else if (userPlan === "monthly" || userPlan === "annual" || userPlan === "yearly") {
-        message = "Você atingiu o limite mensal de conversas. Faça upgrade para Premium Plus.";
+      } else if (userPlan === "monthly") {
+        message = "Você usou todas as 500 perguntas do mês. O limite será renovado no próximo mês.";
+      } else if (userPlan === "yearly" || userPlan === "annual") {
+        message = "Você usou todas as 3750 perguntas do ano. O limite será renovado no próximo período.";
       } else if (userPlan === "premium_plus") {
-        message = "Você atingiu o limite mensal de conversas. Entre em contato para um plano customizado.";
+        message = "Você usou todas as 7200 perguntas do ano. Entre em contato para um plano customizado.";
       }
       
       toast({
@@ -328,27 +329,37 @@ export default function Teacher() {
         setUserPlan(data.plan);
       }
       
-      // Only track limits for FREE users (premium has unlimited via budget)
-      if (data.plan === "free" && data.conversationsUsed !== undefined) {
+      // Track limits for ALL users (each plan has its own limit)
+      if (data.conversationsUsed !== undefined) {
         setConversationsUsed(data.conversationsUsed);
         if (data.conversationsLimit && data.conversationsLimit > 0) {
           setConversationsLimit(data.conversationsLimit);
         }
         
-        // Check if limit reached for FREE users
+        // Check if limit reached
         if (data.limitReached) {
           setLimitReached(true);
         }
         
-        // Show warning at 75% of limit for FREE users only
+        // Show warning at 75% of limit for all users
         if (data.conversationsLimit && data.conversationsLimit > 0 && 
             data.conversationsUsed >= Math.floor(data.conversationsLimit * 0.75)) {
           if (!showLimitWarning) {
             setShowLimitWarning(true);
             const remaining = data.conversationsLimit - data.conversationsUsed;
+            let warningMessage = "";
+            
+            if (data.plan === "free") {
+              warningMessage = "Assine um plano premium para continuar usando a IA após esgotar suas perguntas.";
+            } else if (data.plan === "monthly") {
+              warningMessage = "Seu limite mensal está próximo de esgotar. Renova no próximo mês.";
+            } else {
+              warningMessage = "Seu limite anual está próximo de esgotar. Renova no próximo período.";
+            }
+            
             toast({
               title: `Próximo do limite (${remaining} perguntas restantes)`,
-              description: "Assine um plano premium para continuar usando a IA após esgotar suas perguntas gratuitas.",
+              description: warningMessage,
             });
           }
         }

@@ -117,84 +117,93 @@ if (process.env.STRIPE_SECRET_KEY) {
   console.warn("⚠️  STRIPE_SECRET_KEY not found - donation features will be disabled");
 }
 
-// AI Rate Limiting Constants
-const FREE_PLAN_AI_TOTAL_LIMIT = 20; // 20 AI requests total for free users
-const AI_REQUEST_COST = 0.01; // Cost per AI request in USD
-const AI_BUDGET_PERCENTAGE = 0.25; // 25% of subscription budget
+// AI Rate Limiting Constants - Limits by plan
+// FREE: 20 total (never resets) - must subscribe to continue
+// Monthly: 500/month (resets monthly)
+// Yearly/Annual: 3750/year (resets yearly)
+// Premium Plus: 7200/year (resets yearly)
+const AI_PLAN_LIMITS: Record<string, { limit: number; resetPeriod: 'never' | 'monthly' | 'yearly' }> = {
+  free: { limit: 20, resetPeriod: 'never' },
+  monthly: { limit: 500, resetPeriod: 'monthly' },
+  yearly: { limit: 3750, resetPeriod: 'yearly' },
+  annual: { limit: 3750, resetPeriod: 'yearly' },
+  premium_plus: { limit: 7200, resetPeriod: 'yearly' },
+};
 
-// Helper to check AI quota for free plan users
-async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; message?: string }> {
+const AI_REQUEST_COST = 0.01; // Cost per AI request in USD (for tracking)
+
+// Helper to check AI quota for ALL users (based on their plan limits)
+async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; limit: number; plan: string; message?: string }> {
   try {
     const user = await storage.getUser(userId);
     
     // If no user found, treat as free with no prior usage
     if (!user) {
-      return { allowed: true, remaining: FREE_PLAN_AI_TOTAL_LIMIT };
+      return { allowed: true, remaining: 20, limit: 20, plan: 'free' };
     }
     
     const plan = user.subscriptionPlan || 'free';
-
-    // Premium users (monthly/yearly/premium_plus plans) - check their specific budget limits
-    if (plan === 'monthly' || plan === 'yearly' || plan === 'premium_plus') {
-      const monthlySpend = user.aiSpendMonth ? Number(user.aiSpendMonth) : 0;
-      const yearlySpend = user.aiSpendYear ? Number(user.aiSpendYear) : 0;
-      
-      let monthlyLimit = 0;
-      let yearlyLimit = 0;
-      
-      if (plan === 'monthly') {
-        monthlyLimit = 2.98; // 25% of ~R$12 (approx budget for ~300 requests)
-      } else if (plan === 'yearly') {
-        yearlyLimit = 27.50; // 25% of ~R$110 (approx budget for ~2750 requests)
-      } else if (plan === 'premium_plus') {
-        yearlyLimit = 52.00; // 25% of ~R$208 (approx budget for ~5200 requests)
-      }
-      
-      // Check monthly limit
-      if (monthlyLimit > 0 && monthlySpend >= monthlyLimit) {
-        return {
-          allowed: false,
-          remaining: 0,
-          message: `Limite de IA do plano mensal atingido (R$${monthlyLimit.toFixed(2)}). Faça upgrade para Premium Plus para mais créditos.`
-        };
-      }
-      
-      // Check yearly limit
-      if (yearlyLimit > 0 && yearlySpend >= yearlyLimit) {
-        const planName = plan === 'premium_plus' ? 'Premium Plus' : 'Anual';
-        return {
-          allowed: false,
-          remaining: 0,
-          message: `Limite de IA do plano ${planName} atingido (R$${yearlyLimit.toFixed(2)}). O limite será renovado no próximo período.`
-        };
-      }
-      
-      return { allowed: true, remaining: -1 };
+    const config = AI_PLAN_LIMITS[plan] || AI_PLAN_LIMITS.free;
+    const now = new Date();
+    
+    let totalRequests = user.aiRequestsCount || 0;
+    const resetAt = user.aiRequestsResetAt;
+    
+    // Check if counter should be reset based on plan period
+    if (config.resetPeriod !== 'never' && resetAt && now >= new Date(resetAt)) {
+      // Period has passed, counter will be reset on next increment
+      totalRequests = 0;
     }
-
-    const totalRequests = user.aiRequestsCount || 0;
-    const remaining = FREE_PLAN_AI_TOTAL_LIMIT - totalRequests;
-
-    if (totalRequests >= FREE_PLAN_AI_TOTAL_LIMIT) {
+    
+    const remaining = Math.max(0, config.limit - totalRequests);
+    
+    // Check if limit reached
+    if (totalRequests >= config.limit) {
+      let message = "";
+      
+      if (plan === 'free') {
+        message = "Você esgotou suas 20 perguntas gratuitas. Para continuar usando a IA, assine um de nossos planos.";
+      } else if (plan === 'monthly') {
+        message = `Você usou todas as ${config.limit} perguntas do mês. O limite será renovado no próximo mês.`;
+      } else if (plan === 'yearly' || plan === 'annual') {
+        message = `Você usou todas as ${config.limit} perguntas do ano. O limite será renovado no próximo período.`;
+      } else if (plan === 'premium_plus') {
+        message = `Você usou todas as ${config.limit} perguntas do ano. Entre em contato para um plano customizado.`;
+      }
+      
       return {
         allowed: false,
         remaining: 0,
-        message: "Você atingiu o limite total de 20 perguntas do plano grátis. Adquira um plano Premium para continuar usando a Assistente IA!"
+        limit: config.limit,
+        plan,
+        message
       };
     }
 
-    if (remaining <= 5 && remaining > 0) {
+    // Warning at 75% of limit
+    const warningThreshold = Math.floor(config.limit * 0.75);
+    if (totalRequests >= warningThreshold && remaining > 0) {
+      let upgradeMessage = "";
+      
+      if (plan === 'free') {
+        upgradeMessage = `Atenção: Você tem apenas ${remaining} perguntas restantes. Assine um plano para continuar usando a IA.`;
+      } else {
+        upgradeMessage = `Atenção: Você tem ${remaining} perguntas restantes no período atual.`;
+      }
+      
       return {
         allowed: true,
         remaining,
-        message: `Atenção: Você tem apenas mais ${remaining} perguntas restantes no plano grátis. Considere adquirir um plano Premium para uso ilimitado!`
+        limit: config.limit,
+        plan,
+        message: upgradeMessage
       };
     }
     
-    return { allowed: true, remaining };
+    return { allowed: true, remaining, limit: config.limit, plan };
   } catch (error) {
     console.error("[AI Quota] Error checking quota:", error);
-    return { allowed: true, remaining: 0 };
+    return { allowed: true, remaining: 0, limit: 20, plan: 'free' };
   }
 }
 
@@ -1427,12 +1436,8 @@ REGRAS IMPORTANTES:
 
       const generated = JSON.parse(content);
       
-      // Increment AI request counter only for FREE users
-      const user = await storage.getUser(userId);
-      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
-        await storage.incrementAiRequests(userId);
-        console.log(`[AI Quota] User ${userId} used an AI request (lesson generation)`);
-      }
+      // Increment AI request counter for ALL users (function handles plan-specific logic)
+      await storage.incrementAiRequests(userId);
       
       res.json(generated);
     } catch (error: any) {
@@ -1507,20 +1512,11 @@ IMPORTANTE:
         answer: answer.substring(0, 150) 
       });
 
-      // Increment AI request counter only for FREE users
-      const currentUser = await storage.getUser(userId);
-      const userPlan = currentUser?.subscriptionPlan || "free";
+      // Increment AI request counter for ALL users (function handles plan-specific logic)
+      const { totalCount, limit, plan: userPlan } = await storage.incrementAiRequests(userId);
       
-      let totalCount = currentUser?.aiRequestsCount || 0;
-      if (userPlan === "free") {
-        const { totalCount: newTotal } = await storage.incrementAiRequests(userId);
-        totalCount = newTotal;
-        console.log(`[AI Quota] User ${userId} used an AI request (teacher assistant)`);
-      }
-      
-      // Calculate remaining and used for frontend compatibility
-      const limit = userPlan === "free" ? FREE_PLAN_AI_TOTAL_LIMIT : -1;
-      const remaining = userPlan === "free" ? Math.max(0, FREE_PLAN_AI_TOTAL_LIMIT - totalCount) : -1;
+      // Calculate remaining for frontend
+      const remaining = Math.max(0, limit - totalCount);
       
       res.json({ 
         answer,
@@ -1529,7 +1525,7 @@ IMPORTANTE:
         conversationsRemaining: remaining,
         remaining,
         plan: userPlan,
-        limitReached: userPlan === "free" && totalCount >= FREE_PLAN_AI_TOTAL_LIMIT
+        limitReached: totalCount >= limit
       });
     } catch (error: any) {
       console.error("Erro no assistente IA:", error);
@@ -2088,20 +2084,14 @@ IMPORTANTE:
         chapterData
       );
 
-      // Increment AI request counter and track spending for free plan users
-      const user = await storage.getUser(userId);
-      let spending = null;
-      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
-        await storage.incrementAiRequests(userId);
-        console.log(`[AI Quota] User ${userId} used an AI request`);
-        
-        // Track spending (25% budget limit)
-        try {
-          spending = await storage.trackAISpending(userId, AI_REQUEST_COST);
-          console.log(`[AI Budget] User ${userId} spending tracked - Monthly remaining: $${spending.monthlyRemaining.toFixed(2)}, Yearly remaining: $${spending.yearlyRemaining.toFixed(2)}`);
-        } catch (trackError) {
-          console.error("[AI Budget] Error tracking spending:", trackError);
-        }
+      // Increment AI request counter for ALL users (function handles plan-specific logic)
+      await storage.incrementAiRequests(userId);
+      
+      // Track spending for analytics
+      try {
+        await storage.trackAISpending(userId, AI_REQUEST_COST);
+      } catch (trackError) {
+        console.error("[AI Budget] Error tracking spending:", trackError);
       }
 
       // Save to BOTH global cache and user cache
@@ -2380,12 +2370,8 @@ Regras:
       // Track AI spending for premium users and increment counter for FREE users
       await storage.trackAISpending(userId, AI_REQUEST_COST);
       
-      // Increment AI request counter (for FREE users this counts towards the 20 total limit)
-      const user = await storage.getUser(userId);
-      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
-        await storage.incrementAiRequests(userId);
-        console.log(`[AI Quota] User ${userId} used an AI request (semantic search)`);
-      }
+      // Increment AI request counter for ALL users (function handles plan-specific logic)
+      await storage.incrementAiRequests(userId);
 
       const responseText = completion.choices[0]?.message?.content || "";
       
@@ -3573,14 +3559,11 @@ Responda em português do Brasil.`
         }
       }
 
-      // Increment AI request counter for free plan users
-      const user = await storage.getUser(userId);
-      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
-        await storage.incrementAiRequests(userId);
-        console.log(`[AI Quota] User ${userId} used an AI request (study)`);
-      }
+      // Increment AI request counter for ALL users (function handles plan-specific logic)
+      const { totalCount, limit } = await storage.incrementAiRequests(userId);
+      const remaining = Math.max(0, limit - totalCount);
 
-      res.json({ answer, remaining: quota.remaining > 0 ? quota.remaining - 1 : -1 });
+      res.json({ answer, remaining });
     } catch (error: any) {
       console.error("Erro ao chamar OpenAI:", error);
       res.status(500).json({ error: "Erro ao processar sua pergunta. Por favor, tente novamente." });
@@ -4152,12 +4135,8 @@ Responda APENAS com a pergunta, sem introdução ou explicação.`;
 
           question = response.choices[0]?.message?.content?.trim() || "";
           
-          // Increment AI request counter for FREE users
-          const user = await storage.getUser(userId);
-          if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
-            await storage.incrementAiRequests(userId);
-            console.log(`[AI Quota] User ${userId} used an AI request (discussion question)`);
-          }
+          // Increment AI request counter for ALL users (function handles plan-specific logic)
+          await storage.incrementAiRequests(userId);
         } catch (aiError) {
           console.error("Erro ao gerar pergunta com IA:", aiError);
         }
@@ -4341,12 +4320,8 @@ Formato da resposta:
         throw new Error("Resposta vazia da IA");
       }
       
-      // Increment AI request counter for FREE users
-      const user = await storage.getUser(userId);
-      if (!user?.subscriptionPlan || user.subscriptionPlan === 'free') {
-        await storage.incrementAiRequests(userId);
-        console.log(`[AI Quota] User ${userId} used an AI request (discussion synthesis)`);
-      }
+      // Increment AI request counter for ALL users (function handles plan-specific logic)
+      await storage.incrementAiRequests(userId);
       
       // Save synthesis
       const updated = await storage.saveDiscussionSynthesis(discussionId, synthesis);

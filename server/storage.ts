@@ -1154,39 +1154,86 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async incrementAiRequests(userId: string): Promise<{ count: number; resetAt: Date; totalCount: number }> {
+  async incrementAiRequests(userId: string): Promise<{ count: number; resetAt: Date; totalCount: number; limit: number; plan: string }> {
     const now = new Date();
     const user = await this.getUser(userId);
-    
-    let count = user?.aiRequestsToday || 0;
-    let resetAt = user?.aiRequestsResetAt;
-    let totalCount = user?.aiRequestsCount || 0;
     const plan = user?.subscriptionPlan || 'free';
-
-    // Reset daily count if it's a new day
-    if (!resetAt || now > resetAt) {
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+    
+    // Define limits and reset periods by plan
+    // FREE: 20 total (never resets) - must subscribe to continue
+    // Monthly: 500/month (resets on 1st of each month)
+    // Yearly/Annual: 3750/year (resets on subscription anniversary)
+    // Premium Plus: 7200/year (resets on subscription anniversary)
+    const planConfig: Record<string, { limit: number; resetPeriod: 'never' | 'monthly' | 'yearly' }> = {
+      free: { limit: 20, resetPeriod: 'never' },
+      monthly: { limit: 500, resetPeriod: 'monthly' },
+      yearly: { limit: 3750, resetPeriod: 'yearly' },
+      annual: { limit: 3750, resetPeriod: 'yearly' },
+      premium_plus: { limit: 7200, resetPeriod: 'yearly' },
+    };
+    
+    const config = planConfig[plan] || planConfig.free;
+    let periodCount = user?.aiRequestsCount || 0;  // Period counter (resets based on plan)
+    const currentResetAt = user?.aiRequestsResetAt;
+    
+    // Calculate next reset date and check if should reset
+    let nextResetAt: Date;
+    let shouldReset = false;
+    
+    if (config.resetPeriod === 'never') {
+      // FREE: never reset - this is a lifetime counter
+      nextResetAt = new Date('2099-12-31T23:59:59Z');
+      shouldReset = false;
+    } else if (config.resetPeriod === 'monthly') {
+      // Monthly: reset on first day of next month
+      nextResetAt = new Date(now);
+      nextResetAt.setMonth(nextResetAt.getMonth() + 1);
+      nextResetAt.setDate(1);
+      nextResetAt.setHours(0, 0, 0, 0);
       
-      count = 1;
-      resetAt = tomorrow;
+      // Check if current reset date has passed
+      if (currentResetAt && now >= new Date(currentResetAt)) {
+        shouldReset = true;
+      }
     } else {
-      count++;
+      // Yearly: reset one year from now (or subscription anniversary)
+      nextResetAt = new Date(now);
+      nextResetAt.setFullYear(nextResetAt.getFullYear() + 1);
+      nextResetAt.setMonth(0);  // January
+      nextResetAt.setDate(1);
+      nextResetAt.setHours(0, 0, 0, 0);
+      
+      // Check if current reset date has passed
+      if (currentResetAt && now >= new Date(currentResetAt)) {
+        shouldReset = true;
+      }
     }
-
-    // Only increment total count for FREE users (premium uses budget limits)
-    if (plan === 'free') {
-      totalCount++;
+    
+    // Reset counter if period has passed
+    if (shouldReset) {
+      periodCount = 0;
+      console.log(`[AI Quota] Reset counter for user ${userId} (${plan} plan) - new period started`);
     }
-
+    
+    // Increment period counter
+    periodCount++;
+    
+    // Persist to database with user isolation (uses userId in WHERE clause)
     await this.updateUserSubscription(userId, {
-      aiRequestsToday: count,
-      aiRequestsResetAt: resetAt,
-      aiRequestsCount: totalCount,
+      aiRequestsCount: periodCount,
+      aiRequestsResetAt: nextResetAt,
+      aiRequestsToday: periodCount,  // Keep in sync for backwards compat
     });
-
-    return { count, resetAt, totalCount };
+    
+    console.log(`[AI Quota] User ${userId} (${plan}): ${periodCount}/${config.limit} requests | Next reset: ${nextResetAt.toISOString()}`);
+    
+    return { 
+      count: periodCount, 
+      resetAt: nextResetAt, 
+      totalCount: periodCount, 
+      limit: config.limit,
+      plan 
+    };
   }
 
   // ============================================
