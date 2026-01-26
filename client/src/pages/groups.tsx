@@ -645,8 +645,8 @@ export default function Groups() {
 
   // Group detail view
   if (selectedGroup) {
-    const isLeader = selectedGroup.role === "leader";
-    const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator";
+    const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
+    const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
     
     return (
       <div className="min-h-screen bg-background relative overflow-hidden">
@@ -666,7 +666,7 @@ export default function Groups() {
               <div className="flex gap-2">
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="rounded-xl">
+                    <Button variant="outline" size="sm" className="rounded-xl" data-testid="button-edit-group">
                       Editar
                     </Button>
                   </DialogTrigger>
@@ -683,7 +683,7 @@ export default function Groups() {
                             <FormItem>
                               <FormLabel>Nome do Grupo</FormLabel>
                               <FormControl>
-                                <Input {...field} />
+                                <Input {...field} data-testid="input-edit-name" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -696,7 +696,7 @@ export default function Groups() {
                             <FormItem>
                               <FormLabel>Descrição</FormLabel>
                               <FormControl>
-                                <Textarea {...field} />
+                                <Textarea {...field} data-testid="input-edit-description" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -712,13 +712,13 @@ export default function Groups() {
                                 <FormDescription>Permite que qualquer pessoa encontre e entre no grupo.</FormDescription>
                               </div>
                               <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-edit-public" />
                               </FormControl>
                             </FormItem>
                           )}
                         />
                         <DialogFooter>
-                          <Button type="submit" disabled={updateMutation.isPending}>
+                          <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group">
                             {updateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                             Salvar Alterações
                           </Button>
@@ -730,7 +730,7 @@ export default function Groups() {
 
                 <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="destructive" size="sm" className="rounded-xl">
+                    <Button variant="destructive" size="sm" className="rounded-xl" data-testid="button-delete-group">
                       Excluir
                     </Button>
                   </DialogTrigger>
@@ -742,8 +742,8 @@ export default function Groups() {
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancelar</Button>
-                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending}>
+                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete">Cancelar</Button>
+                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete">
                         {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                         Confirmar Exclusão
                       </Button>
