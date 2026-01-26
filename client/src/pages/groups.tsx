@@ -612,7 +612,7 @@ export default function Groups() {
                   <ScrollArea className="h-[400px] border rounded-lg p-4">
                     {loadingMessages ? (
                       <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       </div>
                     ) : groupMessages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center">
@@ -1255,7 +1255,7 @@ export default function Groups() {
 
                       {loadingDiscussions ? (
                         <div className="flex items-center justify-center py-12">
-                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
                       ) : groupDiscussions.length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground">
@@ -1360,29 +1360,21 @@ export default function Groups() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10">
-        <div className="flex flex-col items-center justify-center mb-8">
-          <Users className="h-24 w-24 text-primary mb-6" />
-          <h1 className="text-4xl font-extrabold text-center tracking-tight">Grupos de Estudo</h1>
-          <p className="text-lg text-muted-foreground text-center max-w-md mt-2 font-medium">Compartilhe sua jornada de fé e estudo bíblico com sua comunidade.</p>
-        </div>
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+          className="text-center space-y-2"
         >
-          <div className="space-y-2">
-            <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight" data-testid="text-page-title">
-              Grupos de <span className="text-primary relative inline-block">
-                Estudo
-                <div className="absolute -bottom-1 left-0 w-full h-1 bg-primary/20 rounded-full" />
-              </span>
-            </h1>
-            <p className="text-lg text-muted-foreground font-medium max-w-xl">
-              Compartilhe sua fé e cresça em conhecimento bíblico com sua comunidade.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">COMUNIDADE</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+            Grupos de Estudo
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Compartilhe sua fé e cresça em conhecimento bíblico com sua comunidade
+          </p>
+        </motion.div>
+        
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button 
               variant="outline" 
               size="lg" 
@@ -1403,8 +1395,7 @@ export default function Groups() {
               <Plus className="h-5 w-5 mr-2.5" />
               Criar Grupo
             </Button>
-          </div>
-        </motion.div>
+        </div>
 
         <Tabs defaultValue="my-groups" className="space-y-8">
           <TabsList className="bg-muted/30 p-1.5 rounded-2xl border border-primary/5">

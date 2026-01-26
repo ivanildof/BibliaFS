@@ -53,14 +53,10 @@ export default function Progress() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">{t.progress.loadingProgress}</p>
-            </div>
-          </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">{t.progress.loadingProgress}</p>
         </div>
       </div>
     );
@@ -107,12 +103,13 @@ export default function Progress() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="text-center space-y-2 mb-12"
         >
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent" data-testid="text-page-title">
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">ESTATÍSTICAS</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
             {t.progress.title}
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl">
+          <p className="text-sm text-muted-foreground">
             {t.progress.subtitle}
           </p>
         </motion.div>

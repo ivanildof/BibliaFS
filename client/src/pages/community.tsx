@@ -102,14 +102,10 @@ export default function Community() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Carregando posts...</p>
-            </div>
-          </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">Carregando posts...</p>
         </div>
       </div>
     );
@@ -143,19 +139,17 @@ export default function Community() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-6 sm:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 flex items-center gap-3 flex-wrap" data-testid="text-page-title">
-              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700 flex-shrink-0">
-                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-              </div>
-              {t.community.title}
-            </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
-              Compartilhe insights e conecte-se com outros
-            </p>
-          </div>
-          
+        <div className="text-center space-y-2 mb-8">
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">CONEXÕES</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+            {t.community.title}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Compartilhe insights e conecte-se com outros
+          </p>
+        </div>
+        
+        <div className="flex justify-center mb-8">
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-post" className="flex-shrink-0">
@@ -301,10 +295,10 @@ export default function Community() {
           ) : (
             <>
               {/* AI Suggestion Card */}
-              <Card className="bg-gradient-to-r from-violet-500/10 to-violet-500/5 border-violet-500/20 rounded-2xl">
+              <Card className="bg-gradient-to-r from-slate-600/10 to-slate-600/5 border-slate-600/20 rounded-2xl">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-violet-600" />
+                    <Sparkles className="h-4 w-4 text-slate-600" />
                     <h3 className="font-bold text-sm">Sugestão da IA</h3>
                   </div>
                 </CardHeader>
@@ -314,7 +308,7 @@ export default function Community() {
                   </p>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border-2 border-background">
-                      <AvatarFallback className="bg-violet-500 text-white font-bold">MS</AvatarFallback>
+                      <AvatarFallback className="bg-slate-600 text-white font-bold">MS</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-sm truncate">Maria Silva</p>
@@ -332,7 +326,7 @@ export default function Community() {
                     <div className="flex items-start gap-3">
                       <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
                         <AvatarImage src={post.user?.profileImageUrl} />
-                        <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white font-bold">
+                        <AvatarFallback className="bg-gradient-to-br from-blue-800 to-slate-800 text-white font-bold">
                           {post.user?.firstName?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>

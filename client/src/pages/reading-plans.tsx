@@ -152,14 +152,10 @@ export default function ReadingPlans() {
 
   if (plansLoading && activePlans.length === 0 && completedPlans.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">{t.common.loading}</p>
-            </div>
-          </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -171,17 +167,18 @@ export default function ReadingPlans() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-12"
+          className="text-center space-y-2 mb-12"
         >
-          <div>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent" data-testid="text-page-title">
-              {t.plans.title}
-            </h1>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-              {t.plans.subtitle}
-            </p>
-          </div>
-          
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">LEITURA BÍBLICA</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+            {t.plans.title}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {t.plans.subtitle}
+          </p>
+        </motion.div>
+        
+        <div className="flex justify-center mb-8">
           <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
               <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-md hover-elevate">
@@ -372,7 +369,7 @@ export default function ReadingPlans() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {[

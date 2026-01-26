@@ -566,14 +566,10 @@ export default function Teacher() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Carregando aulas...</p>
-            </div>
-          </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">Carregando aulas...</p>
         </div>
       </div>
     );
@@ -615,21 +611,18 @@ export default function Teacher() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12"
+          className="text-center space-y-2 mb-12"
         >
-          <div>
-            <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-foreground flex items-center gap-4" data-testid="text-page-title">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary shadow-xl shadow-primary/20">
-                <GraduationCap className="h-7 w-7 text-white" />
-              </div>
-              {t.teacherMode.title}
-              <Sparkles className="h-6 w-6 text-accent animate-pulse" />
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-xl">
-              Crie aulas inspiradoras, gerencie seus alunos e potencialize seu ensino com IA
-            </p>
-          </div>
-          
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">ENSINO BÍBLICO</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+            {t.teacherMode.title}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Crie aulas inspiradoras e potencialize seu ensino com IA
+          </p>
+        </motion.div>
+        
+        <div className="flex justify-center mb-8">
           <Dialog open={isCreateDialogOpen} onOpenChange={(open) => open ? setIsCreateDialogOpen(true) : handleCloseDialog()}>
             <DialogTrigger asChild>
               <Button size="lg" className="rounded-2xl h-14 px-8 shadow-xl shadow-primary/20 hover-elevate" data-testid="button-create-lesson" onClick={() => setIsCreateDialogOpen(true)}>
@@ -943,7 +936,7 @@ export default function Teacher() {
               </Form>
             </DialogContent>
           </Dialog>
-        </motion.div>
+        </div>
 
         {/* Tabs */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>

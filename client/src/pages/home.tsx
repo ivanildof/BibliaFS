@@ -15,7 +15,8 @@ import {
   Calendar,
   ChevronRight,
   Flame,
-  GraduationCap
+  GraduationCap,
+  Loader2
 } from "lucide-react";
 import { Link } from "wouter";
 import type { ReadingPlan } from "@shared/schema";
@@ -53,9 +54,9 @@ export default function Home() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary border-t-transparent mx-auto mb-4"></div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
           <p className="text-sm text-muted-foreground">Carregando...</p>
         </div>
       </div>
@@ -63,7 +64,7 @@ export default function Home() {
   }
 
   const quickActions = [
-    { icon: GraduationCap, label: "Modo Professor", href: "/teacher", gradient: "from-violet-500 to-purple-600" },
+    { icon: GraduationCap, label: "Modo Professor", href: "/teacher", gradient: "from-blue-800 to-slate-800" },
     { icon: MessageSquare, label: "Nova Oração", href: "/prayers", gradient: "from-rose-400 to-pink-500" },
     { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", gradient: "from-teal-400 to-emerald-500" },
     { icon: Users, label: "Comunidade", href: "/community", gradient: "from-amber-400 to-orange-500" },
@@ -188,7 +189,7 @@ export default function Home() {
           <Card className="glass border-0 rounded-2xl overflow-hidden">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-800 to-slate-800 shadow-md">
                   <Sparkles className="h-4 w-4 text-white" />
                 </div>
                 <CardTitle className="text-lg font-bold">Atividade Recente</CardTitle>
@@ -197,7 +198,7 @@ export default function Home() {
             <CardContent className="pt-2">
               <div className="space-y-2">
                 {[
-                  { icon: BookOpen, text: "Você leu Salmos 23", time: "Há 2 horas", gradient: "from-violet-500 to-purple-600" },
+                  { icon: BookOpen, text: "Você leu Salmos 23", time: "Há 2 horas", gradient: "from-blue-800 to-slate-800" },
                   { icon: MessageSquare, text: "Nova oração registrada", time: "Ontem", gradient: "from-rose-400 to-pink-500" },
                   { icon: Users, text: "Você publicou na comunidade", time: "Há 3 dias", gradient: "from-amber-400 to-orange-500" },
                 ].map((item, i) => (

@@ -52,7 +52,7 @@ export function GamificationBanner() {
     iniciante: { name: "Iniciante", minXP: 0, maxXP: 100, gradient: "from-slate-400 to-slate-500", icon: Star },
     crescendo: { name: "Crescendo", minXP: 100, maxXP: 500, gradient: "from-emerald-400 to-emerald-600", icon: Sparkles },
     discipulo: { name: "Discípulo", minXP: 500, maxXP: 2000, gradient: "from-blue-400 to-blue-600", icon: Crown },
-    professor: { name: "Professor", minXP: 2000, maxXP: 10000, gradient: "from-violet-400 to-violet-600", icon: Trophy },
+    professor: { name: "Professor", minXP: 2000, maxXP: 10000, gradient: "from-blue-800 to-slate-800", icon: Trophy },
   };
 
   const currentLevel = levelConfig[level] || levelConfig.iniciante;

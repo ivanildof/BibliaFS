@@ -24,8 +24,11 @@ export default function Achievements() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">Carregando conquistas...</p>
+        </div>
       </div>
     );
   }
@@ -45,21 +48,15 @@ export default function Achievements() {
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-6 mb-10"
+          className="text-center space-y-2 mb-10"
         >
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Trophy className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                Conquistas
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                Acompanhe seu progresso e desbloqueie recompensas
-              </p>
-            </div>
-          </div>
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">GAMIFICAÇÃO</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground">
+            Conquistas
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Acompanhe seu progresso e desbloqueie recompensas
+          </p>
         </motion.div>
 
         <motion.div 

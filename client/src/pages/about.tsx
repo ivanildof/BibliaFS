@@ -55,8 +55,8 @@ export default function About() {
       description: "Regras e condições de uso do aplicativo",
       icon: FileText,
       href: "/terms",
-      color: "text-purple-600",
-      bgColor: "bg-purple-500/10"
+      color: "text-slate-600",
+      bgColor: "bg-slate-600/10"
     },
     {
       title: "Política de Segurança",

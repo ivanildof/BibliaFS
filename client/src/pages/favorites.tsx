@@ -136,8 +136,11 @@ export default function Favorites() {
 
   if (loadingBookmarks || loadingHighlights || loadingNotes) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background/50 backdrop-blur-sm">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">Carregando favoritos...</p>
+        </div>
       </div>
     );
   }
@@ -146,24 +149,15 @@ export default function Favorites() {
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="container max-w-5xl mx-auto p-4 md:p-8 pb-32">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div className="flex items-center gap-5">
-            <Link href="/">
-              <Button variant="outline" size="icon" className="rounded-2xl hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm border-primary/20">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Heart className="h-5 w-5 text-primary fill-current" />
-                <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-foreground">{t.favorites.title}</h1>
-              </div>
-              <p className="text-muted-foreground font-medium">
-                {t.favorites.subtitle}
-              </p>
-            </div>
-          </div>
-          
+        <div className="text-center space-y-2 mb-10">
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">MEUS TESOUROS</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground">{t.favorites.title}</h1>
+          <p className="text-sm text-muted-foreground">
+            {t.favorites.subtitle}
+          </p>
+        </div>
+        
+        <div className="flex justify-center mb-8">
           <div className="relative group w-full md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input 

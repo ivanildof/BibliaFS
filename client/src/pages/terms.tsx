@@ -48,7 +48,7 @@ export default function Terms() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-purple-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-500/5 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
@@ -72,11 +72,11 @@ export default function Terms() {
           className="text-center space-y-4"
         >
           <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-xl shadow-purple-500/20">
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-800 to-slate-800 flex items-center justify-center shadow-xl shadow-slate-800/20">
               <FileText className="h-10 w-10 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-800 to-slate-800 bg-clip-text text-transparent">
             Termos de Uso
           </h1>
           <p className="text-muted-foreground">

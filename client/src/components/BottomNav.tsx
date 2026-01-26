@@ -18,7 +18,7 @@ export function BottomNav() {
     { title: t.nav.bible, url: '/bible-reader', icon: BookOpen, color: 'text-emerald-500', testId: 'nav-bible' },
     { title: t.nav.plans, url: '/plans', icon: Book, color: 'text-amber-500', testId: 'nav-plans' },
     { title: t.nav.progress, url: '/progress', icon: Trophy, color: 'text-yellow-500', testId: 'nav-progress' },
-    { title: t.nav.you, url: '/perfil', icon: User, color: 'text-purple-500', testId: 'nav-you' },
+    { title: t.nav.you, url: '/perfil', icon: User, color: 'text-slate-600', testId: 'nav-you' },
   ];
 
   return (

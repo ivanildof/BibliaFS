@@ -64,19 +64,19 @@ const testimonials = [
     name: "Pastora de São Paulo",
     role: "Uso em sua comunidade",
     content: "Os planos de leitura customizáveis e o modo offline transformaram como nossa comunidade estuda juntos.",
-    avatar: "📖"
+    initials: "PS"
   },
   {
     name: "Professor Universitário",
     role: "Estudo de Teologia",
     content: "O assistente IA oferece perspectivas teológicas equilibradas para minhas aulas. Sempre lembro aos alunos de validar com as fontes originais.",
-    avatar: "🎓"
+    initials: "PU"
   },
   {
     name: "Estudo em Grupo",
     role: "Leitura Diária",
     content: "Adoramos usar a comunidade para compartilhar notas. O app permite que cada um tenha sua própria interpretação das Escrituras.",
-    avatar: "👥"
+    initials: "EG"
   },
 ];
 
@@ -298,7 +298,7 @@ export default function Landing() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative z-10 max-w-5xl mx-auto px-6 text-center"
         >
-          <Badge className="mb-6 bg-amber-400/90 text-purple-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
+          <Badge className="mb-6 bg-amber-400/90 text-slate-900 border-amber-300 backdrop-blur-md px-6 py-2 font-semibold shadow-lg" data-testid="badge-version">
             A Revolução do Estudo Bíblico
           </Badge>
           
@@ -313,7 +313,7 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg"
-              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-purple-900 border-0 shadow-xl font-bold glow-gold"
+              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 border-0 shadow-xl font-bold glow-gold"
               onClick={() => window.location.href = "/register"}
               data-testid="button-start-free"
             >
@@ -337,7 +337,7 @@ export default function Landing() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-purple-50 via-background to-amber-50/30 dark:from-purple-950/30 dark:via-background dark:to-amber-950/20">
+      <section className="py-24 px-6 bg-gradient-to-b from-slate-50 via-background to-amber-50/30 dark:from-slate-950/30 dark:via-background dark:to-amber-950/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Por que Ler a <span className="gradient-text">Bíblia Sagrada</span> na BíbliaFS?</h2>
@@ -348,9 +348,9 @@ export default function Landing() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Zap, title: "Assistente IA", desc: "Respostas teológicas (requer internet)", color: "from-purple-500 to-purple-600" },
+              { icon: Zap, title: "Assistente IA", desc: "Respostas teológicas (requer internet)", color: "from-blue-800 to-slate-800" },
               { icon: Sparkles, title: "Temas Premium", desc: "4 temas exclusivos + personalizáveis", color: "from-amber-400 to-amber-500" },
-              { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia + planos sem internet", color: "from-indigo-500 to-purple-500" },
+              { icon: Globe, title: "Offline Total", desc: "Leia a Bíblia + planos sem internet", color: "from-slate-600 to-slate-700" },
               { icon: Shield, title: "Plano Básico Gratuito", desc: "Recursos essenciais para sempre", color: "from-orange-400 to-amber-500" },
             ].map((benefit, idx) => {
               const BenefitCard = () => {
@@ -361,7 +361,7 @@ export default function Landing() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    className="p-6 rounded-2xl bg-white/80 dark:bg-card/80 border border-purple-200/50 dark:border-purple-800/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                    className="p-6 rounded-2xl bg-white/80 dark:bg-card/80 border border-slate-200/50 dark:border-slate-800/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                   >
                     <div className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${benefit.color} mb-4 shadow-lg`}>
                       <benefit.icon className="h-7 w-7 text-white" />
@@ -378,7 +378,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section id="recursos" className="py-24 px-6 bg-gradient-to-b from-background via-purple-50/20 to-background dark:from-background dark:via-purple-950/20 dark:to-background">
+      <section id="recursos" className="py-24 px-6 bg-gradient-to-b from-background via-slate-50/20 to-background dark:from-background dark:via-slate-950/20 dark:to-background">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
@@ -400,10 +400,10 @@ export default function Landing() {
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
-                    <Card className="premium-card border-purple-200/50 dark:border-purple-800/30 bg-white/90 dark:bg-card/90" data-testid={`card-feature-${index}`}>
+                    <Card className="premium-card border-slate-200/50 dark:border-slate-800/30 bg-white/90 dark:bg-card/90" data-testid={`card-feature-${index}`}>
                       <CardHeader>
                         <div className="flex items-center gap-4 mb-2">
-                          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-800 to-slate-800 shadow-lg">
                             <feature.icon className="h-7 w-7 text-white" />
                           </div>
                         </div>
@@ -538,8 +538,8 @@ export default function Landing() {
                     <Card className="hover-elevate border-border/50 h-full" data-testid={`testimonial-${index}`}>
                       <CardHeader>
                         <div className="flex items-center gap-4 mb-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-white font-bold">
-                            {testimonial.avatar}
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-white font-bold text-sm">
+                            {testimonial.initials}
                           </div>
                           <div>
                             <h3 className="font-bold text-lg">{testimonial.name}</h3>
@@ -606,7 +606,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white relative overflow-hidden">
+      <section className="py-24 px-6 bg-gradient-to-r from-blue-800 via-slate-700 to-blue-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
@@ -619,7 +619,7 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg"
-              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-purple-900 hover:from-amber-300 hover:to-amber-400 shadow-xl font-bold glow-gold"
+              className="text-lg px-10 py-6 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 hover:from-amber-300 hover:to-amber-400 shadow-xl font-bold glow-gold"
               onClick={() => window.location.href = "/api/register"}
               data-testid="button-cta-start"
             >
@@ -631,7 +631,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-gradient-to-b from-purple-50 to-white dark:from-purple-950/50 dark:to-background border-t border-purple-200/50 dark:border-purple-800/30">
+      <footer className="py-12 px-6 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950/50 dark:to-background border-t border-slate-200/50 dark:border-slate-800/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -677,7 +677,7 @@ export default function Landing() {
             </div>
           </div>
           
-          <div className="pt-8 border-t border-purple-200/50 dark:border-purple-800/30 text-center text-sm text-muted-foreground">
+          <div className="pt-8 border-t border-slate-200/50 dark:border-slate-800/30 text-center text-sm text-muted-foreground">
             <p>© 2026 BíbliaFS. Todos os direitos reservados. Desenvolvido por FabriSite.</p>
           </div>
         </div>

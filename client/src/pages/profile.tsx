@@ -46,7 +46,8 @@ import {
   Mail,
   LogOut,
   Edit,
-  AlertTriangle
+  AlertTriangle,
+  Loader2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -74,7 +75,7 @@ const levelInfo = {
     next: "Professor", 
     minXP: 500, 
     maxXP: 1000,
-    color: "text-purple-600"
+    color: "text-blue-600"
   },
   professor: { 
     name: "Professor", 
@@ -159,10 +160,10 @@ export default function Profile() {
   // Show loading state while auth is being checked
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto" />
-          <p className="text-muted-foreground">{t.common?.loading || "Carregando..."}</p>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">{t.common?.loading || "Carregando..."}</p>
         </div>
       </div>
     );
@@ -171,7 +172,7 @@ export default function Profile() {
   // Show login prompt if not authenticated
   if (!user && !isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
         <Card className="max-w-md w-full rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-2xl">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
@@ -205,7 +206,7 @@ export default function Profile() {
   const completedPlans = readingPlans.filter(p => p.isCompleted);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[150px]" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/5 rounded-full blur-[150px]" />
@@ -262,7 +263,7 @@ export default function Profile() {
                 </Link>
                 <Link href="/privacy">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                    <Shield className="h-4 w-4 mr-3 text-violet-500" />
+                    <Shield className="h-4 w-4 mr-3 text-slate-600" />
                     Política de Privacidade
                   </Button>
                 </Link>
@@ -400,8 +401,8 @@ export default function Profile() {
                   <Separator orientation="vertical" className="h-14 hidden md:block" />
                   
                   <div className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10">
-                      <Award className="h-5 w-5 text-purple-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-600/10">
+                      <Award className="h-5 w-5 text-slate-600" />
                     </div>
                     <div>
                       <p className="text-lg font-bold">{achievements.length}</p>
@@ -494,7 +495,7 @@ export default function Profile() {
                       </Link>
                       <Link href="/privacy">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                          <Shield className="h-4 w-4 mr-3 text-violet-500" />
+                          <Shield className="h-4 w-4 mr-3 text-slate-600" />
                           Política de Privacidade
                         </Button>
                       </Link>

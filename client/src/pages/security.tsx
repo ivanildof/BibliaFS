@@ -194,8 +194,8 @@ export default function Security() {
           <Card data-testid="card-ai-security" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="p-2.5 rounded-xl bg-purple-500/10">
-                  <Fingerprint className="h-6 w-6 text-purple-600" />
+                <div className="p-2.5 rounded-xl bg-slate-600/10">
+                  <Fingerprint className="h-6 w-6 text-slate-600" />
                 </div>
                 Segurança da IA
               </CardTitle>

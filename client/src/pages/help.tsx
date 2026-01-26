@@ -126,7 +126,7 @@ export default function Help() {
             <Card data-testid="card-tutorials" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600">
+                  <div className="p-2.5 rounded-xl bg-slate-600/10 text-slate-600">
                     <Video className="h-6 w-6" />
                   </div>
                   Tutoriais em Vídeo

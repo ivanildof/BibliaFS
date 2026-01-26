@@ -107,7 +107,7 @@ const plans = [
     period: "por ano",
     description: "Máximo poder de IA",
     icon: Zap,
-    iconBg: "bg-purple-600",
+    iconBg: "bg-blue-800",
     features: [
       "Tudo do Anual",
       "IA Teológica: ~5.200 perguntas/ano",
@@ -245,7 +245,7 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/5 to-amber-50/5 dark:from-background dark:via-purple-950/10 dark:to-amber-950/10 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[150px]" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-amber-500/5 rounded-full blur-[150px]" />

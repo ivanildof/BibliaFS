@@ -61,7 +61,7 @@ export function AppSidebar() {
     iniciante: { name: "Iniciante", minXP: 0, maxXP: 100, color: "from-slate-400 to-slate-500", icon: Star },
     crescendo: { name: "Crescendo", minXP: 100, maxXP: 500, color: "from-emerald-400 to-emerald-600", icon: Sparkles },
     discipulo: { name: "Discípulo", minXP: 500, maxXP: 2000, color: "from-blue-400 to-blue-600", icon: Crown },
-    professor: { name: "Professor", minXP: 2000, maxXP: 10000, color: "from-violet-400 to-violet-600", icon: GraduationCap },
+    professor: { name: "Professor", minXP: 2000, maxXP: 10000, color: "from-blue-800 to-slate-800", icon: GraduationCap },
   };
 
   const currentLevel = levelConfig[level] || levelConfig.iniciante;
@@ -69,7 +69,7 @@ export function AppSidebar() {
   const LevelIcon = currentLevel.icon;
 
   const journeyItems = [
-    { title: t.nav.home, url: "/", icon: Home, color: "text-violet-500" },
+    { title: t.nav.home, url: "/", icon: Home, color: "text-slate-600" },
     { title: t.nav.bible, url: "/bible-reader", icon: BookOpen, color: "text-emerald-500" },
     { title: t.favorites.title, url: "/favorites", icon: Bookmark, color: "text-rose-400" },
     { title: t.nav.plans, url: "/plans", icon: Book, color: "text-amber-500" },
@@ -78,7 +78,7 @@ export function AppSidebar() {
 
   const studyItems = [
     { title: t.nav.compareVersions, url: "/compare", icon: Columns, color: "text-indigo-400" },
-    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap, color: "text-violet-500" },
+    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap, color: "text-slate-600" },
     { title: t.nav.podcasts, url: "/podcasts", icon: Headphones, color: "text-teal-500" },
   ];
 
@@ -109,7 +109,7 @@ export function AppSidebar() {
               >
                 <Avatar className="h-11 w-11 border-2 border-background">
                   <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
-                  <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white font-bold text-sm">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-800 to-slate-800 text-white font-bold text-sm">
                     {(user.firstName?.[0] || "U").toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
