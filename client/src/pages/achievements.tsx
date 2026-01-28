@@ -104,8 +104,8 @@ export default function Achievements() {
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.1 }}
         >
-          <Card className="rounded-[2.5rem] border-none glass-darker shadow-2xl mb-12 overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-transparent to-orange-500/10 opacity-50 group-hover:opacity-100 transition-opacity" />
+          <Card className="rounded-[2.5rem] border-none premium-card mb-12 overflow-hidden relative group ring-2 ring-amber-500/20 hover:ring-amber-500/40 transition-all">
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-amber-500/20 opacity-70 group-hover:opacity-100 transition-opacity" />
             <CardContent className="p-8 relative">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div className="flex items-center gap-5">
@@ -159,9 +159,9 @@ export default function Achievements() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <Card className="rounded-[2rem] border-none glass-darker shadow-2xl h-full overflow-hidden group hover:shadow-amber-500/20 hover:-translate-y-2 transition-all duration-500">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.2] group-hover:opacity-[0.3] transition-opacity`} />
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/20 to-transparent rounded-bl-full" />
+                    <Card className="rounded-[2rem] border-none premium-card h-full overflow-hidden group hover:shadow-amber-500/30 hover:-translate-y-2 transition-all duration-500 ring-2 ring-amber-500/20 hover:ring-amber-500/40">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.25] group-hover:opacity-[0.35] transition-opacity`} />
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-400/20 to-transparent rounded-bl-full" />
                       <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative">
                         <div className={`p-4 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-2xl ring-4 ring-white/20 transform group-hover:scale-110 transition-transform`}>
                           {getAchievementIcon(achievement.icon, true)}
@@ -211,7 +211,9 @@ export default function Achievements() {
             <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
                 {lockedAchievements.map((achievement, idx) => {
-                  const progress = (achievement.currentValue / achievement.requirementValue) * 100;
+                  const currentVal = achievement.currentValue ?? 0;
+                  const requiredVal = achievement.requirementValue ?? 1;
+                  const progress = requiredVal > 0 ? (currentVal / requiredVal) * 100 : 0;
 
                   return (
                     <motion.div
@@ -221,36 +223,36 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-[2rem] border-none glass-darker shadow-2xl h-full overflow-hidden group hover:shadow-primary/20 hover:-translate-y-2 transition-all duration-500 ring-2 ring-white/10 hover:ring-primary/30">
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
+                      <Card className="rounded-[2rem] border-none premium-card h-full overflow-hidden group hover:shadow-primary/30 hover:-translate-y-2 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-purple-600/10" />
                         <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative">
-                          <div className="p-4 rounded-2xl bg-white/5 shadow-inner group-hover:bg-primary/20 transition-all transform group-hover:rotate-6">
+                          <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-800 shadow-xl group-hover:from-primary group-hover:to-blue-700 transition-all transform group-hover:rotate-6 ring-2 ring-white/10">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-1.5 flex-1">
-                            <CardTitle className="text-lg font-black text-white/80 group-hover:text-primary transition-colors tracking-tight uppercase">
+                            <CardTitle className="text-lg font-black text-foreground group-hover:text-primary transition-colors tracking-tight">
                               {achievement.name}
                             </CardTitle>
-                            <CardDescription className="text-sm font-bold text-white/50 group-hover:text-white/70 transition-opacity leading-relaxed">
+                            <CardDescription className="text-sm font-bold opacity-70 group-hover:opacity-90 transition-opacity leading-relaxed">
                               {achievement.description}
                             </CardDescription>
                           </div>
                         </CardHeader>
                         <CardContent className="p-6 pt-0 relative">
-                          <div className="space-y-4 bg-black/20 p-5 rounded-2xl border-2 border-white/5 shadow-inner">
+                          <div className="space-y-4 bg-muted/30 dark:bg-black/30 p-5 rounded-2xl border border-border/50 shadow-inner">
                             <div className="flex items-center justify-between">
-                              <span className="text-white/40 font-black text-[10px] uppercase tracking-[0.2em]">
-                                PROGRESSO: {achievement.currentValue} / {achievement.requirementValue}
+                              <span className="text-muted-foreground font-black text-[10px] uppercase tracking-[0.2em]">
+                                PROGRESSO: {currentVal} / {requiredVal}
                               </span>
                               <div className="flex items-center gap-2">
                                 <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
                                 <span className="font-black text-primary text-sm tracking-tighter">{Math.round(progress)}%</span>
                               </div>
                             </div>
-                            <ProgressBar value={progress} className="h-2 rounded-full bg-white/5 shadow-sm overflow-hidden" />
+                            <ProgressBar value={progress} className="h-2 rounded-full bg-muted/50 shadow-sm overflow-hidden" />
                           </div>
                           <div className="mt-4 flex justify-end">
-                            <Badge className="rounded-full bg-amber-500/10 text-amber-500 border-amber-500/20 font-black text-[10px] px-3 py-1 uppercase tracking-widest">
+                            <Badge className="rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border-2 border-amber-500/30 font-black text-[10px] px-3 py-1 uppercase tracking-widest shadow-lg">
                               +{achievement.xpReward || 50} XP Reward
                             </Badge>
                           </div>

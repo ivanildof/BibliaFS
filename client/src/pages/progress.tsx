@@ -154,11 +154,11 @@ export default function Progress() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className="rounded-[2rem] border-none glass-darker shadow-2xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 ring-2 ring-white/10 hover:ring-white/30">
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.15] group-hover:opacity-[0.25] transition-opacity`} />
+              <Card className="rounded-[2rem] border-none premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.2] group-hover:opacity-[0.3] transition-opacity`} />
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 relative">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">{item.title}</CardTitle>
-                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${item.gradient} shadow-2xl ${item.shadow} group-hover:scale-110 group-hover:rotate-6 transition-all`}>
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{item.title}</CardTitle>
+                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${item.gradient} shadow-2xl ${item.shadow} group-hover:scale-110 group-hover:rotate-6 transition-all ring-2 ring-white/20`}>
                     <item.icon className="h-4 w-4 text-white" />
                   </div>
                 </CardHeader>
@@ -166,16 +166,16 @@ export default function Progress() {
                   <div className={`text-4xl font-black bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent filter drop-shadow-sm`} data-testid={`text-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
                     {item.val}
                   </div>
-                  <p className="text-[11px] font-black mt-1 text-white/60 uppercase tracking-wider truncate">
+                  <p className="text-[11px] font-black mt-1 text-muted-foreground uppercase tracking-wider truncate">
                     {item.sub}
                   </p>
                   {item.title === t.progress.level && (
                     <div className="mt-4">
-                      <div className="flex justify-between text-[9px] mb-1.5 font-black text-white/40 uppercase tracking-widest">
+                      <div className="flex justify-between text-[9px] mb-1.5 font-black text-muted-foreground uppercase tracking-widest">
                         <span>{xpProgressInfo.current} XP</span>
                         <span>{xpProgressInfo.needed} XP</span>
                       </div>
-                      <ProgressBar value={xpProgressInfo.percent} className="h-2 rounded-full bg-white/5 shadow-inner overflow-hidden" />
+                      <ProgressBar value={xpProgressInfo.percent} className="h-2 rounded-full bg-muted/30 shadow-inner overflow-hidden" />
                     </div>
                   )}
                 </CardContent>
@@ -189,8 +189,8 @@ export default function Progress() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="mb-12 rounded-[2.5rem] border-none glass-darker shadow-2xl overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-amber-500/10" />
+          <Card className="mb-12 rounded-[2.5rem] border-none premium-card overflow-hidden relative ring-2 ring-primary/20">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/15 via-transparent to-amber-500/15" />
             <CardHeader className="relative p-8">
               <div className="flex items-center gap-6">
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-primary to-blue-700 shadow-2xl shadow-primary/40 animate-pulse">
@@ -279,17 +279,17 @@ export default function Progress() {
                         transition={{ delay: 0.6 + catIdx * 0.1 + achIdx * 0.05 }}
                       >
                         <Card 
-                          className={`rounded-[2rem] border-none shadow-2xl h-full overflow-hidden group transition-all duration-500 ${
+                          className={`rounded-[2rem] border-none h-full overflow-hidden group transition-all duration-500 ${
                             unlocked 
-                              ? 'glass-darker ring-2 ring-white/20 hover:ring-white/40 hover:-translate-y-2' 
-                              : 'bg-card/60 backdrop-blur-xl opacity-90 hover:opacity-100 ring-2 ring-white/10 hover:ring-primary/30'
+                              ? 'premium-card ring-2 ring-amber-500/20 hover:ring-amber-500/40 hover:-translate-y-2' 
+                              : 'premium-card opacity-90 hover:opacity-100 ring-2 ring-primary/10 hover:ring-primary/30'
                           }`}
                           data-testid={`card-achievement-${achievement.id}`}
                         >
                           {unlocked && (
-                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.2]`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.25]`} />
                           )}
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full" />
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full" />
                           
                           <CardHeader className="p-6 pb-4 relative">
                             <div className="flex items-start gap-5">
@@ -339,7 +339,7 @@ export default function Progress() {
                             </div>
                             
                             {!unlocked && progress > 0 && (
-                              <div className="mt-5 p-4 rounded-2xl bg-muted/40 border-2 border-white/5 shadow-inner">
+                              <div className="mt-5 p-4 rounded-2xl bg-muted/30 dark:bg-black/20 border border-border/50 shadow-inner">
                                 <div className="flex justify-between text-[11px] font-black mb-2 uppercase text-muted-foreground tracking-wider">
                                   <span>PROGRESSO ATUAL</span>
                                   <span className="text-primary">{progress}%</span>

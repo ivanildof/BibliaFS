@@ -3,24 +3,41 @@
 @tailwind utilities;
 
 .glass-darker {
-  background: rgba(20, 20, 35, 0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15),
+              0 8px 16px -6px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 2px solid hsl(var(--border));
 }
 
 .dark .glass-darker {
-  background: rgba(10, 10, 20, 0.9);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: linear-gradient(145deg, rgba(18, 18, 35, 0.98) 0%, rgba(12, 12, 28, 0.99) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+              0 12px 20px -8px rgba(0, 0, 0, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-:root .glass-darker {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+.premium-card {
+  background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12),
+              0 8px 16px -6px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 2px solid hsl(var(--border));
+}
+
+.dark .premium-card {
+  background: linear-gradient(145deg, rgba(15, 15, 32, 0.98) 0%, rgba(10, 10, 25, 0.99) 100%);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.45),
+              0 8px 16px -6px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* LIGHT MODE - Premium Soft Theme: Warm Paper + Aged Gold + Soft Navy */
