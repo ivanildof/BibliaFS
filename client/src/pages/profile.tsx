@@ -342,7 +342,7 @@ export default function Profile() {
                     v{APP_VERSION}
                   </Badge>
                 </div>
-                <p className="text-muted-foreground mb-2">{user.email} • <span style={{ color: '#9333ea', fontWeight: 600 }}>v{APP_VERSION}</span></p>
+                <p className="text-muted-foreground mb-2">{user.email}</p>
                 {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
                   <div className="mb-4 p-3 bg-primary/5 rounded-lg">
                     <p className="text-sm">
