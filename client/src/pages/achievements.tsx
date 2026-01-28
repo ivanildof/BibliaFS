@@ -159,11 +159,11 @@ export default function Achievements() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <Card className="rounded-[2rem] border-none glass-darker shadow-2xl h-full overflow-hidden group hover:shadow-amber-500/10 hover:-translate-y-1 transition-all duration-500">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.12] group-hover:opacity-[0.18] transition-opacity`} />
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full" />
+                    <Card className="rounded-[2rem] border-none glass-darker shadow-2xl h-full overflow-hidden group hover:shadow-amber-500/20 hover:-translate-y-2 transition-all duration-500">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.2] group-hover:opacity-[0.3] transition-opacity`} />
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/20 to-transparent rounded-bl-full" />
                       <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative">
-                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-2xl ring-4 ring-white/10 transform group-hover:scale-110 transition-transform`}>
+                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-2xl ring-4 ring-white/20 transform group-hover:scale-110 transition-transform`}>
                           {getAchievementIcon(achievement.icon, true)}
                         </div>
                         <div className="flex flex-col gap-1.5 flex-1">

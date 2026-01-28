@@ -281,13 +281,13 @@ export default function Progress() {
                         <Card 
                           className={`rounded-[2rem] border-none shadow-2xl h-full overflow-hidden group transition-all duration-500 ${
                             unlocked 
-                              ? 'glass-darker ring-2 ring-white/10 hover:ring-white/20 hover:-translate-y-2' 
-                              : 'bg-card/40 backdrop-blur-md opacity-75 hover:opacity-100 ring-1 ring-white/5'
+                              ? 'glass-darker ring-2 ring-white/20 hover:ring-white/40 hover:-translate-y-2' 
+                              : 'bg-card/60 backdrop-blur-xl opacity-90 hover:opacity-100 ring-2 ring-white/10 hover:ring-primary/30'
                           }`}
                           data-testid={`card-achievement-${achievement.id}`}
                         >
                           {unlocked && (
-                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.12]`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.2]`} />
                           )}
                           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full" />
                           
