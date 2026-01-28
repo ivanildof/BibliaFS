@@ -105,14 +105,14 @@ export function DailyVerse() {
       <div ref={cardRef} data-testid="card-daily-verse">
         <div className="verse-hero p-8 sm:p-10 shadow-lg">
           <div className="relative z-10 space-y-6 text-center max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-2">
-              <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-500/50" />
-              <Quote className="h-5 w-5 text-amber-600 dark:text-amber-400 rotate-180" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-amber-700 dark:text-amber-400" data-testid="text-daily-verse-title">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-nowrap overflow-hidden">
+              <div className="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-amber-500/50" />
+              <Quote className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-amber-600 dark:text-amber-400 rotate-180 flex-shrink-0" />
+              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-amber-700 dark:text-amber-400 whitespace-nowrap" data-testid="text-daily-verse-title">
                 {t.dailyVerse.verse_of_the_day}
               </span>
-              <Quote className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-500/50" />
+              <Quote className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+              <div className="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-amber-500/50" />
             </div>
 
             {verse.theme && (
