@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Send, CheckCircle2, MessageSquare, Heart, Clock, ExternalLink } from "lucide-react";
+import { Mail, Send, CheckCircle2, MessageSquare, Heart, Clock, ExternalLink, Star } from "lucide-react";
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const contactSchema = z.object({
@@ -159,7 +159,7 @@ export default function Contact() {
                     ))}
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 space-y-3">
                     <Button 
                       variant="secondary" 
                       className="w-full rounded-2xl h-14 font-black shadow-lg"
@@ -169,6 +169,18 @@ export default function Contact() {
                       }}
                     >
                       Enviar feedback detalhado
+                    </Button>
+                    
+                    <Button 
+                      variant="outline"
+                      className="w-full rounded-2xl h-14 font-black shadow-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none gap-3"
+                      onClick={() => {
+                        window.open('https://play.google.com/store/apps/details?id=com.bibliafullstack.app', '_blank');
+                      }}
+                      data-testid="button-rate-play-store"
+                    >
+                      <Star className="h-5 w-5 fill-current" />
+                      Avaliar na Play Store
                     </Button>
                   </div>
                 </CardContent>
