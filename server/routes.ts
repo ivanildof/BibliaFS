@@ -307,13 +307,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Atividade recente isolada por usuário
   app.get("/api/activity/recent", isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any).id;
+      const user = req.user as any;
+      if (!user || !user.id) {
+        return res.status(401).json({ error: "Não autorizado" });
+      }
+      const userId = user.id;
       const { formatDistanceToNow } = await import("date-fns");
       const { ptBR } = await import("date-fns/locale");
 
       // Buscar orações recentes
       const prayers = await storage.getPrayers(userId);
-      const recentPrayers = prayers.slice(0, 2).map(p => ({
+      const recentPrayers = (prayers || []).slice(0, 2).map(p => ({
         type: 'prayer',
         text: "Nova oração registrada",
         time: formatDistanceToNow(new Date(p.createdAt || new Date()), { addSuffix: true, locale: ptBR }),
@@ -322,7 +326,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Buscar posts recentes
       const posts = await storage.getCommunityPosts(10, userId);
-      const recentPosts = posts
+      const recentPosts = (posts || [])
         .filter(p => p.userId === userId)
         .slice(0, 2)
         .map(p => ({
@@ -334,7 +338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Buscar planos de leitura ativos
       const plans = await storage.getReadingPlans(userId);
-      const recentPlans = plans
+      const recentPlans = (plans || [])
         .filter(p => p.updatedAt) // Somente planos que tiveram progresso real
         .slice(0, 1)
         .map(p => ({
