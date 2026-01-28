@@ -334,12 +334,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Buscar planos de leitura ativos
       const plans = await storage.getReadingPlans(userId);
-      const recentPlans = plans.slice(0, 1).map(p => ({
-        type: 'read',
-        text: `Você progrediu no plano: ${p.title}`,
-        time: formatDistanceToNow(new Date(p.updatedAt || new Date()), { addSuffix: true, locale: ptBR }),
-        date: new Date(p.updatedAt || new Date())
-      }));
+      const recentPlans = plans
+        .filter(p => p.updatedAt) // Somente planos que tiveram progresso real
+        .slice(0, 1)
+        .map(p => ({
+          type: 'read',
+          text: `Você progrediu no plano: ${p.title}`,
+          time: formatDistanceToNow(new Date(p.updatedAt!), { addSuffix: true, locale: ptBR }),
+          date: new Date(p.updatedAt!)
+        }));
 
       const allActivity = [...recentPrayers, ...recentPosts, ...recentPlans]
         .sort((a, b) => b.date.getTime() - a.date.getTime())

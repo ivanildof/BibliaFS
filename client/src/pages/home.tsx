@@ -207,56 +207,56 @@ export default function Home() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="glass-darker border-none rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.2)]">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10" />
+          <Card className="glass-darker border-none rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.3)] ring-1 ring-white/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-transparent to-purple-500/20" />
             <CardHeader className="p-8 pb-4 relative">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-5">
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 shadow-2xl shadow-indigo-500/40 animate-pulse">
-                    <Sparkles className="h-6 w-6 text-white" />
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-800 shadow-2xl shadow-indigo-500/50 animate-pulse">
+                    <Sparkles className="h-7 w-7 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-3xl font-black bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent tracking-tighter">Atividade Recente</CardTitle>
-                    <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">Sua Trilha de Evolução</p>
+                    <CardTitle className="text-3xl font-black bg-gradient-to-r from-indigo-400 via-primary to-purple-500 bg-clip-text text-transparent tracking-tighter">Atividade Recente</CardTitle>
+                    <p className="text-xs text-primary font-black uppercase tracking-[0.3em] mt-1">Sua Trilha de Evolução Exclusiva</p>
                   </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-8 pt-2 relative">
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {isLoadingActivity ? (
-                  <div className="flex justify-center py-16">
+                  <div className="flex justify-center py-20">
                     <div className="flex flex-col items-center gap-4">
-                      <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
-                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">Sincronizando Atividades...</p>
+                      <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                      <p className="text-sm font-black uppercase tracking-widest text-primary animate-pulse">Sincronizando Suas Glórias...</p>
                     </div>
                   </div>
                 ) : recentActivity && recentActivity.length > 0 ? (
                   recentActivity.map((item, i) => (
                     <motion.div 
                       key={i}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: -30 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + i * 0.1 }}
-                      className="flex items-center gap-5 p-5 rounded-[1.5rem] bg-gradient-to-r from-muted/50 to-transparent hover:from-primary/10 hover:to-primary/5 transition-all duration-500 group cursor-pointer border border-white/5 hover:border-primary/20 shadow-sm hover:shadow-xl"
+                      transition={{ delay: 0.4 + i * 0.1, type: "spring", stiffness: 100 }}
+                      className="flex items-center gap-6 p-6 rounded-[2rem] bg-gradient-to-r from-white/5 to-transparent hover:from-primary/20 hover:to-primary/5 transition-all duration-500 group cursor-pointer border border-white/5 hover:border-primary/30 shadow-lg hover:shadow-2xl"
                     >
-                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${
-                        item.type === 'read' ? 'from-blue-600 to-indigo-800 shadow-blue-500/40' :
-                        item.type === 'prayer' ? 'from-rose-500 to-pink-700 shadow-rose-500/40' :
-                        item.type === 'post' ? 'from-amber-500 to-orange-700 shadow-amber-500/40' :
-                        'from-slate-500 to-slate-700 shadow-slate-500/40'
-                      } shadow-2xl ring-4 ring-white/5 group-hover:scale-110 transition-transform`}>
-                        {item.type === 'read' ? <BookOpen className="h-5 w-5 text-white" /> :
-                         item.type === 'prayer' ? <MessageSquare className="h-5 w-5 text-white" /> :
-                         item.type === 'post' ? <Users className="h-5 w-5 text-white" /> :
-                         <Sparkles className="h-5 w-5 text-white" />}
+                      <div className={`p-5 rounded-2xl bg-gradient-to-br ${
+                        item.type === 'read' ? 'from-blue-600 to-indigo-900 shadow-blue-600/50' :
+                        item.type === 'prayer' ? 'from-rose-600 to-pink-800 shadow-rose-600/50' :
+                        item.type === 'post' ? 'from-amber-500 to-orange-800 shadow-amber-500/50' :
+                        'from-slate-600 to-slate-900 shadow-slate-600/50'
+                      } shadow-2xl ring-4 ring-white/10 group-hover:scale-110 group-hover:rotate-3 transition-all`}>
+                        {item.type === 'read' ? <BookOpen className="h-6 w-6 text-white" /> :
+                         item.type === 'prayer' ? <MessageSquare className="h-6 w-6 text-white" /> :
+                         item.type === 'post' ? <Users className="h-6 w-6 text-white" /> :
+                         <Sparkles className="h-6 w-6 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-black text-sm text-foreground truncate group-hover:text-primary transition-colors tracking-tight">{item.text}</p>
-                        <p className="text-xs font-bold text-muted-foreground mt-1 uppercase tracking-widest opacity-60">{item.time}</p>
+                        <p className="font-black text-base text-foreground truncate group-hover:text-primary transition-colors tracking-tight">{item.text}</p>
+                        <p className="text-xs font-black text-muted-foreground mt-1.5 uppercase tracking-widest opacity-80 group-hover:opacity-100">{item.time}</p>
                       </div>
-                      <div className="p-2.5 rounded-full bg-primary/10 group-hover:bg-primary group-hover:text-white transition-all">
-                        <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary group-hover:text-white transition-all shadow-xl">
+                        <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </motion.div>
                   ))
@@ -265,14 +265,14 @@ export default function Home() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="flex items-center justify-center p-16 rounded-[2rem] bg-muted/10 border-4 border-dashed border-muted/20"
+                    className="flex items-center justify-center p-20 rounded-[3rem] bg-gradient-to-br from-primary/5 to-transparent border-4 border-dashed border-primary/20 shadow-inner"
                   >
                     <div className="text-center">
-                      <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center mx-auto mb-6 shadow-inner">
-                        <Sparkles className="h-12 w-12 text-indigo-500/20" />
+                      <div className="h-32 w-32 rounded-[2.5rem] bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
+                        <Sparkles className="h-16 w-16 text-primary/40" />
                       </div>
-                      <p className="text-lg font-black text-foreground mb-2 tracking-tight">Vazio, Por Enquanto</p>
-                      <p className="text-sm text-muted-foreground max-w-[240px] font-medium mx-auto opacity-70">Sua história começa no momento em que você abre as Escrituras.</p>
+                      <p className="text-2xl font-black text-foreground mb-3 tracking-tighter">O Livro está em Branco</p>
+                      <p className="text-base text-muted-foreground max-w-[280px] font-bold mx-auto opacity-70">Sua jornada épica começa no momento em que você abre as Escrituras pela primeira vez.</p>
                     </div>
                   </motion.div>
                 )}
