@@ -144,7 +144,7 @@ export default function Profile() {
   if (!user && !isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-2xl">
+        <Card className="max-w-md w-full rounded-3xl border-none premium-card ring-2 ring-primary/15">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <User className="h-10 w-10 text-primary" />
@@ -273,7 +273,7 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-        <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-xl">
+        <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10">
           <CardContent className="pt-8 pb-8 px-8">
             <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
               <ProfileImageUpload 
@@ -548,7 +548,7 @@ export default function Profile() {
 
           {/* Donate Tab */}
           <TabsContent value="donate" className="space-y-6 mt-6">
-            <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+            <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10">
               <CardHeader>
                 <CardTitle className="flex items-start gap-2">
                   <Heart className="h-5 w-5 text-pink-600 fill-current mt-1 shrink-0" />

@@ -414,7 +414,7 @@ export default function Settings() {
 
           <TabsContent value="appearance" className="space-y-6">
             {/* Theme Selection */}
-            <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+            <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10">
               <CardHeader>
                 <CardTitle>Tema de Cores</CardTitle>
                 <CardDescription>
@@ -961,7 +961,7 @@ export default function Settings() {
           </TabsContent>
 
           <TabsContent value="feedback" className="space-y-6">
-            <Card className="rounded-3xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+            <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Send className="h-5 w-5" />

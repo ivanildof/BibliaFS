@@ -255,7 +255,7 @@ export default function Community() {
         </div>
 
         {/* Stats Banner */}
-        <Card className="mb-8 glass border-0 rounded-2xl">
+        <Card className="mb-8 premium-card border-none rounded-2xl ring-2 ring-primary/10">
           <CardContent className="pt-6">
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
@@ -295,7 +295,7 @@ export default function Community() {
           ) : (
             <>
               {/* AI Suggestion Card */}
-              <Card className="bg-gradient-to-r from-slate-600/10 to-slate-600/5 border-slate-600/20 rounded-2xl">
+              <Card className="premium-card border-none rounded-2xl ring-2 ring-slate-500/20">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-slate-600" />

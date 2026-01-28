@@ -825,7 +825,7 @@ export default function Groups() {
             )}
           </div>
 
-          <Card className="border-0 glass rounded-[2.5rem] overflow-hidden">
+          <Card className="border-none premium-card rounded-[2.5rem] overflow-hidden ring-2 ring-primary/15">
             <CardHeader className="pb-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -1716,7 +1716,7 @@ export default function Groups() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
-                <Card className="border-none bg-card/40 backdrop-blur-sm shadow-xl rounded-3xl">
+                <Card className="border-none premium-card rounded-3xl ring-2 ring-primary/10">
                   <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary/10 mb-6 rotate-3">
                       <Users className="h-10 w-10 text-primary" />
@@ -1859,7 +1859,7 @@ export default function Groups() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="group border-none bg-card/40 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden">
+                  <Card className="group border-none premium-card rounded-3xl ring-2 ring-primary/10 hover:ring-primary/30 transition-all duration-500 overflow-hidden">
                     <CardHeader className="pb-4">
                       <div className="p-3.5 rounded-2xl bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors w-fit mb-4">
                         <Globe className="h-7 w-7 text-blue-500" />

@@ -472,7 +472,7 @@ export default function Prayers() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 + idx * 0.05 }}
             >
-              <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+              <Card className="rounded-2xl border-none premium-card ring-2 ring-primary/10">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
                   <div className="p-2 rounded-xl bg-muted/50">
@@ -537,7 +537,7 @@ export default function Prayers() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg group" data-testid={`card-prayer-${prayer.id}`}>
+                        <Card className="rounded-2xl border-none premium-card ring-2 ring-primary/10 hover:ring-primary/30 group transition-all" data-testid={`card-prayer-${prayer.id}`}>
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between gap-4">
                               <div className="flex-1">
@@ -644,7 +644,7 @@ export default function Prayers() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <Card className="rounded-2xl border-none bg-green-500/5 backdrop-blur-xl shadow-lg" data-testid={`card-answered-${prayer.id}`}>
+                        <Card className="rounded-2xl border-none premium-card ring-2 ring-green-500/20 hover:ring-green-500/40 transition-all" data-testid={`card-answered-${prayer.id}`}>
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between gap-4">
                               <div className="flex-1">
