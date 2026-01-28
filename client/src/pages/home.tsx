@@ -191,20 +191,29 @@ export default function Home() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="glass border-0 rounded-2xl overflow-hidden">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-800 to-slate-800 shadow-md">
-                  <Sparkles className="h-4 w-4 text-white" />
+          <Card className="glass border-0 rounded-3xl overflow-hidden shadow-xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5" />
+            <CardHeader className="pb-3 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
+                    <Sparkles className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Atividade Recente</CardTitle>
+                    <p className="text-[10px] text-muted-foreground font-medium">Seu histórico de atividades</p>
+                  </div>
                 </div>
-                <CardTitle className="text-lg font-bold">Atividade Recente</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-2">
-              <div className="space-y-2">
+            <CardContent className="pt-1 relative">
+              <div className="space-y-3">
                 {isLoadingActivity ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  <div className="flex justify-center py-10">
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                      <p className="text-xs text-muted-foreground">Carregando atividades...</p>
+                    </div>
                   </div>
                 ) : recentActivity && recentActivity.length > 0 ? (
                   recentActivity.map((item, i) => (
@@ -213,37 +222,41 @@ export default function Home() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.5 + i * 0.1 }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-muted/40 to-muted/20 hover:from-muted/60 hover:to-muted/40 transition-all duration-300 group cursor-pointer border border-transparent hover:border-primary/10 shadow-sm hover:shadow-md"
                     >
-                      <div className={`p-2 rounded-lg bg-gradient-to-br ${
-                        item.type === 'read' ? 'from-blue-800 to-slate-800' :
-                        item.type === 'prayer' ? 'from-rose-400 to-pink-500' :
-                        item.type === 'post' ? 'from-amber-400 to-orange-500' :
-                        'from-gray-400 to-gray-500'
-                      } shadow-sm`}>
-                        {item.type === 'read' ? <BookOpen className="h-4 w-4 text-white" /> :
-                         item.type === 'prayer' ? <MessageSquare className="h-4 w-4 text-white" /> :
-                         item.type === 'post' ? <Users className="h-4 w-4 text-white" /> :
-                         <Sparkles className="h-4 w-4 text-white" />}
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${
+                        item.type === 'read' ? 'from-blue-500 to-indigo-600 shadow-blue-500/20' :
+                        item.type === 'prayer' ? 'from-rose-400 to-pink-500 shadow-rose-500/20' :
+                        item.type === 'post' ? 'from-amber-400 to-orange-500 shadow-amber-500/20' :
+                        'from-gray-400 to-gray-500 shadow-gray-500/20'
+                      } shadow-lg ring-2 ring-white/10`}>
+                        {item.type === 'read' ? <BookOpen className="h-5 w-5 text-white" /> :
+                         item.type === 'prayer' ? <MessageSquare className="h-5 w-5 text-white" /> :
+                         item.type === 'post' ? <Users className="h-5 w-5 text-white" /> :
+                         <Sparkles className="h-5 w-5 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-foreground truncate">{item.text}</p>
-                        <p className="text-[10px] text-muted-foreground">{item.time}</p>
+                        <p className="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">{item.text}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{item.time}</p>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                      <div className="p-2 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                        <ChevronRight className="h-4 w-4 text-primary/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                      </div>
                     </motion.div>
                   ))
                 ) : (
                   <motion.div 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="flex items-center justify-center p-8 rounded-xl bg-muted/20 border border-dashed border-muted-foreground/20"
+                    className="flex items-center justify-center p-10 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border-2 border-dashed border-muted-foreground/15"
                   >
                     <div className="text-center">
-                      <Sparkles className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground font-medium">Nenhuma atividade recente encontrada</p>
-                      <p className="text-xs text-muted-foreground/60">Comece a ler a Bíblia para ver seu progresso aqui</p>
+                      <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center mx-auto mb-4">
+                        <Sparkles className="h-8 w-8 text-indigo-500/40" />
+                      </div>
+                      <p className="text-sm text-foreground font-semibold mb-1">Nenhuma atividade recente</p>
+                      <p className="text-xs text-muted-foreground max-w-[200px]">Comece a ler a Bíblia para ver seu progresso aqui</p>
                     </div>
                   </motion.div>
                 )}
