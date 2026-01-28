@@ -19,8 +19,10 @@ import {
   Clock,
   Send,
   Loader2,
-  BookOpen
+  BookOpen,
+  Info
 } from "lucide-react";
+import { APP_VERSION, APP_NAME } from "@/lib/config";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -1014,6 +1016,29 @@ export default function Settings() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <div className="mt-12 pt-8 border-t border-border/50">
+          <div className="flex flex-col items-center justify-center text-center space-y-3">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Info className="h-4 w-4" />
+              <span className="text-sm font-medium">Informações do App</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-black bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent" data-testid="text-app-name">
+                {APP_NAME}
+              </span>
+              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold ring-1 ring-primary/20" data-testid="text-app-version">
+                v{APP_VERSION}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground max-w-md">
+              Estudo Bíblico Premium com IA Teológica
+            </p>
+            <p className="text-[10px] text-muted-foreground/60 uppercase tracking-widest">
+              Desenvolvido com amor para a glória de Deus
+            </p>
+          </div>
+        </div>
         </motion.div>
       </div>
     </div>

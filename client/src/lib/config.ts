@@ -1,6 +1,9 @@
 import { Capacitor } from '@capacitor/core';
 import { APP_URL } from './env-config';
 
+export const APP_VERSION = '1.0.5';
+export const APP_NAME = 'BíbliaFS';
+
 function isNativePlatform(): boolean {
   try {
     return Capacitor.isNativePlatform();
