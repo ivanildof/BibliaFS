@@ -88,62 +88,64 @@ function Router() {
     );
   }
 
+  if (!isAuthenticated) {
+    return (
+      <Switch>
+        <Route path="/" component={isNative ? Login : Landing} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        <Route path="/forgot-password" component={ForgotPassword} />
+        <Route path="/reset-password" component={ResetPassword} />
+        <Route path="/auth/callback" component={AuthCallback} />
+        <Route path="/planos" component={Pricing} />
+        <Route path="/pricing" component={Pricing} />
+        <Route path="/terms" component={Terms} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/security" component={Security} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/groups" component={Groups} />
+        <Route component={NotFound} />
+      </Switch>
+    );
+  }
+
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <>
-          <Route path="/" component={isNative ? Login : Landing} />
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-          <Route path="/forgot-password" component={ForgotPassword} />
-          <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/auth/callback" component={AuthCallback} />
-          <Route path="/planos" component={Pricing} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/terms" component={Terms} />
-          <Route path="/privacy" component={Privacy} />
-          <Route path="/security" component={Security} />
-          <Route path="/about" component={About} />
-          <Route path="/contact" component={Contact} />
-          <Route path="/groups" component={Groups} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={Home} />
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-          <Route path="/auth/callback" component={AuthCallback} />
-          <Route path="/bible" component={BibleReader} />
-          <Route path="/bible-reader" component={BibleReader} />
-          <Route path="/compare" component={VersionCompare} />
-          <Route path="/comparar" component={VersionCompare} />
-          <Route path="/favorites" component={Favorites} />
-          <Route path="/plans" component={ReadingPlans} />
-          <Route path="/progress" component={Progress} />
-          <Route path="/prayers" component={Prayers} />
-          <Route path="/podcasts" component={Podcasts} />
-          <Route path="/teacher" component={Teacher} />
-          <Route path="/groups" component={Groups} />
-          <Route path="/community" component={Community} />
-          <Route path="/achievements" component={Achievements} />
-          <Route path="/conquistas" component={Achievements} />
-          <Route path="/configurações" component={Settings} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/perfil" component={Profile} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/offline" component={Offline} />
-          <Route path="/donate" component={Donate} />
-          <Route path="/doar" component={Donate} />
-          <Route path="/planos" component={Pricing} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/help" component={Help} />
-          <Route path="/about" component={About} />
-          <Route path="/terms" component={Terms} />
-          <Route path="/privacy" component={Privacy} />
-          <Route path="/security" component={Security} />
-          <Route path="/contact" component={Contact} />
-        </>
-      )}
+      <Route path="/" component={Home} />
+      <Route path="/home" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/auth/callback" component={AuthCallback} />
+      <Route path="/bible" component={BibleReader} />
+      <Route path="/bible-reader" component={BibleReader} />
+      <Route path="/compare" component={VersionCompare} />
+      <Route path="/comparar" component={VersionCompare} />
+      <Route path="/favorites" component={Favorites} />
+      <Route path="/plans" component={ReadingPlans} />
+      <Route path="/progress" component={Progress} />
+      <Route path="/prayers" component={Prayers} />
+      <Route path="/podcasts" component={Podcasts} />
+      <Route path="/teacher" component={Teacher} />
+      <Route path="/groups" component={Groups} />
+      <Route path="/community" component={Community} />
+      <Route path="/achievements" component={Achievements} />
+      <Route path="/conquistas" component={Achievements} />
+      <Route path="/configurações" component={Settings} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/perfil" component={Profile} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/offline" component={Offline} />
+      <Route path="/donate" component={Donate} />
+      <Route path="/doar" component={Donate} />
+      <Route path="/planos" component={Pricing} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/help" component={Help} />
+      <Route path="/about" component={About} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/security" component={Security} />
+      <Route path="/contact" component={Contact} />
       <Route component={NotFound} />
     </Switch>
   );
