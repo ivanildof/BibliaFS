@@ -1,0 +1,105 @@
+Visão Geral
+1.1 Problema
+Atualmente, o sistema apresenta inconsistências visuais críticas:
+Cards com cores desiguais (alguns vibrantes, outros "apagados" ou desbotados)
+Falta de coerência entre módulos (dashboard, gestão de clientes, transações)
+Experiência visual não premium, prejudicando a percepção de valor do produto
+Landing pages com identidade visual desconectada do sistema principal
+1.2 Objetivo
+Implementar um sistema de design unificado e premium que:
+Padronize cores, sombras, tipografia e espaçamento em 100% das interfaces
+Transmita sofisticação, confiança e profissionalismo
+Garanta consistência entre sistema administrativo e landing pages
+Eleve a percepção de valor do produto perante clientes e usuários finais
+2. Público-Alvo
+Persona
+Necessidade
+Empresários/CEOs
+Confiança na plataforma; percepção de ferramenta profissional e robusta
+Gestores Operacionais
+Interface limpa que reduza fadiga visual em uso prolongado
+Visitantes de Landing Pages
+Primeira impressão premium que converta em assinaturas
+Equipe de Suporte
+Identidade visual clara que facilite orientação aos usuários
+3. Requisitos Funcionais
+3.1 Sistema de Cores Premium
+Requisito
+Descrição
+RF-01
+Definir paleta principal com 1 cor primária, 1 secundária, 1 de destaque e 2 neutras
+RF-02
+Aplicar gradientes sutis (máximo 15° de inclinação) apenas em elementos hero (headers, cards principais)
+RF-03
+Usar sombras consistentes: elevação baixa (cards), elevação média (modais), elevação alta (notificações)
+RF-04
+Garantir contraste mínimo de 4.5:1 para texto sobre fundos (acessibilidade WCAG AA)
+3.2 Padronização de Componentes
+Requisito
+Descrição
+RF-05
+Todos os cards devem seguir: bordas arredondadas (8px), sombra suave (0 4px 12px rgba(0,0,0,0.08)), fundo branco ou neutro claro
+RF-06
+Botões primários: cor de destaque com hover +8% de saturação; botões secundários: borda sólida com fundo transparente
+RF-07
+Tipografia unificada: fonte sans-serif moderna (ex.: Inter, Poppins) com hierarquia clara (H1 a H6 + corpo)
+RF-08
+Espaçamento baseado em sistema de 8px (múltiplos de 8 para paddings/margins)
+3.3 Aplicação em Todo o Produto
+Requisito
+Descrição
+RF-09
+Sistema administrativo: 100% dos módulos (dashboard, clientes, transações, etc.) com nova identidade
+RF-10
+Landing pages: mesmos componentes visuais do sistema (cards, botões, tipografia) para continuidade de experiência
+RF-11
+Emails transacionais e marketing: cores e tipografia alinhadas ao novo padrão
+RF-12
+Dark mode opcional com paleta premium alternativa (não obrigatório na v1)
+4. Requisitos Não Funcionais
+Requisito
+Critério de Aceitação
+RNF-01
+Desempenho: sistema de cores não deve impactar tempo de carregamento (>100ms)
+RNF-02
+Acessibilidade: paleta validada por ferramenta de contraste (ex.: WebAIM)
+RNF-03
+Manutenibilidade: cores definidas em variáveis CSS/Design Tokens para fácil atualização futura
+RNF-04
+Consistência: auditoria visual confirmando 100% dos cards com mesmo estilo em todo o produto
+5. Critérios de Aceitação
+✅ CA-01: Todos os cards do sistema (dashboard, clientes, transações) apresentam:
+Mesma cor de fundo neutra (#FFFFFF ou #F8F9FA)
+Sombra idêntica (0 4px 12px rgba(0,0,0,0.08))
+Bordas arredondadas de 8px
+Header com gradiente sutil da cor primária para secundária
+✅ CA-02: Landing pages utilizam:
+Mesmos componentes de card do sistema administrativo
+Botões com exatamente as mesmas cores e estados de hover
+Tipografia idêntica (família, pesos, tamanhos)
+✅ CA-03: Paleta premium validada por:
+Teste A/B com 50 usuários mostrando preferência pela nova identidade (>70%)
+Score de contraste mínimo 4.5:1 em todos os elementos textuais
+✅ CA-04: Documentação entregue:
+Guia de estilo digital (Figma/Adobe XD) com todos os componentes
+Tabela de Design Tokens (cores, sombras, tipografia, espaçamento)
+Checklist de auditoria visual para novos desenvolvimentos
+6. Métricas de Sucesso
+Métrica
+Meta
+Satisfação do usuário (NPS)
++15 pontos após implementação
+Tempo médio na landing page
+Aumento de 25% (indica engajamento com design premium)
+Conversão de leads em assinaturas
+Aumento de 18%
+Redução de tickets de suporte sobre "interface confusa"
+-40%
+7. Escopo Fora do Projeto (V1)
+❌ Personalização de tema pelo usuário final (será abordado em roadmap futuro)
+❌ Animações complexas (micro-interações limitadas a hover/focus)
+❌ Dark mode (será avaliado após validação da paleta clara)
+8. Anexos Sugeridos
+Moodboard com referências de interfaces premium (ex.: Linear, Notion, Stripe)
+Protótipo de alta fidelidade mostrando antes/depois dos cards problemáticos
+Paleta proposta com códigos HEX/RGB e exemplos de aplicação em contexto real
