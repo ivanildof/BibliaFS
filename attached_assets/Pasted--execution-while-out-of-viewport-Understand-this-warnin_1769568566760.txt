@@ -1,0 +1,27 @@
+'execution-while-out-of-viewport'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'layout-animations'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'legacy-image-formats'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'navigation-override'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'oversized-images'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'publickey-credentials'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'speaker-selection'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'unoptimized-images'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Unrecognized feature: 'unsized-media'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Allow attribute will take precedence over 'allowfullscreen'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Ar2t%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.Understand this warning
+main.tsx:9 [PWA] Service Worker registered: https://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/
+client:536 WebSocket connection to 'wss://b68899e6-9039-45f4-a60d-208a55ed5a4f-00-3d81deiy6fb8r.janeway.replit.dev/?token=sqmePj6sbqtj' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=sqmePj6sbqtj' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+Bibliafs:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+bibleSqlite.ts:62 [BibleSQLite] Initializing sql.js...
+bibleSqlite.ts:69 [BibleSQLite] Fetching bible.db from ./bible.db...
+bibleSqlite.ts:77 [BibleSQLite] Database loaded successfully
+OfflineContext.tsx:61 [OfflineProvider] SQLite Bible database ready
