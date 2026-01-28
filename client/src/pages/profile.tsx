@@ -342,7 +342,12 @@ export default function Profile() {
                     v1.0.5
                   </Badge>
                 </div>
-                <p className="text-muted-foreground mb-4">{user.email}</p>
+                <p className="text-muted-foreground mb-2">{user.email}</p>
+                <div className="mb-4">
+                  <span className="inline-block px-3 py-1 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full shadow-md">
+                    BíbliaFS v1.0.5
+                  </span>
+                </div>
                 {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
                   <div className="mb-4 p-3 bg-primary/5 rounded-lg">
                     <p className="text-sm">
