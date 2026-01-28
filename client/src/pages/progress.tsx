@@ -143,10 +143,10 @@ export default function Progress() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {[
-            { title: t.progress.level, val: currentLevel, sub: levelInfo.title, icon: Crown, gradient: "from-primary to-blue-700", shadow: "shadow-primary/30" },
-            { title: t.progress.experiencePoints, val: stats?.experiencePoints || 0, sub: t.progress.totalXpAccumulated, icon: Star, gradient: "from-amber-500 to-orange-600", shadow: "shadow-amber-500/30" },
-            { title: t.progress.readingStreak, val: stats?.readingStreak || 0, sub: t.progress.consecutiveDays, icon: Flame, gradient: "from-orange-500 to-red-700", shadow: "shadow-orange-500/30" },
-            { title: t.progress.achievements, val: unlockedAchievements.length, sub: `${unlockedAchievements.length}/${totalAchievements}`, icon: Trophy, gradient: "from-amber-500 to-amber-800", shadow: "shadow-amber-500/30" }
+            { title: t.progress.level, val: currentLevel, sub: levelInfo.title, icon: Crown, gradient: "from-blue-600 to-indigo-800", shadow: "shadow-blue-500/40" },
+            { title: t.progress.experiencePoints, val: stats?.experiencePoints || 0, sub: t.progress.totalXpAccumulated, icon: Star, gradient: "from-amber-500 to-orange-700", shadow: "shadow-amber-500/40" },
+            { title: t.progress.readingStreak, val: stats?.readingStreak || 0, sub: t.progress.consecutiveDays, icon: Flame, gradient: "from-orange-600 to-red-800", shadow: "shadow-orange-500/40" },
+            { title: t.progress.achievements, val: unlockedAchievements.length, sub: `${unlockedAchievements.length}/${totalAchievements}`, icon: Trophy, gradient: "from-purple-600 to-pink-800", shadow: "shadow-purple-500/40" }
           ].map((item, idx) => (
             <motion.div
               key={item.title}
@@ -154,28 +154,28 @@ export default function Progress() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className="rounded-3xl border-none glass-darker shadow-2xl overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.06] group-hover:opacity-[0.1] transition-opacity`} />
+              <Card className="rounded-[2rem] border-none glass-darker shadow-2xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 ring-2 ring-white/10 hover:ring-white/30">
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.15] group-hover:opacity-[0.25] transition-opacity`} />
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 relative">
-                  <CardTitle className="text-xs font-black uppercase tracking-[0.15em] text-muted-foreground/80">{item.title}</CardTitle>
-                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${item.gradient} shadow-xl ${item.shadow} group-hover:scale-110 transition-transform`}>
-                    <item.icon className="h-5 w-5 text-white" />
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">{item.title}</CardTitle>
+                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${item.gradient} shadow-2xl ${item.shadow} group-hover:scale-110 group-hover:rotate-6 transition-all`}>
+                    <item.icon className="h-4 w-4 text-white" />
                   </div>
                 </CardHeader>
                 <CardContent className="relative">
-                  <div className={`text-5xl font-black bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`} data-testid={`text-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
+                  <div className={`text-4xl font-black bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent filter drop-shadow-sm`} data-testid={`text-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
                     {item.val}
                   </div>
-                  <p className="text-sm font-bold mt-2 text-muted-foreground/90 truncate">
+                  <p className="text-[11px] font-black mt-1 text-white/60 uppercase tracking-wider truncate">
                     {item.sub}
                   </p>
                   {item.title === t.progress.level && (
-                    <div className="mt-5">
-                      <div className="flex justify-between text-xs mb-1.5 font-black text-muted-foreground/80">
+                    <div className="mt-4">
+                      <div className="flex justify-between text-[9px] mb-1.5 font-black text-white/40 uppercase tracking-widest">
                         <span>{xpProgressInfo.current} XP</span>
                         <span>{xpProgressInfo.needed} XP</span>
                       </div>
-                      <ProgressBar value={xpProgressInfo.percent} className="h-3 rounded-full bg-muted/30 shadow-inner" />
+                      <ProgressBar value={xpProgressInfo.percent} className="h-2 rounded-full bg-white/5 shadow-inner overflow-hidden" />
                     </div>
                   )}
                 </CardContent>

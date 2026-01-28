@@ -221,27 +221,38 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-[2rem] border-none bg-card/40 backdrop-blur-md shadow-2xl h-full opacity-85 hover:opacity-100 transition-all duration-300 ring-2 ring-white/10 group">
-                        <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6">
-                          <div className="p-4 rounded-2xl bg-muted/50 shadow-inner group-hover:bg-primary/10 transition-colors">
+                      <Card className="rounded-[2rem] border-none glass-darker shadow-2xl h-full overflow-hidden group hover:shadow-primary/20 hover:-translate-y-2 transition-all duration-500 ring-2 ring-white/10 hover:ring-primary/30">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
+                        <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative">
+                          <div className="p-4 rounded-2xl bg-white/5 shadow-inner group-hover:bg-primary/20 transition-all transform group-hover:rotate-6">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-1.5 flex-1">
-                            <CardTitle className="text-lg font-black text-muted-foreground group-hover:text-primary transition-colors tracking-tight">
+                            <CardTitle className="text-lg font-black text-white/80 group-hover:text-primary transition-colors tracking-tight uppercase">
                               {achievement.name}
                             </CardTitle>
-                            <CardDescription className="text-sm font-bold opacity-60 group-hover:opacity-100 transition-opacity">{achievement.description}</CardDescription>
+                            <CardDescription className="text-sm font-bold text-white/50 group-hover:text-white/70 transition-opacity leading-relaxed">
+                              {achievement.description}
+                            </CardDescription>
                           </div>
                         </CardHeader>
-                        <CardContent className="p-6 pt-0">
-                          <div className="space-y-4 bg-muted/40 p-5 rounded-2xl border-2 border-white/5 shadow-inner">
+                        <CardContent className="p-6 pt-0 relative">
+                          <div className="space-y-4 bg-black/20 p-5 rounded-2xl border-2 border-white/5 shadow-inner">
                             <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground font-black text-[10px] uppercase tracking-widest">
-                                {achievement.currentValue} / {achievement.requirementValue}
+                              <span className="text-white/40 font-black text-[10px] uppercase tracking-[0.2em]">
+                                PROGRESSO: {achievement.currentValue} / {achievement.requirementValue}
                               </span>
-                              <span className="font-black text-primary text-sm tracking-tighter">{Math.round(progress)}%</span>
+                              <div className="flex items-center gap-2">
+                                <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                                <span className="font-black text-primary text-sm tracking-tighter">{Math.round(progress)}%</span>
+                              </div>
                             </div>
-                            <Progress value={progress} className="h-3 rounded-full bg-muted/50 shadow-sm" />
+                            <ProgressBar value={progress} className="h-2 rounded-full bg-white/5 shadow-sm overflow-hidden" />
+                          </div>
+                          <div className="mt-4 flex justify-end">
+                            <Badge className="rounded-full bg-amber-500/10 text-amber-500 border-amber-500/20 font-black text-[10px] px-3 py-1 uppercase tracking-widest">
+                              +{achievement.xpReward || 50} XP Reward
+                            </Badge>
                           </div>
                         </CardContent>
                       </Card>
