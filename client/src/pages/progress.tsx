@@ -37,14 +37,14 @@ interface UserAchievementWithDetails extends UserAchievement {
 
 const getCategoryGradient = (category: string) => {
   switch(category.toLowerCase()) {
-    case 'leitura': return 'from-blue-500 to-indigo-600';
-    case 'streak': return 'from-orange-400 to-red-500';
-    case 'planos': return 'from-emerald-400 to-teal-500';
-    case 'oração': return 'from-purple-400 to-pink-500';
-    case 'comunidade': return 'from-amber-400 to-orange-500';
-    case 'destaques': return 'from-cyan-400 to-blue-500';
-    case 'exploração': return 'from-violet-400 to-purple-500';
-    default: return 'from-slate-400 to-slate-600';
+    case 'leitura': return 'from-blue-600 to-indigo-800';
+    case 'streak': return 'from-orange-500 to-red-700';
+    case 'planos': return 'from-emerald-500 to-teal-700';
+    case 'oração': return 'from-purple-500 to-pink-700';
+    case 'comunidade': return 'from-amber-500 to-orange-700';
+    case 'destaques': return 'from-cyan-500 to-blue-700';
+    case 'exploração': return 'from-violet-500 to-purple-800';
+    default: return 'from-slate-500 to-slate-800';
   }
 };
 
@@ -116,9 +116,9 @@ export default function Progress() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-primary/5 to-amber-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/20 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-primary/10 to-amber-500/10 blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto p-6 relative z-10">
@@ -128,25 +128,25 @@ export default function Progress() {
           className="text-center space-y-3 mb-12"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="h-px w-8 bg-gradient-to-r from-transparent to-primary/50" />
-            <Crown className="h-5 w-5 text-primary" />
-            <div className="h-px w-8 bg-gradient-to-l from-transparent to-primary/50" />
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary/60" />
+            <Crown className="h-6 w-6 text-primary animate-bounce" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-primary/60" />
           </div>
-          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">ESTATÍSTICAS</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-amber-500 to-primary bg-clip-text text-transparent" data-testid="text-page-title">
+          <p className="text-xs font-bold text-primary uppercase tracking-[0.3em]">ESTATÍSTICAS PREMIUM</p>
+          <h1 className="font-display text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-primary via-amber-500 to-primary bg-clip-text text-transparent drop-shadow-sm" data-testid="text-page-title">
             {t.progress.title}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground font-medium">
             {t.progress.subtitle}
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {[
-            { title: t.progress.level, val: currentLevel, sub: levelInfo.title, icon: Crown, gradient: "from-primary to-blue-600", shadow: "shadow-primary/20" },
-            { title: t.progress.experiencePoints, val: stats?.experiencePoints || 0, sub: t.progress.totalXpAccumulated, icon: Star, gradient: "from-amber-400 to-orange-500", shadow: "shadow-amber-500/20" },
-            { title: t.progress.readingStreak, val: stats?.readingStreak || 0, sub: t.progress.consecutiveDays, icon: Flame, gradient: "from-orange-400 to-red-500", shadow: "shadow-orange-500/20" },
-            { title: t.progress.achievements, val: unlockedAchievements.length, sub: `${unlockedAchievements.length}/${totalAchievements}`, icon: Trophy, gradient: "from-amber-400 to-amber-600", shadow: "shadow-amber-500/20" }
+            { title: t.progress.level, val: currentLevel, sub: levelInfo.title, icon: Crown, gradient: "from-primary to-blue-700", shadow: "shadow-primary/30" },
+            { title: t.progress.experiencePoints, val: stats?.experiencePoints || 0, sub: t.progress.totalXpAccumulated, icon: Star, gradient: "from-amber-500 to-orange-600", shadow: "shadow-amber-500/30" },
+            { title: t.progress.readingStreak, val: stats?.readingStreak || 0, sub: t.progress.consecutiveDays, icon: Flame, gradient: "from-orange-500 to-red-700", shadow: "shadow-orange-500/30" },
+            { title: t.progress.achievements, val: unlockedAchievements.length, sub: `${unlockedAchievements.length}/${totalAchievements}`, icon: Trophy, gradient: "from-amber-500 to-amber-800", shadow: "shadow-amber-500/30" }
           ].map((item, idx) => (
             <motion.div
               key={item.title}
@@ -154,28 +154,28 @@ export default function Progress() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className="rounded-3xl border-none glass shadow-xl overflow-hidden group">
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.03] group-hover:opacity-[0.06] transition-opacity`} />
+              <Card className="rounded-3xl border-none glass-darker shadow-2xl overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.06] group-hover:opacity-[0.1] transition-opacity`} />
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 relative">
-                  <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{item.title}</CardTitle>
-                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${item.gradient} shadow-lg ${item.shadow}`}>
-                    <item.icon className="h-4 w-4 text-white" />
+                  <CardTitle className="text-xs font-black uppercase tracking-[0.15em] text-muted-foreground/80">{item.title}</CardTitle>
+                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${item.gradient} shadow-xl ${item.shadow} group-hover:scale-110 transition-transform`}>
+                    <item.icon className="h-5 w-5 text-white" />
                   </div>
                 </CardHeader>
                 <CardContent className="relative">
-                  <div className={`text-4xl font-bold bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`} data-testid={`text-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
+                  <div className={`text-5xl font-black bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`} data-testid={`text-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
                     {item.val}
                   </div>
-                  <p className="text-sm font-medium mt-1 text-muted-foreground truncate">
+                  <p className="text-sm font-bold mt-2 text-muted-foreground/90 truncate">
                     {item.sub}
                   </p>
                   {item.title === t.progress.level && (
-                    <div className="mt-4">
-                      <div className="flex justify-between text-[10px] mb-1 font-bold text-muted-foreground">
+                    <div className="mt-5">
+                      <div className="flex justify-between text-xs mb-1.5 font-black text-muted-foreground/80">
                         <span>{xpProgressInfo.current} XP</span>
                         <span>{xpProgressInfo.needed} XP</span>
                       </div>
-                      <ProgressBar value={xpProgressInfo.percent} className="h-2 rounded-full" />
+                      <ProgressBar value={xpProgressInfo.percent} className="h-3 rounded-full bg-muted/30 shadow-inner" />
                     </div>
                   )}
                 </CardContent>
@@ -189,37 +189,39 @@ export default function Progress() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="mb-12 rounded-3xl border-none glass shadow-xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-amber-500/5" />
-            <CardHeader className="relative">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-blue-600 shadow-lg shadow-primary/20">
-                  <TrendingUp className="h-6 w-6 text-white" />
+          <Card className="mb-12 rounded-[2.5rem] border-none glass-darker shadow-2xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-amber-500/10" />
+            <CardHeader className="relative p-8">
+              <div className="flex items-center gap-6">
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-primary to-blue-700 shadow-2xl shadow-primary/40 animate-pulse">
+                  <TrendingUp className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold">{t.progress.nextLevel}</CardTitle>
-                  <CardDescription className="text-sm mt-1">
+                  <CardTitle className="text-3xl font-black tracking-tight">{t.progress.nextLevel}</CardTitle>
+                  <CardDescription className="text-base font-medium mt-1 opacity-80">
                     {t.progress.continueReadingToLevel.replace('{level}', ((stats?.level || 1) + 1).toString())}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="relative">
-              <div className="space-y-4">
+            <CardContent className="relative p-8 pt-0">
+              <div className="space-y-6">
                 <div className="flex justify-between items-end text-sm mb-1">
                   <div className="space-y-1">
-                    <span className="text-muted-foreground block font-medium uppercase tracking-widest text-[10px]">Progresso Atual</span>
-                    <span className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{Math.round(xpProgressInfo.percent)}%</span>
+                    <span className="text-muted-foreground block font-black uppercase tracking-[0.2em] text-xs">Progresso da Jornada</span>
+                    <span className="text-5xl font-black bg-gradient-to-r from-primary to-blue-700 bg-clip-text text-transparent">{Math.round(xpProgressInfo.percent)}%</span>
                   </div>
-                  <p className="text-sm text-muted-foreground font-medium pb-1">
-                    {t.progress.xpNeededForLevel.replace('{xp}', (xpProgressInfo.needed - xpProgressInfo.current).toString()).replace('{level}', (currentLevel + 1).toString())}
-                  </p>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground font-bold pb-1 bg-muted/50 px-4 py-2 rounded-full inline-block">
+                      {t.progress.xpNeededForLevel.replace('{xp}', (xpProgressInfo.needed - xpProgressInfo.current).toString()).replace('{level}', (currentLevel + 1).toString())}
+                    </p>
+                  </div>
                 </div>
-                <ProgressBar value={xpProgressInfo.percent} className="h-4 rounded-full" />
+                <ProgressBar value={xpProgressInfo.percent} className="h-6 rounded-full shadow-2xl bg-muted/20" />
                 {currentLevel < 50 && (
-                  <div className="flex items-center gap-2 mt-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 w-fit">
-                    <Zap className="h-5 w-5 text-amber-500 fill-amber-500" />
-                    <span className="text-sm font-bold text-amber-600">Próximo Título: {getLevelInfo(currentLevel + 1).title}</span>
+                  <div className="flex items-center gap-3 mt-6 px-6 py-4 rounded-[1.5rem] bg-gradient-to-r from-amber-500/15 to-orange-600/15 border-2 border-amber-500/30 w-fit hover-elevate transition-all">
+                    <Zap className="h-6 w-6 text-amber-500 fill-amber-500 animate-pulse" />
+                    <span className="text-lg font-black text-amber-600 dark:text-amber-400">Próximo Título: {getLevelInfo(currentLevel + 1).title}</span>
                   </div>
                 )}
               </div>
@@ -228,15 +230,15 @@ export default function Progress() {
         </motion.div>
 
         <section>
-          <div className="flex items-center gap-4 mb-10">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20">
-              <Trophy className="h-7 w-7 text-white" />
+          <div className="flex items-center gap-6 mb-12">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-700 shadow-2xl shadow-amber-500/40">
+              <Trophy className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h2 className="font-display text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+              <h2 className="font-display text-4xl font-black bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">
                 {t.progress.achievements}
               </h2>
-              <p className="text-sm text-muted-foreground">Desbloqueie conquistas e ganhe XP</p>
+              <p className="text-base text-muted-foreground font-bold">Domine as escrituras e desbloqueie tesouros</p>
             </div>
           </div>
           
@@ -248,22 +250,22 @@ export default function Progress() {
             return (
               <motion.div 
                 key={category} 
-                className="mb-10"
+                className="mb-14"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + catIdx * 0.1 }}
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${categoryGradient} shadow-lg`}>
-                    <CategoryIcon className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-4 mb-8">
+                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${categoryGradient} shadow-2xl ring-4 ring-background`}>
+                    <CategoryIcon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="font-bold text-xl capitalize tracking-tight">{category}</h3>
-                  <Badge className={`rounded-full px-4 py-1 font-bold text-xs bg-gradient-to-r ${categoryGradient} text-white border-none shadow-md`}>
-                    {unlockedInCategory}/{categoryAchievements.length}
+                  <h3 className="font-black text-2xl capitalize tracking-tighter">{category}</h3>
+                  <Badge className={`rounded-full px-6 py-1.5 font-black text-xs bg-gradient-to-r ${categoryGradient} text-white border-none shadow-xl transform hover:scale-105 transition-transform`}>
+                    {unlockedInCategory} / {categoryAchievements.length}
                   </Badge>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {categoryAchievements.map((achievement, achIdx) => {
                     const unlocked = isAchievementUnlocked(achievement.id);
                     const userAchievement = userAchievements.find(ua => ua.achievementId === achievement.id);
@@ -277,72 +279,72 @@ export default function Progress() {
                         transition={{ delay: 0.6 + catIdx * 0.1 + achIdx * 0.05 }}
                       >
                         <Card 
-                          className={`rounded-2xl border-none shadow-lg h-full overflow-hidden group transition-all duration-300 ${
+                          className={`rounded-[2rem] border-none shadow-2xl h-full overflow-hidden group transition-all duration-500 ${
                             unlocked 
-                              ? 'glass hover:shadow-xl' 
-                              : 'bg-card/60 backdrop-blur-sm opacity-80 hover:opacity-100'
+                              ? 'glass-darker ring-2 ring-white/10 hover:ring-white/20 hover:-translate-y-2' 
+                              : 'bg-card/40 backdrop-blur-md opacity-75 hover:opacity-100 ring-1 ring-white/5'
                           }`}
                           data-testid={`card-achievement-${achievement.id}`}
                         >
                           {unlocked && (
-                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.08]`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.12]`} />
                           )}
-                          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full" />
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full" />
                           
-                          <CardHeader className="pb-3 relative">
-                            <div className="flex items-start gap-4">
-                              <div className={`p-3 rounded-xl ${
+                          <CardHeader className="p-6 pb-4 relative">
+                            <div className="flex items-start gap-5">
+                              <div className={`p-4 rounded-2xl ${
                                 unlocked 
-                                  ? `bg-gradient-to-br ${categoryGradient} shadow-lg ring-2 ring-white/20`
-                                  : 'bg-muted'
+                                  ? `bg-gradient-to-br ${categoryGradient} shadow-2xl ring-4 ring-white/10 group-hover:rotate-12 transition-transform`
+                                  : 'bg-muted/50 grayscale'
                               }`}>
                                 {unlocked ? (
-                                  <Trophy className="h-5 w-5 text-white" />
+                                  <Trophy className="h-6 w-6 text-white" />
                                 ) : (
-                                  <Lock className="h-5 w-5 text-muted-foreground" />
+                                  <Lock className="h-6 w-6 text-muted-foreground/60" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <CardTitle className={`text-base font-bold flex items-center gap-2 ${
+                                <CardTitle className={`text-lg font-black flex items-center gap-2 tracking-tight ${
                                   unlocked ? `bg-gradient-to-r ${categoryGradient} bg-clip-text text-transparent` : 'text-muted-foreground'
                                 }`}>
                                   {achievement.name}
                                   {unlocked && (
-                                    <Sparkles className="h-4 w-4 text-amber-400 animate-pulse flex-shrink-0" />
+                                    <Sparkles className="h-5 w-5 text-amber-400 animate-pulse flex-shrink-0" />
                                   )}
                                 </CardTitle>
-                                <CardDescription className="text-xs mt-1 line-clamp-2">
+                                <CardDescription className="text-sm mt-1.5 line-clamp-2 font-bold opacity-70">
                                   {achievement.description}
                                 </CardDescription>
                               </div>
                             </div>
                           </CardHeader>
                           
-                          <CardContent className="pb-4 relative">
-                            <div className="flex items-center justify-between">
+                          <CardContent className="p-6 pt-0 relative">
+                            <div className="flex items-center justify-between mb-2">
                               {unlocked ? (
-                                <Badge className="rounded-full px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-none font-bold text-[10px] uppercase tracking-widest shadow-md">
-                                  <Check className="h-3 w-3 mr-1" />
-                                  Conquistado
+                                <Badge className="rounded-full px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white border-none font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl">
+                                  <Check className="h-3.5 w-3.5 mr-1.5" />
+                                  CONQUISTADO
                                 </Badge>
                               ) : (
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                  {progress > 0 ? `${progress}% concluído` : 'Bloqueado'}
+                                <span className="text-[11px] font-black text-muted-foreground/80 uppercase tracking-[0.15em]">
+                                  {progress > 0 ? `${progress}% CONCLUÍDO` : 'BLOQUEADO'}
                                 </span>
                               )}
-                              <Badge variant="outline" className="rounded-full bg-amber-500/10 text-amber-600 border-amber-200/50 font-bold text-xs">
-                                <Star className="h-3 w-3 mr-1 fill-amber-500" />
-                                {achievement.xpReward} XP
+                              <Badge className="rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border-2 border-amber-500/30 font-black text-xs px-3 py-1">
+                                <Star className="h-3.5 w-3.5 mr-1.5 fill-current" />
+                                +{achievement.xpReward} XP
                               </Badge>
                             </div>
                             
                             {!unlocked && progress > 0 && (
-                              <div className="mt-4 p-3 rounded-xl bg-muted/30 border border-border/20">
-                                <div className="flex justify-between text-[10px] font-bold mb-1.5 uppercase text-muted-foreground">
-                                  <span>Progresso</span>
-                                  <span>{progress}%</span>
+                              <div className="mt-5 p-4 rounded-2xl bg-muted/40 border-2 border-white/5 shadow-inner">
+                                <div className="flex justify-between text-[11px] font-black mb-2 uppercase text-muted-foreground tracking-wider">
+                                  <span>PROGRESSO ATUAL</span>
+                                  <span className="text-primary">{progress}%</span>
                                 </div>
-                                <ProgressBar value={progress} className="h-2 rounded-full" />
+                                <ProgressBar value={progress} className="h-3 rounded-full bg-muted/50" />
                               </div>
                             )}
                           </CardContent>

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Trophy, Star, Sparkles, Lock, Crown, Flame, BookOpen, Users, Target, Zap, Award, Medal, Gift } from "lucide-react";
+import { Loader2, Trophy, Star, Sparkles, Lock, Crown, Flame, BookOpen, Users, Target, Zap, Award, Medal, Gift, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -15,10 +15,11 @@ interface Achievement {
   requirementValue: number;
   currentValue: number;
   category?: string;
+  xpReward?: number;
 }
 
 const getAchievementIcon = (icon: string, isUnlocked: boolean) => {
-  const iconClass = isUnlocked ? "h-6 w-6 text-white" : "h-6 w-6 text-muted-foreground";
+  const iconClass = isUnlocked ? "h-7 w-7 text-white" : "h-7 w-7 text-muted-foreground/50";
   switch (icon) {
     case "flame": return <Flame className={iconClass} />;
     case "book": return <BookOpen className={iconClass} />;
@@ -35,14 +36,14 @@ const getAchievementIcon = (icon: string, isUnlocked: boolean) => {
 };
 
 const getAchievementGradient = (index: number, isUnlocked: boolean) => {
-  if (!isUnlocked) return "from-slate-400/80 to-slate-500/80";
+  if (!isUnlocked) return "from-slate-600 to-slate-800";
   const gradients = [
-    "from-amber-400 to-orange-500",
-    "from-emerald-400 to-teal-500",
-    "from-blue-400 to-indigo-500",
-    "from-purple-400 to-pink-500",
-    "from-rose-400 to-red-500",
-    "from-cyan-400 to-blue-500",
+    "from-amber-500 to-orange-700",
+    "from-emerald-500 to-teal-700",
+    "from-blue-600 to-indigo-800",
+    "from-purple-600 to-pink-800",
+    "from-rose-600 to-red-800",
+    "from-cyan-600 to-blue-800",
   ];
   return gradients[index % gradients.length];
 };
@@ -56,9 +57,9 @@ export default function Achievements() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-muted-foreground">Carregando conquistas...</p>
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
+          <p className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Resgatando Suas Glórias...</p>
         </div>
       </div>
     );
@@ -73,28 +74,28 @@ export default function Achievements() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-amber-500/5 to-orange-500/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/20 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-amber-500/10 to-orange-500/10 blur-3xl" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto py-8 px-4">
+      <div className="relative z-10 max-w-4xl mx-auto py-10 px-6">
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-3 mb-10"
+          className="text-center space-y-4 mb-14"
         >
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-500/50" />
-            <Trophy className="h-5 w-5 text-amber-500" />
-            <div className="h-px w-8 bg-gradient-to-l from-transparent to-amber-500/50" />
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-amber-500/60" />
+            <Trophy className="h-7 w-7 text-amber-500 animate-bounce" />
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-amber-500/60" />
           </div>
-          <p className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-[0.2em]">GAMIFICAÇÃO</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent">
-            Conquistas
+          <p className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
+          <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+            Seus Troféus
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Acompanhe seu progresso e desbloqueie recompensas
+          <p className="text-base text-muted-foreground font-bold">
+            Cada marco é uma prova da sua dedicação à Palavra.
           </p>
         </motion.div>
 
@@ -103,28 +104,28 @@ export default function Achievements() {
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.1 }}
         >
-          <Card className="rounded-3xl border-none glass shadow-xl mb-8 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5" />
-            <CardContent className="p-6 relative">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20">
-                    <Sparkles className="h-6 w-6 text-white" />
+          <Card className="rounded-[2.5rem] border-none glass-darker shadow-2xl mb-12 overflow-hidden relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-transparent to-orange-500/10 opacity-50 group-hover:opacity-100 transition-opacity" />
+            <CardContent className="p-8 relative">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div className="flex items-center gap-5">
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 shadow-2xl shadow-amber-500/40 transform group-hover:rotate-6 transition-transform">
+                    <Sparkles className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <span className="text-xl font-bold text-foreground">Progresso Geral</span>
-                    <p className="text-xs text-muted-foreground">Continue desbloqueando!</p>
+                    <span className="text-3xl font-black text-foreground tracking-tighter">Progresso Lendário</span>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Nível de Domínio das Escrituras</p>
                   </div>
                 </div>
-                <Badge className="rounded-full px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none font-bold text-sm shadow-lg shadow-amber-500/20">
-                  {unlockedCount} de {totalCount} conquistadas
+                <Badge className="rounded-full px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-black text-sm shadow-2xl shadow-amber-500/40 transform hover:scale-105 transition-transform">
+                  {unlockedCount} DE {totalCount} CONQUISTADAS
                 </Badge>
               </div>
               <div className="relative">
-                <Progress value={progressPercent} className="h-4 rounded-full bg-muted/50" />
+                <Progress value={progressPercent} className="h-6 rounded-full bg-muted/30 shadow-inner" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-foreground/80">
-                    {progressPercent.toFixed(0)}%
+                  <span className="text-xs font-black text-foreground drop-shadow-md">
+                    {progressPercent.toFixed(0)}% CONCLUÍDO
                   </span>
                 </div>
               </div>
@@ -137,48 +138,51 @@ export default function Achievements() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-8"
+            className="mb-14"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-md">
-                <Trophy className="h-4 w-4 text-white" />
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-700 shadow-xl shadow-amber-500/30">
+                <Trophy className="h-5 w-5 text-white" />
               </div>
-              <h2 className="text-lg font-bold text-foreground">Desbloqueadas</h2>
-              <Badge variant="secondary" className="rounded-full text-xs bg-amber-500/10 text-amber-600 border-amber-200">
+              <h2 className="text-2xl font-black text-foreground tracking-tight uppercase">Desbloqueadas</h2>
+              <Badge className="rounded-full text-xs font-black bg-amber-500/15 text-amber-600 border-2 border-amber-500/30 px-3 py-1">
                 {unlockedCount}
               </Badge>
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
                 {unlockedAchievements.map((achievement, idx) => (
                   <motion.div
                     key={achievement.id}
                     layout
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <Card className="rounded-2xl border-none glass shadow-lg h-full overflow-hidden group hover:shadow-xl transition-all duration-300">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.08] group-hover:opacity-[0.12] transition-opacity`} />
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full" />
-                      <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-3 relative">
-                        <div className={`p-3.5 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-lg ring-2 ring-white/20`}>
+                    <Card className="rounded-[2rem] border-none glass-darker shadow-2xl h-full overflow-hidden group hover:shadow-amber-500/10 hover:-translate-y-1 transition-all duration-500">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.12] group-hover:opacity-[0.18] transition-opacity`} />
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full" />
+                      <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative">
+                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-2xl ring-4 ring-white/10 transform group-hover:scale-110 transition-transform`}>
                           {getAchievementIcon(achievement.icon, true)}
                         </div>
-                        <div className="flex flex-col gap-1 flex-1">
-                          <CardTitle className="text-lg font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+                        <div className="flex flex-col gap-1.5 flex-1">
+                          <CardTitle className={`text-xl font-black tracking-tight bg-gradient-to-r ${getAchievementGradient(idx, true)} bg-clip-text text-transparent`}>
                             {achievement.name}
                           </CardTitle>
-                          <CardDescription className="text-xs">{achievement.description}</CardDescription>
+                          <CardDescription className="text-sm font-bold opacity-70 leading-relaxed">{achievement.description}</CardDescription>
                         </div>
-                        <div className="absolute top-3 right-3">
-                          <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
+                        <div className="absolute top-4 right-4">
+                          <Sparkles className="h-5 w-5 text-amber-400 animate-pulse" />
                         </div>
                       </CardHeader>
-                      <CardContent className="relative">
-                        <Badge className="rounded-full px-4 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-none font-bold text-[10px] uppercase tracking-widest shadow-md">
-                          <Zap className="h-3 w-3 mr-1" />
-                          Conquistado!
+                      <CardContent className="p-6 pt-0 relative flex justify-between items-center">
+                        <Badge className="rounded-full px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white border-none font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl shadow-green-500/30">
+                          <Check className="h-3.5 w-3.5 mr-2" />
+                          CONQUISTADO
+                        </Badge>
+                        <Badge className="rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border-2 border-amber-500/30 font-black text-xs px-3 py-1">
+                          +{achievement.xpReward || 50} XP
                         </Badge>
                       </CardContent>
                     </Card>
@@ -195,16 +199,16 @@ export default function Achievements() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-muted">
-                <Lock className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 rounded-2xl bg-muted/50 border border-white/5 shadow-inner">
+                <Lock className="h-5 w-5 text-muted-foreground/50" />
               </div>
-              <h2 className="text-lg font-bold text-muted-foreground">Em Progresso</h2>
-              <Badge variant="secondary" className="rounded-full text-xs">
+              <h2 className="text-2xl font-black text-muted-foreground/80 tracking-tight uppercase">Em Progresso</h2>
+              <Badge className="rounded-full text-xs font-black bg-muted/50 text-muted-foreground border-2 border-muted-foreground/10 px-3 py-1">
                 {lockedAchievements.length}
               </Badge>
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
                 {lockedAchievements.map((achievement, idx) => {
                   const progress = (achievement.currentValue / achievement.requirementValue) * 100;
@@ -217,27 +221,27 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-2xl border-none bg-card/60 backdrop-blur-sm shadow-md h-full opacity-90 hover:opacity-100 transition-opacity">
-                        <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-3">
-                          <div className="p-3 rounded-xl bg-muted">
+                      <Card className="rounded-[2rem] border-none bg-card/40 backdrop-blur-md shadow-xl h-full opacity-85 hover:opacity-100 transition-all duration-300 ring-1 ring-white/5">
+                        <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6">
+                          <div className="p-4 rounded-2xl bg-muted/50 shadow-inner">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
-                          <div className="flex flex-col gap-1 flex-1">
-                            <CardTitle className="text-base text-muted-foreground">
+                          <div className="flex flex-col gap-1.5 flex-1">
+                            <CardTitle className="text-lg font-black text-muted-foreground tracking-tight">
                               {achievement.name}
                             </CardTitle>
-                            <CardDescription className="text-xs">{achievement.description}</CardDescription>
+                            <CardDescription className="text-sm font-bold opacity-60">{achievement.description}</CardDescription>
                           </div>
                         </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-muted-foreground font-medium text-xs">
+                        <CardContent className="p-6 pt-0">
+                          <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-white/5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-muted-foreground font-black text-[10px] uppercase tracking-widest">
                                 {achievement.currentValue} / {achievement.requirementValue}
                               </span>
-                              <span className="font-bold text-primary text-sm">{Math.round(progress)}%</span>
+                              <span className="font-black text-primary text-sm tracking-tighter">{Math.round(progress)}%</span>
                             </div>
-                            <Progress value={progress} className="h-2 rounded-full" />
+                            <Progress value={progress} className="h-3 rounded-full bg-muted/50" />
                           </div>
                         </CardContent>
                       </Card>
@@ -254,14 +258,14 @@ export default function Achievements() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="rounded-3xl border-dashed border-2 border-muted-foreground/20 bg-muted/10">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-amber-400/20 to-orange-500/20 mb-6">
-                  <Trophy className="h-12 w-12 text-amber-500/50" />
+            <Card className="rounded-[3rem] border-4 border-dashed border-muted/20 bg-muted/5">
+              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="flex h-28 w-28 items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-amber-400/10 to-orange-500/10 mb-8 shadow-inner">
+                  <Trophy className="h-14 w-14 text-amber-500/30" />
                 </div>
-                <h3 className="font-bold text-xl mb-2">Nenhuma conquista ainda</h3>
-                <p className="text-muted-foreground max-w-md text-sm">
-                  Continue lendo a Bíblia para desbloquear conquistas e ganhar recompensas!
+                <h3 className="font-black text-3xl mb-3 tracking-tight">O Palácio está Silencioso</h3>
+                <p className="text-muted-foreground max-w-md text-base font-medium opacity-70">
+                  Suas glórias ainda não foram escritas. Abra as Escrituras e comece sua jornada para a eternidade.
                 </p>
               </CardContent>
             </Card>

@@ -16,14 +16,19 @@ import {
   ChevronRight,
   Flame,
   GraduationCap,
-  Loader2
+  Loader2,
+  TrendingUp,
+  Star,
+  Zap,
+  Crown,
+  Heart
 } from "lucide-react";
 import { Link } from "wouter";
 import type { ReadingPlan } from "@shared/schema";
 import { DailyVerse } from "@/components/DailyVerse";
 import { GamificationBanner } from "@/components/GamificationBanner";
 import { AISearch } from "@/components/AISearch";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const { toast } = useToast();
@@ -62,47 +67,56 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-muted-foreground">Carregando...</p>
+          <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest animate-pulse">Iniciando Experiência Premium...</p>
         </div>
       </div>
     );
   }
 
   const quickActions = [
-    { icon: GraduationCap, label: "Modo Professor", href: "/teacher", gradient: "from-blue-800 to-slate-800" },
-    { icon: MessageSquare, label: "Nova Oração", href: "/prayers", gradient: "from-rose-400 to-pink-500" },
-    { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", gradient: "from-teal-400 to-emerald-500" },
-    { icon: Users, label: "Comunidade", href: "/community", gradient: "from-amber-400 to-orange-500" },
+    { icon: GraduationCap, label: "Modo Professor", href: "/teacher", gradient: "from-blue-700 to-indigo-900", shadow: "shadow-blue-500/30" },
+    { icon: MessageSquare, label: "Nova Oração", href: "/prayers", gradient: "from-rose-500 to-pink-700", shadow: "shadow-rose-500/30" },
+    { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", gradient: "from-teal-500 to-emerald-700", shadow: "shadow-teal-500/30" },
+    { icon: Users, label: "Comunidade", href: "/community", gradient: "from-amber-500 to-orange-700", shadow: "shadow-amber-500/30" },
   ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.08 }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decorative background blur */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
       <motion.div 
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6"
+        className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 relative z-10"
       >
-        <motion.div variants={itemVariants} className="text-center space-y-2">
-          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">Bem-vindo de volta</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-welcome">
-            {user?.firstName || "Estudante"}
+        <motion.div variants={itemVariants} className="text-center space-y-3">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-primary/50" />
+            <Crown className="h-5 w-5 text-primary" />
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-primary/50" />
+          </div>
+          <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">RECONHECIMENTO DE USUÁRIO</p>
+          <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
+            Olá, {user?.firstName || "Estudante"}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Continue sua jornada espiritual hoje
+          <p className="text-base text-muted-foreground font-medium">
+            Sua jornada espiritual continua com força total hoje.
           </p>
         </motion.div>
 
@@ -120,47 +134,48 @@ export default function Home() {
 
         {currentPlan && (
           <motion.div variants={itemVariants}>
-            <Card className="relative glass border-0 overflow-hidden rounded-2xl">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-primary/50" />
-              <CardHeader className="pb-2">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-primary/10">
-                      <Calendar className="h-5 w-5 text-primary" />
+            <Card className="relative glass-darker border-none overflow-hidden rounded-[2rem] shadow-2xl group hover:shadow-primary/10 transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-primary to-indigo-600" />
+              <CardHeader className="pb-4 relative">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-primary to-indigo-700 shadow-xl shadow-primary/20">
+                      <Calendar className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-bold">Leitura de Hoje</CardTitle>
-                      <CardDescription className="text-xs mt-0.5">{currentPlan.title}</CardDescription>
+                      <CardTitle className="text-xl font-black tracking-tight">Leitura de Hoje</CardTitle>
+                      <CardDescription className="text-sm font-bold opacity-70 mt-0.5 uppercase tracking-wider">{currentPlan.title}</CardDescription>
                     </div>
                   </div>
-                  <Badge className="bg-primary/10 text-primary border-0 font-semibold px-3 py-1 rounded-full text-xs">
-                    Dia {currentPlan.currentDay}
+                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-black px-6 py-2 rounded-full text-xs shadow-lg shadow-primary/20 transform hover:scale-105 transition-transform">
+                    DIA {currentPlan.currentDay}
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4 pt-2">
-                <div>
-                  <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="text-muted-foreground">Progresso do Plano</span>
-                    <span className="font-semibold text-primary">
+              <CardContent className="space-y-6 pt-2 relative">
+                <div className="bg-muted/30 p-6 rounded-2xl border border-white/5">
+                  <div className="flex items-center justify-between text-xs mb-3 font-black uppercase tracking-widest text-muted-foreground">
+                    <span>PROGRESSO DO PLANO</span>
+                    <span className="text-primary">
                       {Math.round(((currentPlan.currentDay || 1) / (currentPlan.schedule?.length || 1)) * 100)}%
                     </span>
                   </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-3 bg-muted/50 rounded-full overflow-hidden shadow-inner">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${((currentPlan.currentDay || 1) / (currentPlan.schedule?.length || 1)) * 100}%` }}
-                      transition={{ duration: 0.8, delay: 0.3 }}
-                      className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
+                      transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+                      className="h-full bg-gradient-to-r from-primary via-indigo-500 to-purple-600 rounded-full shadow-lg"
                     />
                   </div>
                 </div>
                 
-                <Button size="lg" className="w-full rounded-xl font-semibold shadow-sm" asChild data-testid="button-continue-reading">
+                <Button size="lg" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] transition-all bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
                   <Link href="/bible">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Continuar Leitura
-                    <ChevronRight className="ml-2 h-4 w-4" />
+                    <BookOpen className="mr-3 h-5 w-5" />
+                    CONTINUAR LEITURA
+                    <ChevronRight className="ml-3 h-5 w-5" />
                   </Link>
                 </Button>
               </CardContent>
@@ -168,20 +183,21 @@ export default function Home() {
           </motion.div>
         )}
 
-        <motion.div variants={itemVariants} className="space-y-4">
-          <h2 className="font-semibold text-lg text-foreground">
-            Ações Rápidas
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <motion.div variants={itemVariants} className="space-y-6">
+          <div className="flex items-center gap-3">
+             <div className="h-8 w-1 bg-primary rounded-full" />
+             <h2 className="font-black text-xl text-foreground tracking-tight uppercase">Ações Rápidas</h2>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
-                <Card className="cursor-pointer border-0 glass hover-elevate rounded-2xl overflow-visible" data-testid={`card-quick-action-${index}`}>
-                  <CardContent className="p-4">
-                    <div className="flex flex-col items-center text-center space-y-3">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${action.gradient} shadow-md`}>
-                        <action.icon className="h-5 w-5 text-white" />
+                <Card className="cursor-pointer border-none glass-darker hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 rounded-[1.75rem] overflow-visible group" data-testid={`card-quick-action-${index}`}>
+                  <CardContent className="p-6">
+                    <div className="flex flex-col items-center text-center space-y-4">
+                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform group-hover:scale-110 group-hover:rotate-6 transition-all`}>
+                        <action.icon className="h-6 w-6 text-white" />
                       </div>
-                      <p className="font-medium text-xs text-foreground">{action.label}</p>
+                      <p className="font-black text-xs text-foreground uppercase tracking-widest">{action.label}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -191,72 +207,72 @@ export default function Home() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="glass border-0 rounded-3xl overflow-hidden shadow-xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5" />
-            <CardHeader className="pb-3 relative">
+          <Card className="glass-darker border-none rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.2)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10" />
+            <CardHeader className="p-8 pb-4 relative">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
-                    <Sparkles className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-5">
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 shadow-2xl shadow-indigo-500/40 animate-pulse">
+                    <Sparkles className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Atividade Recente</CardTitle>
-                    <p className="text-[10px] text-muted-foreground font-medium">Seu histórico de atividades</p>
+                    <CardTitle className="text-3xl font-black bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent tracking-tighter">Atividade Recente</CardTitle>
+                    <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">Sua Trilha de Evolução</p>
                   </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-1 relative">
-              <div className="space-y-3">
+            <CardContent className="p-8 pt-2 relative">
+              <div className="space-y-4">
                 {isLoadingActivity ? (
-                  <div className="flex justify-center py-10">
-                    <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-                      <p className="text-xs text-muted-foreground">Carregando atividades...</p>
+                  <div className="flex justify-center py-16">
+                    <div className="flex flex-col items-center gap-4">
+                      <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">Sincronizando Atividades...</p>
                     </div>
                   </div>
                 ) : recentActivity && recentActivity.length > 0 ? (
                   recentActivity.map((item, i) => (
                     <motion.div 
                       key={i}
-                      initial={{ opacity: 0, x: -10 }}
+                      initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + i * 0.1 }}
-                      className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-muted/40 to-muted/20 hover:from-muted/60 hover:to-muted/40 transition-all duration-300 group cursor-pointer border border-transparent hover:border-primary/10 shadow-sm hover:shadow-md"
+                      transition={{ delay: 0.4 + i * 0.1 }}
+                      className="flex items-center gap-5 p-5 rounded-[1.5rem] bg-gradient-to-r from-muted/50 to-transparent hover:from-primary/10 hover:to-primary/5 transition-all duration-500 group cursor-pointer border border-white/5 hover:border-primary/20 shadow-sm hover:shadow-xl"
                     >
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${
-                        item.type === 'read' ? 'from-blue-500 to-indigo-600 shadow-blue-500/20' :
-                        item.type === 'prayer' ? 'from-rose-400 to-pink-500 shadow-rose-500/20' :
-                        item.type === 'post' ? 'from-amber-400 to-orange-500 shadow-amber-500/20' :
-                        'from-gray-400 to-gray-500 shadow-gray-500/20'
-                      } shadow-lg ring-2 ring-white/10`}>
+                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${
+                        item.type === 'read' ? 'from-blue-600 to-indigo-800 shadow-blue-500/40' :
+                        item.type === 'prayer' ? 'from-rose-500 to-pink-700 shadow-rose-500/40' :
+                        item.type === 'post' ? 'from-amber-500 to-orange-700 shadow-amber-500/40' :
+                        'from-slate-500 to-slate-700 shadow-slate-500/40'
+                      } shadow-2xl ring-4 ring-white/5 group-hover:scale-110 transition-transform`}>
                         {item.type === 'read' ? <BookOpen className="h-5 w-5 text-white" /> :
                          item.type === 'prayer' ? <MessageSquare className="h-5 w-5 text-white" /> :
                          item.type === 'post' ? <Users className="h-5 w-5 text-white" /> :
                          <Sparkles className="h-5 w-5 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">{item.text}</p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">{item.time}</p>
+                        <p className="font-black text-sm text-foreground truncate group-hover:text-primary transition-colors tracking-tight">{item.text}</p>
+                        <p className="text-xs font-bold text-muted-foreground mt-1 uppercase tracking-widest opacity-60">{item.time}</p>
                       </div>
-                      <div className="p-2 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors">
-                        <ChevronRight className="h-4 w-4 text-primary/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                      <div className="p-2.5 rounded-full bg-primary/10 group-hover:bg-primary group-hover:text-white transition-all">
+                        <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </motion.div>
                   ))
                 ) : (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="flex items-center justify-center p-10 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border-2 border-dashed border-muted-foreground/15"
+                    className="flex items-center justify-center p-16 rounded-[2rem] bg-muted/10 border-4 border-dashed border-muted/20"
                   >
                     <div className="text-center">
-                      <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center mx-auto mb-4">
-                        <Sparkles className="h-8 w-8 text-indigo-500/40" />
+                      <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                        <Sparkles className="h-12 w-12 text-indigo-500/20" />
                       </div>
-                      <p className="text-sm text-foreground font-semibold mb-1">Nenhuma atividade recente</p>
-                      <p className="text-xs text-muted-foreground max-w-[200px]">Comece a ler a Bíblia para ver seu progresso aqui</p>
+                      <p className="text-lg font-black text-foreground mb-2 tracking-tight">Vazio, Por Enquanto</p>
+                      <p className="text-sm text-muted-foreground max-w-[240px] font-medium mx-auto opacity-70">Sua história começa no momento em que você abre as Escrituras.</p>
                     </div>
                   </motion.div>
                 )}
