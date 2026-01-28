@@ -343,8 +343,17 @@ export default function Profile() {
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mb-2">{user.email}</p>
-                <div className="mb-4">
-                  <span className="inline-block px-3 py-1 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full shadow-md">
+                <div className="mb-4" style={{ marginTop: '8px' }}>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '6px 16px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#ffffff',
+                    background: 'linear-gradient(to right, #9333ea, #4f46e5)',
+                    borderRadius: '9999px',
+                    boxShadow: '0 4px 12px rgba(147, 51, 234, 0.4)'
+                  }}>
                     BíbliaFS v1.0.5
                   </span>
                 </div>
