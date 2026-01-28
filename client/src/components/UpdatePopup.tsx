@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Download, Clock, Shield, Sparkles, Bug, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { APP_VERSION } from "@/lib/config";
 
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.bibliafullstack.app";
 const STORAGE_KEY = "bibliasf_update_dismissed_at";
 const DISMISS_DURATION_MS = 24 * 60 * 60 * 1000;
-const CURRENT_APP_VERSION = "1.0.5";
 
 interface UpdateInfo {
   currentVersion: string;
@@ -56,7 +56,7 @@ export function UpdatePopup() {
     }
 
     try {
-      const response = await fetch(`/api/app/version?current=${CURRENT_APP_VERSION}`);
+      const response = await fetch(`/api/app/version?current=${APP_VERSION}`);
       if (!response.ok) return;
       
       const data = await response.json();
