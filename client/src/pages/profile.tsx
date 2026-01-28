@@ -338,7 +338,7 @@ export default function Profile() {
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     Nível {currentLevel.level} - {currentLevel.title}
                   </Badge>
-                  <Badge variant="outline" className="border-primary/20 text-muted-foreground/70">
+                  <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-none">
                     v{APP_VERSION}
                   </Badge>
                 </div>
