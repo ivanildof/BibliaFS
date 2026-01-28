@@ -34,7 +34,8 @@ BíbliaFS is a premium, personalized, and intelligent Bible study application de
 - **ORM**: Drizzle ORM
 
 ### Key Features
-- **Study Groups**: Create/manage public/private groups, real-time chat, member management with roles (Leader/Moderator/Member), invitation system via email/phone/codes. Data stored in Supabase (`groups`, `group_members`, `group_messages`, `group_invites`).
+- **Study Groups**: Create/manage public/private groups, real-time chat, member management with roles (Leader/Moderator/Member), invitation system via email/phone/codes. Group leaders can edit/delete groups directly from card grid via three-dots menu. Data stored in Supabase (`groups`, `group_members`, `group_messages`, `group_invites`).
+- **Recent Activity Feed**: User-isolated activity feed on home page displaying prayers, community posts, and reading plan progress via `/api/activity/recent` endpoint.
 - **Bible Audio System**: Integrates OpenAI TTS API for high-quality audio generation, with server-side caching in PostgreSQL (`audio_cache` table) for instant playback on subsequent requests. Supports long chapters by chunking text. Frontend streams from Supabase Storage, tracks progress, and allows offline caching to IndexedDB.
 - **Version Comparison**: Side-by-side comparison of up to 3 Bible versions, with multilingual support and dynamic book name translation.
 - **Teacher Mode**: AI-powered lesson creation, generating structured outlines with pedagogical assistance based on specified duration, with PDF export.
