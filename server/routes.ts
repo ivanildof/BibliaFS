@@ -304,8 +304,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return 0;
   }
 
-  // Run database migrations
-  await runMigrations();
+  // Atividade recente isolada por usuário
+  app.get("/api/activity/recent", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const { formatDistanceToNow } = await import("date-fns");
+      const { ptBR } = await import("date-fns/locale");
+
+      // Buscar orações recentes
+      const prayers = await storage.getPrayers(userId);
+      const recentPrayers = prayers.slice(0, 2).map(p => ({
+        type: 'prayer',
+        text: "Nova oração registrada",
+        time: formatDistanceToNow(new Date(p.createdAt || new Date()), { addSuffix: true, locale: ptBR }),
+        date: new Date(p.createdAt || new Date())
+      }));
+
+      // Buscar posts recentes
+      const posts = await storage.getCommunityPosts(10, userId);
+      const recentPosts = posts
+        .filter(p => p.userId === userId)
+        .slice(0, 2)
+        .map(p => ({
+          type: 'post',
+          text: "Você publicou na comunidade",
+          time: formatDistanceToNow(new Date(p.createdAt || new Date()), { addSuffix: true, locale: ptBR }),
+          date: new Date(p.createdAt || new Date())
+        }));
+
+      // Buscar planos de leitura ativos
+      const plans = await storage.getReadingPlans(userId);
+      const recentPlans = plans.slice(0, 1).map(p => ({
+        type: 'read',
+        text: `Você progrediu no plano: ${p.title}`,
+        time: formatDistanceToNow(new Date(p.updatedAt || new Date()), { addSuffix: true, locale: ptBR }),
+        date: new Date(p.updatedAt || new Date())
+      }));
+
+      const allActivity = [...recentPrayers, ...recentPosts, ...recentPlans]
+        .sort((a, b) => b.date.getTime() - a.date.date.getTime())
+        .slice(0, 5);
+
+      res.json(allActivity);
+    } catch (error) {
+      console.error("[Activity] Error:", error);
+      res.status(500).json({ error: "Erro ao buscar atividades" });
+    }
+  });
   
   // Initialize push notification tables
   await initPushTables();
