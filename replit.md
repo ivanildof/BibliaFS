@@ -1,4 +1,4 @@
-# BíbliaFS v2.0 (v1.0.5)
+# BíbliaFS v2.0 (v1.0.6)
 
 ## Overview
 BíbliaFS is a premium, personalized, and intelligent Bible study application designed to enhance traditional scripture reading with modern AI-powered theological assistance. It aims to provide a comprehensive platform for individual and group study, integrating features like AI-assisted learning, audio playback, version comparison, and community engagement.

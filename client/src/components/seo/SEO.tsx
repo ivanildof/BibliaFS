@@ -19,7 +19,7 @@ export function SEO({
   ogType = "website",
   canonical,
 }: SEOProps) {
-  const siteName = "BíbliaFS v1.0.5";
+  const siteName = "BíbliaFS v1.0.6";
   const fullTitle = title ? `${title} | ${siteName}` : siteName;
   const defaultDescription = "BíbliaFS - Um aplicativo bíblico premium com IA teológica, planos de leitura personalizados e comunidade espiritual.";
   const defaultOgImage = "https://bibliafs.replit.app/og-image.png"; // Placeholder for actual branding image

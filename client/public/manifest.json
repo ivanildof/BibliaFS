@@ -1,7 +1,7 @@
 {
   "name": "BíbliaFS",
   "short_name": "BíbliaFS",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Estudo Bíblico Premium com IA Teológica",
   "start_url": "/",
   "display": "standalone",
