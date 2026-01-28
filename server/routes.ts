@@ -307,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Atividade recente isolada por usuário
   app.get("/api/activity/recent", isAuthenticated, async (req, res) => {
     try {
-      const user = req.user as any;
+      const user = (req as any).user;
       if (!user || !user.id) {
         return res.status(401).json({ error: "Não autorizado" });
       }
