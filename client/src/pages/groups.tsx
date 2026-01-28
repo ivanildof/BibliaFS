@@ -192,6 +192,9 @@ export default function Groups() {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [groupForAction, setGroupForAction] = useState<Group | null>(null);
+  const [isGridEditDialogOpen, setIsGridEditDialogOpen] = useState(false);
+  const [isGridDeleteDialogOpen, setIsGridDeleteDialogOpen] = useState(false);
 
   const updateMutation = useMutation({
     mutationFn: async (data: GroupFormData) => {
@@ -226,6 +229,53 @@ export default function Groups() {
       queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
       setSelectedGroup(null);
       setIsDeleteDialogOpen(false);
+      toast({
+        title: "Grupo excluído",
+        description: "O grupo foi removido permanentemente.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao excluir grupo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const gridUpdateMutation = useMutation({
+    mutationFn: async (data: GroupFormData) => {
+      const res = await apiRequest("PATCH", `/api/groups/${groupForAction?.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      setIsGridEditDialogOpen(false);
+      setGroupForAction(null);
+      toast({
+        title: "Grupo atualizado!",
+        description: "As informações do grupo foram salvas.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao atualizar grupo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const gridDeleteMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("DELETE", `/api/groups/${groupForAction?.id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      setIsGridDeleteDialogOpen(false);
+      setGroupForAction(null);
       toast({
         title: "Grupo excluído",
         description: "O grupo foi removido permanentemente.",
@@ -311,6 +361,15 @@ export default function Groups() {
     },
   });
 
+  const gridEditForm = useForm<GroupFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      isPublic: false,
+    },
+  });
+
   // Update edit form values when group changes
   useEffect(() => {
     if (selectedGroup) {
@@ -321,6 +380,17 @@ export default function Groups() {
       });
     }
   }, [selectedGroup, editForm]);
+
+  // Update grid edit form when groupForAction changes
+  useEffect(() => {
+    if (groupForAction) {
+      gridEditForm.reset({
+        name: groupForAction.name,
+        description: groupForAction.description || "",
+        isPublic: groupForAction.isPublic,
+      });
+    }
+  }, [groupForAction, gridEditForm]);
 
   const messageForm = useForm<MessageFormData>({
     resolver: zodResolver(messageSchema),
@@ -1697,43 +1767,57 @@ export default function Groups() {
                                 <><Crown className="h-3 w-3 mr-1 text-amber-500" /> Líder</>
                               ) : "Membro"}
                             </Badge>
-                            <div className="relative z-[1000]">
+                            <div className="relative">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button 
-                                    variant="outline" 
+                                    variant="ghost" 
                                     size="icon" 
-                                    className="h-8 w-8 rounded-full bg-amber-100 border-amber-300 hover:bg-amber-200 no-default-hover-elevate focus:ring-0 focus-visible:ring-0 shadow-sm flex items-center justify-center relative z-[9999]"
+                                    className="rounded-full"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                     }}
                                     data-testid="button-group-options"
                                   >
-                                    <MoreVertical className="h-5 w-5 text-amber-700" />
+                                    <MoreVertical className="h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl z-[10000]">
+                                <DropdownMenuContent align="end" className="rounded-xl border-0 shadow-2xl">
+                                  {group.role === "leader" && (
+                                    <>
+                                      <DropdownMenuItem 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setGroupForAction(group);
+                                          setIsGridEditDialogOpen(true);
+                                        }}
+                                        className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
+                                      >
+                                        <Settings className="h-4 w-4" />
+                                        Editar Grupo
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setGroupForAction(group);
+                                          setIsGridDeleteDialogOpen(true);
+                                        }}
+                                        className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
+                                      >
+                                        <LogOut className="h-4 w-4" />
+                                        Excluir Grupo
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
                                   <DropdownMenuItem 
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setSelectedGroup(group);
-                                      setIsEditDialogOpen(true);
                                     }}
                                     className="gap-2 cursor-pointer focus:bg-primary/5 rounded-lg"
                                   >
-                                    <Settings className="h-4 w-4" />
-                                    Editar Grupo
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedGroup(group);
-                                      setIsDeleteDialogOpen(true);
-                                    }}
-                                    className="gap-2 cursor-pointer focus:bg-destructive/5 text-destructive focus:text-destructive rounded-lg"
-                                  >
-                                    <LogOut className="h-4 w-4" />
-                                    Excluir Grupo
+                                    <ChevronRight className="h-4 w-4" />
+                                    Ver Grupo
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -1958,6 +2042,91 @@ export default function Groups() {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Grid Edit Dialog */}
+      <Dialog open={isGridEditDialogOpen} onOpenChange={(open) => {
+        setIsGridEditDialogOpen(open);
+        if (!open) setGroupForAction(null);
+      }}>
+        <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Editar Grupo</DialogTitle>
+          </DialogHeader>
+          <Form {...gridEditForm}>
+            <form onSubmit={gridEditForm.handleSubmit((data) => gridUpdateMutation.mutate(data))} className="space-y-4">
+              <FormField
+                control={gridEditForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Grupo</FormLabel>
+                    <FormControl>
+                      <Input {...field} data-testid="input-grid-edit-name" className="rounded-xl h-12" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={gridEditForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} data-testid="input-grid-edit-description" className="rounded-xl min-h-[100px]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={gridEditForm.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between rounded-xl border p-4 bg-muted/30">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Grupo Público</FormLabel>
+                      <FormDescription>Visível para toda a comunidade.</FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-grid-edit-public" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit" disabled={gridUpdateMutation.isPending} data-testid="button-grid-save-group" className="rounded-xl h-12 w-full font-bold">
+                  {gridUpdateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  Salvar Alterações
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Grid Delete Dialog */}
+      <Dialog open={isGridDeleteDialogOpen} onOpenChange={(open) => {
+        setIsGridDeleteDialogOpen(open);
+        if (!open) setGroupForAction(null);
+      }}>
+        <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold text-destructive">Excluir Grupo?</DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo "{groupForAction?.name}" serão perdidos para sempre.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-4">
+            <Button variant="outline" onClick={() => setIsGridDeleteDialogOpen(false)} data-testid="button-grid-cancel-delete" className="rounded-xl h-12 flex-1 order-2 sm:order-1">Cancelar</Button>
+            <Button variant="destructive" onClick={() => gridDeleteMutation.mutate()} disabled={gridDeleteMutation.isPending} data-testid="button-grid-confirm-delete" className="rounded-xl h-12 flex-1 order-1 sm:order-2 font-bold">
+              {gridDeleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Confirmar Exclusão
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
