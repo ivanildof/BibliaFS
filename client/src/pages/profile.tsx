@@ -53,6 +53,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { APP_VERSION, APP_NAME } from "@/lib/config";
 import type { ReadingPlan, Highlight, Note, Bookmark, Prayer, Achievement as AchievementType } from "@shared/schema";
 
 import { getLevelByXp, getXpProgressInLevel, GAMIFICATION_LEVELS } from "@/lib/gamification-levels";
@@ -336,6 +337,9 @@ export default function Profile() {
                   )}
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     Nível {currentLevel.level} - {currentLevel.title}
+                  </Badge>
+                  <Badge variant="outline" className="border-primary/20 text-muted-foreground/70">
+                    v{APP_VERSION}
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mb-4">{user.email}</p>

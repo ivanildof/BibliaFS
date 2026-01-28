@@ -41,6 +41,7 @@ import { cn } from "@/lib/utils";
 import { getLevelByXp, getXpProgressInLevel } from "@/lib/gamification-levels";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { APP_VERSION } from "@/lib/config";
 
 export function AppSidebar() {
   const [location] = useLocation();
@@ -251,7 +252,7 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-4 border-t border-sidebar-border/50">
         <div className="text-center text-[10px] text-muted-foreground/70">
-          © 2026 BíbliaFS • Desenvolvido por{" "}
+          v{APP_VERSION} • © 2026 BíbliaFS • Desenvolvido por{" "}
           <a 
             href="https://fabrisite.com.br/" 
             target="_blank" 
