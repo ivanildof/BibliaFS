@@ -84,7 +84,7 @@ export default function Help() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-faq" className="rounded-[2.5rem] border-none bg-card/80 backdrop-blur-xl shadow-lg overflow-hidden">
+          <Card data-testid="card-faq" className="premium-card ring-2 ring-primary/10 rounded-[2.5rem] border-none bg-card/80 backdrop-blur-xl shadow-lg overflow-hidden">
             <CardHeader className="bg-primary/5 p-8 border-b border-primary/10">
               <CardTitle className="flex items-center gap-3 text-2xl font-bold">
                 <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
@@ -123,7 +123,7 @@ export default function Help() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <Card data-testid="card-tutorials" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
+            <Card data-testid="card-tutorials" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-slate-600/10 text-slate-600">
@@ -148,7 +148,7 @@ export default function Help() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
-            <Card data-testid="card-contact-support" className="rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg h-full">
+            <Card data-testid="card-contact-support" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10 text-primary">

@@ -186,7 +186,7 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <Card className="rounded-[3rem] border-none bg-card/50 backdrop-blur-2xl shadow-2xl border border-border/50 overflow-hidden">
+                  <Card className="premium-card ring-2 ring-primary/10 rounded-[3rem] border-none bg-card/50 backdrop-blur-2xl shadow-2xl overflow-hidden">
                     <CardHeader className="p-6 sm:p-8 md:p-12 pb-0">
                       <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight">Envie sua Mensagem</CardTitle>
                       <CardDescription className="text-base sm:text-lg">
@@ -269,7 +269,7 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-12"
                 >
-                  <Card className="rounded-[4rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl text-center overflow-hidden">
+                  <Card className="premium-card ring-2 ring-primary/10 rounded-[4rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl text-center overflow-hidden">
                     <div className="h-4 w-full bg-green-500" />
                     <CardHeader className="pt-12 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-8">
                       <div className="flex justify-center mb-6 sm:mb-10">

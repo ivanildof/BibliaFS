@@ -307,8 +307,8 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-500 rounded-3xl border-none backdrop-blur-sm hover:shadow-2xl hover:-translate-y-1 ${
-                    plan.popular ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-xl ring-2 ring-primary/30' : 'bg-card/80 shadow-lg'
+                  className={`premium-card relative flex flex-col transition-all duration-500 rounded-3xl border-none backdrop-blur-sm hover:shadow-2xl hover:-translate-y-1 ${
+                    plan.popular ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-xl ring-2 ring-primary/30' : 'ring-2 ring-primary/10 bg-card/80 shadow-lg'
                   } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >

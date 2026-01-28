@@ -146,7 +146,7 @@ export default function About() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-mission" className="rounded-2xl border-none bg-gradient-to-br from-pink-500/10 to-pink-500/5 backdrop-blur-xl shadow-lg">
+          <Card data-testid="card-mission" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-gradient-to-br from-pink-500/10 to-pink-500/5 backdrop-blur-xl shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-xl">
                 <div className="h-12 w-12 rounded-xl bg-pink-500/10 flex items-center justify-center">
@@ -171,7 +171,7 @@ export default function About() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
-            <Card data-testid="card-features" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
+            <Card data-testid="card-features" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
@@ -200,7 +200,7 @@ export default function About() {
 
           <div className="space-y-6">
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-              <Card data-testid="card-languages" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+              <Card data-testid="card-languages" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
@@ -231,7 +231,7 @@ export default function About() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
-              <Card data-testid="card-platforms" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+              <Card data-testid="card-platforms" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <div className="h-12 w-12 rounded-xl bg-green-500/10 flex items-center justify-center">
@@ -268,7 +268,7 @@ export default function About() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Card data-testid="card-team" className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+          <Card data-testid="card-team" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-xl bg-green-500/10 flex items-center justify-center">
@@ -321,7 +321,7 @@ export default function About() {
               >
                 <Link href={page.href}>
                   <Card 
-                    className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg cursor-pointer h-full transition-all hover:shadow-xl group"
+                    className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg cursor-pointer h-full transition-all hover:shadow-xl group"
                     data-testid={`card-link-${page.href.slice(1)}`}
                   >
                     <CardContent className="p-5 flex items-center gap-4">
@@ -342,7 +342,7 @@ export default function About() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card data-testid="card-fabrisite" className="rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg">
+          <Card data-testid="card-fabrisite" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg">
             <CardContent className="p-8 text-center space-y-4">
               <div className="flex justify-center">
                 <div className="h-14 w-14 rounded-xl bg-primary/20 flex items-center justify-center">

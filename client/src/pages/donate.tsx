@@ -139,7 +139,7 @@ export default function Donate() {
   if (donationSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
+        <Card className="premium-card ring-2 ring-primary/10 max-w-md w-full">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
@@ -180,7 +180,7 @@ export default function Donate() {
           </div>
         </div>
 
-        <Card className="border-green-500/30 bg-green-500/5">
+        <Card className="premium-card ring-2 ring-green-500/20 border-green-500/30 bg-green-500/5">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
               <Shield className="h-6 w-6 text-green-600 mt-0.5" />
@@ -204,7 +204,7 @@ export default function Donate() {
         </Card>
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          <Card data-testid="card-donation-form">
+          <Card data-testid="card-donation-form" className="premium-card ring-2 ring-primary/10">
             <CardHeader>
               <CardTitle>{t.donate.amount}</CardTitle>
             </CardHeader>
@@ -351,7 +351,7 @@ export default function Donate() {
           </Card>
         </form>
 
-        <Card>
+        <Card className="premium-card ring-2 ring-primary/10">
           <CardHeader>
             <CardTitle className="text-lg">Sobre as doações</CardTitle>
           </CardHeader>

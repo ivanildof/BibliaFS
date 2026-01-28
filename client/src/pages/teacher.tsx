@@ -957,7 +957,7 @@ export default function Teacher() {
         {/* Assistant Tab */}
         {currentTab === "assistant" && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <Card className="rounded-[2.5rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[650px] mb-8">
+            <Card className="premium-card ring-2 ring-primary/10 rounded-[2.5rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[650px] mb-8">
               <CardHeader className="bg-primary/5 p-6 md:p-8 border-b border-primary/10">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -1074,7 +1074,7 @@ export default function Teacher() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 + idx * 0.05 }}
               >
-                <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+                <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
                   <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
                     <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.title}</CardTitle>
                     <div className={`p-2 rounded-xl ${stat.bg}`}>
@@ -1097,7 +1097,7 @@ export default function Teacher() {
           <>
             {lessons.length === 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-                <Card className="rounded-[3rem] border-none bg-muted/20 backdrop-blur-sm">
+                <Card className="premium-card ring-2 ring-primary/10 rounded-[3rem] border-none bg-muted/20 backdrop-blur-sm">
                   <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-background shadow-inner mb-8">
                       <BookOpen className="h-12 w-12 text-muted-foreground" />
@@ -1133,7 +1133,7 @@ export default function Teacher() {
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ delay: idx * 0.05 }}
                           >
-                            <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg group h-full" data-testid={`card-lesson-${lesson.id}`}>
+                            <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg group h-full" data-testid={`card-lesson-${lesson.id}`}>
                               <CardHeader className="pb-4">
                                 <div className="flex items-start justify-between gap-4 mb-2">
                                   <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">{lesson.title}</CardTitle>
@@ -1225,7 +1225,7 @@ export default function Teacher() {
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ delay: idx * 0.05 }}
                           >
-                            <Card className="rounded-2xl border-none bg-muted/30 backdrop-blur-sm border-dashed group h-full">
+                            <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-muted/30 backdrop-blur-sm border-dashed group h-full">
                               <CardHeader className="pb-4">
                                 <div className="flex items-start justify-between gap-4">
                                   <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">{lesson.title}</CardTitle>
