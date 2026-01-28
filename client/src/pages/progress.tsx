@@ -296,7 +296,7 @@ export default function Progress() {
                               <div className={`p-4 rounded-2xl ${
                                 unlocked 
                                   ? `bg-gradient-to-br ${categoryGradient} shadow-2xl ring-4 ring-white/10 group-hover:rotate-12 transition-transform`
-                                  : 'bg-muted/50 grayscale'
+                                  : 'bg-muted/50 grayscale opacity-40 group-hover:opacity-100 transition-opacity'
                               }`}>
                                 {unlocked ? (
                                   <Trophy className="h-6 w-6 text-white" />
@@ -323,7 +323,7 @@ export default function Progress() {
                           <CardContent className="p-6 pt-0 relative">
                             <div className="flex items-center justify-between mb-2">
                               {unlocked ? (
-                                <Badge className="rounded-full px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white border-none font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl">
+                                <Badge className="rounded-full px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-800 text-white border-none font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl">
                                   <Check className="h-3.5 w-3.5 mr-1.5" />
                                   CONQUISTADO
                                 </Badge>
@@ -332,7 +332,7 @@ export default function Progress() {
                                   {progress > 0 ? `${progress}% CONCLUÍDO` : 'BLOQUEADO'}
                                 </span>
                               )}
-                              <Badge className="rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border-2 border-amber-500/30 font-black text-xs px-3 py-1">
+                              <Badge className="rounded-full bg-amber-600/20 text-amber-500 dark:text-amber-400 border-2 border-amber-500/40 font-black text-xs px-3 py-1 shadow-lg shadow-amber-900/20">
                                 <Star className="h-3.5 w-3.5 mr-1.5 fill-current" />
                                 +{achievement.xpReward} XP
                               </Badge>

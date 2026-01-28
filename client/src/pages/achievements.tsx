@@ -221,27 +221,27 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-[2rem] border-none bg-card/40 backdrop-blur-md shadow-xl h-full opacity-85 hover:opacity-100 transition-all duration-300 ring-1 ring-white/5">
+                      <Card className="rounded-[2rem] border-none bg-card/40 backdrop-blur-md shadow-2xl h-full opacity-85 hover:opacity-100 transition-all duration-300 ring-2 ring-white/10 group">
                         <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6">
-                          <div className="p-4 rounded-2xl bg-muted/50 shadow-inner">
+                          <div className="p-4 rounded-2xl bg-muted/50 shadow-inner group-hover:bg-primary/10 transition-colors">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-1.5 flex-1">
-                            <CardTitle className="text-lg font-black text-muted-foreground tracking-tight">
+                            <CardTitle className="text-lg font-black text-muted-foreground group-hover:text-primary transition-colors tracking-tight">
                               {achievement.name}
                             </CardTitle>
-                            <CardDescription className="text-sm font-bold opacity-60">{achievement.description}</CardDescription>
+                            <CardDescription className="text-sm font-bold opacity-60 group-hover:opacity-100 transition-opacity">{achievement.description}</CardDescription>
                           </div>
                         </CardHeader>
                         <CardContent className="p-6 pt-0">
-                          <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-white/5">
+                          <div className="space-y-4 bg-muted/40 p-5 rounded-2xl border-2 border-white/5 shadow-inner">
                             <div className="flex items-center justify-between">
                               <span className="text-muted-foreground font-black text-[10px] uppercase tracking-widest">
                                 {achievement.currentValue} / {achievement.requirementValue}
                               </span>
                               <span className="font-black text-primary text-sm tracking-tighter">{Math.round(progress)}%</span>
                             </div>
-                            <Progress value={progress} className="h-3 rounded-full bg-muted/50" />
+                            <Progress value={progress} className="h-3 rounded-full bg-muted/50 shadow-sm" />
                           </div>
                         </CardContent>
                       </Card>
