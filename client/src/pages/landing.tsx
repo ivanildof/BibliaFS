@@ -191,15 +191,30 @@ export default function Landing() {
 
           {/* Desktop Menu */}
           <nav className="hidden lg:flex items-center gap-10">
-            {['recursos', 'temas', 'testemunhos', 'faq'].map((item) => (
-              <a 
-                key={item}
-                href={`#${item}`} 
-                className="text-sm font-bold text-muted-foreground hover:text-primary transition-all hover:tracking-widest"
-              >
-                {t.landing[`nav_${item}` as keyof typeof t.landing] || item.toUpperCase()}
-              </a>
-            ))}
+            <a 
+              href="#recursos" 
+              className="text-sm font-bold text-muted-foreground hover:text-primary transition-all hover:tracking-widest"
+            >
+              {t.landing.nav_resources}
+            </a>
+            <a 
+              href="#temas" 
+              className="text-sm font-bold text-muted-foreground hover:text-primary transition-all hover:tracking-widest"
+            >
+              {t.landing.nav_themes}
+            </a>
+            <a 
+              href="#testemunhos" 
+              className="text-sm font-bold text-muted-foreground hover:text-primary transition-all hover:tracking-widest"
+            >
+              {t.landing.nav_testimonials}
+            </a>
+            <a 
+              href="#faq" 
+              className="text-sm font-bold text-muted-foreground hover:text-primary transition-all hover:tracking-widest"
+            >
+              {t.landing.nav_faq}
+            </a>
           </nav>
 
           <motion.div 
@@ -225,14 +240,30 @@ export default function Landing() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64 p-2 rounded-2xl glass-darker">
-                {['recursos', 'temas', 'testemunhos', 'faq'].map((item) => (
-                  <DropdownMenuItem key={item} asChild className="rounded-xl">
-                    <a href={`#${item}`} className="cursor-pointer py-3 font-bold flex items-center gap-3">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      {t.landing[`nav_${item}` as keyof typeof t.landing] || item.toUpperCase()}
-                    </a>
-                  </DropdownMenuItem>
-                ))}
+                <DropdownMenuItem asChild className="rounded-xl">
+                  <a href="#recursos" className="cursor-pointer py-3 font-bold flex items-center gap-3">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    {t.landing.nav_resources}
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="rounded-xl">
+                  <a href="#temas" className="cursor-pointer py-3 font-bold flex items-center gap-3">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    {t.landing.nav_themes}
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="rounded-xl">
+                  <a href="#testemunhos" className="cursor-pointer py-3 font-bold flex items-center gap-3">
+                    <Star className="h-4 w-4 text-primary" />
+                    {t.landing.nav_testimonials}
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="rounded-xl">
+                  <a href="#faq" className="cursor-pointer py-3 font-bold flex items-center gap-3">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    {t.landing.nav_faq}
+                  </a>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl bg-primary/10 mt-2">
                   <Link href="/login" className="cursor-pointer py-3 font-black text-primary flex items-center gap-3">
                     <LogIn className="h-4 w-4" />
