@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Trophy, Star, Sparkles, Lock, Crown, Flame, BookOpen, Users, Target, Zap, Award, Medal, Gift, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Progress as ProgressBar } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -122,7 +122,7 @@ export default function Achievements() {
                 </Badge>
               </div>
               <div className="relative">
-                <Progress value={progressPercent} className="h-6 rounded-full bg-muted/30 shadow-inner" />
+                <ProgressBar value={progressPercent} className="h-6 rounded-full bg-muted/30 shadow-inner" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-xs font-black text-foreground drop-shadow-md">
                     {progressPercent.toFixed(0)}% CONCLUÍDO
