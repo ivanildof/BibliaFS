@@ -134,7 +134,7 @@ export default function Home() {
 
         {currentPlan && (
           <motion.div variants={itemVariants}>
-            <Card className="relative glass-darker border-none overflow-hidden rounded-[2rem] shadow-2xl group hover:shadow-primary/10 transition-all duration-500">
+            <Card className="relative premium-card border-none overflow-hidden rounded-[2rem] group hover:shadow-primary/20 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-primary to-indigo-600" />
               <CardHeader className="pb-4 relative">
@@ -191,7 +191,7 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
-                <Card className="cursor-pointer border-none glass-darker hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 rounded-[1.75rem] overflow-visible group" data-testid={`card-quick-action-${index}`}>
+                <Card className="cursor-pointer border-none premium-card hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 rounded-[1.75rem] overflow-visible group ring-2 ring-primary/10 hover:ring-primary/30" data-testid={`card-quick-action-${index}`}>
                   <CardContent className="p-6">
                     <div className="flex flex-col items-center text-center space-y-4">
                       <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform group-hover:scale-110 group-hover:rotate-6 transition-all`}>
@@ -207,7 +207,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="glass-darker border-none rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.3)] ring-1 ring-white/10">
+          <Card className="premium-card border-none rounded-[2.5rem] overflow-hidden ring-2 ring-indigo-500/20 hover:ring-indigo-500/40 transition-all">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-transparent to-purple-500/20" />
             <CardHeader className="p-8 pb-4 relative">
               <div className="flex items-center justify-between">
