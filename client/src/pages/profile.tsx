@@ -986,6 +986,13 @@ export default function Profile() {
           </TabsContent>
         </Tabs>
         </motion.div>
+        
+        {/* Version Footer */}
+        <div className="text-center py-6 mt-8 border-t border-border/50">
+          <p className="text-sm text-muted-foreground">
+            {APP_NAME} v{APP_VERSION}
+          </p>
+        </div>
       </div>
     </div>
   );
