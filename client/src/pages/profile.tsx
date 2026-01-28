@@ -988,10 +988,11 @@ export default function Profile() {
         </motion.div>
         
         {/* Version Footer */}
-        <div className="text-center py-6 mt-8 border-t border-border/50">
-          <p className="text-sm text-muted-foreground">
+        <div className="text-center py-8 mt-8 border-t border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-primary/5">
+          <p className="text-base font-medium text-primary">
             {APP_NAME} v{APP_VERSION}
           </p>
+          <p className="text-xs text-muted-foreground mt-1">Desenvolvido por FabriSite</p>
         </div>
       </div>
     </div>
