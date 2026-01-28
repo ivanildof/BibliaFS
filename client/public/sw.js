@@ -1,6 +1,6 @@
-const CACHE_NAME = 'bibliasf-v2';
-const STATIC_CACHE = 'bibliasf-static-v2';
-const DYNAMIC_CACHE = 'bibliasf-dynamic-v2';
+const CACHE_NAME = 'bibliasf-v3';
+const STATIC_CACHE = 'bibliasf-static-v3';
+const DYNAMIC_CACHE = 'bibliasf-dynamic-v3';
 
 const STATIC_ASSETS = [
   '/',
