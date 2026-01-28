@@ -52,6 +52,11 @@ export default function Home() {
     enabled: isAuthenticated,
   });
 
+  const { data: recentActivity, isLoading: isLoadingActivity } = useQuery<any[]>({
+    queryKey: ["/api/activity/recent"],
+    enabled: isAuthenticated,
+  });
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -197,18 +202,51 @@ export default function Home() {
             </CardHeader>
             <CardContent className="pt-2">
               <div className="space-y-2">
-                <motion.div 
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="flex items-center justify-center p-8 rounded-xl bg-muted/20 border border-dashed border-muted-foreground/20"
-                >
-                  <div className="text-center">
-                    <Sparkles className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground font-medium">Nenhuma atividade recente encontrada</p>
-                    <p className="text-xs text-muted-foreground/60">Comece a ler a Bíblia para ver seu progresso aqui</p>
+                {isLoadingActivity ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
-                </motion.div>
+                ) : recentActivity && recentActivity.length > 0 ? (
+                  recentActivity.map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + i * 0.1 }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className={`p-2 rounded-lg bg-gradient-to-br ${
+                        item.type === 'read' ? 'from-blue-800 to-slate-800' :
+                        item.type === 'prayer' ? 'from-rose-400 to-pink-500' :
+                        item.type === 'post' ? 'from-amber-400 to-orange-500' :
+                        'from-gray-400 to-gray-500'
+                      } shadow-sm`}>
+                        {item.type === 'read' ? <BookOpen className="h-4 w-4 text-white" /> :
+                         item.type === 'prayer' ? <MessageSquare className="h-4 w-4 text-white" /> :
+                         item.type === 'post' ? <Users className="h-4 w-4 text-white" /> :
+                         <Sparkles className="h-4 w-4 text-white" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm text-foreground truncate">{item.text}</p>
+                        <p className="text-[10px] text-muted-foreground">{item.time}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                    </motion.div>
+                  ))
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex items-center justify-center p-8 rounded-xl bg-muted/20 border border-dashed border-muted-foreground/20"
+                  >
+                    <div className="text-center">
+                      <Sparkles className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground font-medium">Nenhuma atividade recente encontrada</p>
+                      <p className="text-xs text-muted-foreground/60">Comece a ler a Bíblia para ver seu progresso aqui</p>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </CardContent>
           </Card>

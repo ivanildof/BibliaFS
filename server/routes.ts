@@ -342,7 +342,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }));
 
       const allActivity = [...recentPrayers, ...recentPosts, ...recentPlans]
-        .sort((a, b) => b.date.getTime() - a.date.date.getTime())
+        .sort((a, b) => b.date.getTime() - a.date.getTime())
         .slice(0, 5);
 
       res.json(allActivity);
