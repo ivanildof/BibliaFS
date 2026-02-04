@@ -91,7 +91,7 @@ export default function Terms() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + idx * 0.05 }}
           >
-            <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+            <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10">
@@ -122,7 +122,7 @@ export default function Terms() {
         ))}
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
+          <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-green-500/10">
@@ -152,7 +152,7 @@ export default function Terms() {
             { href: "/security", title: "Segurança", desc: "Medidas de segurança" }
           ].map((link, idx) => (
             <Link key={idx} href={link.href}>
-              <Card className="rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg cursor-pointer h-full transition-all hover:shadow-xl">
+              <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg cursor-pointer h-full transition-all hover:shadow-xl">
                 <CardContent className="p-5 text-center">
                   <h3 className="font-bold mb-1">{link.title}</h3>
                   <p className="text-sm text-muted-foreground">{link.desc}</p>
