@@ -259,6 +259,21 @@ export default function BibleReader() {
   const [commentarySheetOpen, setCommentarySheetOpen] = useState(false);
   const [verseForCommentary, setVerseForCommentary] = useState<{ number: number; text: string } | null>(null);
   
+  // Font size state
+  const [fontSize, setFontSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bible_font_size');
+      return saved ? parseInt(saved) : 18;
+    }
+    return 18;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bible_font_size', fontSize.toString());
+    }
+  }, [fontSize]);
+  
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -1765,6 +1780,31 @@ export default function BibleReader() {
                 )}
               </Button>
             )}
+
+            {/* Font Size Controls */}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+                onClick={() => setFontSize(Math.max(12, fontSize - 2))}
+                title="Diminuir fonte"
+                data-testid="button-decrease-font"
+              >
+                <span className="text-sm font-bold text-slate-600">A-</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+                onClick={() => setFontSize(Math.min(32, fontSize + 2))}
+                title="Aumentar fonte"
+                data-testid="button-increase-font"
+              >
+                <span className="text-lg font-bold text-slate-600">A+</span>
+              </Button>
+            </div>
             
             <button
               onClick={() => setIsChaptersOpen(true)}
