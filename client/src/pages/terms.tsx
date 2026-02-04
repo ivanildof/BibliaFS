@@ -46,10 +46,10 @@ export default function Terms() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-500/10 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -69,17 +69,17 @@ export default function Terms() {
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
+          className="text-center space-y-4 mb-12"
         >
-          <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-800 to-slate-800 flex items-center justify-center shadow-xl shadow-slate-800/20">
-              <FileText className="h-10 w-10 text-white" />
+          <div className="flex justify-center mb-6">
+            <div className="h-24 w-24 rounded-3xl bg-white shadow-xl flex items-center justify-center relative overflow-hidden">
+              <FileText className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-800 to-slate-800 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent italic uppercase tracking-tighter">
             Termos de Uso
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-slate-400 font-bold italic">
             Última atualização: {new Date().toLocaleDateString('pt-BR')}
           </p>
         </motion.div>
@@ -91,27 +91,27 @@ export default function Terms() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + idx * 0.05 }}
           >
-            <Card className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity z-0" />
+            <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-white font-black uppercase italic tracking-tighter">
-                  <div className="p-2.5 rounded-xl bg-white/5 ring-1 ring-white/10 text-white shadow-inner">
-                    <section.icon className="h-5 w-5 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+                <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-primary shadow-sm">
+                    <section.icon className="h-5 w-5" />
                   </div>
                   {section.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 text-white/60 font-medium leading-relaxed relative z-10">
+              <CardContent className="space-y-4 text-slate-500 font-medium leading-relaxed relative z-10">
                 {section.content && <p>{section.content}</p>}
-                {section.intro && <p className="text-white/80 font-bold italic">{section.intro}</p>}
+                {section.intro && <p className="text-slate-700 font-bold italic">{section.intro}</p>}
                 {section.forbidden && (
                   <div className="space-y-3 pt-2">
-                    <p className="font-black text-white/90 uppercase tracking-widest text-xs italic">Você concorda em NÃO:</p>
+                    <p className="font-black text-slate-800 uppercase tracking-widest text-xs italic">Você concorda em NÃO:</p>
                     <ul className="space-y-3">
                       {section.forbidden.map((item, i) => (
                         <li key={i} className="flex items-start gap-3">
-                          <span className="h-2 w-2 rounded-full bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)] mt-2 flex-shrink-0" />
-                          <span className="text-white/70">{item}</span>
+                          <span className="h-2 w-2 rounded-full bg-destructive/60 shadow-sm mt-2 flex-shrink-0" />
+                          <span className="text-slate-500">{item}</span>
                         </li>
                       ))}
                     </ul>

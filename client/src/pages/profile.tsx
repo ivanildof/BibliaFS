@@ -180,10 +180,10 @@ export default function Profile() {
   const completedPlans = readingPlans.filter(p => p.isCompleted);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 relative overflow-hidden">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/5 rounded-full blur-[150px]" />
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-slate-200/40 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 rounded-full blur-[150px]" />
       
       {/* Mobile Header with Action Buttons */}
       <div className="md:hidden sticky top-0 z-20 bg-background/80 backdrop-blur-2xl border-b border-border/50 px-4 py-3">
@@ -274,8 +274,8 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-        <Card className="rounded-[2.5rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_25px_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-indigo-600/5 z-0" />
+        <Card className="rounded-[2.5rem] border-none bg-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
           <CardContent className="pt-10 pb-10 px-10 relative z-10">
             <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
               <ProfileImageUpload 
@@ -285,7 +285,7 @@ export default function Profile() {
               
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <h1 className="font-display text-4xl md:text-5xl font-black tracking-tighter text-white drop-shadow-md uppercase italic" data-testid="text-profile-name">
+                  <h1 className="font-display text-4xl md:text-5xl font-black tracking-tighter text-slate-800 uppercase" data-testid="text-profile-name">
                     {user.firstName} {user.lastName}
                   </h1>
                   <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
@@ -354,37 +354,33 @@ export default function Profile() {
                 
                 {/* Quick Stats */}
                 <div className="flex flex-wrap gap-4 md:gap-6">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
                       <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-lg font-bold">{user.readingStreak || 0}</p>
-                      <p className="text-xs text-muted-foreground">{t.profile.reading_streak}</p>
+                      <p className="text-lg font-black text-slate-800 tracking-tight">{user.readingStreak || 0}</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{t.profile.reading_streak}</p>
                     </div>
                   </div>
                   
-                  <Separator orientation="vertical" className="h-14 hidden md:block" />
-                  
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10">
                       <CheckCircle2 className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-bold">{completedPlans.length}</p>
-                      <p className="text-xs text-muted-foreground">{t.plans.completedPlans}</p>
+                      <p className="text-lg font-black text-slate-800 tracking-tight">{completedPlans.length}</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{t.plans.completedPlans}</p>
                     </div>
                   </div>
                   
-                  <Separator orientation="vertical" className="h-14 hidden md:block" />
-                  
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-600/10">
-                      <Award className="h-5 w-5 text-slate-600" />
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
+                      <Award className="h-5 w-5 text-amber-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-bold">{achievements.length}</p>
-                      <p className="text-xs text-muted-foreground">{t.profile.achievements}</p>
+                      <p className="text-lg font-black text-slate-800 tracking-tight">{achievements.length}</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{t.profile.achievements}</p>
                     </div>
                   </div>
                 </div>
@@ -504,23 +500,23 @@ export default function Profile() {
             </div>
 
             {/* XP Progress Bar */}
-            <div className="mt-6 pt-6 border-t">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">
+            <div className="mt-8 pt-8 border-t border-slate-50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                   {t.progress.level} {currentLevel.title}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
                   {isMaxLevel ? `${xp} ${t.progress.xp} (Máximo)` : `${xpProgressInfo.current} / ${xpProgressInfo.needed} ${t.progress.xp}`}
                 </span>
               </div>
-              <Progress value={Math.min(xpProgressInfo.percent, 100)} className="h-2" />
+              <Progress value={Math.min(xpProgressInfo.percent, 100)} className="h-2 bg-slate-100" />
               {!isMaxLevel && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-[10px] font-bold text-slate-300 mt-2 italic">
                   Próximo nível: {nextLevel.title}
                 </p>
               )}
               {isMaxLevel && (
-                <p className="text-xs text-primary font-medium mt-1">
+                <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-2 italic">
                   Nível máximo alcançado!
                 </p>
               )}
@@ -536,56 +532,63 @@ export default function Profile() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto bg-card/80 backdrop-blur-xl rounded-2xl p-1.5 shadow-lg border-none" data-testid="tabs-profile">
-            <TabsTrigger value="plans" className="flex-col gap-1.5 py-3.5 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-plans">
+          <TabsList className="grid w-full grid-cols-3 h-auto bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 shadow-xl border border-slate-100" data-testid="tabs-profile">
+            <TabsTrigger value="plans" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-plans">
               <BookOpen className="h-5 w-5" />
-              <span className="text-xs font-medium">{t.profile.my_plans}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">{t.profile.my_plans}</span>
             </TabsTrigger>
-            <TabsTrigger value="prayers" className="flex-col gap-1.5 py-3.5 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-prayers">
+            <TabsTrigger value="prayers" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-prayers">
               <HandHeart className="h-5 w-5" />
-              <span className="text-xs font-medium">{t.nav.prayers}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">{t.nav.prayers}</span>
             </TabsTrigger>
-            <TabsTrigger value="donate" className="flex-col gap-1.5 py-3.5 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-md transition-all" data-testid="tab-donate">
+            <TabsTrigger value="donate" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-donate">
               <Heart className="h-5 w-5" />
-              <span className="text-xs font-medium">Doar</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">Doar</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Donate Tab */}
-          <TabsContent value="donate" className="space-y-6 mt-6">
-            <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10">
-              <CardHeader>
-                <CardTitle className="flex items-start gap-2">
-                  <Heart className="h-5 w-5 text-pink-600 fill-current mt-1 shrink-0" />
+          <TabsContent value="donate" className="space-y-6 mt-10">
+            <Card className="rounded-[2.5rem] border-none bg-white shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-500/5 via-transparent to-transparent rounded-bl-full z-0" />
+              <CardHeader className="p-8 sm:p-10 relative z-10">
+                <CardTitle className="flex items-start gap-4 text-xl font-black text-slate-800 uppercase italic tracking-tighter leading-tight">
+                  <Heart className="h-6 w-6 text-pink-600 fill-pink-600 mt-1 shrink-0 animate-pulse" />
                   <span>Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
-                <CardDescription className="mt-3">
+                <CardDescription className="mt-4 text-base font-bold text-slate-400 italic leading-relaxed">
                   Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos.
                   <br /><br />
                   Você não está só doando. Você está sendo parte da história de quem busca a Palavra, onde quer que esteja.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-8 sm:p-10 pt-0 relative z-10">
                 <Link href="/donate">
-                  <Button className="w-full" size="lg" data-testid="button-go-donate">
-                    <Heart className="h-4 w-4 mr-2 fill-current" />
+                  <Button className="w-full h-16 rounded-2xl text-xl font-black italic uppercase tracking-widest shadow-xl shadow-primary/20" size="lg" data-testid="button-go-donate">
+                    <Heart className="h-5 w-5 mr-3 fill-current" />
                     Fazer uma Doação
                   </Button>
                 </Link>
-                <div className="pt-4 border-t space-y-3">
-                  <p className="text-sm font-medium">Suas doações ajudam em:</p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                      <span>Manter o aplicativo gratuito para todos</span>
+                <div className="mt-10 pt-8 border-t border-slate-50 space-y-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2 italic">Suas doações ajudam em:</p>
+                  <ul className="space-y-4">
+                    <li className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                      <div className="p-1 rounded-full bg-green-500/10 shadow-inner">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      </div>
+                      <span className="font-bold text-slate-600">Manter o aplicativo gratuito para todos</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                      <span>Traduzir a Bíblia para mais idiomas</span>
+                    <li className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                      <div className="p-1 rounded-full bg-green-500/10 shadow-inner">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      </div>
+                      <span className="font-bold text-slate-600">Traduzir a Bíblia para mais idiomas</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                      <span>Desenvolver novos recursos e melhorias</span>
+                    <li className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                      <div className="p-1 rounded-full bg-green-500/10 shadow-inner">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      </div>
+                      <span className="font-bold text-slate-600">Desenvolver novos recursos e melhorias</span>
                     </li>
                   </ul>
                 </div>

@@ -245,10 +245,10 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 relative overflow-hidden">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-amber-500/5 rounded-full blur-[150px]" />
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-slate-200/40 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-slate-100/50 rounded-full blur-[150px]" />
       
       {/* Header */}
       <div className="relative z-10 p-4 md:p-6">
@@ -307,37 +307,37 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_25px_50px_rgba(0,0,0,0.4)] hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
+                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none bg-white shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
                     plan.popular ? 'ring-2 ring-primary/40' : ''
                   } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${plan.id === 'monthly' ? 'from-primary/20' : plan.id === 'yearly' ? 'from-amber-500/20' : 'from-blue-600/20'} via-transparent to-transparent z-0`} />
+                  <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl ${plan.id === 'monthly' ? 'from-primary/5' : plan.id === 'yearly' ? 'from-amber-500/5' : 'from-blue-600/5'} via-transparent to-transparent z-0`} />
                   <CardHeader className="pb-4 space-y-4 pt-10 px-8 relative z-10">
                     <div className="flex items-center justify-between">
-                      <div className={`h-16 w-16 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-1 ring-white/20`}>
-                        <IconComponent className="h-8 w-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+                      <div className={`h-16 w-16 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-lg border border-white/50`}>
+                        <IconComponent className="h-8 w-8 text-white drop-shadow-sm" />
                       </div>
                       {plan.popular && (
-                        <Badge className="bg-primary text-white text-[10px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(var(--primary),0.5)] border-none">
+                        <Badge className="bg-primary text-white text-[10px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/20 border-none">
                           Popular
                         </Badge>
                       )}
                     </div>
                     
                     <div>
-                      <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase italic">{plan.name}</CardTitle>
-                      <CardDescription className="text-base mt-2 font-bold text-white/40 italic">
+                      <CardTitle className="text-3xl font-black text-slate-800 tracking-tighter uppercase">{plan.name}</CardTitle>
+                      <CardDescription className="text-base mt-2 font-bold text-slate-400 italic">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
                     <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden">
-                      <span className="text-xl font-black text-white/40 mr-1.5 italic">R$</span>
-                      <span className="text-5xl font-black text-white tracking-tighter">
+                      <span className="text-xl font-black text-slate-300 mr-1.5 italic">R$</span>
+                      <span className="text-5xl font-black text-slate-800 tracking-tighter">
                         {plan.price.replace('R$ ', '')}
                       </span>
-                      <span className="text-white/20 text-xs ml-1.5 font-black uppercase tracking-widest italic">/{plan.period}</span>
+                      <span className="text-slate-300 text-xs ml-1.5 font-black uppercase tracking-widest italic">/{plan.period}</span>
                     </div>
                   </CardHeader>
 
@@ -345,10 +345,10 @@ export default function Pricing() {
                     <ul className="space-y-4">
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-3 text-base" data-testid={`feature-${plan.id}-${i}`}>
-                          <div className="p-1 rounded-full bg-white/5 ring-1 ring-white/10 mt-1 shadow-inner">
-                            <Check className="h-3 w-3 text-primary drop-shadow-[0_0_5px_rgba(var(--primary),0.5)]" />
+                          <div className="p-1 rounded-full bg-slate-50 border border-slate-100 mt-1 shadow-inner">
+                            <Check className="h-3 w-3 text-primary" />
                           </div>
-                          <span className="font-bold text-white/70 leading-relaxed">{feature}</span>
+                          <span className="font-bold text-slate-600 leading-relaxed">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -357,7 +357,7 @@ export default function Pricing() {
                   <CardFooter className="pb-10 px-8 relative z-10">
                     <Button 
                       className={`w-full h-16 rounded-2xl font-black text-xl italic uppercase tracking-widest transition-all ${
-                        plan.popular ? 'bg-primary text-white shadow-[0_15px_30px_rgba(var(--primary),0.4)]' : 'bg-white/5 text-white ring-1 ring-white/10 hover:bg-white/10'
+                        plan.popular ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100'
                       }`}
                       variant={plan.popular ? "default" : "outline"}
                       disabled={buttonConfig.disabled || checkoutMutation.isPending || portalMutation.isPending}

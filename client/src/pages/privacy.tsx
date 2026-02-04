@@ -77,10 +77,10 @@ export default function Privacy() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -100,28 +100,28 @@ export default function Privacy() {
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
+          className="text-center space-y-4 mb-12"
         >
-          <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-xl shadow-blue-500/20">
-              <Shield className="h-10 w-10 text-white" />
+          <div className="flex justify-center mb-6">
+            <div className="h-24 w-24 rounded-3xl bg-white shadow-xl flex items-center justify-center relative overflow-hidden">
+              <Shield className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent italic uppercase tracking-tighter">
             Política de Privacidade
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-slate-400 font-bold italic">
             Última atualização: {new Date().toLocaleDateString('pt-BR')}
           </p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-intro" className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-transparent z-0" />
+          <Card data-testid="card-intro" className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="text-xl font-black text-white italic uppercase tracking-tighter">Introdução</CardTitle>
+              <CardTitle className="text-xl font-black text-slate-800 italic uppercase tracking-tighter">Introdução</CardTitle>
             </CardHeader>
-            <CardContent className="text-white/60 font-medium text-lg relative z-10">
+            <CardContent className="text-slate-500 font-medium text-lg relative z-10">
               <p>
                 No BíbliaFS, levamos sua privacidade a sério. Esta Política de Privacidade explica 
                 como coletamos, usamos, armazenamos e protegemos suas informações pessoais.
@@ -137,26 +137,26 @@ export default function Privacy() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 + idx * 0.05 }}
           >
-            <Card className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity z-0" />
+            <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-white font-black uppercase italic tracking-tighter">
-                  <div className="p-2.5 rounded-xl bg-white/5 ring-1 ring-white/10 text-white shadow-inner">
-                    <section.icon className="h-5 w-5 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+                <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-primary shadow-sm">
+                    <section.icon className="h-5 w-5" />
                   </div>
                   {section.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-white/60 font-medium relative z-10">
-                {section.intro && <p className="font-bold text-white/80 italic">{section.intro}</p>}
+              <CardContent className="space-y-3 text-slate-500 font-medium relative z-10">
+                {section.intro && <p className="font-bold text-slate-700 italic">{section.intro}</p>}
                 {section.content && (
                   <ul className="space-y-4">
                     {section.content.map((item, i) => (
                       <li key={i} className="flex items-start gap-4">
-                        <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)] mt-2 flex-shrink-0" />
+                        <span className="h-2 w-2 rounded-full bg-primary/60 shadow-sm mt-2 flex-shrink-0" />
                         <div>
-                          <strong className="text-white font-black uppercase italic tracking-wider text-xs block mb-1">{item.label}</strong>
-                          <span className="text-white/60">{item.desc}</span>
+                          <strong className="text-slate-800 font-black uppercase italic tracking-wider text-[10px] block mb-1">{item.label}</strong>
+                          <span className="text-slate-500">{item.desc}</span>
                         </div>
                       </li>
                     ))}
@@ -166,8 +166,8 @@ export default function Privacy() {
                   <ul className="space-y-3">
                     {section.items.map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)] mt-2 flex-shrink-0" />
-                        <span className="text-white/70">{item}</span>
+                        <span className="h-2 w-2 rounded-full bg-primary/60 shadow-sm mt-2 flex-shrink-0" />
+                        <span className="text-slate-500">{item}</span>
                       </li>
                     ))}
                   </ul>

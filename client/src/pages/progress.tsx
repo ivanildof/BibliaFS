@@ -114,11 +114,10 @@ export default function Progress() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/20 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-primary/10 to-amber-500/10 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto p-6 relative z-10">
@@ -189,39 +188,39 @@ export default function Progress() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="mb-12 rounded-[2.5rem] border-none premium-card overflow-hidden relative ring-2 ring-primary/20">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/15 via-transparent to-amber-500/15" />
-            <CardHeader className="relative p-8">
+          <Card className="mb-12 rounded-[2.5rem] border-none bg-white shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="relative p-8 z-10">
               <div className="flex items-center gap-6">
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-primary to-blue-700 shadow-2xl shadow-primary/40 animate-pulse">
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-primary to-blue-700 shadow-xl shadow-primary/20 animate-pulse">
                   <TrendingUp className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-3xl font-black tracking-tight">{t.progress.nextLevel}</CardTitle>
-                  <CardDescription className="text-base font-medium mt-1 opacity-80">
+                  <CardTitle className="text-3xl font-black tracking-tighter text-slate-800">{t.progress.nextLevel}</CardTitle>
+                  <CardDescription className="text-base font-bold text-slate-400 mt-1">
                     {t.progress.continueReadingToLevel.replace('{level}', ((stats?.level || 1) + 1).toString())}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="relative p-8 pt-0">
+            <CardContent className="relative p-8 pt-0 z-10">
               <div className="space-y-6">
                 <div className="flex justify-between items-end text-sm mb-1">
                   <div className="space-y-1">
-                    <span className="text-muted-foreground block font-black uppercase tracking-[0.2em] text-xs">Progresso da Jornada</span>
+                    <span className="text-slate-400 block font-black uppercase tracking-[0.2em] text-[10px]">Progresso da Jornada</span>
                     <span className="text-5xl font-black bg-gradient-to-r from-primary to-blue-700 bg-clip-text text-transparent">{Math.round(xpProgressInfo.percent)}%</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground font-bold pb-1 bg-muted/50 px-4 py-2 rounded-full inline-block">
+                    <p className="text-xs text-slate-400 font-black uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-full inline-block border border-slate-100">
                       {t.progress.xpNeededForLevel.replace('{xp}', (xpProgressInfo.needed - xpProgressInfo.current).toString()).replace('{level}', (currentLevel + 1).toString())}
                     </p>
                   </div>
                 </div>
-                <ProgressBar value={xpProgressInfo.percent} className="h-6 rounded-full shadow-2xl bg-muted/20" />
+                <ProgressBar value={xpProgressInfo.percent} className="h-4 rounded-full shadow-inner bg-slate-100" />
                 {currentLevel < 50 && (
-                  <div className="flex items-center gap-3 mt-6 px-6 py-4 rounded-[1.5rem] bg-gradient-to-r from-amber-500/15 to-orange-600/15 border-2 border-amber-500/30 w-fit hover-elevate transition-all">
-                    <Zap className="h-6 w-6 text-amber-500 fill-amber-500 animate-pulse" />
-                    <span className="text-lg font-black text-amber-600 dark:text-amber-400">Próximo Título: {getLevelInfo(currentLevel + 1).title}</span>
+                  <div className="flex items-center gap-3 mt-6 px-6 py-4 rounded-2xl bg-amber-500/10 border border-amber-200/50 w-fit shadow-sm">
+                    <Zap className="h-5 w-5 text-amber-500 fill-amber-500 animate-pulse" />
+                    <span className="text-base font-black text-amber-600 tracking-tight">Próximo Título: {getLevelInfo(currentLevel + 1).title}</span>
                   </div>
                 )}
               </div>
@@ -279,42 +278,39 @@ export default function Progress() {
                         transition={{ delay: 0.6 + catIdx * 0.1 + achIdx * 0.05 }}
                       >
                         <Card 
-                          className={`rounded-[2rem] border-none h-full overflow-hidden group transition-all duration-500 relative ${
+                          className={`rounded-[2rem] border-none h-full overflow-hidden group transition-all duration-500 relative bg-white shadow-lg ${
                             unlocked 
-                              ? 'bg-slate-900/40 ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:ring-white/40 hover:-translate-y-2' 
-                              : 'bg-slate-900/60 ring-1 ring-white/10 opacity-90 hover:opacity-100 hover:ring-white/20'
+                              ? 'hover:shadow-2xl hover:-translate-y-2' 
+                              : 'opacity-95 hover:opacity-100'
                           }`}
                           data-testid={`card-achievement-${achievement.id}`}
                         >
-                          {unlocked && (
-                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.15] z-0`} />
-                          )}
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full z-0" />
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
                           
                           <CardHeader className="p-6 pb-4 relative z-10">
                             <div className="flex items-start gap-5">
-                              <div className={`p-4 rounded-2xl shadow-2xl transition-all duration-500 ${
+                              <div className={`p-4 rounded-2xl transition-all duration-500 shadow-md ${
                                 unlocked 
-                                  ? `bg-gradient-to-br ${categoryGradient} ring-1 ring-white/30 group-hover:scale-110 group-hover:rotate-6`
-                                  : 'bg-white/5 grayscale opacity-40 group-hover:opacity-100 ring-1 ring-white/10'
+                                  ? `bg-gradient-to-br ${categoryGradient} group-hover:scale-110 group-hover:rotate-6 border border-white/50`
+                                  : 'bg-slate-50 grayscale opacity-40 group-hover:opacity-100 border border-slate-100'
                               }`}>
                                 {unlocked ? (
-                                  <Trophy className="h-6 w-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+                                  <Trophy className="h-6 w-6 text-white drop-shadow-sm" />
                                 ) : (
-                                  <Lock className="h-6 w-6 text-white/40" />
+                                  <Lock className="h-6 w-6 text-slate-300" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <CardTitle className={`text-lg font-black flex items-center gap-2 tracking-tight transition-colors ${
-                                  unlocked ? 'text-white' : 'text-white/40'
+                                <CardTitle className={`text-lg font-black flex items-center gap-2 tracking-tighter transition-colors ${
+                                  unlocked ? 'text-slate-800' : 'text-slate-300'
                                 }`}>
                                   {achievement.name}
                                   {unlocked && (
                                     <Sparkles className="h-4 w-4 text-amber-400 animate-pulse flex-shrink-0" />
                                   )}
                                 </CardTitle>
-                                <CardDescription className={`text-sm mt-1.5 line-clamp-2 font-bold transition-opacity ${
-                                  unlocked ? 'text-white/70' : 'text-white/20'
+                                <CardDescription className={`text-xs mt-1 line-clamp-2 font-bold transition-opacity ${
+                                  unlocked ? 'text-slate-500' : 'text-slate-200'
                                 }`}>
                                   {achievement.description}
                                 </CardDescription>
@@ -325,30 +321,20 @@ export default function Progress() {
                           <CardContent className="p-6 pt-0 relative z-10">
                             <div className="flex items-center justify-between mb-2">
                               {unlocked ? (
-                                <Badge className="rounded-full px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                                <Badge className="rounded-full px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-100">
                                   <Check className="h-3 w-3 mr-1.5" />
                                   CONQUISTADO
                                 </Badge>
                               ) : (
-                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
-                                  {progress > 0 ? `${progress}% CONCLUÍDO` : 'BLOQUEADO'}
+                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">
+                                  BLOQUEADO
                                 </span>
                               )}
-                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
                                 <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                                <span className="font-black text-[11px] text-amber-500 tracking-tighter">+{achievement.xpReward} XP</span>
+                                <span className="font-black text-[11px] text-amber-600 tracking-tighter">+{achievement.xpReward} XP</span>
                               </div>
                             </div>
-                            
-                            {!unlocked && progress > 0 && (
-                              <div className="mt-5 p-4 rounded-2xl bg-white/5 border border-white/5 shadow-inner">
-                                <div className="flex justify-between text-[10px] font-black mb-2 uppercase text-white/40 tracking-widest">
-                                  <span>PROGRESSO</span>
-                                  <span className="text-primary">{progress}%</span>
-                                </div>
-                                <ProgressBar value={progress} className="h-2 rounded-full bg-white/5" />
-                              </div>
-                            )}
                           </CardContent>
                         </Card>
                       </motion.div>

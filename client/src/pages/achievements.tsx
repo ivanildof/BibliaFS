@@ -85,9 +85,9 @@ export default function Achievements() {
           className="text-center space-y-4 mb-14"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-amber-500/60" />
-            <Trophy className="h-7 w-7 text-amber-500 animate-bounce" />
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-amber-500/60" />
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-slate-200" />
+            <Trophy className="h-7 w-7 text-amber-500 animate-bounce drop-shadow-sm" />
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-slate-200" />
           </div>
           <p className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
           <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
@@ -140,11 +140,11 @@ export default function Achievements() {
             className="mb-14"
           >
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-700 shadow-xl shadow-amber-500/30">
-                <Trophy className="h-5 w-5 text-white" />
+              <div className="p-3 rounded-2xl bg-white shadow-lg border border-slate-50">
+                <Trophy className="h-5 w-5 text-amber-500" />
               </div>
-              <h2 className="text-2xl font-black text-foreground tracking-tight uppercase">Desbloqueadas</h2>
-              <Badge className="rounded-full text-xs font-black bg-amber-500/15 text-amber-600 border-2 border-amber-500/30 px-3 py-1">
+              <h2 className="text-2xl font-black text-slate-800 tracking-tighter uppercase">Desbloqueadas</h2>
+              <Badge className="rounded-full text-xs font-black bg-slate-100 text-slate-500 border border-slate-200 px-3 py-1">
                 {unlockedCount}
               </Badge>
             </div>
@@ -200,15 +200,15 @@ export default function Achievements() {
             transition={{ delay: 0.3 }}
           >
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-2xl bg-muted/50 border border-white/5 shadow-inner">
-                <Lock className="h-5 w-5 text-muted-foreground/50" />
+              <div className="p-3 rounded-2xl bg-white shadow-lg border border-slate-50">
+                <Lock className="h-5 w-5 text-slate-300" />
               </div>
-              <h2 className="text-2xl font-black text-muted-foreground/80 tracking-tight uppercase">Em Progresso</h2>
-              <Badge className="rounded-full text-xs font-black bg-muted/50 text-muted-foreground border-2 border-muted-foreground/10 px-3 py-1">
+              <h2 className="text-2xl font-black text-slate-400 tracking-tighter uppercase">Em Progresso</h2>
+              <Badge className="rounded-full text-xs font-black bg-slate-100 text-slate-400 border border-slate-200 px-3 py-1">
                 {lockedAchievements.length}
               </Badge>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
                 {lockedAchievements.map((achievement, idx) => {
                   const currentVal = achievement.currentValue ?? 0;
@@ -224,14 +224,14 @@ export default function Achievements() {
                       transition={{ delay: idx * 0.05 }}
                     >
                       <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 bg-white shadow-lg relative">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-100 to-transparent z-0" />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-100 to-transparent rounded-bl-full z-0" />
                         
                         <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-6 pb-2 relative z-10">
                           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 shadow-sm transition-all group-hover:scale-105">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-0.5 flex-1">
-                            <CardTitle className="text-lg font-black text-slate-700 tracking-tight leading-tight">
+                            <CardTitle className="text-lg font-black text-slate-700 tracking-tighter leading-tight">
                               {achievement.name}
                             </CardTitle>
                             <CardDescription className="text-xs font-bold text-slate-400 leading-tight">
@@ -246,9 +246,9 @@ export default function Achievements() {
                               BLOQUEADO
                             </span>
                             
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 shadow-sm">
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
                               <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                              <span className="font-black text-amber-500 text-[11px] tracking-tight">+{achievement.xpReward || 50} XP</span>
+                              <span className="font-black text-amber-600 text-[11px] tracking-tight">+{achievement.xpReward || 50} XP</span>
                             </div>
                           </div>
                         </CardContent>
@@ -266,13 +266,13 @@ export default function Achievements() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="rounded-[3rem] border-4 border-dashed border-muted/20 bg-muted/5">
+            <Card className="rounded-[3rem] border-2 border-dashed border-slate-200 bg-white shadow-sm">
               <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="flex h-28 w-28 items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-amber-400/10 to-orange-500/10 mb-8 shadow-inner">
-                  <Trophy className="h-14 w-14 text-amber-500/30" />
+                <div className="flex h-28 w-28 items-center justify-center rounded-[2.5rem] bg-slate-50 mb-8 shadow-inner border border-slate-100">
+                  <Trophy className="h-14 w-14 text-slate-200" />
                 </div>
-                <h3 className="font-black text-3xl mb-3 tracking-tight">O Palácio está Silencioso</h3>
-                <p className="text-muted-foreground max-w-md text-base font-medium opacity-70">
+                <h3 className="font-black text-3xl mb-3 tracking-tighter text-slate-800 uppercase italic">O Palácio está Silencioso</h3>
+                <p className="text-slate-400 max-w-md text-base font-bold italic">
                   Suas glórias ainda não foram escritas. Abra as Escrituras e comece sua jornada para a eternidade.
                 </p>
               </CardContent>
