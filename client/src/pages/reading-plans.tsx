@@ -170,10 +170,10 @@ export default function ReadingPlans() {
           className="text-center space-y-2 mb-12"
         >
           <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">LEITURA BÍBLICA</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#333333]" data-testid="text-page-title">
             {t.plans.title}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[#666666]">
             {t.plans.subtitle}
           </p>
         </motion.div>
@@ -181,29 +181,29 @@ export default function ReadingPlans() {
         <div className="flex justify-center mb-8">
           <Dialog open={isTemplatesDialogOpen} onOpenChange={setIsTemplatesDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-md hover-elevate">
+              <Button size="lg" data-testid="button-create-plan" className="whitespace-nowrap rounded-2xl shadow-md hover-elevate bg-[#FFA500] hover:bg-[#FF8C00] text-white border-0">
                 <Plus className="h-5 w-5 mr-2" />
                 {t.plans.startPlan}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl border-0 glass">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl border-0 bg-white">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold">Criar Plano de Leitura</DialogTitle>
-                <DialogDescription className="text-base">
+                <DialogTitle className="text-2xl font-bold text-[#333333]">Criar Plano de Leitura</DialogTitle>
+                <DialogDescription className="text-base text-[#666666]">
                   Escolha um modelo pré-definido ou crie um plano customizado
                 </DialogDescription>
               </DialogHeader>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-6">
-                <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-2xl">
-                  <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold">Modelos</TabsTrigger>
-                  <TabsTrigger value="custom" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold">Customizado</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 p-1 bg-slate-100 rounded-2xl">
+                  <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm font-semibold">Modelos</TabsTrigger>
+                  <TabsTrigger value="custom" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm font-semibold">Customizado</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="templates" className="space-y-6 mt-6">
               {templatesLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <Loader2 className="h-8 w-8 animate-spin text-[#FFA500]" />
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 gap-4">
@@ -215,26 +215,26 @@ export default function ReadingPlans() {
                       transition={{ delay: idx * 0.05 }}
                     >
                       <Card 
-                        className={`cursor-pointer transition-all hover-elevate rounded-3xl border-none shadow-md bg-card/50 backdrop-blur-sm ${
-                          selectedTemplate?.id === template.id ? 'ring-2 ring-primary bg-primary/5' : ''
+                        className={`cursor-pointer transition-all hover-elevate rounded-3xl border-none shadow-sm bg-[#FFD1DC]/30 ${
+                          selectedTemplate?.id === template.id ? 'ring-2 ring-[#FFA500] bg-[#FFD1DC]/50' : ''
                         }`}
                         onClick={() => setSelectedTemplate(template)}
                         data-testid={`card-template-${template.id}`}
                       >
                         <CardHeader>
-                          <CardTitle className="text-lg truncate">{template.name}</CardTitle>
-                          <CardDescription className="text-sm line-clamp-2">
+                          <CardTitle className="text-lg truncate text-[#333333]">{template.name}</CardTitle>
+                          <CardDescription className="text-sm line-clamp-2 text-[#666666]">
                             {template.description}
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="flex flex-wrap gap-2">
-                            <Badge variant="secondary" className="rounded-full px-3">
+                            <Badge variant="secondary" className="rounded-full px-3 bg-white/50 text-[#333333]">
                               <Clock className="h-3 w-3 mr-1" />
                               {template.duration} {t.plans.days}
                             </Badge>
                             {template.category && (
-                              <Badge variant="outline" className="rounded-full px-3">
+                              <Badge variant="outline" className="rounded-full px-3 border-[#FFA500]/30 text-[#FFA500]">
                                 {template.category}
                               </Badge>
                             )}
@@ -248,12 +248,12 @@ export default function ReadingPlans() {
                 </TabsContent>
 
                 <TabsContent value="custom" className="space-y-6 mt-6">
-                  <div className="space-y-6 bg-muted/30 p-6 rounded-3xl">
+                  <div className="space-y-6 bg-[#FFDAB9]/30 p-6 rounded-3xl">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="version" className="text-sm font-medium">Versão</Label>
+                        <Label htmlFor="version" className="text-sm font-medium text-[#333333]">Versão</Label>
                         <Select value={customVersion} onValueChange={setCustomVersion}>
-                          <SelectTrigger id="version" data-testid="select-version" className="rounded-xl bg-background">
+                          <SelectTrigger id="version" data-testid="select-version" className="rounded-xl bg-white border-0">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl">
@@ -265,9 +265,9 @@ export default function ReadingPlans() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="book" className="text-sm font-medium">Livro</Label>
+                        <Label htmlFor="book" className="text-sm font-medium text-[#333333]">Livro</Label>
                         <Select value={customBook} onValueChange={setCustomBook}>
-                          <SelectTrigger id="book" data-testid="select-book" className="rounded-xl bg-background">
+                          <SelectTrigger id="book" data-testid="select-book" className="rounded-xl bg-white border-0">
                             <SelectValue placeholder="Escolha um livro" />
                           </SelectTrigger>
                           <SelectContent className="max-h-60 rounded-xl">
@@ -281,7 +281,7 @@ export default function ReadingPlans() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="start" className="text-sm font-medium">Capítulo Inicial</Label>
+                        <Label htmlFor="start" className="text-sm font-medium text-[#333333]">Capítulo Inicial</Label>
                         <Input 
                           id="start" 
                           type="number" 
@@ -289,13 +289,13 @@ export default function ReadingPlans() {
                           value={customStartChapter}
                           onChange={(e) => setCustomStartChapter(e.target.value)}
                           placeholder="Ex: 1"
-                          className="rounded-xl bg-background"
+                          className="rounded-xl bg-white border-0"
                           data-testid="input-start-chapter"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="end" className="text-sm font-medium">Capítulo Final</Label>
+                        <Label htmlFor="end" className="text-sm font-medium text-[#333333]">Capítulo Final</Label>
                         <Input 
                           id="end" 
                           type="number" 
@@ -303,34 +303,10 @@ export default function ReadingPlans() {
                           value={customEndChapter}
                           onChange={(e) => setCustomEndChapter(e.target.value)}
                           placeholder="Ex: 5"
-                          className="rounded-xl bg-background"
+                          className="rounded-xl bg-white border-0"
                           data-testid="input-end-chapter"
                         />
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="verses" className="text-sm font-medium">Versículos (opcional)</Label>
-                      <Input 
-                        id="verses" 
-                        value={customVerses}
-                        onChange={(e) => setCustomVerses(e.target.value)}
-                        placeholder="Ex: 1-10 ou deixe em branco para todos"
-                        className="rounded-xl bg-background"
-                        data-testid="input-verses"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="title" className="text-sm font-medium">Título do Plano (opcional)</Label>
-                      <Input 
-                        id="title" 
-                        value={customTitle}
-                        onChange={(e) => setCustomTitle(e.target.value)}
-                        placeholder="Ex: Minha Leitura de Mateus"
-                        className="rounded-xl bg-background"
-                        data-testid="input-plan-title"
-                      />
                     </div>
                   </div>
                 </TabsContent>
@@ -341,7 +317,7 @@ export default function ReadingPlans() {
                   variant="outline" 
                   onClick={() => setIsTemplatesDialogOpen(false)}
                   data-testid="button-cancel"
-                  className="rounded-xl"
+                  className="rounded-xl border-slate-200"
                 >
                   {t.common.cancel}
                 </Button>
@@ -350,7 +326,7 @@ export default function ReadingPlans() {
                     disabled={!selectedTemplate || createFromTemplateMutation.isPending}
                     onClick={() => selectedTemplate && createFromTemplateMutation.mutate(selectedTemplate.id)}
                     data-testid="button-start-plan"
-                    className="rounded-xl shadow-md"
+                    className="rounded-xl shadow-md bg-[#FFA500] hover:bg-[#FF8C00] text-white border-0"
                   >
                     {createFromTemplateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     {createFromTemplateMutation.isPending ? t.plans.starting : t.plans.startPlan}
@@ -360,7 +336,7 @@ export default function ReadingPlans() {
                     disabled={!customBook || !customStartChapter || !customEndChapter || createCustomPlanMutation.isPending}
                     onClick={() => createCustomPlanMutation.mutate()}
                     data-testid="button-create-custom"
-                    className="rounded-xl shadow-md"
+                    className="rounded-xl shadow-md bg-[#FFA500] hover:bg-[#FF8C00] text-white border-0"
                   >
                     {createCustomPlanMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     {createCustomPlanMutation.isPending ? "Criando..." : "Criar Plano"}
@@ -373,9 +349,9 @@ export default function ReadingPlans() {
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {[
-            { title: t.plans.activePlans, val: activePlans.length, icon: BookOpen, tid: "text-active-plans", color: "text-primary" },
-            { title: t.plans.completedPlans, val: completedPlans.length, icon: Check, tid: "text-completed-plans", color: "text-green-500" },
-            { title: t.plans.currentDay, val: activePlans[0]?.currentDay ?? 0, icon: Calendar, tid: "text-current-day", color: "text-amber-500" }
+            { title: t.plans.activePlans, val: activePlans.length, icon: BookOpen, tid: "text-active-plans", color: "text-[#FFA500]", bgColor: "bg-[#D6EAF8]" },
+            { title: t.plans.completedPlans, val: completedPlans.length, icon: Check, tid: "text-completed-plans", color: "text-[#800080]", bgColor: "bg-[#E6E6FA]" },
+            { title: t.plans.currentDay, val: activePlans[0]?.currentDay ?? 0, icon: Calendar, tid: "text-current-day", color: "text-[#FF8C00]", bgColor: "bg-[#FFDAB9]" }
           ].map((stat, idx) => (
             <motion.div
               key={stat.title}
@@ -383,9 +359,9 @@ export default function ReadingPlans() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + idx * 0.1 }}
             >
-              <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10 hover:ring-primary/30 group transition-all">
+              <Card className={`rounded-3xl border-none shadow-sm ${stat.bgColor} group transition-all`}>
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-                  <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{stat.title}</CardTitle>
+                  <CardTitle className="text-sm font-semibold uppercase tracking-wider text-[#333333] opacity-70">{stat.title}</CardTitle>
                   <stat.icon className={`h-5 w-5 ${stat.color}`} />
                 </CardHeader>
                 <CardContent>
@@ -399,12 +375,12 @@ export default function ReadingPlans() {
         </div>
 
         <section className="mb-16">
-          <div className="bg-primary/5 p-6 rounded-[2rem] border border-primary/10 mb-12">
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
+          <div className="bg-[#D6EAF8]/30 p-6 rounded-[2rem] border border-[#D6EAF8]/50 mb-12">
+            <h2 className="text-xl font-bold mb-3 flex items-center gap-2 text-[#333333]">
+              <Sparkles className="h-5 w-5 text-[#FFA500]" />
               Como funcionam os planos?
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-[#666666] leading-relaxed">
               Os planos de leitura ajudam você a manter uma constância no estudo bíblico. 
               Ao iniciar um plano, você recebe leituras diárias organizadas. Cada dia concluído 
               rende <strong>10 XP</strong> para sua evolução no aplicativo e mantém sua <strong>ofensiva (streak)</strong> ativa. 
@@ -412,8 +388,8 @@ export default function ReadingPlans() {
             </p>
           </div>
 
-          <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
-            <TrendingUp className="h-6 w-6 text-primary" />
+          <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2 text-[#333333]">
+            <TrendingUp className="h-6 w-6 text-[#FFA500]" />
             {t.plans.activePlans}
           </h2>
           
@@ -423,16 +399,16 @@ export default function ReadingPlans() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <Card className="rounded-3xl border-none border-dashed bg-muted/30 backdrop-blur-sm">
+              <Card className="rounded-3xl border-none bg-slate-50">
                 <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-background shadow-inner mb-6">
-                    <BookOpen className="h-10 w-10 text-muted-foreground" />
+                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-sm mb-6">
+                    <BookOpen className="h-10 w-10 text-slate-300" />
                   </div>
-                  <h3 className="font-bold text-xl mb-3">{t.plans.noActivePlans}</h3>
-                  <p className="text-muted-foreground mb-8 max-w-sm">
+                  <h3 className="font-bold text-xl mb-3 text-[#333333]">{t.plans.noActivePlans}</h3>
+                  <p className="text-[#666666] mb-8 max-w-sm">
                     {t.plans.choosePlanDescription}
                   </p>
-                  <Button onClick={() => setIsTemplatesDialogOpen(true)} data-testid="button-start-first-plan" size="lg" className="rounded-2xl px-8">
+                  <Button onClick={() => setIsTemplatesDialogOpen(true)} data-testid="button-start-first-plan" size="lg" className="rounded-2xl px-8 bg-[#FFA500] hover:bg-[#FF8C00] text-white border-0">
                     <Plus className="h-5 w-5 mr-2" />
                     {t.plans.startFirstPlan}
                   </Button>
@@ -454,40 +430,40 @@ export default function ReadingPlans() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + planIdx * 0.1 }}
                   >
-                    <Card className="rounded-[2.5rem] border-none premium-card ring-2 ring-primary/10 hover:ring-primary/30 overflow-hidden transition-all" data-testid={`card-plan-${plan.id}`}>
-                      <CardHeader className="pb-4">
+                    <Card className="rounded-[2.5rem] border-none bg-white shadow-md overflow-hidden transition-all" data-testid={`card-plan-${plan.id}`}>
+                      <CardHeader className="pb-4 bg-[#FFD1DC]/10">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
-                            <CardTitle className="text-xl sm:text-2xl mb-2">{plan.title}</CardTitle>
-                            <CardDescription className="text-sm line-clamp-2">
+                            <CardTitle className="text-xl sm:text-2xl mb-2 text-[#333333]">{plan.title}</CardTitle>
+                            <CardDescription className="text-sm line-clamp-2 text-[#666666]">
                               {plan.description}
                             </CardDescription>
                           </div>
-                          <Badge variant="secondary" className="rounded-full px-4 py-1 bg-primary/10 text-primary border-none text-sm font-semibold">
+                          <Badge variant="secondary" className="rounded-full px-4 py-1 bg-[#FFA500]/10 text-[#FFA500] border-none text-sm font-semibold">
                             <Target className="h-3 w-3 mr-1.5" />
                             {t.plans.day} {currentDay}/{plan.totalDays}
                           </Badge>
                         </div>
                       </CardHeader>
-                      <CardContent className="space-y-6">
-                        <div className="bg-muted/30 p-4 rounded-[1.5rem]">
+                      <CardContent className="space-y-6 pt-6">
+                        <div className="bg-slate-50 p-4 rounded-[1.5rem]">
                           <div className="flex justify-between text-sm font-bold mb-3">
-                            <span className="text-muted-foreground">{t.plans.progress}</span>
-                            <span className="text-primary">{Math.round(progress)}%</span>
+                            <span className="text-[#666666]">{t.plans.progress}</span>
+                            <span className="text-[#800080]">{Math.round(progress)}%</span>
                           </div>
-                          <Progress value={progress} className="h-3 rounded-full" />
-                          <div className="flex items-center justify-between text-xs mt-3 text-muted-foreground">
+                          <Progress value={progress} className="h-3 rounded-full bg-slate-200" />
+                          <div className="flex items-center justify-between text-xs mt-3 text-[#666666]">
                             <span>{completedDays} dias concluídos</span>
                             <span>{plan.totalDays - completedDays} restantes</span>
                           </div>
                         </div>
                         
                         {schedule[currentDay - 1] && !schedule[currentDay - 1].isCompleted && (
-                          <div className="pt-4 border-t border-border/50">
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">{t.plans.todayReading}</p>
+                          <div className="pt-4 border-t border-slate-100">
+                            <p className="text-sm font-bold text-[#666666] uppercase tracking-wider mb-4">{t.plans.todayReading}</p>
                             <div className="grid gap-2">
                               {schedule[currentDay - 1].readings.map((reading: any, idx: number) => (
-                                <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-muted/20 border border-border/30">
+                                <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-[#D6EAF8]/20 border border-[#D6EAF8]/30">
                                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
                                     {idx + 1}
                                   </div>
