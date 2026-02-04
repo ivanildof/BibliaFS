@@ -281,7 +281,7 @@ export default function Pricing() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <Badge className="mt-6 bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30 px-4 py-2 rounded-full text-sm font-bold">
+              <Badge className="mt-6 bg-green-500/20 text-green-600 border-green-500/30 px-4 py-2 rounded-full text-sm font-bold">
                 <Crown className="h-4 w-4 mr-2" />
                 Assinante {currentPlan === 'monthly' ? 'Mensal' : currentPlan === 'yearly' ? 'Anual' : 'Premium Plus'}
               </Badge>

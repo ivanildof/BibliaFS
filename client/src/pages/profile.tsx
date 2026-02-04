@@ -144,7 +144,7 @@ export default function Profile() {
   // Show login prompt if not authenticated
   if (!user && !isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#fcfaff] flex items-center justify-center p-4">
         <Card className="max-w-md w-full rounded-3xl border-none bg-white shadow-xl">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
@@ -186,7 +186,7 @@ export default function Profile() {
       <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 rounded-full blur-[150px]" />
       
       {/* Mobile Header with Action Buttons */}
-      <div className="md:hidden sticky top-0 z-20 bg-background/80 backdrop-blur-2xl border-b border-border/50 px-4 py-3">
+      <div className="md:hidden sticky top-0 z-20 bg-white/90 backdrop-blur-2xl border-b border-slate-100 px-4 py-3">
         <div className="flex items-center justify-end gap-2">
           <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-share-profile-mobile">
             <Share2 className="h-5 w-5" />
@@ -779,7 +779,7 @@ export default function Profile() {
                   ) : (
                     <div className="grid md:grid-cols-2 gap-4">
                       {completedPlans.map((plan) => (
-                        <div key={plan.id} className="border rounded-lg p-4 bg-green-50 dark:bg-green-950/20">
+                        <div key={plan.id} className="border border-slate-100 rounded-lg p-4 bg-green-50">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <h3 className="font-semibold text-sm">{plan.title}</h3>
