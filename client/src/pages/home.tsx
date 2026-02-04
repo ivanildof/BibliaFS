@@ -170,7 +170,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <Button size="lg" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:scale-[1.02] transition-all bg-[#FFA500] hover:bg-[#FF8C00] border-0" asChild data-testid="button-continue-reading">
+                <Button size="lg" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:scale-[1.02] transition-all bg-[#FFA500] border-0" asChild data-testid="button-continue-reading">
                   <Link href="/bible">
                     <BookOpen className="mr-3 h-5 w-5" />
                     CONTINUAR LEITURA

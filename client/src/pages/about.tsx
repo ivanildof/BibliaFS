@@ -116,7 +116,7 @@ export default function About() {
         <div className="flex justify-start">
           <Button 
             size="sm" 
-            className="rounded-2xl gap-2 bg-[#FFA500] hover:bg-[#FF8C00] text-white transition-all font-black uppercase tracking-widest text-[10px]"
+            className="rounded-2xl gap-2 bg-[#FFA500] text-white transition-all font-black uppercase tracking-widest text-[10px]"
             onClick={() => setLocation("/")}
           >
             <ArrowLeft className="h-3 w-3" />
@@ -304,7 +304,7 @@ export default function About() {
               </p>
               <div className="pt-4">
                 <Link href="/donate" data-testid="link-donate-about">
-                  <Button className="rounded-2xl h-12 px-8 shadow-lg font-black uppercase tracking-widest text-xs gap-3 hover:scale-105 active:scale-95 transition-all bg-[#FFA500] hover:bg-[#FF8C00]" data-testid="button-donate-about">
+                  <Button className="rounded-2xl h-12 px-8 shadow-lg font-black uppercase tracking-widest text-xs gap-3 hover:scale-105 active:scale-95 transition-all bg-[#FFA500]" data-testid="button-donate-about">
                     <Heart className="h-4 w-4 fill-white/20" />
                     Apoiar o Projeto
                   </Button>
@@ -382,7 +382,7 @@ export default function About() {
                 className="inline-block mt-4"
                 data-testid="link-fabrisite"
               >
-                <Button className="rounded-2xl h-14 px-10 bg-[#FFA500] hover:bg-[#FF8C00] text-white font-black uppercase tracking-widest text-xs gap-3 transition-all shadow-lg" data-testid="button-fabrisite">
+                <Button className="rounded-2xl h-14 px-10 bg-[#FFA500] text-white font-black uppercase tracking-widest text-xs gap-3 transition-all shadow-lg" data-testid="button-fabrisite">
                   Visitar Website Oficial
                   <ExternalLink className="h-4 w-4" />
                 </Button>
@@ -417,7 +417,7 @@ export default function About() {
           >
             <Button
               size="icon"
-              className="h-12 w-12 rounded-full bg-[#FFA500] hover:bg-[#FF8C00] shadow-lg"
+              className="h-12 w-12 rounded-full bg-[#FFA500] shadow-lg"
               onClick={scrollToTop}
             >
               <ChevronUp className="h-6 w-6 text-white" />

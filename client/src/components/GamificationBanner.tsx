@@ -139,7 +139,7 @@ export function GamificationBanner() {
             )}
           </div>
           <Link href="/achievements">
-            <Button size="sm" className="bg-[#FFA500] hover:bg-[#FF8C00] text-white rounded-full px-3" data-testid="button-view-achievements">
+            <Button size="sm" className="bg-[#FFA500] text-white rounded-full px-3" data-testid="button-view-achievements">
               <span className="hidden sm:inline text-xs">Ver todas</span>
               <ChevronRight className="h-4 w-4 sm:ml-1" />
             </Button>
