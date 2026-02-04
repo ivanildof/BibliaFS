@@ -1718,7 +1718,7 @@ export default function BibleReader() {
       )}
 
       {/* Bottom Navigation - Premium Style */}
-      <div className="fixed bottom-20 md:bottom-4 left-0 right-0 z-40 px-3">
+      <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-40 px-3">
         <div className="max-w-lg mx-auto bg-white/95 backdrop-blur-md border border-primary/20 rounded-full shadow-2xl px-4 py-2 ring-1 ring-primary/5">
           <div className="flex items-center justify-center gap-3">
             <Button
@@ -1809,7 +1809,7 @@ export default function BibleReader() {
       </div>
 
       {/* Font Size Controls - Floating Buttons */}
-      <div className="fixed bottom-36 md:bottom-20 right-3 z-40 flex flex-col gap-2">
+      <div className="fixed bottom-40 md:bottom-20 right-3 z-40 flex flex-col gap-2">
         <Button
           variant="default"
           size="icon"
