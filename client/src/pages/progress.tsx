@@ -276,37 +276,37 @@ export default function Progress() {
                         transition={{ delay: 0.6 + catIdx * 0.1 + achIdx * 0.05 }}
                       >
                         <Card 
-                          className={`rounded-[2rem] border-none h-full overflow-hidden group transition-all duration-500 relative ${categoryColor} shadow-lg ${
+                          className={`rounded-[2.5rem] border-none h-full overflow-hidden group transition-all duration-500 relative bg-white shadow-lg ${
                             unlocked 
                               ? 'hover:shadow-xl hover:-translate-y-2' 
                               : 'opacity-95 hover:opacity-100'
                           }`}
                           data-testid={`card-achievement-${achievement.id}`}
                         >
-                          <CardHeader className="p-6 pb-4 relative z-10">
+                          {/* Subtle gradient background like in the image */}
+                          <div className={`absolute inset-0 bg-gradient-to-br ${categoryColor} opacity-20 z-0`} />
+                          
+                          <CardHeader className="p-8 pb-4 relative z-10">
                             <div className="flex items-start gap-5">
-                              <div className={`p-4 rounded-2xl transition-all duration-500 shadow-md ${
+                              <div className={`p-4 rounded-2xl transition-all duration-500 shadow-md flex items-center justify-center ${
                                 unlocked 
-                                  ? 'bg-[#FFA500] group-hover:scale-110 group-hover:rotate-6'
-                                  : 'bg-white/50 opacity-60 group-hover:opacity-100'
+                                  ? 'bg-white group-hover:scale-110 group-hover:rotate-6 shadow-sm border border-[#E6E6FA]'
+                                  : 'bg-white opacity-40 group-hover:opacity-100 border border-[#E6E6FA]'
                               }`}>
                                 {unlocked ? (
-                                  <Trophy className="h-6 w-6 text-white" />
+                                  <Trophy className="h-6 w-6 text-[#FFA500]" />
                                 ) : (
-                                  <Lock className="h-6 w-6 text-[#666666]" />
+                                  <Lock className="h-6 w-6 text-[#666666]/30" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <CardTitle className={`text-lg font-black flex items-center gap-2 tracking-tighter transition-colors ${
-                                  unlocked ? 'text-[#333333]' : 'text-[#666666]'
+                                <CardTitle className={`text-xl font-black flex items-center gap-2 tracking-tighter transition-colors uppercase italic ${
+                                  unlocked ? 'text-[#333333]' : 'text-[#666666]/60'
                                 }`}>
                                   {achievement.name}
-                                  {unlocked && (
-                                    <Sparkles className="h-4 w-4 text-[#FFA500] animate-pulse flex-shrink-0" />
-                                  )}
                                 </CardTitle>
-                                <CardDescription className={`text-xs mt-1 line-clamp-2 font-bold transition-opacity ${
-                                  unlocked ? 'text-[#666666]' : 'text-[#666666]/50'
+                                <CardDescription className={`text-sm mt-1 line-clamp-2 font-bold transition-opacity italic leading-tight ${
+                                  unlocked ? 'text-[#666666]' : 'text-[#666666]/40'
                                 }`}>
                                   {achievement.description}
                                 </CardDescription>
@@ -314,21 +314,21 @@ export default function Progress() {
                             </div>
                           </CardHeader>
                           
-                          <CardContent className="p-6 pt-0 relative z-10">
-                            <div className="flex items-center justify-between mb-2">
+                          <CardContent className="p-8 pt-0 relative z-10">
+                            <div className="flex items-center justify-between mt-4">
                               {unlocked ? (
-                                <Badge className="rounded-full px-4 py-1.5 bg-[#800080] text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-lg">
+                                <Badge className="rounded-full px-5 py-2 bg-gradient-to-r from-[#800080] to-[#9B30FF] text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-lg">
                                   <Check className="h-3 w-3 mr-1.5" />
                                   CONQUISTADO
                                 </Badge>
                               ) : (
-                                <span className="text-[10px] font-black text-[#666666] uppercase tracking-[0.2em]">
+                                <span className="text-[10px] font-black text-[#666666]/40 uppercase tracking-[0.2em] italic">
                                   BLOQUEADO
                                 </span>
                               )}
-                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFA500]/10 border border-[#FFA500]/20 shadow-sm">
-                                <Star className="h-3 w-3 text-[#FFA500] fill-[#FFA500]" />
-                                <span className="font-black text-[11px] text-[#333333] tracking-tighter">+{achievement.xpReward} XP</span>
+                              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-[#FFDAB9]">
+                                <Star className="h-3.5 w-3.5 text-[#FFA500] fill-[#FFA500]" />
+                                <span className="font-black text-xs text-[#FFA500] tracking-tighter">+{achievement.xpReward} XP</span>
                               </div>
                             </div>
                           </CardContent>

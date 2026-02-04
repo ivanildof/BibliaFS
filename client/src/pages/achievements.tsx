@@ -19,7 +19,7 @@ interface Achievement {
 }
 
 const getAchievementIcon = (icon: string, isUnlocked: boolean) => {
-  const iconClass = isUnlocked ? "h-7 w-7 text-white" : "h-7 w-7 text-slate-300";
+  const iconClass = isUnlocked ? "h-7 w-7 text-[#FFA500]" : "h-7 w-7 text-[#666666]/30";
   switch (icon) {
     case "flame": return <Flame className={iconClass} />;
     case "book": return <BookOpen className={iconClass} />;
@@ -151,42 +151,40 @@ export default function Achievements() {
             <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
                 {unlockedAchievements.map((achievement, idx) => (
-                  <motion.div
-                    key={achievement.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.05 }}
-                  >
-                    <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 bg-white shadow-xl relative">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.05] group-hover:opacity-[0.1] transition-opacity z-0`} />
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
-                      <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative z-10">
-                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-xl transform group-hover:scale-110 group-hover:rotate-6 transition-all border border-white/50`}>
-                          {getAchievementIcon(achievement.icon, true)}
-                        </div>
-                        <div className="flex flex-col gap-1.5 flex-1">
-                          <CardTitle className="text-xl font-black tracking-tighter text-slate-800">
-                            {achievement.name}
-                          </CardTitle>
-                          <CardDescription className="text-sm font-bold text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors">{achievement.description}</CardDescription>
-                        </div>
-                        <div className="absolute top-4 right-4">
-                          <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-6 pt-0 relative z-10 flex justify-between items-center">
-                        <Badge className="rounded-full px-5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-200">
-                          <Check className="h-3 w-3 mr-2" />
-                          CONQUISTADO
-                        </Badge>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          <span className="font-black text-amber-600 text-[11px] tracking-tighter">+{achievement.xpReward || 50} XP</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                  return (
+                    <motion.div
+                      key={achievement.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <Card className="rounded-[2.5rem] border-none h-full overflow-hidden group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 bg-white shadow-xl relative">
+                        <div className={`absolute inset-0 bg-gradient-to-br from-[#E6E6FA] to-white opacity-20 z-0`} />
+                        <CardHeader className="flex flex-row items-center gap-6 space-y-0 p-8 relative z-10">
+                          <div className={`p-4 rounded-2xl bg-white shadow-sm border border-[#E6E6FA] transform group-hover:scale-110 group-hover:rotate-6 transition-all flex items-center justify-center`}>
+                            {getAchievementIcon(achievement.icon, true)}
+                          </div>
+                          <div className="flex flex-col gap-1.5 flex-1">
+                            <CardTitle className="text-2xl font-black tracking-tighter text-[#333333] uppercase italic">
+                              {achievement.name}
+                            </CardTitle>
+                            <CardDescription className="text-base font-bold text-[#666666] leading-relaxed italic">{achievement.description}</CardDescription>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-8 pt-0 relative z-10 flex justify-between items-center">
+                          <Badge className="rounded-full px-6 py-2 bg-gradient-to-r from-[#800080] to-[#9B30FF] text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-lg">
+                            <Check className="h-3 w-3 mr-2" />
+                            CONQUISTADO
+                          </Badge>
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-[#FFDAB9]">
+                            <Star className="h-4 w-4 text-[#FFA500] fill-[#FFA500]" />
+                            <span className="font-black text-[#FFA500] text-xs tracking-tighter">+{achievement.xpReward || 50} XP</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
                 ))}
               </AnimatePresence>
             </div>
@@ -223,33 +221,31 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 bg-white shadow-lg relative">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-100 to-transparent rounded-bl-full z-0" />
+                      <Card className="rounded-[2.5rem] border-none h-full overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 bg-white shadow-lg relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#F8F8FF] to-white opacity-50 z-0" />
                         
-                        <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-6 pb-2 relative z-10">
-                          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 shadow-sm transition-all group-hover:scale-105">
+                        <CardHeader className="flex flex-row items-center gap-6 space-y-0 p-8 pb-4 relative z-10">
+                          <div className="p-4 rounded-2xl bg-white border border-[#E6E6FA] shadow-sm transition-all group-hover:scale-105 flex items-center justify-center">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
-                          <div className="flex flex-col gap-0.5 flex-1">
-                            <CardTitle className="text-lg font-black text-slate-700 tracking-tighter leading-tight">
+                          <div className="flex flex-col gap-1 flex-1">
+                            <CardTitle className="text-xl font-black text-[#666666]/60 tracking-tighter leading-tight uppercase italic">
                               {achievement.name}
                             </CardTitle>
-                            <CardDescription className="text-xs font-bold text-slate-400 leading-tight">
+                            <CardDescription className="text-sm font-bold text-[#666666]/40 leading-tight italic">
                               {achievement.description}
                             </CardDescription>
                           </div>
                         </CardHeader>
 
-                        <CardContent className="px-6 pb-6 pt-2 relative z-10">
-                          <div className="flex items-center justify-between mt-4">
-                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                              BLOQUEADO
-                            </span>
-                            
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
-                              <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                              <span className="font-black text-amber-600 text-[11px] tracking-tight">+{achievement.xpReward || 50} XP</span>
-                            </div>
+                        <CardContent className="px-8 pb-8 pt-2 relative z-10 flex items-center justify-between">
+                          <span className="text-[10px] font-black text-[#666666]/40 uppercase tracking-widest italic">
+                            BLOQUEADO
+                          </span>
+                          
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-[#FFDAB9]">
+                            <Star className="h-4 w-4 text-[#FFA500] fill-[#FFA500]" />
+                            <span className="font-black text-[#FFA500] text-xs tracking-tight">+{achievement.xpReward || 50} XP</span>
                           </div>
                         </CardContent>
                       </Card>
