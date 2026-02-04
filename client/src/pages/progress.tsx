@@ -128,11 +128,11 @@ export default function Progress() {
           className="text-center space-y-3 mb-12"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_10px_rgba(251,191,36,0.5)]" />
-            <Crown className="h-7 w-7 text-amber-500 fill-amber-500/20 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse" />
-            <div className="h-px w-12 bg-gradient-to-l from-transparent via-amber-400 to-transparent shadow-[0_0_10px_rgba(251,191,36,0.5)]" />
+            <div className="h-px w-12 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
+            <Crown className="h-8 w-8 text-amber-500 fill-amber-500/30 drop-shadow-[0_0_12px_rgba(245,158,11,0.7)] animate-pulse" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
           </div>
-          <p className="text-[11px] font-black text-slate-500/80 uppercase tracking-[0.4em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
+          <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
           <h1 className="font-display text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-primary via-amber-500 to-primary bg-clip-text text-transparent drop-shadow-sm" data-testid="text-page-title">
             {t.progress.title}
           </h1>
