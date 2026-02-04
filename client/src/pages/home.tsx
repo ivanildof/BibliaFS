@@ -106,12 +106,12 @@ export default function Home() {
         className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 relative z-10"
       >
         <motion.div variants={itemVariants} className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <div className="h-px w-8 bg-gradient-to-r from-transparent to-primary/50" />
-            <Crown className="h-5 w-5 text-primary" />
-            <div className="h-px w-8 bg-gradient-to-l from-transparent to-primary/50" />
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
+            <Crown className="h-8 w-8 text-amber-500 fill-amber-500/30 drop-shadow-[0_0_12px_rgba(245,158,11,0.7)] animate-pulse" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
           </div>
-          <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">RECONHECIMENTO DE USUÁRIO</p>
+          <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
           <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
             Olá, {user?.firstName || "Estudante"}
           </h1>
