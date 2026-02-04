@@ -94,7 +94,7 @@ export default function Privacy() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <p className="text-muted-foreground">Voltar para Sobre</p>
+          <p className="text-slate-400">Voltar para Sobre</p>
         </motion.div>
 
         <motion.div 
@@ -178,16 +178,17 @@ export default function Privacy() {
         ))}
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-pink-500/10">
+          <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="relative z-10">
+              <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
+                <div className="p-2.5 rounded-xl bg-pink-500/10 border border-pink-100 shadow-sm">
                   <Baby className="h-5 w-5 text-pink-600" />
                 </div>
                 7. Privacidade de Menores
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-slate-500 font-medium relative z-10">
               <p>
                 O BíbliaFS pode ser usado por menores de idade, mas recomendamos supervisão parental. 
                 Não coletamos intencionalmente informações de crianças menores de 13 anos sem 
@@ -198,16 +199,17 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-          <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/10">
+          <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="relative z-10">
+              <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-100 shadow-sm">
                   <RefreshCw className="h-5 w-5 text-amber-600" />
                 </div>
                 8. Alterações nesta Política
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-slate-500 font-medium relative z-10">
               <p>
                 Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos sobre 
                 mudanças significativas através do aplicativo ou por e-mail.
@@ -217,16 +219,17 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-green-500/10">
+          <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="relative z-10">
+              <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
+                <div className="p-2.5 rounded-xl bg-green-500/10 border border-green-100 shadow-sm">
                   <Mail className="h-5 w-5 text-green-600" />
                 </div>
                 9. Contato
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-slate-500 font-medium relative z-10">
               <p>
                 Para questões sobre privacidade ou para exercer seus direitos, entre em contato 
                 através da página "Fale Conosco".
@@ -239,7 +242,7 @@ export default function Privacy() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.65 }}
-          className="grid md:grid-cols-3 gap-4 py-8"
+          className="grid md:grid-cols-3 gap-6 py-8"
         >
           {[
             { href: "/about", title: "Sobre", desc: "Conheça o BíbliaFS" },
@@ -247,17 +250,17 @@ export default function Privacy() {
             { href: "/security", title: "Segurança", desc: "Proteção de dados" }
           ].map((link, idx) => (
             <Link key={idx} href={link.href}>
-              <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg cursor-pointer h-full transition-all hover:shadow-xl">
-                <CardContent className="p-5 text-center">
-                  <h3 className="font-bold mb-1">{link.title}</h3>
-                  <p className="text-sm text-muted-foreground">{link.desc}</p>
+              <Card className="rounded-2xl border-none bg-white shadow-lg cursor-pointer h-full transition-all hover:shadow-xl hover:-translate-y-1">
+                <CardContent className="p-6 text-center">
+                  <h3 className="font-black text-slate-800 mb-1 uppercase tracking-tight">{link.title}</h3>
+                  <p className="text-sm text-slate-400 font-bold italic">{link.desc}</p>
                 </CardContent>
               </Card>
             </Link>
           ))}
         </motion.div>
 
-        <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border/50">
+        <footer className="text-center text-sm text-slate-400 py-8 border-t border-slate-100">
           <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
           <p className="mt-1">
             Desenvolvido por{" "}

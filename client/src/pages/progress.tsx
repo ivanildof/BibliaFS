@@ -86,7 +86,7 @@ export default function Progress() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-muted-foreground">{t.progress.loadingProgress}</p>
+          <p className="text-sm text-slate-400 font-bold italic">{t.progress.loadingProgress}</p>
         </div>
       </div>
     );
@@ -135,7 +135,7 @@ export default function Progress() {
           <h1 className="font-display text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-primary via-amber-500 to-primary bg-clip-text text-transparent drop-shadow-sm" data-testid="text-page-title">
             {t.progress.title}
           </h1>
-          <p className="text-base text-muted-foreground font-medium">
+          <p className="text-base text-slate-400 font-bold italic">
             {t.progress.subtitle}
           </p>
         </motion.div>
@@ -153,10 +153,10 @@ export default function Progress() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className="rounded-[2rem] border-none premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
+              <Card className="rounded-[2rem] border-none bg-white shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl">
                 <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-[0.2] group-hover:opacity-[0.3] transition-opacity`} />
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 relative">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{item.title}</CardTitle>
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{item.title}</CardTitle>
                   <div className={`p-2.5 rounded-xl bg-gradient-to-br ${item.gradient} shadow-2xl ${item.shadow} group-hover:scale-110 group-hover:rotate-6 transition-all ring-2 ring-white/20`}>
                     <item.icon className="h-4 w-4 text-white" />
                   </div>
@@ -165,12 +165,12 @@ export default function Progress() {
                   <div className={`text-4xl font-black bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent filter drop-shadow-sm`} data-testid={`text-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
                     {item.val}
                   </div>
-                  <p className="text-[11px] font-black mt-1 text-muted-foreground uppercase tracking-wider truncate">
+                  <p className="text-[11px] font-black mt-1 text-slate-400 uppercase tracking-wider truncate">
                     {item.sub}
                   </p>
                   {item.title === t.progress.level && (
                     <div className="mt-4">
-                      <div className="flex justify-between text-[9px] mb-1.5 font-black text-muted-foreground uppercase tracking-widest">
+                      <div className="flex justify-between text-[9px] mb-1.5 font-black text-slate-300 uppercase tracking-widest">
                         <span>{xpProgressInfo.current} XP</span>
                         <span>{xpProgressInfo.needed} XP</span>
                       </div>
@@ -237,7 +237,7 @@ export default function Progress() {
               <h2 className="font-display text-4xl font-black bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">
                 {t.progress.achievements}
               </h2>
-              <p className="text-base text-muted-foreground font-bold">Domine as escrituras e desbloqueie tesouros</p>
+              <p className="text-base text-slate-400 font-bold italic">Domine as escrituras e desbloqueie tesouros</p>
             </div>
           </div>
           

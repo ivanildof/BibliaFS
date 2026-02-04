@@ -62,7 +62,7 @@ export default function Help() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <p className="text-muted-foreground">Voltar para Sobre</p>
+          <p className="text-slate-400">Voltar para Sobre</p>
         </motion.div>
 
         <motion.div 
@@ -179,7 +179,7 @@ export default function Help() {
           </motion.div>
         </div>
 
-        <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border/50">
+        <footer className="text-center text-sm text-slate-400 py-8 border-t border-slate-100">
           <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
           <p className="mt-1">
             Desenvolvido por{" "}

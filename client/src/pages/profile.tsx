@@ -135,7 +135,7 @@ export default function Profile() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-muted-foreground">{t.common?.loading || "Carregando..."}</p>
+          <p className="text-sm text-slate-400 font-bold italic">{t.common?.loading || "Carregando..."}</p>
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ export default function Profile() {
   if (!user && !isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background via-slate-50/5 to-amber-50/5 dark:from-background dark:via-slate-950/10 dark:to-amber-950/10 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full rounded-3xl border-none premium-card ring-2 ring-primary/15">
+        <Card className="max-w-md w-full rounded-3xl border-none bg-white shadow-xl">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <User className="h-10 w-10 text-primary" />
@@ -343,7 +343,7 @@ export default function Profile() {
                     v{APP_VERSION}
                   </Badge>
                 </div>
-                <p className="text-muted-foreground mb-2">{user.email}</p>
+                <p className="text-slate-400 mb-2 font-bold">{user.email}</p>
                 {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
                   <div className="mb-4 p-3 bg-primary/5 rounded-lg">
                     <p className="text-sm">
@@ -610,7 +610,7 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {highlights.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhum destaque ainda</p>
+                    <p className="text-sm text-slate-400">Nenhum destaque ainda</p>
                   ) : (
                     <div className="space-y-3">
                       {highlights.slice(0, 5).map((highlight) => (
@@ -621,7 +621,7 @@ export default function Profile() {
                               className="h-3 w-3 rounded-full" 
                               style={{ backgroundColor: highlight.color }}
                             />
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-slate-400">
                               {new Date(highlight.createdAt!).toLocaleDateString()}
                             </p>
                           </div>
@@ -650,13 +650,13 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {notes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhuma nota ainda</p>
+                    <p className="text-sm text-slate-400">Nenhuma nota ainda</p>
                   ) : (
                     <div className="space-y-3">
                       {notes.slice(0, 5).map((note) => (
                         <div key={note.id} className="text-sm">
                           <p className="font-medium">{note.book} {note.chapter}{note.verse ? `:${note.verse}` : ''}</p>
-                          <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                          <p className="text-xs text-slate-400 line-clamp-2 mt-1">
                             {note.content}
                           </p>
                         </div>
@@ -684,14 +684,14 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {bookmarks.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhum favorito ainda</p>
+                    <p className="text-sm text-slate-400">Nenhum favorito ainda</p>
                   ) : (
                     <div className="space-y-3">
                       {bookmarks.slice(0, 5).map((bookmark) => (
                         <div key={bookmark.id} className="text-sm">
                           <p className="font-medium">{bookmark.book} {bookmark.chapter}:{bookmark.verse}</p>
                           {bookmark.note && (
-                            <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
+                            <p className="text-xs text-slate-400 line-clamp-1 mt-1">
                               {bookmark.note}
                             </p>
                           )}
@@ -728,8 +728,8 @@ export default function Profile() {
                 <CardContent>
                   {activePlans.length === 0 ? (
                     <div className="text-center py-8">
-                      <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                      <p className="text-muted-foreground mb-4">{t.plans.noActivePlans}</p>
+                      <BookOpen className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+                      <p className="text-slate-400 mb-4">{t.plans.noActivePlans}</p>
                       <Link href="/plans">
                         <Button>Explorar Planos</Button>
                       </Link>
@@ -743,7 +743,7 @@ export default function Profile() {
                             <div className="flex items-start justify-between mb-3">
                               <div>
                                 <h3 className="font-semibold">{plan.title}</h3>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-slate-400">
                                   {t.plans.day} {plan.currentDay || 1} de {plan.totalDays}
                                 </p>
                               </div>
@@ -773,7 +773,7 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {completedPlans.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4">
+                    <p className="text-sm text-slate-400 text-center py-4">
                       Complete seu primeiro plano para ver aqui!
                     </p>
                   ) : (
@@ -783,14 +783,14 @@ export default function Profile() {
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <h3 className="font-semibold text-sm">{plan.title}</h3>
-                              <p className="text-xs text-muted-foreground mt-1">
+                              <p className="text-xs text-slate-400 mt-1">
                                 {plan.totalDays} {t.plans.days}
                               </p>
                             </div>
                             <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
                           </div>
                           {plan.completedAt && (
-                            <p className="text-xs text-muted-foreground mt-2">
+                            <p className="text-xs text-slate-400 mt-2">
                               {t.plans.completedOn} {new Date(plan.completedAt).toLocaleDateString()}
                             </p>
                           )}
@@ -818,8 +818,8 @@ export default function Profile() {
               <CardContent>
                 {achievements.length === 0 ? (
                   <div className="text-center py-8">
-                    <Award className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground">
+                    <Award className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+                    <p className="text-slate-400">
                       Continue lendo a Bíblia para desbloquear conquistas!
                     </p>
                   </div>
@@ -836,8 +836,8 @@ export default function Profile() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold mb-1">{achievement.name}</p>
-                          <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                          <p className="text-xs text-muted-foreground mt-2">
+                          <p className="text-sm text-slate-400">{achievement.description}</p>
+                          <p className="text-xs text-slate-400 mt-2">
                             +{achievement.xpReward} XP
                           </p>
                         </div>
@@ -871,8 +871,8 @@ export default function Profile() {
               <CardContent>
                 {prayers.length === 0 ? (
                   <div className="text-center py-8">
-                    <HandHeart className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground mb-4">
+                    <HandHeart className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+                    <p className="text-slate-400 mb-4">
                       Nenhuma oração registrada ainda
                     </p>
                     <Link href="/prayers">
@@ -887,7 +887,7 @@ export default function Profile() {
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold mb-1">{prayer.title}</h3>
                             {prayer.content && (
-                              <p className="text-sm text-muted-foreground line-clamp-2">
+                              <p className="text-sm text-slate-400 line-clamp-2">
                                 {prayer.content}
                               </p>
                             )}
@@ -900,7 +900,7 @@ export default function Profile() {
                             )}
                           </div>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-3">
+                        <p className="text-xs text-slate-400 mt-3">
                           {new Date(prayer.createdAt!).toLocaleDateString()}
                         </p>
                       </div>
@@ -925,7 +925,7 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Membro desde</span>
+                    <span className="text-sm text-slate-400">Membro desde</span>
                     <span className="font-medium">
                       {new Date(user.createdAt!).toLocaleDateString('pt-BR', { 
                         month: 'long', 
@@ -935,14 +935,14 @@ export default function Profile() {
                   </div>
                   <Separator />
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Tema Atual</span>
+                    <span className="text-sm text-slate-400">Tema Atual</span>
                     <Badge variant="secondary" className="capitalize">
                       {user.selectedTheme?.replace('_', ' ') || 'Clássico'}
                     </Badge>
                   </div>
                   <Separator />
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Total de XP</span>
+                    <span className="text-sm text-slate-400">Total de XP</span>
                     <span className="font-bold text-primary">{xp}</span>
                   </div>
                 </CardContent>
@@ -996,7 +996,7 @@ export default function Profile() {
           <p className="text-base font-medium text-primary">
             {APP_NAME} v{APP_VERSION}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">Desenvolvido por FabriSite</p>
+          <p className="text-xs text-slate-300 mt-1 font-bold italic">Desenvolvido por FabriSite</p>
         </div>
       </div>
     </div>

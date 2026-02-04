@@ -19,7 +19,7 @@ interface Achievement {
 }
 
 const getAchievementIcon = (icon: string, isUnlocked: boolean) => {
-  const iconClass = isUnlocked ? "h-7 w-7 text-white" : "h-7 w-7 text-muted-foreground/50";
+  const iconClass = isUnlocked ? "h-7 w-7 text-white" : "h-7 w-7 text-slate-300";
   switch (icon) {
     case "flame": return <Flame className={iconClass} />;
     case "book": return <BookOpen className={iconClass} />;
@@ -59,7 +59,7 @@ export default function Achievements() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Resgatando Suas Glórias...</p>
+          <p className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 animate-pulse">Resgatando Suas Glórias...</p>
         </div>
       </div>
     );
@@ -93,7 +93,7 @@ export default function Achievements() {
           <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
             Seus Troféus
           </h1>
-          <p className="text-base text-muted-foreground font-bold">
+          <p className="text-base text-slate-400 font-bold italic">
             Cada marco é uma prova da sua dedicação à Palavra.
           </p>
         </motion.div>

@@ -271,7 +271,7 @@ export default function Pricing() {
           <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-4 tracking-tight" data-testid="text-page-title">
             Escolha seu Plano
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-medium">
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto font-bold italic">
             Transforme seu estudo bíblico com recursos premium
           </p>
           
@@ -394,15 +394,15 @@ export default function Pricing() {
           className="max-w-4xl mx-auto"
         >
           <div className="flex flex-wrap justify-center gap-6 md:gap-10">
-            <div className="flex items-center gap-2 bg-card/60 backdrop-blur-sm px-5 py-3 rounded-2xl border border-border/50 shadow-sm">
+            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-lg">
               <Shield className="h-5 w-5 text-green-500" />
               <span className="text-sm font-medium">Pagamento seguro</span>
             </div>
-            <div className="flex items-center gap-2 bg-card/60 backdrop-blur-sm px-5 py-3 rounded-2xl border border-border/50 shadow-sm">
+            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-lg">
               <Check className="h-5 w-5 text-green-500" />
               <span className="text-sm font-medium">Cancele quando quiser</span>
             </div>
-            <div className="flex items-center gap-2 bg-card/60 backdrop-blur-sm px-5 py-3 rounded-2xl border border-border/50 shadow-sm">
+            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-lg">
               <Star className="h-5 w-5 text-amber-500" />
               <span className="text-sm font-medium">Garantia de 30 dias</span>
             </div>
@@ -422,13 +422,13 @@ export default function Pricing() {
             Perguntas Frequentes
           </h2>
           
-          <Accordion type="single" collapsible className="w-full bg-card/60 backdrop-blur-sm rounded-3xl border border-border/50 shadow-lg overflow-hidden">
+          <Accordion type="single" collapsible className="w-full bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-b-border/30 last:border-b-0 px-6">
                 <AccordionTrigger className="text-left py-5 text-base font-medium hover:no-underline" data-testid={`faq-question-${index}`}>
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-5 text-base">
+                <AccordionContent className="text-slate-500 pb-5 text-base font-medium">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -445,7 +445,7 @@ export default function Pricing() {
           transition={{ delay: 0.7 }}
           className="max-w-2xl mx-auto text-center"
         >
-          <p className="text-muted-foreground mb-6 text-lg font-medium">
+          <p className="text-slate-400 mb-6 text-lg font-bold italic">
             Dúvidas? Estamos aqui para ajudar
           </p>
           <Link href="/contact">

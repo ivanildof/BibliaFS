@@ -67,7 +67,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black tracking-tight text-foreground"
+            className="text-4xl md:text-6xl font-black tracking-tighter text-slate-800 uppercase italic"
           >
             Como podemos <span className="text-primary">ajudar você?</span>
           </motion.h1>
@@ -75,7 +75,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+            className="text-lg text-slate-400 max-w-2xl mx-auto font-bold italic"
           >
             Tem dúvidas, sugestões ou feedback? Adoraríamos ouvir você! Nossa equipe está pronta para oferecer suporte e ouvir suas ideias.
           </motion.p>
@@ -283,7 +283,7 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-12"
                 >
-                  <Card className="premium-card ring-2 ring-primary/10 rounded-[4rem] border-none bg-card/80 backdrop-blur-2xl shadow-2xl text-center overflow-hidden">
+                  <Card className="rounded-[3rem] border-none bg-white shadow-2xl text-center overflow-hidden relative">
                     <div className="h-4 w-full bg-green-500" />
                     <CardHeader className="pt-12 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-8">
                       <div className="flex justify-center mb-6 sm:mb-10">
@@ -313,14 +313,14 @@ export default function Contact() {
         </div>
 
         <footer className="mt-20 text-center space-y-4 py-12 px-4 border-t border-border/50">
-          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-muted-foreground text-sm sm:text-base">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-slate-400 text-sm sm:text-base">
             <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-bold">FabriSite</a>
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Termos de Uso</a>
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Privacidade</a>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground/60 font-medium">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
+          <p className="text-xs sm:text-sm text-slate-300 font-bold italic">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
         </footer>
       </div>
     </div>
