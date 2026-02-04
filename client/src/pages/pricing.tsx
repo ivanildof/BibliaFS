@@ -245,10 +245,10 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #F8F8FF 0%, #FFFFFF 100%)' }}>
       {/* Decorative background elements */}
-      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-slate-200/40 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-slate-100/50 rounded-full blur-[150px]" />
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#E6E6FA]/40 rounded-full blur-[150px] animate-pulse" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#FFDAB9]/30 rounded-full blur-[150px]" />
       
       {/* Header */}
       <div className="relative z-10 p-4 md:p-6">

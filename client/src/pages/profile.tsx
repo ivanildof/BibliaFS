@@ -180,10 +180,10 @@ export default function Profile() {
   const completedPlans = readingPlans.filter(p => p.isCompleted);
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #F8F8FF 0%, #FFFFFF 100%)' }}>
       {/* Decorative background elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-slate-200/40 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 rounded-full blur-[150px]" />
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#E6E6FA]/40 rounded-full blur-[150px] animate-pulse" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#FFDAB9]/30 rounded-full blur-[150px]" />
       
       {/* Mobile Header with Action Buttons */}
       <div className="md:hidden sticky top-0 z-20 bg-white/90 backdrop-blur-2xl border-b border-slate-100 px-4 py-3">
