@@ -280,8 +280,9 @@ export default function Teacher() {
   const handleAssistantSubmit = async () => {
     if (!assistantInput.trim()) return;
     
-    // Check if limit is reached
-    if (limitReached) {
+    // Check if limit is reached only at the moment of submission
+    // We already have the conversationsUsed and limit from previous calls
+    if (limitReached || (conversationsLimit > 0 && conversationsUsed >= conversationsLimit)) {
       let message = "Você atingiu o limite de conversas.";
       
       if (userPlan === "free") {
@@ -341,9 +342,9 @@ export default function Teacher() {
           setLimitReached(true);
         }
         
-        // Show warning at 75% of limit for all users
+        // Show warning at 95% of limit instead of 75% to be less intrusive
         if (data.conversationsLimit && data.conversationsLimit > 0 && 
-            data.conversationsUsed >= Math.floor(data.conversationsLimit * 0.75)) {
+            data.conversationsUsed >= Math.floor(data.conversationsLimit * 0.95)) {
           if (!showLimitWarning) {
             setShowLimitWarning(true);
             const remaining = data.conversationsLimit - data.conversationsUsed;
