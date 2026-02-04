@@ -319,25 +319,25 @@ export default function Community() {
                 </CardContent>
               </Card>
 
-        {/* Posts */}
+              {/* Posts */}
               {posts.map((post) => (
-                <Card key={post.id} className="border-0 bg-white shadow-sm rounded-2xl hover-elevate overflow-hidden" data-testid={`card-post-${post.id}`}>
+                <Card key={post.id} className="border-0 glass rounded-2xl hover-elevate overflow-hidden" data-testid={`card-post-${post.id}`}>
                   <CardHeader className="pb-2">
                     <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10 border-2 border-slate-50 shadow-sm">
+                      <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
                         <AvatarImage src={post.user?.profileImageUrl} />
-                        <AvatarFallback className="bg-[#D6EAF8] text-[#333333] font-bold">
+                        <AvatarFallback className="bg-gradient-to-br from-blue-800 to-slate-800 text-white font-bold">
                           {post.user?.firstName?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-bold text-sm text-[#333333] truncate">{post.user?.firstName} {post.user?.lastName}</p>
-                          <Badge variant="secondary" className="text-[10px] font-bold px-2 py-0 h-4 bg-[#D6EAF8] text-[#333333] border-0">
-                            Lvl {post.user?.level || 1}
+                          <p className="font-bold text-sm truncate">{post.user?.firstName} {post.user?.lastName}</p>
+                          <Badge variant="secondary" className="text-[10px] font-bold px-2 py-0 h-4 bg-primary/10 text-primary border-0">
+                            {post.user?.level}
                           </Badge>
                         </div>
-                        <p className="text-[10px] text-[#666666] font-medium">
+                        <p className="text-[10px] text-muted-foreground font-medium">
                           {formatDistanceToNow(new Date(post.createdAt!), {
                             addSuffix: true,
                             locale: ptBR
@@ -349,29 +349,29 @@ export default function Community() {
 
                   <CardContent className="space-y-4 pt-2">
                     {/* Verse */}
-                    <div className="relative overflow-hidden p-4 bg-slate-50 rounded-2xl">
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#FFA500]" />
+                    <div className="relative overflow-hidden p-4 bg-muted/30 rounded-2xl">
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
                       <div className="flex items-center gap-2 mb-2">
-                        <BookOpen className="h-3.5 w-3.5 text-[#FFA500]" />
-                        <span className="font-bold text-xs text-[#FFA500]">{post.verseReference}</span>
+                        <BookOpen className="h-3.5 w-3.5 text-primary" />
+                        <span className="font-bold text-xs text-primary">{post.verseReference}</span>
                       </div>
-                      <p className="font-serif text-base sm:text-lg leading-relaxed italic text-[#333333]">
+                      <p className="font-serif text-base sm:text-lg leading-relaxed italic text-foreground/90">
                         "{post.verseText}"
                       </p>
                     </div>
 
                     {/* User's Note */}
-                    <p className="text-sm leading-relaxed text-[#333333] font-medium">{post.note}</p>
+                    <p className="text-sm leading-relaxed text-foreground/80 font-medium">{post.note}</p>
                   </CardContent>
 
-                  <Separator className="bg-slate-100" />
+                  <Separator className="opacity-50" />
 
                   <CardFooter className="py-2 px-2">
                     <div className="flex items-center gap-1 w-full">
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="flex-1 rounded-xl h-9 font-bold text-xs text-[#333333]"
+                        className="flex-1 rounded-xl h-9 font-bold text-xs"
                         onClick={() => toggleLikeMutation.mutate({ 
                           postId: post.id, 
                           isLiked: post.isLikedByCurrentUser || false 
@@ -380,14 +380,14 @@ export default function Community() {
                         data-testid={`button-like-post-${post.id}`}
                       >
                         <Heart 
-                          className={`h-4 w-4 mr-2 ${post.isLikedByCurrentUser ? 'fill-rose-500 text-rose-500' : 'text-[#666666]'}`} 
+                          className={`h-4 w-4 mr-2 ${post.isLikedByCurrentUser ? 'fill-rose-500 text-rose-500' : 'text-muted-foreground'}`} 
                         />
                         {post.likeCount || 0}
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="flex-1 rounded-xl h-9 font-bold text-xs text-[#666666]"
+                        className="flex-1 rounded-xl h-9 font-bold text-xs text-muted-foreground"
                         data-testid="button-comment-post"
                       >
                         <MessageCircle className="h-4 w-4 mr-2" />
@@ -396,7 +396,7 @@ export default function Community() {
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="flex-1 rounded-xl h-9 font-bold text-xs text-[#666666]"
+                        className="flex-1 rounded-xl h-9 font-bold text-xs text-muted-foreground"
                         data-testid="button-share-post"
                       >
                         <Share2 className="h-4 w-4 mr-2" />

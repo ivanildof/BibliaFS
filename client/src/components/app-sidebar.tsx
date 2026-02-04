@@ -86,38 +86,38 @@ export function AppSidebar() {
 
   const journeyItems = [
     { title: t.nav.home, url: "/", icon: Home, color: "text-slate-600" },
-    { title: t.nav.bible, url: "/bible-reader", icon: BookOpen, color: "text-[#FFA500]" },
+    { title: t.nav.bible, url: "/bible-reader", icon: BookOpen, color: "text-emerald-500" },
     { title: t.favorites.title, url: "/favorites", icon: Bookmark, color: "text-rose-400" },
-    { title: t.nav.plans, url: "/plans", icon: Book, color: "text-[#FFA500]" },
+    { title: t.nav.plans, url: "/plans", icon: Book, color: "text-amber-500" },
     { title: t.nav.prayers, url: "/prayers", icon: MessageSquare, color: "text-pink-400" },
   ];
 
   const studyItems = [
     { title: t.nav.compareVersions, url: "/compare", icon: Columns, color: "text-indigo-400" },
-    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap, color: "text-[#800080]" },
+    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap, color: "text-slate-600" },
     { title: t.nav.podcasts, url: "/podcasts", icon: Headphones, color: "text-teal-500" },
   ];
 
   const communityItems = [
     { title: t.nav.discover, url: "/community", icon: Users, color: "text-cyan-500" },
-    { title: t.nav.studyGroups, url: "/groups", icon: UsersRound, color: "text-[#FFA500]" },
-    { title: "Conquistas", url: "/achievements", icon: Trophy, color: "text-[#FFA500]" },
-    { title: t.nav.progress, url: "/progress", icon: Trophy, color: "text-[#FFA500]" },
+    { title: t.nav.studyGroups, url: "/groups", icon: UsersRound, color: "text-orange-400" },
+    { title: "Conquistas", url: "/achievements", icon: Trophy, color: "text-amber-500" },
+    { title: t.nav.progress, url: "/progress", icon: Trophy, color: "text-yellow-500" },
   ];
 
   return (
-    <Sidebar className="border-r border-sidebar-border/50 bg-[#F8F8FF] dark:bg-sidebar">
+    <Sidebar className="border-r border-sidebar-border/50">
       <SidebarHeader className="p-4 border-b border-sidebar-border/50">
         <div className="flex items-center gap-3 mb-4">
-          <img src={logoImage} alt="BíbliaFS Logo" className="h-10 w-10 object-cover rounded-xl shadow-sm" />
+          <img src={logoImage} alt="BíbliaFS Logo" className="h-10 w-10 object-cover rounded-xl shadow-md" />
           <div>
-            <h2 className="font-display text-lg font-bold text-[#333333]">{t.common.appName}</h2>
-            <p className="text-[10px] text-[#666666] font-medium tracking-wide uppercase">{t.sections.premiumStudy}</p>
+            <h2 className="font-display text-lg font-bold text-foreground">{t.common.appName}</h2>
+            <p className="text-[10px] text-muted-foreground font-medium tracking-wide uppercase">{t.sections.premiumStudy}</p>
           </div>
         </div>
 
         {user && (
-          <div className="bg-white rounded-2xl p-3 space-y-3 shadow-sm border border-slate-100">
+          <div className="glass rounded-2xl p-3 space-y-3">
             <div className="flex items-center gap-3">
               <div 
                 className="user-avatar-ring" 
@@ -125,33 +125,33 @@ export function AppSidebar() {
               >
                 <Avatar className="h-11 w-11 border-2 border-background">
                   <AvatarImage src={user.profileImageUrl || undefined} alt={user.firstName || "User"} />
-                  <AvatarFallback className="bg-[#D6EAF8] text-[#333333] font-bold text-sm">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-800 to-slate-800 text-white font-bold text-sm">
                     {(user.firstName?.[0] || "U").toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-[#333333] truncate">{user.firstName || "Estudante"}</p>
+                <p className="font-semibold text-sm text-foreground truncate">{user.firstName || "Estudante"}</p>
                 <div className="flex items-center gap-1.5">
                   <div className={cn("p-0.5 rounded bg-gradient-to-br", getLevelGradient(detailedLevel.level))}>
                     <LevelIcon className="h-2.5 w-2.5 text-white" />
                   </div>
-                  <span className="text-[10px] text-[#666666] font-medium">{detailedLevel.title}</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">{detailedLevel.title}</span>
                 </div>
               </div>
               {streak > 0 && (
-                <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-[#FFA500]/10">
-                  <Flame className="h-3.5 w-3.5 text-[#FFA500]" />
-                  <span className="text-xs font-bold text-[#FFA500]">{streak}</span>
+                <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500/10">
+                  <Flame className="h-3.5 w-3.5 text-orange-500" />
+                  <span className="text-xs font-bold text-orange-600 dark:text-orange-400">{streak}</span>
                 </div>
               )}
             </div>
             <div className="space-y-1">
               <div className="flex justify-between text-[10px]">
-                <span className="text-[#666666]">Próximo nível</span>
-                <span className="font-semibold text-[#800080]">{xp} XP</span>
+                <span className="text-muted-foreground">Próximo nível</span>
+                <span className="font-semibold text-primary">{xp} XP</span>
               </div>
-              <Progress value={progressToNextLevel} className="h-1.5 bg-slate-100" />
+              <Progress value={progressToNextLevel} className="h-1.5" />
             </div>
           </div>
         )}
