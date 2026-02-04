@@ -72,11 +72,11 @@ export default function Achievements() {
   const progressPercent = totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/20 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-amber-500/10 to-orange-500/10 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-amber-500/5 to-orange-500/5 blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto py-10 px-6">
@@ -104,33 +104,33 @@ export default function Achievements() {
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.1 }}
         >
-          <Card className="rounded-[2.5rem] border-none premium-card mb-12 overflow-hidden relative group ring-2 ring-amber-500/20 hover:ring-amber-500/40 transition-all">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-amber-500/20 opacity-70 group-hover:opacity-100 transition-opacity" />
-            <CardContent className="p-8 relative">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                <div className="flex items-center gap-5">
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 shadow-2xl shadow-amber-500/40 transform group-hover:rotate-6 transition-transform">
-                    <Sparkles className="h-8 w-8 text-white" />
+            <Card className="rounded-[2.5rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_25px_50px_rgba(0,0,0,0.4)] mb-12 overflow-hidden relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-amber-500/10 opacity-70 group-hover:opacity-100 transition-opacity z-0" />
+              <CardContent className="p-8 relative z-10">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                  <div className="flex items-center gap-5">
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 shadow-2xl shadow-amber-500/40 transform group-hover:rotate-6 transition-transform ring-1 ring-white/20">
+                      <Sparkles className="h-8 w-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+                    </div>
+                    <div>
+                      <span className="text-3xl font-black text-white tracking-tighter italic uppercase">Progresso Lendário</span>
+                      <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mt-1 italic">Nível de Domínio das Escrituras</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-3xl font-black text-foreground tracking-tighter">Progresso Lendário</span>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Nível de Domínio das Escrituras</p>
+                  <Badge className="rounded-full px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-black text-xs shadow-2xl shadow-amber-500/40 transform hover:scale-105 transition-transform tracking-widest uppercase italic">
+                    {unlockedCount} DE {totalCount} CONQUISTADAS
+                  </Badge>
+                </div>
+                <div className="relative">
+                  <ProgressBar value={progressPercent} className="h-6 rounded-full bg-white/5 shadow-inner ring-1 ring-white/5" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] italic">
+                      {progressPercent.toFixed(0)}% CONCLUÍDO
+                    </span>
                   </div>
                 </div>
-                <Badge className="rounded-full px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-black text-sm shadow-2xl shadow-amber-500/40 transform hover:scale-105 transition-transform">
-                  {unlockedCount} DE {totalCount} CONQUISTADAS
-                </Badge>
-              </div>
-              <div className="relative">
-                <ProgressBar value={progressPercent} className="h-6 rounded-full bg-muted/30 shadow-inner" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xs font-black text-foreground drop-shadow-md">
-                    {progressPercent.toFixed(0)}% CONCLUÍDO
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
         </motion.div>
 
         {unlockedAchievements.length > 0 && (
@@ -159,7 +159,7 @@ export default function Achievements() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-amber-500/30 hover:-translate-y-2 transition-all duration-500 ring-1 ring-white/20 bg-slate-900/40 backdrop-blur-xl relative">
+                    <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-amber-500/30 hover:-translate-y-2 transition-all duration-500 ring-1 ring-white/20 bg-slate-900/40 backdrop-blur-2xl relative">
                       <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.15] group-hover:opacity-[0.25] transition-opacity z-0`} />
                       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full z-0" />
                       <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative z-10">
@@ -167,10 +167,10 @@ export default function Achievements() {
                           {getAchievementIcon(achievement.icon, true)}
                         </div>
                         <div className="flex flex-col gap-1.5 flex-1">
-                          <CardTitle className="text-xl font-black tracking-tight text-white drop-shadow-sm">
+                          <CardTitle className="text-xl font-black tracking-tighter text-white italic uppercase drop-shadow-sm">
                             {achievement.name}
                           </CardTitle>
-                          <CardDescription className="text-sm font-bold text-white/60 leading-relaxed group-hover:text-white/80 transition-colors">{achievement.description}</CardDescription>
+                          <CardDescription className="text-sm font-bold text-white/60 leading-relaxed group-hover:text-white/80 transition-colors italic">{achievement.description}</CardDescription>
                         </div>
                         <div className="absolute top-4 right-4">
                           <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
@@ -181,9 +181,9 @@ export default function Achievements() {
                           <Check className="h-3 w-3 mr-2" />
                           CONQUISTADO
                         </Badge>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 shadow-inner">
                           <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          <span className="font-black text-amber-500 text-[11px] tracking-tighter">+{achievement.xpReward || 50} XP</span>
+                          <span className="font-black text-amber-500 text-[11px] tracking-tighter italic">+{achievement.xpReward || 50} XP</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -231,10 +231,10 @@ export default function Achievements() {
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-1.5 flex-1">
-                            <CardTitle className="text-lg font-black text-white/40 group-hover:text-white transition-colors tracking-tight uppercase italic">
+                            <CardTitle className="text-lg font-black text-white/40 group-hover:text-white transition-colors tracking-tighter uppercase italic">
                               {achievement.name}
                             </CardTitle>
-                            <CardDescription className="text-sm font-bold text-white/20 group-hover:text-white/40 transition-opacity leading-relaxed">
+                            <CardDescription className="text-sm font-bold text-white/20 group-hover:text-white/40 transition-opacity leading-relaxed italic">
                               {achievement.description}
                             </CardDescription>
                           </div>
