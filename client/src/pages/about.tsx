@@ -157,11 +157,11 @@ export default function About() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-mission" className="rounded-[2.5rem] border-none bg-card-reading shadow-lg overflow-hidden group transition-all duration-500">
+          <Card data-testid="card-mission" className="rounded-[2.5rem] border-none bg-white shadow-lg overflow-hidden group transition-all duration-500">
             <CardHeader className="relative z-10 p-8 sm:p-10">
               <CardTitle className="flex items-center gap-4 text-2xl font-black tracking-tight text-[#333333] italic uppercase">
-                <div className="h-14 w-14 rounded-2xl bg-[#FFA500] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
-                  <Heart className="h-7 w-7 text-white fill-white/20" />
+                <div className="h-14 w-14 rounded-2xl bg-card-reading flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
+                  <Heart className="h-7 w-7 text-[#800080]" />
                 </div>
                 Nossa Missão
               </CardTitle>
@@ -182,11 +182,11 @@ export default function About() {
 
         <div className="grid md:grid-cols-2 gap-8">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
-            <Card data-testid="card-features" className="rounded-[2rem] border-none bg-card-points shadow-lg h-full group transition-all overflow-hidden">
+            <Card data-testid="card-features" className="rounded-[2rem] border-none bg-white shadow-lg h-full group transition-all overflow-hidden">
               <CardHeader className="relative z-10">
                 <CardTitle className="flex items-center gap-4 text-xl font-black text-[#333333] italic uppercase">
-                  <div className="h-12 w-12 rounded-2xl bg-[#FFA500] flex items-center justify-center shadow-lg">
-                    <Sparkles className="h-6 w-6 text-white" />
+                  <div className="h-12 w-12 rounded-2xl bg-card-points flex items-center justify-center shadow-lg">
+                    <Sparkles className="h-6 w-6 text-[#FFA500]" />
                   </div>
                   Recursos Principais
                 </CardTitle>
@@ -198,8 +198,8 @@ export default function About() {
                 <ul className="grid gap-3">
                   {appFeatures.map((feature, index) => (
                     <li key={index} className="flex items-center gap-3 text-[#666666] group/item">
-                      <div className="h-8 w-8 rounded-xl bg-white/60 flex items-center justify-center group-hover/item:bg-[#FFA500]/20 transition-colors">
-                        <div className="h-2 w-2 rounded-full bg-[#FFA500] shadow-sm" />
+                      <div className="h-8 w-8 rounded-xl bg-card-reading/30 flex items-center justify-center group-hover/item:bg-[#FFA500]/20 transition-colors">
+                        <div className="h-2 w-2 rounded-full bg-[#800080] shadow-sm" />
                       </div>
                       <span className="text-sm font-bold italic">{feature}</span>
                     </li>
@@ -211,11 +211,11 @@ export default function About() {
 
           <div className="space-y-8">
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-              <Card data-testid="card-languages" className="rounded-[2rem] border-none bg-card-level shadow-lg group transition-all overflow-hidden">
+              <Card data-testid="card-languages" className="rounded-[2rem] border-none bg-white shadow-lg group transition-all overflow-hidden">
                 <CardHeader className="relative z-10">
                   <CardTitle className="flex items-center gap-4 text-xl font-black text-[#333333] italic uppercase">
-                    <div className="h-12 w-12 rounded-2xl bg-[#800080] flex items-center justify-center shadow-lg">
-                      <Globe className="h-6 w-6 text-white" />
+                    <div className="h-12 w-12 rounded-2xl bg-card-level flex items-center justify-center shadow-lg">
+                      <Globe className="h-6 w-6 text-[#800080]" />
                     </div>
                     Multilíngue
                   </CardTitle>
@@ -231,7 +231,7 @@ export default function About() {
                       { flag: "🇳🇱", name: "Nederlands", code: "NL" },
                       { flag: "🇪🇸", name: "Español", code: "ES" }
                     ].map((lang, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-4 rounded-2xl bg-white/60 border border-white hover:bg-white transition-colors group/lang">
+                      <div key={idx} className="flex items-center gap-3 p-4 rounded-2xl bg-[#F8F8FF] border border-[#E6E6FA] hover:bg-white transition-colors group/lang shadow-sm">
                         <span className="text-2xl drop-shadow-sm">{lang.flag}</span>
                         <div className="flex flex-col">
                           <span className="text-[10px] text-[#666666] font-black">{lang.code}</span>
@@ -245,11 +245,11 @@ export default function About() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
-              <Card data-testid="card-platforms" className="rounded-[2rem] border-none bg-card-achievements shadow-lg group transition-all overflow-hidden">
+              <Card data-testid="card-platforms" className="rounded-[2rem] border-none bg-white shadow-lg group transition-all overflow-hidden">
                 <CardHeader className="relative z-10">
                   <CardTitle className="flex items-center gap-4 text-xl font-black text-[#333333] italic uppercase">
-                    <div className="h-12 w-12 rounded-2xl bg-[#FFA500] flex items-center justify-center shadow-lg">
-                      <Smartphone className="h-6 w-6 text-white" />
+                    <div className="h-12 w-12 rounded-2xl bg-card-achievements flex items-center justify-center shadow-lg">
+                      <Smartphone className="h-6 w-6 text-[#800080]" />
                     </div>
                     Plataformas
                   </CardTitle>
@@ -259,16 +259,16 @@ export default function About() {
                     {platforms.map((platform, index) => (
                       <div 
                         key={index} 
-                        className="flex flex-col gap-2 p-4 rounded-2xl bg-white/60 border border-white hover:bg-white transition-all"
+                        className="flex flex-col gap-2 p-4 rounded-2xl bg-[#F8F8FF] border border-[#E6E6FA] hover:bg-white transition-all shadow-sm"
                         data-testid={`platform-${platform.name.toLowerCase()}`}
                       >
                         <div className="flex items-center gap-2">
-                          <platform.icon className="h-4 w-4 text-[#800080]" />
+                          <platform.icon className="h-4 w-4 text-[#FFA500]" />
                           <span className="text-xs font-black text-[#333333] uppercase tracking-wider">{platform.name}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span 
-                            className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFA500]/10 text-[#FFA500] font-black border border-[#FFA500]/20"
+                            className="text-[10px] px-2 py-0.5 rounded-full bg-[#E6E6FA] text-[#800080] font-black border border-[#800080]/10"
                             data-testid={`status-platform-${platform.name.toLowerCase()}`}
                           >
                             {platform.status.toUpperCase()}
@@ -287,8 +287,8 @@ export default function About() {
           <Card data-testid="card-team" className="rounded-[2.5rem] border-none bg-white shadow-lg overflow-hidden group transition-all">
             <CardHeader className="relative z-10 p-8">
               <CardTitle className="flex items-center gap-4 text-xl font-black text-[#333333] italic uppercase">
-                <div className="h-12 w-12 rounded-2xl bg-[#800080] flex items-center justify-center shadow-lg">
-                  <Users className="h-6 w-6 text-white" />
+                <div className="h-12 w-12 rounded-2xl bg-card-level flex items-center justify-center shadow-lg">
+                  <Users className="h-6 w-6 text-[#800080]" />
                 </div>
                 100% Gratuito
               </CardTitle>
