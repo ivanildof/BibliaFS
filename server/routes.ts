@@ -261,7 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // App version check endpoint for update popup
   // LATEST_VERSION: Update this when releasing a new version to Play Store
   // Quando lançar nova versão na Play Store, atualize este valor para mostrar o popup de atualização
-  const LATEST_VERSION = process.env.APP_LATEST_VERSION || "1.0.7";
+  const LATEST_VERSION = process.env.APP_LATEST_VERSION || "1.0.9";
   
   app.get("/api/app/version", (req, res) => {
     const currentVersion = req.query.current as string;
