@@ -90,7 +90,7 @@ export default function Achievements() {
             <Trophy className="h-7 w-7 text-amber-500 animate-bounce" />
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-amber-500/60" />
           </div>
-          <p className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
+          <p className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
           <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
             Seus Troféus
           </h1>
