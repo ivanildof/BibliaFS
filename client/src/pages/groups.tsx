@@ -529,10 +529,20 @@ export default function Groups() {
       queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "invites"] });
       inviteForm.reset();
       setIsInviteDialogOpen(false);
+      
+      const inviteUrl = `${window.location.origin}/invite/${invite.inviteCode}`;
+      
       toast({
         title: "Convite criado!",
-        description: `Código: ${invite.inviteCode} - Compartilhe com quem deseja convidar.`,
+        description: `Código: ${invite.inviteCode}. Link: ${inviteUrl}`,
       });
+      
+      // Auto copy to clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(inviteUrl).catch(err => {
+          console.warn("Failed to copy invite URL:", err);
+        });
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -594,7 +604,12 @@ export default function Groups() {
 
   const createDiscussionMutation = useMutation({
     mutationFn: async (data: DiscussionFormData): Promise<GroupDiscussion> => {
+      console.log("Creating discussion for group:", selectedGroup?.id, "with data:", data);
       const res = await apiRequest("POST", `/api/groups/${selectedGroup?.id}/discussions`, data);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erro ao criar discussão");
+      }
       return res.json();
     },
     onSuccess: (discussion: GroupDiscussion) => {
@@ -696,6 +711,7 @@ export default function Groups() {
       });
       return;
     }
+    console.log("Creating invite with data:", data);
     createInviteMutation.mutate(data);
   };
 

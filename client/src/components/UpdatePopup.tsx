@@ -48,7 +48,8 @@ export function UpdatePopup() {
     const dismissedAt = localStorage.getItem(STORAGE_KEY);
     if (dismissedAt) {
       const dismissedTime = parseInt(dismissedAt, 10);
-      if (Date.now() - dismissedTime < DISMISS_DURATION_MS) {
+      // Only skip if dismissed in the last 2 hours for now, to ensure users see it during transition
+      if (Date.now() - dismissedTime < 2 * 60 * 60 * 1000) {
         return;
       }
     }
