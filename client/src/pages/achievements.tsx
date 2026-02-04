@@ -151,7 +151,6 @@ export default function Achievements() {
             <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence mode="popLayout">
                 {unlockedAchievements.map((achievement, idx) => (
-                  return (
                     <motion.div
                       key={achievement.id}
                       layout
@@ -184,7 +183,6 @@ export default function Achievements() {
                         </CardContent>
                       </Card>
                     </motion.div>
-                  );
                 ))}
               </AnimatePresence>
             </div>
