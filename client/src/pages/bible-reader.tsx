@@ -1718,9 +1718,9 @@ export default function BibleReader() {
       )}
 
       {/* Bottom Navigation - Premium Style */}
-      <div className="fixed bottom-20 md:bottom-4 left-0 right-0 z-40 px-2">
-        <div className="max-w-md mx-auto bg-white/95 backdrop-blur-md border border-primary/20 rounded-2xl shadow-2xl px-3 py-3 ring-1 ring-primary/5">
-          <div className="flex items-center justify-center gap-2">
+      <div className="fixed bottom-20 md:bottom-4 left-0 right-0 z-40 px-3">
+        <div className="max-w-lg mx-auto bg-white/95 backdrop-blur-md border border-primary/20 rounded-full shadow-2xl px-4 py-2 ring-1 ring-primary/5">
+          <div className="flex items-center justify-center gap-3">
             <Button
               variant="ghost"
               size="icon"
@@ -1788,7 +1788,7 @@ export default function BibleReader() {
 
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-sm font-bold px-3 py-2 rounded-full hover:bg-muted/50 text-[#4a4a4a] whitespace-nowrap"
+              className="text-sm font-bold px-4 py-2 rounded-full hover:bg-muted/50 text-[#4a4a4a] whitespace-nowrap"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
@@ -1808,28 +1808,28 @@ export default function BibleReader() {
         </div>
       </div>
 
-      {/* Font Size Controls - Separate Fixed Bar */}
-      <div className="fixed bottom-36 md:bottom-20 right-4 z-40 flex flex-col gap-2">
+      {/* Font Size Controls - Floating Buttons */}
+      <div className="fixed bottom-36 md:bottom-20 right-3 z-40 flex flex-col gap-2">
         <Button
           variant="default"
           size="icon"
-          className="h-12 w-12 rounded-full bg-[#FFA500] hover:bg-[#FF8C00] shadow-xl border-2 border-orange-700"
+          className="h-11 w-11 rounded-full bg-[#FFA500] hover:bg-[#FF8C00] shadow-xl border-2 border-orange-600"
           onClick={() => setFontSize(Math.min(32, fontSize + 2))}
           title="Aumentar fonte"
           data-testid="button-increase-font"
         >
-          <span className="text-xl font-black text-white">A+</span>
+          <span className="text-lg font-black text-white">A+</span>
         </Button>
         
         <Button
           variant="default"
           size="icon"
-          className="h-12 w-12 rounded-full bg-[#FFA500] hover:bg-[#FF8C00] shadow-xl border-2 border-orange-700"
+          className="h-11 w-11 rounded-full bg-[#FFA500] hover:bg-[#FF8C00] shadow-xl border-2 border-orange-600"
           onClick={() => setFontSize(Math.max(12, fontSize - 2))}
           title="Diminuir fonte"
           data-testid="button-decrease-font"
         >
-          <span className="text-lg font-black text-white">A-</span>
+          <span className="text-base font-black text-white">A-</span>
         </Button>
       </div>
 
