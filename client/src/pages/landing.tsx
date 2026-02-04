@@ -468,9 +468,9 @@ export default function Landing() {
                         <div className="h-4 w-5/6 bg-white/5 rounded-full" />
                         <div className="h-4 w-full bg-white/5 rounded-full" />
                       </div>
-                      <div className="h-60 rounded-3xl bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center border-2 border-white/5">
-                        <Sparkles className="h-20 w-20 text-primary/40 animate-pulse" />
-                      </div>
+                    <div className="h-40 rounded-[2rem] bg-gradient-to-br from-primary/10 to-indigo-600/10 flex items-center justify-center border border-white/5">
+                      <Sparkles className="h-12 w-12 text-primary/30 animate-pulse" />
+                    </div>
                     </div>
                  </div>
                </motion.div>
