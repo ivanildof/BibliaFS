@@ -1719,34 +1719,34 @@ export default function BibleReader() {
 
       {/* Bottom Navigation - Premium Style */}
       <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-50 px-2">
-        <div className="max-w-[95vw] md:max-w-xl mx-auto bg-background/95 backdrop-blur-md border border-primary/20 rounded-full shadow-2xl px-2 py-2 ring-1 ring-primary/5">
+        <div className="max-w-[95vw] md:max-w-xl mx-auto bg-white/95 backdrop-blur-md border border-primary/20 rounded-full shadow-2xl px-2 py-2 ring-1 ring-primary/5">
           <div className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-full hover:bg-amber-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
+                className="h-10 w-10 rounded-full hover:bg-amber-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
                 onClick={goToPreviousChapter}
                 disabled={!selectedBook || (booksArray.length > 0 && selectedBook === booksArray[0]?.abbrev?.pt && selectedChapter === 1)}
                 data-testid="button-previous-chapter"
               >
-                <ChevronLeft className="h-5 w-5 text-amber-600" />
+                <ChevronLeft className="h-6 w-6 text-amber-600" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-full hover:bg-emerald-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
+                className="h-10 w-10 rounded-full hover:bg-emerald-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
                 onClick={toggleAudio}
                 disabled={!selectedBook || isLoadingAudio}
                 data-testid="button-toggle-audio"
               >
                 {isLoadingAudio ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
+                  <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
                 ) : isPlayingAudio ? (
-                  <VolumeX className="h-5 w-5 text-emerald-600" />
+                  <VolumeX className="h-6 w-6 text-emerald-600" />
                 ) : (
-                  <Volume2 className="h-5 w-5 text-emerald-600" />
+                  <Volume2 className="h-6 w-6 text-emerald-600" />
                 )}
               </Button>
 
@@ -1754,7 +1754,7 @@ export default function BibleReader() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-full hover:bg-blue-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
+                  className="h-10 w-10 rounded-full hover:bg-blue-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
                   onClick={async () => {
                     try {
                       if (isChapterOffline(selectedBook, selectedChapter, version)) {
@@ -1778,44 +1778,44 @@ export default function BibleReader() {
                   data-testid="button-toggle-offline"
                 >
                   {downloadingAudio ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                    <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
                   ) : isChapterOffline(selectedBook, selectedChapter, version) ? (
-                    <CloudOff className="h-5 w-5 text-blue-600" />
+                    <CloudOff className="h-6 w-6 text-blue-600" />
                   ) : (
-                    <Cloud className="h-5 w-5 text-blue-600" />
+                    <Cloud className="h-6 w-6 text-blue-600" />
                   )}
                 </Button>
               )}
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className="h-9 w-9 rounded-full bg-primary/5 hover:bg-primary/10 transition-all hover:scale-110 active:scale-95 border border-primary/10 flex-shrink-0"
+                className="h-11 w-11 rounded-full bg-primary/10 hover:bg-primary/20 transition-all hover:scale-110 active:scale-95 border-2 border-primary/30 flex-shrink-0 shadow-lg"
                 onClick={() => setFontSize(Math.max(12, fontSize - 2))}
                 title="Diminuir fonte"
                 data-testid="button-decrease-font"
               >
-                <span className="text-sm font-bold text-primary">A-</span>
+                <span className="text-base font-black text-primary">A-</span>
               </Button>
 
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className="h-9 w-9 rounded-full bg-primary/5 hover:bg-primary/10 transition-all hover:scale-110 active:scale-95 border border-primary/10 flex-shrink-0"
+                className="h-11 w-11 rounded-full bg-primary/10 hover:bg-primary/20 transition-all hover:scale-110 active:scale-95 border-2 border-primary/30 flex-shrink-0 shadow-lg"
                 onClick={() => setFontSize(Math.min(32, fontSize + 2))}
                 title="Aumentar fonte"
                 data-testid="button-increase-font"
               >
-                <span className="text-lg font-bold text-primary">A+</span>
+                <span className="text-xl font-black text-primary">A+</span>
               </Button>
             </div>
             
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsChaptersOpen(true)}
-                className="text-xs font-bold min-w-[80px] text-center hover-elevate px-2 py-1.5 rounded-full transition-all hover:bg-muted/50 text-[#4a4a4a] whitespace-nowrap"
+                className="text-xs font-black min-w-[70px] text-center px-2 py-2 rounded-full transition-all hover:bg-primary/10 text-primary whitespace-nowrap border border-primary/20"
                 data-testid="text-chapter-navigation"
               >
                 {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
@@ -1824,12 +1824,12 @@ export default function BibleReader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-full hover:bg-amber-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
+                className="h-10 w-10 rounded-full hover:bg-amber-500/10 transition-all hover:scale-110 active:scale-95 flex-shrink-0"
                 onClick={goToNextChapter}
                 disabled={!currentBook || (booksArray.length > 0 && selectedBook === booksArray[booksArray.length - 1]?.abbrev?.pt && selectedChapter === currentBook?.chapters)}
                 data-testid="button-next-chapter"
               >
-                <ChevronRight className="h-5 w-5 text-amber-600" />
+                <ChevronRight className="h-6 w-6 text-amber-600" />
               </Button>
             </div>
           </div>
