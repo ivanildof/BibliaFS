@@ -77,10 +77,10 @@ export default function Privacy() {
   ];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -116,11 +116,12 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-intro" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-gradient-to-br from-blue-500/10 to-blue-500/5 backdrop-blur-xl shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl">Introdução</CardTitle>
+          <Card data-testid="card-intro" className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-transparent z-0" />
+            <CardHeader className="relative z-10">
+              <CardTitle className="text-xl font-black text-white italic uppercase tracking-tighter">Introdução</CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground text-lg">
+            <CardContent className="text-white/60 font-medium text-lg relative z-10">
               <p>
                 No BíbliaFS, levamos sua privacidade a sério. Esta Política de Privacidade explica 
                 como coletamos, usamos, armazenamos e protegemos suas informações pessoais.
@@ -136,35 +137,37 @@ export default function Privacy() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 + idx * 0.05 }}
           >
-            <Card className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-primary/10">
-                    <section.icon className="h-5 w-5 text-primary" />
+            <Card className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity z-0" />
+              <CardHeader className="relative z-10">
+                <CardTitle className="flex items-center gap-3 text-white font-black uppercase italic tracking-tighter">
+                  <div className="p-2.5 rounded-xl bg-white/5 ring-1 ring-white/10 text-white shadow-inner">
+                    <section.icon className="h-5 w-5 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
                   </div>
                   {section.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-muted-foreground">
-                {section.intro && <p className="font-medium text-foreground">{section.intro}</p>}
+              <CardContent className="space-y-3 text-white/60 font-medium relative z-10">
+                {section.intro && <p className="font-bold text-white/80 italic">{section.intro}</p>}
                 {section.content && (
-                  <ul className="space-y-3">
+                  <ul className="space-y-4">
                     {section.content.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-4">
+                        <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)] mt-2 flex-shrink-0" />
                         <div>
-                          <strong className="text-foreground">{item.label}:</strong> {item.desc}
+                          <strong className="text-white font-black uppercase italic tracking-wider text-xs block mb-1">{item.label}</strong>
+                          <span className="text-white/60">{item.desc}</span>
                         </div>
                       </li>
                     ))}
                   </ul>
                 )}
                 {section.items && (
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {section.items.map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <span className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <span>{item}</span>
+                        <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)] mt-2 flex-shrink-0" />
+                        <span className="text-white/70">{item}</span>
                       </li>
                     ))}
                   </ul>

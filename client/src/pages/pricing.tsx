@@ -307,63 +307,58 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`premium-card relative flex flex-col transition-all duration-500 rounded-3xl border-none backdrop-blur-sm hover:shadow-2xl hover:-translate-y-1 ${
-                    plan.popular ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-xl ring-2 ring-primary/30' : 'ring-2 ring-primary/10 bg-card/80 shadow-lg'
+                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_25px_50px_rgba(0,0,0,0.4)] hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
+                    plan.popular ? 'ring-2 ring-primary/40' : ''
                   } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >
-                  <CardHeader className="pb-4 space-y-4 pt-8">
-                    {/* Icon and Popular Badge Row */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${plan.id === 'monthly' ? 'from-primary/20' : plan.id === 'yearly' ? 'from-amber-500/20' : 'from-blue-600/20'} via-transparent to-transparent z-0`} />
+                  <CardHeader className="pb-4 space-y-4 pt-10 px-8 relative z-10">
                     <div className="flex items-center justify-between">
-                      <div className={`h-14 w-14 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-lg`}>
-                        <IconComponent className="h-7 w-7 text-white" />
+                      <div className={`h-16 w-16 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-1 ring-white/20`}>
+                        <IconComponent className="h-8 w-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
                       </div>
                       {plan.popular && (
-                        <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full font-bold shadow-lg shadow-primary/30">
+                        <Badge className="bg-primary text-white text-[10px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(var(--primary),0.5)] border-none">
                           Popular
-                        </Badge>
-                      )}
-                      {isCurrentPlan && !plan.popular && (
-                        <Badge variant="outline" className="text-sm px-3 py-1 rounded-full font-bold border-green-500 text-green-600">
-                          <Check className="h-3 w-3 mr-1" />
-                          Atual
                         </Badge>
                       )}
                     </div>
                     
                     <div>
-                      <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                      <CardDescription className="text-base mt-2 font-medium">
+                      <CardTitle className="text-3xl font-black text-white italic tracking-tighter uppercase italic">{plan.name}</CardTitle>
+                      <CardDescription className="text-base mt-2 font-bold text-white/40 italic">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
-                    {/* Price */}
-                    <div className="pt-3 flex items-baseline whitespace-nowrap overflow-hidden">
-                      <span className="text-xl font-bold mr-1">R$</span>
-                      <span className="text-4xl font-extrabold tracking-tight">
+                    <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden">
+                      <span className="text-xl font-black text-white/40 mr-1.5 italic">R$</span>
+                      <span className="text-5xl font-black text-white tracking-tighter">
                         {plan.price.replace('R$ ', '')}
                       </span>
-                      <span className="text-muted-foreground text-sm ml-1 font-medium">/{plan.period}</span>
+                      <span className="text-white/20 text-xs ml-1.5 font-black uppercase tracking-widest italic">/{plan.period}</span>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="flex-1 pb-6">
-                    <ul className="space-y-3">
+                  <CardContent className="flex-1 pb-8 px-8 relative z-10">
+                    <ul className="space-y-4">
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-3 text-base" data-testid={`feature-${plan.id}-${i}`}>
-                          <div className="p-1 rounded-full bg-primary/10 mt-0.5">
-                            <Check className="h-3 w-3 text-primary" />
+                          <div className="p-1 rounded-full bg-white/5 ring-1 ring-white/10 mt-1 shadow-inner">
+                            <Check className="h-3 w-3 text-primary drop-shadow-[0_0_5px_rgba(var(--primary),0.5)]" />
                           </div>
-                          <span className="font-medium">{feature}</span>
+                          <span className="font-bold text-white/70 leading-relaxed">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </CardContent>
 
-                  <CardFooter className="pb-8">
+                  <CardFooter className="pb-10 px-8 relative z-10">
                     <Button 
-                      className={`w-full h-14 rounded-2xl font-bold text-lg shadow-lg transition-all ${plan.popular ? 'shadow-primary/30 hover:shadow-primary/40' : ''}`}
+                      className={`w-full h-16 rounded-2xl font-black text-xl italic uppercase tracking-widest transition-all ${
+                        plan.popular ? 'bg-primary text-white shadow-[0_15px_30px_rgba(var(--primary),0.4)]' : 'bg-white/5 text-white ring-1 ring-white/10 hover:bg-white/10'
+                      }`}
                       variant={plan.popular ? "default" : "outline"}
                       disabled={buttonConfig.disabled || checkoutMutation.isPending || portalMutation.isPending}
                       onClick={() => {
@@ -376,10 +371,10 @@ export default function Pricing() {
                       data-testid={`button-cta-${plan.id}`}
                     >
                       {(checkoutMutation.isPending || portalMutation.isPending) && (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        <Loader2 className="h-5 w-5 mr-3 animate-spin" />
                       )}
                       {buttonConfig.text}
-                      {buttonConfig.isPortal && <Settings className="h-4 w-4 ml-2" />}
+                      {buttonConfig.isPortal && <Settings className="h-5 w-5 ml-3" />}
                     </Button>
                   </CardFooter>
                 </Card>

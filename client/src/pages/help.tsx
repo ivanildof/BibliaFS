@@ -45,10 +45,11 @@ export default function Help() {
   ];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-primary/5 to-indigo-600/5 blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -68,50 +69,52 @@ export default function Help() {
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
+          className="text-center space-y-4 mb-12"
         >
-          <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-xl shadow-amber-500/20">
-              <HelpCircle className="h-10 w-10 text-white" />
+          <div className="flex justify-center mb-6">
+            <div className="h-24 w-24 rounded-3xl bg-slate-900/40 backdrop-blur-xl ring-1 ring-white/20 flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+              <HelpCircle className="h-12 w-12 text-amber-500 drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] relative z-10" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-amber-400 via-amber-600 to-amber-400 bg-clip-text text-transparent italic uppercase tracking-tighter drop-shadow-sm">
             Ajuda e Suporte
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-white/40 text-lg font-bold italic">
             Estamos aqui para ajudar você a aproveitar ao máximo o BíbliaFS
           </p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-faq" className="premium-card ring-2 ring-primary/10 rounded-[2.5rem] border-none bg-card/80 backdrop-blur-xl shadow-lg overflow-hidden">
-            <CardHeader className="bg-primary/5 p-8 border-b border-primary/10">
-              <CardTitle className="flex items-center gap-3 text-2xl font-bold">
-                <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <Card data-testid="card-faq" className="rounded-[2.5rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_25px_50px_rgba(0,0,0,0.4)] overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-amber-500/5 z-0" />
+            <CardHeader className="p-8 border-b border-white/10 relative z-10">
+              <CardTitle className="flex items-center gap-3 text-2xl font-black text-white italic uppercase tracking-tighter">
+                <div className="p-2.5 rounded-xl bg-white/5 ring-1 ring-white/10 text-white shadow-inner">
                   <Book className="h-6 w-6" />
                 </div>
                 Perguntas Frequentes
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-base font-bold text-white/40 italic">
                 Clique nas perguntas para ver as respostas
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8">
+            <CardContent className="p-8 relative z-10">
               <Accordion type="single" collapsible className="w-full space-y-4">
                 {faqs.map((faq, idx) => (
                   <AccordionItem 
                     key={idx} 
                     value={`item-${idx}`} 
-                    className="border-none bg-muted/30 rounded-2xl px-6"
+                    className="border-none bg-white/5 hover:bg-white/10 transition-colors rounded-2xl px-6 ring-1 ring-white/5"
                     data-testid={`accordion-faq-${idx}`}
                   >
-                    <AccordionTrigger className="hover:no-underline py-6 font-bold text-lg text-left" data-testid={`trigger-faq-${idx}`}>
+                    <AccordionTrigger className="hover:no-underline py-6 font-black text-lg text-left text-white/80 hover:text-white transition-colors" data-testid={`trigger-faq-${idx}`}>
                       <div className="flex items-center gap-4">
-                        <faq.icon className="h-5 w-5 text-primary shrink-0" />
-                        <span>{faq.q}</span>
+                        <faq.icon className="h-5 w-5 text-primary shrink-0 drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+                        <span className="tracking-tight">{faq.q}</span>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground text-base leading-relaxed pb-6">
+                    <AccordionContent className="text-white/60 text-base font-medium leading-relaxed pb-6">
                       {faq.a}
                     </AccordionContent>
                   </AccordionItem>
@@ -123,23 +126,24 @@ export default function Help() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <Card data-testid="card-tutorials" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-lg h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-slate-600/10 text-slate-600">
+            <Card data-testid="card-tutorials" className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] h-full relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent z-0" />
+              <CardHeader className="relative z-10">
+                <CardTitle className="flex items-center gap-3 text-white font-black uppercase italic tracking-tighter">
+                  <div className="p-2.5 rounded-xl bg-white/5 ring-1 ring-white/10 text-white">
                     <Video className="h-6 w-6" />
                   </div>
                   Tutoriais em Vídeo
                 </CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base font-bold text-white/40 italic">
                   Aprenda a usar todos os recursos
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <p className="text-muted-foreground leading-relaxed">
+              <CardContent className="space-y-6 relative z-10">
+                <p className="text-white/60 font-medium leading-relaxed">
                   Em breve disponibilizaremos tutoriais em vídeo para ajudá-lo a explorar todos os recursos do BíbliaFS de forma visual e prática.
                 </p>
-                <Button variant="outline" className="w-full rounded-xl h-12" disabled>
+                <Button variant="outline" className="w-full rounded-2xl h-12 border-white/10 text-white/40 font-black italic uppercase tracking-widest" disabled>
                   <Video className="h-4 w-4 mr-2" />
                   Ver Tutoriais (Em Breve)
                 </Button>
@@ -148,24 +152,25 @@ export default function Help() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
-            <Card data-testid="card-contact-support" className="premium-card ring-2 ring-primary/10 rounded-2xl border-none bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-xl shadow-lg h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+            <Card data-testid="card-contact-support" className="rounded-[2rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] h-full relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-indigo-600/10 z-0" />
+              <CardHeader className="relative z-10">
+                <CardTitle className="flex items-center gap-3 text-white font-black uppercase italic tracking-tighter">
+                  <div className="p-2.5 rounded-xl bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)] text-white">
                     <MessageCircle className="h-6 w-6" />
                   </div>
                   Precisa de Mais Ajuda?
                 </CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base font-bold text-white/40 italic">
                   Nossa equipe está pronta para atendê-lo
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <p className="text-muted-foreground leading-relaxed">
+              <CardContent className="space-y-6 relative z-10">
+                <p className="text-white/60 font-medium leading-relaxed">
                   Se você não encontrou a resposta para sua dúvida nas FAQs acima, entre em contato conosco diretamente. Responderemos o mais breve possível!
                 </p>
                 <Link href="/contact" data-testid="link-contact-help">
-                  <Button className="w-full rounded-xl h-12 shadow-lg shadow-primary/20" data-testid="button-contact-us">
+                  <Button className="w-full rounded-2xl h-12 shadow-[0_10px_20px_rgba(var(--primary),0.3)] font-black italic uppercase tracking-widest" data-testid="button-contact-us">
                     <Mail className="h-4 w-4 mr-2" />
                     Fale Conosco
                   </Button>

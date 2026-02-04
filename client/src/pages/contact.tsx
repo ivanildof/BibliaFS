@@ -110,14 +110,15 @@ export default function Contact() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.1 }}
-                  className="group flex items-center gap-4 p-6 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all shadow-sm"
+                  className="group flex items-center gap-6 p-8 rounded-[2rem] bg-slate-900/40 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all shadow-[0_15px_30px_rgba(0,0,0,0.2)] relative overflow-hidden"
                 >
-                  <div className={`h-14 w-14 rounded-2xl ${item.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
-                    <item.icon className="h-7 w-7" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent z-0" />
+                  <div className={`h-16 w-16 rounded-2xl ${item.color} flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-2xl relative z-10`}>
+                    <item.icon className="h-8 w-8 drop-shadow-md" />
                   </div>
-                  <div>
-                    <p className="font-bold text-lg">{item.label}</p>
-                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  <div className="relative z-10">
+                    <p className="font-black text-xl text-white italic uppercase tracking-tighter">{item.label}</p>
+                    <p className="text-sm font-bold text-white/40 italic mt-1 leading-tight">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -198,76 +199,77 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <Card className="premium-card ring-2 ring-primary/10 rounded-[3rem] border-none bg-card/50 backdrop-blur-2xl shadow-2xl overflow-hidden">
-                    <CardHeader className="p-6 sm:p-8 md:p-12 pb-0">
-                      <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight">Envie sua Mensagem</CardTitle>
-                      <CardDescription className="text-base sm:text-lg">
+                  <Card className="rounded-[3rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.4)] overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-indigo-600/5 z-0" />
+                    <CardHeader className="p-8 sm:p-10 md:p-14 pb-0 relative z-10">
+                      <CardTitle className="text-3xl sm:text-4xl font-black tracking-tighter text-white uppercase italic">Envie sua Mensagem</CardTitle>
+                      <CardDescription className="text-base sm:text-lg font-bold text-white/40 italic mt-2">
                         Preencha os campos abaixo e entraremos em contato.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="p-6 sm:p-8 md:p-12">
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <div className="grid md:grid-cols-2 gap-8">
-                          <div className="space-y-3">
-                            <Label htmlFor="name" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
+                    <CardContent className="p-8 sm:p-10 md:p-14 relative z-10">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+                        <div className="grid md:grid-cols-2 gap-10">
+                          <div className="space-y-4">
+                            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-2 italic">Nome Completo</Label>
                             <Input
                               id="name"
                               placeholder="Como devemos te chamar?"
-                              className="rounded-2xl h-14 bg-background border-border/50 focus:border-primary transition-all px-6 text-lg"
+                              className="rounded-2xl h-16 bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 transition-all px-8 text-lg font-bold text-white placeholder:text-white/20 shadow-inner"
                               {...form.register("name")}
                             />
                             {form.formState.errors.name && (
-                              <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.name.message}</p>
+                              <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.name.message}</p>
                             )}
                           </div>
 
-                          <div className="space-y-3">
-                            <Label htmlFor="email" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">E-mail de Contato</Label>
+                          <div className="space-y-4">
+                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-2 italic">E-mail de Contato</Label>
                             <Input
                               id="email"
                               type="email"
                               placeholder="exemplo@email.com"
-                              className="rounded-2xl h-14 bg-background border-border/50 focus:border-primary transition-all px-6 text-lg"
+                              className="rounded-2xl h-16 bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 transition-all px-8 text-lg font-bold text-white placeholder:text-white/20 shadow-inner"
                               {...form.register("email")}
                             />
                             {form.formState.errors.email && (
-                              <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.email.message}</p>
+                              <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.email.message}</p>
                             )}
                           </div>
                         </div>
 
-                        <div className="space-y-3">
-                          <Label htmlFor="subject" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Assunto</Label>
+                        <div className="space-y-4">
+                          <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-2 italic">Assunto</Label>
                           <Input
                             id="subject"
                             placeholder="Sobre o que você gostaria de falar?"
-                            className="rounded-2xl h-14 bg-background border-border/50 focus:border-primary transition-all px-6 text-lg"
+                            className="rounded-2xl h-16 bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 transition-all px-8 text-lg font-bold text-white placeholder:text-white/20 shadow-inner"
                             {...form.register("subject")}
                           />
                           {form.formState.errors.subject && (
-                            <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.subject.message}</p>
+                            <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.subject.message}</p>
                           )}
                         </div>
 
-                        <div className="space-y-3">
-                          <Label htmlFor="message" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Sua Mensagem</Label>
+                        <div className="space-y-4">
+                          <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-2 italic">Sua Mensagem</Label>
                           <Textarea
                             id="message"
                             placeholder="Conte-nos os detalhes..."
-                            className="rounded-3xl min-h-[200px] bg-background border-border/50 focus:border-primary transition-all p-6 text-lg resize-none"
+                            className="rounded-[2.5rem] min-h-[220px] bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 transition-all p-8 text-lg font-bold text-white placeholder:text-white/20 shadow-inner resize-none"
                             {...form.register("message")}
                           />
                           {form.formState.errors.message && (
-                            <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.message.message}</p>
+                            <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.message.message}</p>
                           )}
                         </div>
 
                         <Button 
                           type="submit" 
                           disabled={form.formState.isSubmitting}
-                          className="w-full rounded-[2rem] h-16 text-xl font-black shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                          className="w-full rounded-[2.5rem] h-20 text-2xl font-black italic uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(var(--primary),0.3)] transition-all hover:scale-[1.01] active:scale-[0.99] bg-primary text-white"
                         >
-                          <Send className="h-6 w-6 mr-3" />
+                          <Send className="h-7 w-7 mr-4 drop-shadow-md" />
                           Enviar agora
                         </Button>
                       </form>
