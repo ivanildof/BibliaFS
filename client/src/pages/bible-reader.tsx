@@ -1784,27 +1784,27 @@ export default function BibleReader() {
             )}
 
             {/* Font Size Controls */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+                className="h-10 w-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-all hover:scale-110 active:scale-95 border border-primary/10"
                 onClick={() => setFontSize(Math.max(12, fontSize - 2))}
                 title="Diminuir fonte"
                 data-testid="button-decrease-font"
               >
-                <span className="text-sm font-bold text-slate-600">A-</span>
+                <span className="text-sm font-bold text-primary">A-</span>
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+                className="h-10 w-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-all hover:scale-110 active:scale-95 border border-primary/10"
                 onClick={() => setFontSize(Math.min(32, fontSize + 2))}
                 title="Aumentar fonte"
                 data-testid="button-increase-font"
               >
-                <span className="text-lg font-bold text-slate-600">A+</span>
+                <span className="text-lg font-bold text-primary">A+</span>
               </Button>
             </div>
             
