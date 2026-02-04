@@ -1071,12 +1071,17 @@ export default function BibleReader() {
     : "Leia e estude a Bíblia Sagrada com IA teológica e recursos premium.";
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #F8F8FF 0%, #FFFFFF 100%)' }}>
       <SEO 
         title={seoTitle}
         description={seoDescription}
         ogType="book"
       />
+      {/* Background Decorative Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#E6E6FA]/40 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#FFDAB9]/30 blur-[120px] animate-pulse" />
+      </div>
       {/* Top Header - Icons only */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
@@ -1456,11 +1461,11 @@ export default function BibleReader() {
                         >
                           {verse.number}
                         </sup>
-                        <p 
-                          className="verse-text flex-1 font-serif leading-relaxed text-[#333333] dark:text-slate-300" 
-                          data-testid={`verse-text-${verse.number}`}
-                          style={{ fontSize: `${fontSize}px` }}
-                        >
+                          <p 
+                            className="verse-text flex-1 font-serif leading-relaxed text-[#1a1a1a] dark:text-slate-200" 
+                            data-testid={`verse-text-${verse.number}`}
+                            style={{ fontSize: `${fontSize}px` }}
+                          >
                           {verse.text}
                         </p>
                       </div>
