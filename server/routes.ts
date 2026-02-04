@@ -265,6 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get("/api/app/version", (req, res) => {
     const currentVersion = req.query.current as string;
+    const isNativeHeader = req.headers['x-platform'] === 'android' || req.headers['user-agent']?.includes('Capacitor');
     
     if (!currentVersion) {
       return res.json({
@@ -277,6 +278,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     const updateAvailable = compareVersions(LATEST_VERSION, currentVersion) > 0;
+    
+    console.log(`[Version Check] Client: ${currentVersion}, Latest: ${LATEST_VERSION}, Update: ${updateAvailable}`);
     
     res.json({
       currentVersion,

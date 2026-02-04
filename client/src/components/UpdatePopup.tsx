@@ -37,15 +37,13 @@ export function UpdatePopup() {
   }, []);
 
   const checkForUpdates = async () => {
-    // Não mostrar na Web (identificamos pelo UserAgent ou se não for um ambiente PWA/Android)
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                        (window.navigator as any).standalone || 
-                        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Forçar verificação em todos os ambientes mobile e PWA
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
     
-    // Se for Web puro (não PWA e não Mobile), não mostra
-    if (!isStandalone && !/Android/i.test(navigator.userAgent)) {
-      return;
-    }
+    // Se não for mobile nem PWA, ainda permitimos verificação na Web para garantir
+    // Mas priorizamos o comportamento de app se for mobile
+    console.log("[UpdatePopup] Checking updates. Mobile:", isMobile, "Standalone:", isStandalone);
 
     const dismissedAt = localStorage.getItem(STORAGE_KEY);
     if (dismissedAt) {
