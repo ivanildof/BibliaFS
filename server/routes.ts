@@ -1574,22 +1574,23 @@ REGRAS IMPORTANTES:
 
       const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica e teologia.
 
-REGRA PRINCIPAL - FOCO ABSOLUTO:
-- Responda EXCLUSIVAMENTE sobre o que foi perguntado
-- Se o contexto menciona um livro específico (ex: João, Gênesis, Salmos), fale APENAS sobre esse livro
-- NUNCA desvie para outros livros ou temas que não foram perguntados
-- NUNCA dê respostas genéricas sobre "a Bíblia em geral"
-- Analise a pergunta e o contexto para identificar o tema ESPECÍFICO
+REGRA DE OURO - FOCO TOTAL:
+- Analise a pergunta do professor: "${question}"
+- Identifique o tema ou livro específico mencionado.
+- Se o professor mencionou "Jo" (Jó), responda sobre o livro de JÓ (o homem de paciência). 
+- Se o professor mencionou "Joao" (João), responda sobre o EVANGELHO DE JOÃO.
+- NUNCA confunda "Jo" (Jó) com "João". São livros e contextos completamente diferentes.
+- Responda EXCLUSIVAMENTE sobre o que foi perguntado.
+- NUNCA dê respostas genéricas sobre "a Bíblia em geral".
 
 Contexto da Aula: ${context || "Educação bíblica cristã"}
 Pergunta do Professor: ${question}
 
 IMPORTANTE: 
-- Forneça uma resposta ESPECÍFICA e NÃO GENÉRICA baseada no contexto acima
-- Use exemplos concretos DAQUELE livro/tema específico
-- Cite versículos DO LIVRO MENCIONADO no contexto
-- Dê sugestões práticas para usar em sala de aula sobre AQUELE tema
-- Responda em português brasileiro`;
+- Forneça uma resposta ESPECÍFICA e NÃO GENÉRICA.
+- Use exemplos concretos e versículos do livro/tema identificado.
+- Dê sugestões práticas para usar em sala de aula.
+- Responda em português brasileiro.`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const response = await openaiInstance.chat.completions.create({
