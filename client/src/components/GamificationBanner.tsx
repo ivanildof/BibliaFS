@@ -53,15 +53,6 @@ export function GamificationBanner() {
   const xpProgress = getXpProgressInLevel(xp, detailedLevel.level);
   
   // Color gradients based on level tiers (soft navy blue palette)
-  const getLevelGradient = (level: number) => {
-    if (level <= 5) return "from-slate-400 to-slate-500";
-    if (level <= 10) return "from-emerald-400 to-emerald-600";
-    if (level <= 20) return "from-blue-400 to-blue-600";
-    if (level <= 30) return "from-amber-400 to-amber-600";
-    if (level <= 40) return "from-slate-500 to-slate-700";
-    return "from-amber-500 to-amber-700";
-  };
-  
   const getLevelIcon = (level: number) => {
     if (level <= 5) return Star;
     if (level <= 10) return Sparkles;
@@ -73,7 +64,6 @@ export function GamificationBanner() {
   
   const progressToNextLevel = xpProgress.percent;
   const LevelIcon = getLevelIcon(detailedLevel.level);
-  const currentLevelGradient = getLevelGradient(detailedLevel.level);
 
   const unlockedCount = userAchievements?.filter(a => a.isUnlocked).length || 0;
   const totalAchievements = userAchievements?.length || 0;
@@ -87,69 +77,69 @@ export function GamificationBanner() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass rounded-2xl p-4 sm:p-5"
+      className="bg-white rounded-2xl p-4 sm:p-5 shadow-lg border border-[#E6E6FA]/50"
     >
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 bg-card-reading rounded-xl p-3">
           <div className="relative">
-            <div className={`p-2.5 rounded-xl bg-gradient-to-br ${streak > 0 ? "from-orange-400 to-red-500" : "from-slate-300 to-slate-400 dark:from-slate-600 dark:to-slate-700"} shadow-md`}>
+            <div className={`p-2.5 rounded-xl ${streak > 0 ? "bg-[#FFA500]" : "bg-[#666666]/30"} shadow-md`}>
               <Flame className="h-5 w-5 text-white" />
             </div>
             {streak >= 7 && (
-              <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-400 flex items-center justify-center shadow-sm">
-                <Zap className="h-2.5 w-2.5 text-amber-900" />
+              <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#FFA500] flex items-center justify-center shadow-sm">
+                <Zap className="h-2.5 w-2.5 text-white" />
               </div>
             )}
           </div>
           <div>
-            <p className="text-2xl font-bold text-foreground" data-testid="text-streak-value">{streak}</p>
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Dias seguidos</p>
+            <p className="text-2xl font-bold text-[#333333]" data-testid="text-streak-value">{streak}</p>
+            <p className="text-[10px] text-[#666666] font-medium uppercase tracking-wide">Dias seguidos</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className={`p-2.5 rounded-xl bg-gradient-to-br ${currentLevelGradient} shadow-md`}>
+        <div className="flex items-center gap-3 bg-card-level rounded-xl p-3">
+          <div className="p-2.5 rounded-xl bg-[#800080] shadow-md">
             <LevelIcon className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
-              <p className="font-semibold text-sm text-foreground truncate" data-testid="text-level-name">{detailedLevel.title}</p>
-              <span className="text-[10px] text-muted-foreground font-medium">{xp} XP</span>
+              <p className="font-semibold text-sm text-[#333333] truncate" data-testid="text-level-name">{detailedLevel.title}</p>
+              <span className="text-[10px] text-[#666666] font-medium">{xp} XP</span>
             </div>
             <Progress value={progressToNextLevel} className="h-1.5 mt-1" />
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-md">
+        <div className="flex items-center gap-3 bg-card-achievements rounded-xl p-3">
+          <div className="p-2.5 rounded-xl bg-[#FFA500] shadow-md">
             <Trophy className="h-5 w-5 text-white" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-foreground" data-testid="text-achievements-count">{unlockedCount}<span className="text-base text-muted-foreground font-normal">/{totalAchievements}</span></p>
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Conquistas</p>
+            <p className="text-2xl font-bold text-[#333333]" data-testid="text-achievements-count">{unlockedCount}<span className="text-base text-[#666666] font-normal">/{totalAchievements}</span></p>
+            <p className="text-[10px] text-[#666666] font-medium uppercase tracking-wide">Conquistas</p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 bg-card-points rounded-xl p-3">
           <div className="flex gap-1.5">
             {recentAchievements?.slice(0, 3).map((ua) => (
               <div
                 key={ua.id}
-                className="h-8 w-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-xs font-bold shadow-md ring-2 ring-background"
+                className="h-8 w-8 rounded-full bg-[#FFA500] flex items-center justify-center text-white text-xs font-bold shadow-md ring-2 ring-white"
                 title={ua.achievement.name}
               >
                 {ua.achievement.icon || <Trophy className="h-3.5 w-3.5" />}
               </div>
             ))}
             {(!recentAchievements || recentAchievements.length === 0) && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-[#666666]">
                 <Target className="h-4 w-4" />
                 <span className="text-xs">Continue lendo!</span>
               </div>
             )}
           </div>
           <Link href="/achievements">
-            <Button variant="ghost" size="sm" className="text-primary rounded-full px-3" data-testid="button-view-achievements">
+            <Button size="sm" className="bg-[#FFA500] hover:bg-[#FF8C00] text-white rounded-full px-3" data-testid="button-view-achievements">
               <span className="hidden sm:inline text-xs">Ver todas</span>
               <ChevronRight className="h-4 w-4 sm:ml-1" />
             </Button>

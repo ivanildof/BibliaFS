@@ -83,11 +83,11 @@ export function DailyVerse() {
 
   if (isLoading) {
     return (
-      <div className="verse-hero p-10 animate-pulse">
+      <div className="bg-card-achievements p-10 animate-pulse rounded-2xl">
         <div className="relative z-10 space-y-4">
-          <div className="h-6 bg-muted rounded w-48 mx-auto" />
-          <div className="h-24 bg-muted rounded" />
-          <div className="h-4 bg-muted rounded w-32 mx-auto" />
+          <div className="h-6 bg-white/50 rounded w-48 mx-auto" />
+          <div className="h-24 bg-white/50 rounded" />
+          <div className="h-4 bg-white/50 rounded w-32 mx-auto" />
         </div>
       </div>
     );
@@ -103,34 +103,34 @@ export function DailyVerse() {
       className="space-y-4"
     >
       <div ref={cardRef} data-testid="card-daily-verse">
-        <div className="verse-hero p-8 sm:p-10 shadow-lg">
+        <div className="bg-card-achievements p-8 sm:p-10 shadow-lg rounded-2xl">
           <div className="relative z-10 space-y-6 text-center max-w-2xl mx-auto">
             <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-nowrap overflow-hidden">
-              <div className="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-amber-500/50" />
-              <Quote className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-amber-600 dark:text-amber-400 rotate-180 flex-shrink-0" />
-              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-amber-700 dark:text-amber-400 whitespace-nowrap" data-testid="text-daily-verse-title">
+              <div className="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-[#FFA500]/50" />
+              <Quote className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-[#FFA500] rotate-180 flex-shrink-0" />
+              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-[#FFA500] whitespace-nowrap" data-testid="text-daily-verse-title">
                 {t.dailyVerse.verse_of_the_day}
               </span>
-              <Quote className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-              <div className="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-amber-500/50" />
+              <Quote className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-[#FFA500] flex-shrink-0" />
+              <div className="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-[#FFA500]/50" />
             </div>
 
             {verse.theme && (
-              <p className="text-sm text-muted-foreground capitalize font-medium">
+              <p className="text-sm text-[#666666] capitalize font-medium">
                 {verse.theme}
               </p>
             )}
 
-            <blockquote className="font-serif text-xl sm:text-2xl md:text-3xl leading-relaxed text-foreground font-medium" data-testid="text-verse-content">
+            <blockquote className="font-serif text-xl sm:text-2xl md:text-3xl leading-relaxed text-[#333333] font-medium" data-testid="text-verse-content">
               "{verse.text}"
             </blockquote>
             
             <div className="flex items-center justify-center gap-3">
-              <div className="h-px w-8 bg-primary/30" />
-              <p className="text-base font-semibold text-primary" data-testid="text-verse-reference">
+              <div className="h-px w-8 bg-[#800080]/30" />
+              <p className="text-base font-semibold text-[#800080]" data-testid="text-verse-reference">
                 {verse.reference}
               </p>
-              <div className="h-px w-8 bg-primary/30" />
+              <div className="h-px w-8 bg-[#800080]/30" />
             </div>
           </div>
         </div>

@@ -20,6 +20,10 @@ export default {
           DEFAULT: "hsl(var(--card) / <alpha-value>)",
           foreground: "hsl(var(--card-foreground) / <alpha-value>)",
           border: "hsl(var(--card-border) / <alpha-value>)",
+          level: "#D6EAF8",
+          points: "#FFDAB9",
+          reading: "#FFD1DC",
+          achievements: "#E6E6FA",
         },
         popover: {
           DEFAULT: "hsl(var(--popover) / <alpha-value>)",
