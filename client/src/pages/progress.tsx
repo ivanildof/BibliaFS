@@ -279,72 +279,74 @@ export default function Progress() {
                         transition={{ delay: 0.6 + catIdx * 0.1 + achIdx * 0.05 }}
                       >
                         <Card 
-                          className={`rounded-[2rem] border-none h-full overflow-hidden group transition-all duration-500 ${
+                          className={`rounded-[2rem] border-none h-full overflow-hidden group transition-all duration-500 relative ${
                             unlocked 
-                              ? 'premium-card ring-2 ring-amber-500/20 hover:ring-amber-500/40 hover:-translate-y-2' 
-                              : 'premium-card opacity-90 hover:opacity-100 ring-2 ring-primary/10 hover:ring-primary/30'
+                              ? 'bg-slate-900/40 ring-1 ring-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:ring-white/40 hover:-translate-y-2' 
+                              : 'bg-slate-900/60 ring-1 ring-white/10 opacity-90 hover:opacity-100 hover:ring-white/20'
                           }`}
                           data-testid={`card-achievement-${achievement.id}`}
                         >
                           {unlocked && (
-                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.25]`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradient} opacity-[0.15] z-0`} />
                           )}
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full" />
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full z-0" />
                           
-                          <CardHeader className="p-6 pb-4 relative">
+                          <CardHeader className="p-6 pb-4 relative z-10">
                             <div className="flex items-start gap-5">
-                              <div className={`p-4 rounded-2xl ${
+                              <div className={`p-4 rounded-2xl shadow-2xl transition-all duration-500 ${
                                 unlocked 
-                                  ? `bg-gradient-to-br ${categoryGradient} shadow-2xl ring-4 ring-white/10 group-hover:rotate-12 transition-transform`
-                                  : 'bg-muted/50 grayscale opacity-40 group-hover:opacity-100 transition-opacity'
+                                  ? `bg-gradient-to-br ${categoryGradient} ring-1 ring-white/30 group-hover:scale-110 group-hover:rotate-6`
+                                  : 'bg-white/5 grayscale opacity-40 group-hover:opacity-100 ring-1 ring-white/10'
                               }`}>
                                 {unlocked ? (
-                                  <Trophy className="h-6 w-6 text-white" />
+                                  <Trophy className="h-6 w-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
                                 ) : (
-                                  <Lock className="h-6 w-6 text-muted-foreground/60" />
+                                  <Lock className="h-6 w-6 text-white/40" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <CardTitle className={`text-lg font-black flex items-center gap-2 tracking-tight ${
-                                  unlocked ? `bg-gradient-to-r ${categoryGradient} bg-clip-text text-transparent` : 'text-muted-foreground'
+                                <CardTitle className={`text-lg font-black flex items-center gap-2 tracking-tight transition-colors ${
+                                  unlocked ? 'text-white' : 'text-white/40'
                                 }`}>
                                   {achievement.name}
                                   {unlocked && (
-                                    <Sparkles className="h-5 w-5 text-amber-400 animate-pulse flex-shrink-0" />
+                                    <Sparkles className="h-4 w-4 text-amber-400 animate-pulse flex-shrink-0" />
                                   )}
                                 </CardTitle>
-                                <CardDescription className="text-sm mt-1.5 line-clamp-2 font-bold opacity-70">
+                                <CardDescription className={`text-sm mt-1.5 line-clamp-2 font-bold transition-opacity ${
+                                  unlocked ? 'text-white/70' : 'text-white/20'
+                                }`}>
                                   {achievement.description}
                                 </CardDescription>
                               </div>
                             </div>
                           </CardHeader>
                           
-                          <CardContent className="p-6 pt-0 relative">
+                          <CardContent className="p-6 pt-0 relative z-10">
                             <div className="flex items-center justify-between mb-2">
                               {unlocked ? (
-                                <Badge className="rounded-full px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-800 text-white border-none font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl">
-                                  <Check className="h-3.5 w-3.5 mr-1.5" />
+                                <Badge className="rounded-full px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                                  <Check className="h-3 w-3 mr-1.5" />
                                   CONQUISTADO
                                 </Badge>
                               ) : (
-                                <span className="text-[11px] font-black text-muted-foreground/80 uppercase tracking-[0.15em]">
+                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
                                   {progress > 0 ? `${progress}% CONCLUÍDO` : 'BLOQUEADO'}
                                 </span>
                               )}
-                              <Badge className="rounded-full bg-amber-600/20 text-amber-500 dark:text-amber-400 border-2 border-amber-500/40 font-black text-xs px-3 py-1 shadow-lg shadow-amber-900/20">
-                                <Star className="h-3.5 w-3.5 mr-1.5 fill-current" />
-                                +{achievement.xpReward} XP
-                              </Badge>
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                                <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                                <span className="font-black text-[11px] text-amber-500 tracking-tighter">+{achievement.xpReward} XP</span>
+                              </div>
                             </div>
                             
                             {!unlocked && progress > 0 && (
-                              <div className="mt-5 p-4 rounded-2xl bg-muted/30 dark:bg-black/20 border border-border/50 shadow-inner">
-                                <div className="flex justify-between text-[11px] font-black mb-2 uppercase text-muted-foreground tracking-wider">
-                                  <span>PROGRESSO ATUAL</span>
+                              <div className="mt-5 p-4 rounded-2xl bg-white/5 border border-white/5 shadow-inner">
+                                <div className="flex justify-between text-[10px] font-black mb-2 uppercase text-white/40 tracking-widest">
+                                  <span>PROGRESSO</span>
                                   <span className="text-primary">{progress}%</span>
                                 </div>
-                                <ProgressBar value={progress} className="h-3 rounded-full bg-muted/50" />
+                                <ProgressBar value={progress} className="h-2 rounded-full bg-white/5" />
                               </div>
                             )}
                           </CardContent>

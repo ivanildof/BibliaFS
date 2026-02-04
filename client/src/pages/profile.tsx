@@ -274,8 +274,9 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-        <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10">
-          <CardContent className="pt-8 pb-8 px-8">
+        <Card className="rounded-[2.5rem] border-none bg-slate-900/40 backdrop-blur-2xl ring-1 ring-white/20 shadow-[0_25px_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-indigo-600/5 z-0" />
+          <CardContent className="pt-10 pb-10 px-10 relative z-10">
             <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
               <ProfileImageUpload 
                 currentImage={user.profileImageUrl} 
@@ -284,7 +285,7 @@ export default function Profile() {
               
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <h1 className="font-display text-4xl font-extrabold tracking-tight" data-testid="text-profile-name">
+                  <h1 className="font-display text-4xl md:text-5xl font-black tracking-tighter text-white drop-shadow-md uppercase italic" data-testid="text-profile-name">
                     {user.firstName} {user.lastName}
                   </h1>
                   <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
@@ -338,7 +339,7 @@ export default function Profile() {
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     Nível {currentLevel.level} - {currentLevel.title}
                   </Badge>
-                  <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-none shadow-lg">
+                  <Badge className="bg-gradient-to-r from-primary via-purple-600 to-indigo-600 text-white border-none shadow-[0_0_15px_rgba(var(--primary),0.4)] font-black italic tracking-tighter">
                     v{APP_VERSION}
                   </Badge>
                 </div>
