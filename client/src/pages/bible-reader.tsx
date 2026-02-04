@@ -1450,14 +1450,16 @@ export default function BibleReader() {
                         data-testid={`verse-container-${verse.number}`}
                       >
                         <sup 
-                          className={`verse-number text-[0.65rem] font-bold min-w-[1.5rem] text-right flex-shrink-0 leading-none ${readingTheme === "default" ? getVerseNumberColor(verse.number) : ""}`} 
+                          className={`verse-number font-bold min-w-[1.5rem] text-right flex-shrink-0 leading-none ${readingTheme === "default" ? getVerseNumberColor(verse.number) : ""}`} 
                           data-testid={`verse-number-${verse.number}`}
+                          style={{ fontSize: `${Math.max(10, fontSize * 0.6)}px` }}
                         >
                           {verse.number}
                         </sup>
                         <p 
-                          className="verse-text flex-1 font-serif text-base md:text-lg leading-relaxed text-[#333333] dark:text-slate-300" 
+                          className="verse-text flex-1 font-serif leading-relaxed text-[#333333] dark:text-slate-300" 
                           data-testid={`verse-text-${verse.number}`}
+                          style={{ fontSize: `${fontSize}px` }}
                         >
                           {verse.text}
                         </p>
