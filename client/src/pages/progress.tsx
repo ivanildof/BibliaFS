@@ -128,11 +128,11 @@ export default function Progress() {
           className="text-center space-y-3 mb-12"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary/60" />
-            <Crown className="h-6 w-6 text-primary animate-bounce" />
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-primary/60" />
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-500/60" />
+            <Crown className="h-6 w-6 text-amber-500 animate-bounce" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-500/60" />
           </div>
-          <p className="text-xs font-bold text-primary uppercase tracking-[0.3em]">ESTATÍSTICAS PREMIUM</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">RECONHECIMENTO DE USUARIO</p>
           <h1 className="font-display text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-primary via-amber-500 to-primary bg-clip-text text-transparent drop-shadow-sm" data-testid="text-page-title">
             {t.progress.title}
           </h1>
