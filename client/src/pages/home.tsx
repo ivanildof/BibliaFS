@@ -96,8 +96,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
 
       <motion.div 
@@ -112,7 +112,7 @@ export default function Home() {
             <Crown className="h-8 w-8 text-amber-500 fill-amber-500/30 drop-shadow-[0_0_12px_rgba(245,158,11,0.7)] animate-pulse" />
             <div className="h-px w-12 bg-gradient-to-l from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
           </div>
-          <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
+          <p className="text-[12px] font-black text-muted-foreground uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
           <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
             Olá, {user?.firstName || "Estudante"}
           </h1>
@@ -149,7 +149,7 @@ export default function Home() {
                       <CardDescription className="text-sm font-bold opacity-70 mt-0.5 uppercase tracking-wider">{currentPlan.title}</CardDescription>
                     </div>
                   </div>
-                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-black px-6 py-2 rounded-full text-xs shadow-lg shadow-primary/20 transform hover:scale-105 transition-transform">
+                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-black px-6 py-2 rounded-full text-xs shadow-lg shadow-primary/20">
                     DIA {currentPlan.currentDay}
                   </Badge>
                 </div>
@@ -172,7 +172,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <Button size="lg" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] transition-all bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
+                <Button size="lg" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl  bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
                   <Link href="/bible">
                     <BookOpen className="mr-3 h-5 w-5" />
                     CONTINUAR LEITURA
@@ -192,10 +192,10 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
-                <Card className="cursor-pointer border-none premium-card hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 rounded-[1.75rem] overflow-visible group ring-2 ring-primary/10 hover:ring-primary/30" data-testid={`card-quick-action-${index}`}>
+                <Card className="cursor-pointer border-none premium-card hover:shadow-primary/20  transition-all duration-300 rounded-[1.75rem] overflow-visible group ring-2 ring-primary/10 hover:ring-primary/30" data-testid={`card-quick-action-${index}`}>
                   <CardContent className="p-6">
                     <div className="flex flex-col items-center text-center space-y-4">
-                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform group-hover:scale-110 group-hover:rotate-6 transition-all`}>
+                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform  transition-all`}>
                         <action.icon className="h-6 w-6 text-white" />
                       </div>
                       <p className="font-black text-xs text-foreground uppercase tracking-widest">{action.label}</p>
@@ -245,8 +245,8 @@ export default function Home() {
                         item.type === 'read' ? 'from-blue-600 to-indigo-900 shadow-blue-600/50' :
                         item.type === 'prayer' ? 'from-rose-600 to-pink-800 shadow-rose-600/50' :
                         item.type === 'post' ? 'from-amber-500 to-orange-800 shadow-amber-500/50' :
-                        'from-slate-600 to-slate-900 shadow-slate-600/50'
-                      } shadow-2xl ring-4 ring-white/10 group-hover:scale-110 group-hover:rotate-3 transition-all`}>
+                        'from-muted-foreground to-foreground shadow-slate-600/50'
+                      } shadow-2xl ring-4 ring-white/10  transition-all`}>
                         {item.type === 'read' ? <BookOpen className="h-6 w-6 text-white" /> :
                          item.type === 'prayer' ? <MessageSquare className="h-6 w-6 text-white" /> :
                          item.type === 'post' ? <Users className="h-6 w-6 text-white" /> :

@@ -148,8 +148,8 @@ export default function Favorites() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <div className="relative z-10 container max-w-5xl mx-auto p-4 md:p-8 pb-32">
         {/* Header Section */}
@@ -232,10 +232,10 @@ export default function Favorites() {
                             <Badge variant="secondary" className="block w-fit bg-primary/5 text-primary-foreground/70 font-mono text-[10px] uppercase tracking-widest">{bookmark.version || "NVI"}</Badge>
                           </div>
                           <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Button variant="secondary" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary hover:text-primary-foreground" onClick={() => setShareData({...shareData, open: true, book: bookmark.book, chapter: bookmark.chapter, verse: bookmark.verse, text: bookmark.verseText, version: bookmark.version || 'nvi'})}>
+                            <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setShareData({...shareData, open: true, book: bookmark.book, chapter: bookmark.chapter, verse: bookmark.verse, text: bookmark.verseText, version: bookmark.version || 'nvi'})}>
                               <Share2 className="h-4 w-4" />
                             </Button>
-                            <Button variant="secondary" size="icon" className="h-9 w-9 rounded-xl hover:bg-destructive hover:text-destructive-foreground" onClick={() => deleteBookmarkMutation.mutate(bookmark.id)}>
+                            <Button variant="ghost" size="icon" className="rounded-xl text-destructive" onClick={() => deleteBookmarkMutation.mutate(bookmark.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -283,10 +283,10 @@ export default function Favorites() {
                             </Badge>
                           </div>
                           <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Button variant="secondary" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary hover:text-primary-foreground" onClick={() => setShareData({...shareData, open: true, book: highlight.book, chapter: highlight.chapter, verse: highlight.verse, text: highlight.verseText, version: 'nvi'})}>
+                            <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setShareData({...shareData, open: true, book: highlight.book, chapter: highlight.chapter, verse: highlight.verse, text: highlight.verseText, version: 'nvi'})}>
                               <Share2 className="h-4 w-4" />
                             </Button>
-                            <Button variant="secondary" size="icon" className="h-9 w-9 rounded-xl hover:bg-destructive hover:text-destructive-foreground" onClick={() => deleteHighlightMutation.mutate(highlight.id)}>
+                            <Button variant="ghost" size="icon" className="rounded-xl text-destructive" onClick={() => deleteHighlightMutation.mutate(highlight.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -328,7 +328,7 @@ export default function Favorites() {
                               {new Date(note.createdAt!).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </div>
                           </div>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground transition-all" onClick={() => deleteNoteMutation.mutate(note.id)}>
+                          <Button variant="ghost" size="icon" className="rounded-xl opacity-0 group-hover:opacity-100 text-destructive transition-all" onClick={() => deleteNoteMutation.mutate(note.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </CardHeader>

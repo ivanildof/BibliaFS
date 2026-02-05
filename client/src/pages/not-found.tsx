@@ -13,16 +13,16 @@ export default function NotFound() {
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-md w-full text-center space-y-6"
       >
-        <div className="h-24 w-24 bg-slate-100 rounded-[2rem] flex items-center justify-center mx-auto text-slate-500 shadow-xl">
+        <div className="h-24 w-24 bg-muted rounded-[2rem] flex items-center justify-center mx-auto text-muted-foreground shadow-xl">
           <AlertCircle className="h-12 w-12" />
         </div>
         
         <div className="space-y-2">
-          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-slate-800">
+          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-foreground">
             404 Página Não Encontrada
           </h1>
-          <p className="text-slate-500 font-bold italic">
-            A página <code className="bg-slate-100 px-2 py-1 rounded text-slate-600 text-sm not-italic">{location}</code> que você está procurando não existe.
+          <p className="text-muted-foreground font-bold italic">
+            A página <code className="bg-muted px-2 py-1 rounded text-muted-foreground text-sm not-italic">{location}</code> que você está procurando não existe.
           </p>
         </div>
 
@@ -36,7 +36,7 @@ export default function NotFound() {
           <Button 
             variant="outline" 
             onClick={() => window.location.reload()}
-            className="rounded-[2rem] font-black italic uppercase tracking-tighter border-slate-200 w-full sm:w-auto"
+            className="rounded-[2rem] font-black italic uppercase tracking-tighter border-border w-full sm:w-auto"
           >
             <RefreshCw className="mr-2 h-4 w-4" />
             Recarregar

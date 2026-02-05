@@ -138,8 +138,8 @@ export default function Community() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <div className="max-w-4xl mx-auto px-6 sm:px-8 py-6 sm:py-8 relative z-10">
         {/* Header */}
@@ -302,7 +302,7 @@ export default function Community() {
               <Card className="premium-card border-none rounded-2xl ring-2 ring-slate-500/20">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-slate-600" />
+                    <Sparkles className="h-4 w-4 text-muted-foreground" />
                     <h3 className="font-bold text-sm">Sugestão da IA</h3>
                   </div>
                 </CardHeader>
@@ -312,7 +312,7 @@ export default function Community() {
                   </p>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border-2 border-background">
-                      <AvatarFallback className="bg-slate-600 text-white font-bold">MS</AvatarFallback>
+                      <AvatarFallback className="bg-muted-foreground text-white font-bold">MS</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-sm truncate">Maria Silva</p>
@@ -330,7 +330,7 @@ export default function Community() {
                     <div className="flex items-start gap-3">
                       <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
                         <AvatarImage src={post.user?.profileImageUrl} />
-                        <AvatarFallback className="bg-gradient-to-br from-blue-800 to-slate-800 text-white font-bold">
+                        <AvatarFallback className="bg-gradient-to-br from-blue-800 to-foreground text-white font-bold">
                           {post.user?.firstName?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
@@ -427,7 +427,7 @@ export default function Community() {
               {["Fé e Obras", "Jejum Bíblico", "Perdão", "Oração Eficaz"].map((topic, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-2 rounded hover-elevate cursor-pointer"
+                  className="flex items-center justify-between gap-2 p-2 rounded hover-elevate cursor-pointer"
                 >
                   <span className="text-sm">{topic}</span>
                   <Badge variant="secondary">

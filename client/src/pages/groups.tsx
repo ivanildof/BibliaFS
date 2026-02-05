@@ -771,7 +771,7 @@ export default function Groups() {
               <div className="flex gap-2 w-full sm:w-auto">
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="rounded-xl flex-1 sm:flex-none border-primary/20 text-primary hover:bg-primary/5" data-testid="button-edit-group">
+                    <Button variant="outline" size="sm" className="rounded-xl flex-1 sm:flex-none border-primary/20 text-primary " data-testid="button-edit-group">
                       <Settings className="h-4 w-4 mr-2" />
                       Editar Grupo
                     </Button>
@@ -1025,7 +1025,7 @@ export default function Groups() {
                           {isLeader && member.userId !== user?.id && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-primary/10">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full ">
                                   <Settings className="h-4 w-4 text-primary" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -1054,7 +1054,7 @@ export default function Groups() {
                 {isLeaderOrMod && (
                   <TabsContent value="invites">
                     <div className="space-y-4">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center gap-2">
                         <h4 className="font-medium">Convites pendentes</h4>
                         <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
                           <DialogTrigger asChild>
@@ -1703,8 +1703,8 @@ export default function Groups() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10">
         <motion.div 
@@ -1726,7 +1726,7 @@ export default function Groups() {
               variant="outline" 
               size="lg" 
               onClick={() => setIsJoinByCodeDialogOpen(true)}
-              className="rounded-2xl h-14 px-8 border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all font-bold flex-1 sm:flex-none shadow-sm" 
+              className="rounded-2xl h-14 px-8 border-primary/20  hover:border-primary/40 transition-all font-bold flex-1 sm:flex-none shadow-sm" 
               data-testid="button-use-code"
             >
               <UserPlus className="h-5 w-5 mr-2.5 text-primary" />
@@ -1809,8 +1809,8 @@ export default function Groups() {
                     >
                       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/80 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <CardHeader className="pb-4">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="p-3.5 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                        <div className="flex justify-between items-start gap-2 mb-4 flex-wrap">
+                          <div className="p-3.5 rounded-2xl bg-primary/5 group- transition-colors">
                             <Users className="h-7 w-7 text-primary" />
                           </div>
                           <div className="flex flex-col items-end gap-2" data-group-menu>
@@ -1921,7 +1921,7 @@ export default function Groups() {
                         {group.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardFooter className="bg-primary/5 p-5 group-hover:bg-primary/10 transition-colors">
+                    <CardFooter className="bg-primary/5 p-5 group- transition-colors">
                       {!user ? (
                         <Link href="/login">
                           <Button className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10">

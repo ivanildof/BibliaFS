@@ -49,8 +49,8 @@ export default function Contact() {
     <div className="min-h-screen bg-background relative">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-[120px] animate-pulse" />
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary/10 dark:bg-primary/5 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-muted/50 dark:bg-muted/30 blur-[120px] animate-pulse" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 md:py-20">
@@ -67,7 +67,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black tracking-tighter text-slate-800 uppercase italic"
+            className="text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic"
           >
             Como podemos <span className="text-primary">ajudar você?</span>
           </motion.h1>
@@ -75,7 +75,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-slate-400 max-w-2xl mx-auto font-bold italic"
+            className="text-lg text-muted-foreground max-w-2xl mx-auto font-bold italic"
           >
             Tem dúvidas, sugestões ou feedback? Adoraríamos ouvir você! Nossa equipe está pronta para oferecer suporte e ouvir suas ideias.
           </motion.p>
@@ -110,15 +110,15 @@ export default function Contact() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.1 }}
-                  className="group flex items-center gap-6 p-8 rounded-[2rem] bg-white border border-slate-50 hover:border-slate-100 transition-all shadow-xl relative overflow-hidden"
+                  className="group flex items-center gap-6 p-8 rounded-[2rem] bg-card border border-border hover:border-border transition-all shadow-xl relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
-                  <div className={`h-16 w-16 rounded-2xl ${item.color} flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg relative z-10 border border-white/50`}>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
+                  <div className={`h-16 w-16 rounded-2xl ${item.color} flex items-center justify-center transition-all duration-500  shadow-lg relative z-10 border border-white/50`}>
                     <item.icon className="h-8 w-8 drop-shadow-sm" />
                   </div>
                   <div className="relative z-10">
-                    <p className="font-black text-xl text-slate-800 uppercase tracking-tighter">{item.label}</p>
-                    <p className="text-sm font-bold text-slate-400 italic mt-1 leading-tight">{item.desc}</p>
+                    <p className="font-black text-xl text-foreground uppercase tracking-tighter">{item.label}</p>
+                    <p className="text-sm font-bold text-muted-foreground italic mt-1 leading-tight">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -199,11 +199,11 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <Card className="rounded-[3rem] border-none bg-white shadow-2xl overflow-hidden relative">
+                  <Card className="rounded-[3rem] border-none bg-card shadow-2xl overflow-hidden relative">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-primary/5 via-transparent to-transparent rounded-bl-full z-0" />
                     <CardHeader className="p-8 sm:p-10 md:p-14 pb-0 relative z-10">
-                      <CardTitle className="text-3xl sm:text-4xl font-black tracking-tighter text-slate-800 uppercase italic">Envie sua Mensagem</CardTitle>
-                      <CardDescription className="text-base sm:text-lg font-bold text-slate-400 italic mt-2">
+                      <CardTitle className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground uppercase italic">Envie sua Mensagem</CardTitle>
+                      <CardDescription className="text-base sm:text-lg font-bold text-muted-foreground italic mt-2">
                         Preencha os campos abaixo e entraremos em contato.
                       </CardDescription>
                     </CardHeader>
@@ -211,11 +211,11 @@ export default function Contact() {
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
                         <div className="grid md:grid-cols-2 gap-10">
                           <div className="space-y-4">
-                            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2 italic">Nome Completo</Label>
+                            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Nome Completo</Label>
                             <Input
                               id="name"
                               placeholder="Como devemos te chamar?"
-                              className="rounded-2xl h-16 bg-slate-50 border-slate-100 focus:border-primary focus:ring-primary/10 transition-all px-8 text-lg font-bold text-slate-700 placeholder:text-slate-300 shadow-inner"
+                              className="rounded-2xl h-16 bg-muted border-border focus:border-primary focus:ring-primary/10 transition-all px-8 text-lg font-bold text-foreground placeholder:text-muted-foreground shadow-inner"
                               {...form.register("name")}
                             />
                             {form.formState.errors.name && (
@@ -224,12 +224,12 @@ export default function Contact() {
                           </div>
 
                           <div className="space-y-4">
-                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2 italic">E-mail de Contato</Label>
+                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">E-mail de Contato</Label>
                             <Input
                               id="email"
                               type="email"
                               placeholder="exemplo@email.com"
-                              className="rounded-2xl h-16 bg-slate-50 border-slate-100 focus:border-primary focus:ring-primary/10 transition-all px-8 text-lg font-bold text-slate-700 placeholder:text-slate-300 shadow-inner"
+                              className="rounded-2xl h-16 bg-muted border-border focus:border-primary focus:ring-primary/10 transition-all px-8 text-lg font-bold text-foreground placeholder:text-muted-foreground shadow-inner"
                               {...form.register("email")}
                             />
                             {form.formState.errors.email && (
@@ -239,11 +239,11 @@ export default function Contact() {
                         </div>
 
                         <div className="space-y-4">
-                          <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2 italic">Assunto</Label>
+                          <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Assunto</Label>
                           <Input
                             id="subject"
                             placeholder="Sobre o que você gostaria de falar?"
-                            className="rounded-2xl h-16 bg-slate-50 border-slate-100 focus:border-primary focus:ring-primary/10 transition-all px-8 text-lg font-bold text-slate-700 placeholder:text-slate-300 shadow-inner"
+                            className="rounded-2xl h-16 bg-muted border-border focus:border-primary focus:ring-primary/10 transition-all px-8 text-lg font-bold text-foreground placeholder:text-muted-foreground shadow-inner"
                             {...form.register("subject")}
                           />
                           {form.formState.errors.subject && (
@@ -252,11 +252,11 @@ export default function Contact() {
                         </div>
 
                         <div className="space-y-4">
-                          <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2 italic">Sua Mensagem</Label>
+                          <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Sua Mensagem</Label>
                           <Textarea
                             id="message"
                             placeholder="Conte-nos os detalhes..."
-                            className="rounded-[2.5rem] min-h-[220px] bg-slate-50 border-slate-100 focus:border-primary focus:ring-primary/10 transition-all p-8 text-lg font-bold text-slate-700 placeholder:text-slate-300 shadow-inner resize-none"
+                            className="rounded-[2.5rem] min-h-[220px] bg-muted border-border focus:border-primary focus:ring-primary/10 transition-all p-8 text-lg font-bold text-foreground placeholder:text-muted-foreground shadow-inner resize-none"
                             {...form.register("message")}
                           />
                           {form.formState.errors.message && (
@@ -283,7 +283,7 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-12"
                 >
-                  <Card className="rounded-[3rem] border-none bg-white shadow-2xl text-center overflow-hidden relative">
+                  <Card className="rounded-[3rem] border-none bg-card shadow-2xl text-center overflow-hidden relative">
                     <div className="h-4 w-full bg-green-500" />
                     <CardHeader className="pt-12 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-8">
                       <div className="flex justify-center mb-6 sm:mb-10">
@@ -313,14 +313,14 @@ export default function Contact() {
         </div>
 
         <footer className="mt-20 text-center space-y-4 py-12 px-4 border-t border-border/50">
-          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-slate-400 text-sm sm:text-base">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-muted-foreground text-sm sm:text-base">
             <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-bold">FabriSite</a>
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Termos de Uso</a>
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Privacidade</a>
           </div>
-          <p className="text-xs sm:text-sm text-slate-300 font-bold italic">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
+          <p className="text-xs sm:text-sm text-muted-foreground font-bold italic">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
         </footer>
       </div>
     </div>

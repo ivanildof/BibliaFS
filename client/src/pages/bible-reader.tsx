@@ -1072,11 +1072,11 @@ export default function BibleReader() {
     : "Leia e estude a Bíblia Sagrada com IA teológica e recursos premium.";
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <SEO 
         title={seoTitle}
@@ -1084,15 +1084,15 @@ export default function BibleReader() {
         ogType="book"
       />
       {/* Top Header - Icons only */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b">
-        <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
+      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b">
+        <div className="flex items-center justify-between gap-2 px-4 h-14 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-2">
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className="rounded-xl h-10 w-10 shadow-xl bg-white border-slate-200 hover:bg-slate-50 transition-all hover:scale-105" 
+                  className="rounded-xl h-10 w-10 shadow-xl bg-card border-border hover:bg-muted transition-all hover:scale-105" 
                   data-testid="button-search-open"
                 >
                   <Search className="h-4 w-4 text-primary" />
@@ -1116,7 +1116,7 @@ export default function BibleReader() {
                         {searchMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Busque qualquer palavra, nome, expressão ou tema na Bíblia
                     </p>
                   </div>
@@ -1151,7 +1151,7 @@ export default function BibleReader() {
                                       <div className="font-semibold text-sm">
                                         {t.bibleBooks[book.abbrev.pt] || book.name}
                                       </div>
-                                      <div className="text-xs text-slate-500">
+                                      <div className="text-xs text-muted-foreground">
                                         {book.chapters} {book.chapters === 1 ? 'capítulo' : 'capítulos'}
                                       </div>
                                     </div>
@@ -1187,16 +1187,16 @@ export default function BibleReader() {
                                   <div className="font-semibold text-sm mb-1">
                                     {t.bibleBooks[result.book.abbrev.pt] || result.book.name} {result.chapter}:{result.number}
                                   </div>
-                                  <p className="text-sm text-slate-500 font-serif">{result.text}</p>
+                                  <p className="text-sm text-muted-foreground font-serif">{result.text}</p>
                                 </button>
                               </SheetClose>
-                            )) || <p className="text-center text-slate-500 py-4">Nenhum versículo encontrado.</p>}
+                            )) || <p className="text-center text-muted-foreground py-4">Nenhum versículo encontrado.</p>}
                           </div>
                         </div>
                       )}
                       
                       {!searchMutation.data && matchedBooks.length === 0 && searchMutation.isIdle && (
-                        <div className="text-center text-slate-500 py-8">
+                        <div className="text-center text-muted-foreground py-8">
                           <Search className="h-12 w-12 mx-auto mb-2 opacity-50" />
                           <p>Digite para buscar livros ou versículos</p>
                         </div>
@@ -1212,7 +1212,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl h-10 px-3 shadow-xl gap-1.5 bg-white border-slate-200 hover:bg-slate-50 transition-all hover:scale-105" 
+                  className="rounded-xl h-10 px-3 shadow-xl gap-1.5 bg-card border-border hover:bg-muted transition-all hover:scale-105" 
                   data-testid="button-menu"
                 >
                   <Book className="h-4 w-4 text-primary" />
@@ -1279,7 +1279,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl h-10 px-4 shadow-xl font-bold text-sm min-w-[60px] bg-white border-slate-200 hover:bg-slate-50 transition-all hover:scale-105 text-slate-800" 
+                  className="rounded-xl h-10 px-4 shadow-xl font-bold text-sm min-w-[60px] bg-card border-border hover:bg-muted transition-all hover:scale-105 text-foreground" 
                   data-testid="button-version"
                 >
                   {VERSIONS.find(v => v.value === version)?.label || "NVI"}
@@ -1462,7 +1462,7 @@ export default function BibleReader() {
                           {verse.number}
                         </sup>
                         <p 
-                          className="verse-text flex-1 font-serif leading-relaxed text-slate-800" 
+                          className="verse-text flex-1 font-serif leading-relaxed text-foreground" 
                           style={{ fontSize: `${fontSize}px` }}
                           data-testid={`verse-text-${verse.number}`}
                         >
@@ -1712,7 +1712,7 @@ export default function BibleReader() {
             </div>
           </>
         ) : (
-          <div className="text-center py-20 text-slate-500">
+          <div className="text-center py-20 text-muted-foreground">
             {t.bible.selectBookToStart}
           </div>
         )}
@@ -1734,40 +1734,40 @@ export default function BibleReader() {
 
       {/* Bottom Navigation - Premium Style */}
       <div className="fixed bottom-24 md:bottom-4 left-0 right-0 z-30 px-4">
-        <div className="max-w-md mx-auto bg-white/95 backdrop-blur-md border border-slate-200 rounded-full shadow-2xl px-6 py-3 ring-1 ring-slate-100">
+        <div className="max-w-md mx-auto bg-card/95 backdrop-blur-md border border-border rounded-full shadow-2xl px-6 py-3 ring-1 ring-border">
           <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-slate-100 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full hover:bg-muted transition-all hover:scale-110 active:scale-95"
               onClick={goToPreviousChapter}
               disabled={!selectedBook || (booksArray.length > 0 && selectedBook === booksArray[0]?.abbrev?.pt && selectedChapter === 1)}
               data-testid="button-previous-chapter"
             >
-              <ChevronLeft className="h-5 w-5 text-slate-600" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground" />
             </Button>
 
-            <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-full border border-slate-100 shadow-inner">
+            <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-full border border-border shadow-inner">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-full hover:bg-white transition-all hover:scale-110 active:scale-95"
+                className="h-8 w-8 rounded-full hover:bg-card transition-all hover:scale-110 active:scale-95"
                 onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
                 data-testid="button-font-decrease"
               >
-                <span className="text-xs font-black text-slate-600">A-</span>
+                <span className="text-xs font-black text-muted-foreground">A-</span>
               </Button>
 
-              <div className="w-[1px] h-3 bg-slate-200" />
+              <div className="w-[1px] h-3 bg-border" />
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-full hover:bg-white transition-all hover:scale-110 active:scale-95"
+                className="h-8 w-8 rounded-full hover:bg-card transition-all hover:scale-110 active:scale-95"
                 onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
                 data-testid="button-font-increase"
               >
-                <span className="text-xs font-black text-slate-600">A+</span>
+                <span className="text-xs font-black text-muted-foreground">A+</span>
               </Button>
             </div>
 
@@ -1775,7 +1775,7 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-slate-100 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full hover:bg-muted transition-all hover:scale-110 active:scale-95"
               onClick={toggleAudio}
               disabled={!selectedBook || isLoadingAudio}
               data-testid="button-toggle-audio"
@@ -1794,7 +1794,7 @@ export default function BibleReader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-slate-100 transition-all hover:scale-110 active:scale-95"
+                className="rounded-full hover:bg-muted transition-all hover:scale-110 active:scale-95"
                 onClick={async () => {
                   try {
                     if (isChapterOffline(selectedBook, selectedChapter, version)) {
@@ -1829,7 +1829,7 @@ export default function BibleReader() {
             
             <button
               onClick={() => setIsChaptersOpen(true)}
-              className="text-xs font-black uppercase tracking-tighter min-w-[80px] text-center px-3 py-2 rounded-full transition-all hover:bg-slate-100 text-slate-800"
+              className="text-xs font-black uppercase tracking-tighter min-w-[80px] text-center px-3 py-2 rounded-full transition-all hover:bg-muted text-foreground"
               data-testid="text-chapter-navigation"
             >
               {chapterData ? `${t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name} ${chapterData.chapter.number}` : "Selecione"}
@@ -1838,12 +1838,12 @@ export default function BibleReader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-slate-100 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full hover:bg-muted transition-all hover:scale-110 active:scale-95"
               onClick={goToNextChapter}
               disabled={!currentBook || (booksArray.length > 0 && selectedBook === booksArray[booksArray.length - 1]?.abbrev?.pt && selectedChapter === currentBook?.chapters)}
               data-testid="button-next-chapter"
             >
-              <ChevronRight className="h-5 w-5 text-slate-600" />
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
             </Button>
           </div>
         </div>
@@ -1862,7 +1862,7 @@ export default function BibleReader() {
             <div className="mt-4">
               {/* Verse Text */}
               <div className="bg-muted p-4 rounded-lg mb-4">
-                <p className="text-sm font-semibold text-slate-500 mb-1">
+                <p className="text-sm font-semibold text-muted-foreground mb-1">
                   {selectedBook} {selectedChapter}:{verseForCommentary.number}
                 </p>
                 <p className="font-serif text-base leading-relaxed">
@@ -1919,7 +1919,7 @@ export default function BibleReader() {
                 <Volume2 className="h-5 w-5" />
                 <span className="font-semibold">Versículo Selecionado</span>
               </div>
-              <p className="text-sm text-slate-500 text-left">
+              <p className="text-sm text-muted-foreground text-left">
                 {selectedVerse !== null ? `Ouvir apenas versículo ${selectedVerse}` : 'Selecione um versículo primeiro'}
               </p>
             </Button>
@@ -1934,7 +1934,7 @@ export default function BibleReader() {
                 <Book className="h-5 w-5" />
                 <span className="font-semibold">Capítulo Atual</span>
               </div>
-              <p className="text-sm text-slate-500 text-left">
+              <p className="text-sm text-muted-foreground text-left">
                 Ouvir apenas {selectedBook} {selectedChapter}
               </p>
             </Button>
@@ -1949,7 +1949,7 @@ export default function BibleReader() {
                 <Book className="h-5 w-5" />
                 <span className="font-semibold">Livro Completo</span>
               </div>
-              <p className="text-sm text-slate-500 text-left">
+              <p className="text-sm text-muted-foreground text-left">
                 Ouvir todo o livro de {currentBook?.name || selectedBook} em sequência
               </p>
             </Button>
@@ -2011,7 +2011,7 @@ function CommentaryContent({
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-3 text-sm text-slate-500">Gerando comentário...</span>
+        <span className="ml-3 text-sm text-muted-foreground">Gerando comentário...</span>
       </div>
     );
   }

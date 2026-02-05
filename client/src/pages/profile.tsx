@@ -135,7 +135,7 @@ export default function Profile() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-slate-400 font-bold italic">{t.common?.loading || "Carregando..."}</p>
+          <p className="text-sm text-muted-foreground font-bold italic">{t.common?.loading || "Carregando..."}</p>
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ export default function Profile() {
   if (!user && !isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-md w-full rounded-3xl border-none bg-white shadow-xl">
+        <Card className="max-w-md w-full rounded-3xl border-none bg-card shadow-xl">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <User className="h-10 w-10 text-primary" />
@@ -183,12 +183,12 @@ export default function Profile() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       
       {/* Mobile Header with Action Buttons */}
-      <div className="md:hidden sticky top-0 z-20 bg-background/90 backdrop-blur-2xl border-b border-slate-100 px-4 py-3">
+      <div className="md:hidden sticky top-0 z-20 bg-background/90 backdrop-blur-2xl border-b border-border px-4 py-3">
         <div className="flex items-center justify-end gap-2">
           <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-share-profile-mobile">
             <Share2 className="h-5 w-5" />
@@ -239,7 +239,7 @@ export default function Profile() {
                 </Link>
                 <Link href="/privacy">
                   <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                    <Shield className="h-4 w-4 mr-3 text-slate-600" />
+                    <Shield className="h-4 w-4 mr-3 text-muted-foreground" />
                     Política de Privacidade
                   </Button>
                 </Link>
@@ -276,8 +276,8 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-        <Card className="rounded-[2.5rem] border-none bg-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+        <Card className="rounded-[2.5rem] border-none bg-card shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
           <CardContent className="pt-10 pb-10 px-10 relative z-10">
             <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
               <ProfileImageUpload 
@@ -287,7 +287,7 @@ export default function Profile() {
               
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <h1 className="font-display text-4xl md:text-5xl font-black tracking-tighter text-slate-800 uppercase" data-testid="text-profile-name">
+                  <h1 className="font-display text-4xl md:text-5xl font-black tracking-tighter text-foreground uppercase" data-testid="text-profile-name">
                     {user.firstName} {user.lastName}
                   </h1>
                   <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
@@ -345,7 +345,7 @@ export default function Profile() {
                     v{APP_VERSION}
                   </Badge>
                 </div>
-                <p className="text-slate-400 mb-2 font-bold">{user.email}</p>
+                <p className="text-muted-foreground mb-2 font-bold">{user.email}</p>
                 {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
                   <div className="mb-4 p-3 bg-primary/5 rounded-lg">
                     <p className="text-sm">
@@ -356,33 +356,33 @@ export default function Profile() {
                 
                 {/* Quick Stats */}
                 <div className="flex flex-wrap gap-4 md:gap-6">
-                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted border border-border shadow-sm">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
                       <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-lg font-black text-slate-800 tracking-tight">{user.readingStreak || 0}</p>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{t.profile.reading_streak}</p>
+                      <p className="text-lg font-black text-foreground tracking-tight">{user.readingStreak || 0}</p>
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{t.profile.reading_streak}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted border border-border shadow-sm">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10">
                       <CheckCircle2 className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-black text-slate-800 tracking-tight">{completedPlans.length}</p>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{t.plans.completedPlans}</p>
+                      <p className="text-lg font-black text-foreground tracking-tight">{completedPlans.length}</p>
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{t.plans.completedPlans}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted border border-border shadow-sm">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
                       <Award className="h-5 w-5 text-amber-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-black text-slate-800 tracking-tight">{achievements.length}</p>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{t.profile.achievements}</p>
+                      <p className="text-lg font-black text-foreground tracking-tight">{achievements.length}</p>
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{t.profile.achievements}</p>
                     </div>
                   </div>
                 </div>
@@ -471,7 +471,7 @@ export default function Profile() {
                       </Link>
                       <Link href="/privacy">
                         <Button variant="ghost" className="w-full justify-start" data-testid="menu-privacy">
-                          <Shield className="h-4 w-4 mr-3 text-slate-600" />
+                          <Shield className="h-4 w-4 mr-3 text-muted-foreground" />
                           Política de Privacidade
                         </Button>
                       </Link>
@@ -502,18 +502,18 @@ export default function Profile() {
             </div>
 
             {/* XP Progress Bar */}
-            <div className="mt-8 pt-8 border-t border-slate-50">
+            <div className="mt-8 pt-8 border-t border-border">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
                   {t.progress.level} {currentLevel.title}
                 </span>
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                   {isMaxLevel ? `${xp} ${t.progress.xp} (Máximo)` : `${xpProgressInfo.current} / ${xpProgressInfo.needed} ${t.progress.xp}`}
                 </span>
               </div>
-              <Progress value={Math.min(xpProgressInfo.percent, 100)} className="h-2 bg-slate-100" />
+              <Progress value={Math.min(xpProgressInfo.percent, 100)} className="h-2 bg-muted" />
               {!isMaxLevel && (
-                <p className="text-[10px] font-bold text-slate-300 mt-2 italic">
+                <p className="text-[10px] font-bold text-muted-foreground mt-2 italic">
                   Próximo nível: {nextLevel.title}
                 </p>
               )}
@@ -534,16 +534,16 @@ export default function Profile() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto bg-slate-50/50 backdrop-blur-xl rounded-2xl p-1.5 shadow-xl border border-slate-100" data-testid="tabs-profile">
-            <TabsTrigger value="plans" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-plans">
+          <TabsList className="grid w-full grid-cols-3 h-auto bg-muted/50 backdrop-blur-xl rounded-2xl p-1.5 shadow-xl border border-border" data-testid="tabs-profile">
+            <TabsTrigger value="plans" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-muted-foreground data-[state=active]:text-primary" data-testid="tab-plans">
               <BookOpen className="h-5 w-5" />
               <span className="text-[10px] font-black uppercase tracking-widest">{t.profile.my_plans}</span>
             </TabsTrigger>
-            <TabsTrigger value="prayers" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-prayers">
+            <TabsTrigger value="prayers" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-muted-foreground data-[state=active]:text-primary" data-testid="tab-prayers">
               <HandHeart className="h-5 w-5" />
               <span className="text-[10px] font-black uppercase tracking-widest">{t.nav.prayers}</span>
             </TabsTrigger>
-            <TabsTrigger value="donate" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-donate">
+            <TabsTrigger value="donate" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-muted-foreground data-[state=active]:text-primary" data-testid="tab-donate">
               <Heart className="h-5 w-5" />
               <span className="text-[10px] font-black uppercase tracking-widest">Doar</span>
             </TabsTrigger>
@@ -551,14 +551,14 @@ export default function Profile() {
 
           {/* Donate Tab */}
           <TabsContent value="donate" className="space-y-6 mt-10">
-            <Card className="rounded-[2.5rem] border-none bg-white shadow-xl relative overflow-hidden group">
+            <Card className="rounded-[2.5rem] border-none bg-card shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-500/5 via-transparent to-transparent rounded-bl-full z-0" />
               <CardHeader className="p-8 sm:p-10 relative z-10">
-                <CardTitle className="flex items-start gap-4 text-xl font-black text-slate-800 uppercase italic tracking-tighter leading-tight">
+                <CardTitle className="flex items-start gap-4 text-xl font-black text-foreground uppercase italic tracking-tighter leading-tight">
                   <Heart className="h-6 w-6 text-pink-600 fill-pink-600 mt-1 shrink-0 animate-pulse" />
                   <span>Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
-                <CardDescription className="mt-4 text-base font-bold text-slate-400 italic leading-relaxed">
+                <CardDescription className="mt-4 text-base font-bold text-muted-foreground italic leading-relaxed">
                   Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos.
                   <br /><br />
                   Você não está só doando. Você está sendo parte da história de quem busca a Palavra, onde quer que esteja.
@@ -571,26 +571,26 @@ export default function Profile() {
                     Fazer uma Doação
                   </Button>
                 </Link>
-                <div className="mt-10 pt-8 border-t border-slate-50 space-y-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2 italic">Suas doações ajudam em:</p>
+                <div className="mt-10 pt-8 border-t border-border space-y-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Suas doações ajudam em:</p>
                   <ul className="space-y-4">
-                    <li className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                    <li className="flex items-center gap-4 bg-muted p-4 rounded-2xl border border-border/50">
                       <div className="p-1 rounded-full bg-green-500/10 shadow-inner">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
                       </div>
-                      <span className="font-bold text-slate-600">Manter o aplicativo gratuito para todos</span>
+                      <span className="font-bold text-muted-foreground">Manter o aplicativo gratuito para todos</span>
                     </li>
-                    <li className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                    <li className="flex items-center gap-4 bg-muted p-4 rounded-2xl border border-border/50">
                       <div className="p-1 rounded-full bg-green-500/10 shadow-inner">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
                       </div>
-                      <span className="font-bold text-slate-600">Traduzir a Bíblia para mais idiomas</span>
+                      <span className="font-bold text-muted-foreground">Traduzir a Bíblia para mais idiomas</span>
                     </li>
-                    <li className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                    <li className="flex items-center gap-4 bg-muted p-4 rounded-2xl border border-border/50">
                       <div className="p-1 rounded-full bg-green-500/10 shadow-inner">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
                       </div>
-                      <span className="font-bold text-slate-600">Desenvolver novos recursos e melhorias</span>
+                      <span className="font-bold text-muted-foreground">Desenvolver novos recursos e melhorias</span>
                     </li>
                   </ul>
                 </div>
@@ -612,7 +612,7 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {highlights.length === 0 ? (
-                    <p className="text-sm text-slate-400">Nenhum destaque ainda</p>
+                    <p className="text-sm text-muted-foreground">Nenhum destaque ainda</p>
                   ) : (
                     <div className="space-y-3">
                       {highlights.slice(0, 5).map((highlight) => (
@@ -623,7 +623,7 @@ export default function Profile() {
                               className="h-3 w-3 rounded-full" 
                               style={{ backgroundColor: highlight.color }}
                             />
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs text-muted-foreground">
                               {new Date(highlight.createdAt!).toLocaleDateString()}
                             </p>
                           </div>
@@ -652,13 +652,13 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {notes.length === 0 ? (
-                    <p className="text-sm text-slate-400">Nenhuma nota ainda</p>
+                    <p className="text-sm text-muted-foreground">Nenhuma nota ainda</p>
                   ) : (
                     <div className="space-y-3">
                       {notes.slice(0, 5).map((note) => (
                         <div key={note.id} className="text-sm">
                           <p className="font-medium">{note.book} {note.chapter}{note.verse ? `:${note.verse}` : ''}</p>
-                          <p className="text-xs text-slate-400 line-clamp-2 mt-1">
+                          <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
                             {note.content}
                           </p>
                         </div>
@@ -686,14 +686,14 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {bookmarks.length === 0 ? (
-                    <p className="text-sm text-slate-400">Nenhum favorito ainda</p>
+                    <p className="text-sm text-muted-foreground">Nenhum favorito ainda</p>
                   ) : (
                     <div className="space-y-3">
                       {bookmarks.slice(0, 5).map((bookmark) => (
                         <div key={bookmark.id} className="text-sm">
                           <p className="font-medium">{bookmark.book} {bookmark.chapter}:{bookmark.verse}</p>
                           {bookmark.note && (
-                            <p className="text-xs text-slate-400 line-clamp-1 mt-1">
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
                               {bookmark.note}
                             </p>
                           )}
@@ -730,8 +730,8 @@ export default function Profile() {
                 <CardContent>
                   {activePlans.length === 0 ? (
                     <div className="text-center py-8">
-                      <BookOpen className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-                      <p className="text-slate-400 mb-4">{t.plans.noActivePlans}</p>
+                      <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                      <p className="text-muted-foreground mb-4">{t.plans.noActivePlans}</p>
                       <Link href="/plans">
                         <Button>Explorar Planos</Button>
                       </Link>
@@ -745,7 +745,7 @@ export default function Profile() {
                             <div className="flex items-start justify-between mb-3">
                               <div>
                                 <h3 className="font-semibold">{plan.title}</h3>
-                                <p className="text-sm text-slate-400">
+                                <p className="text-sm text-muted-foreground">
                                   {t.plans.day} {plan.currentDay || 1} de {plan.totalDays}
                                 </p>
                               </div>
@@ -775,24 +775,24 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                   {completedPlans.length === 0 ? (
-                    <p className="text-sm text-slate-400 text-center py-4">
+                    <p className="text-sm text-muted-foreground text-center py-4">
                       Complete seu primeiro plano para ver aqui!
                     </p>
                   ) : (
                     <div className="grid md:grid-cols-2 gap-4">
                       {completedPlans.map((plan) => (
-                        <div key={plan.id} className="border border-slate-100 rounded-lg p-4 bg-green-50">
+                        <div key={plan.id} className="border border-border rounded-lg p-4 bg-green-50">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <h3 className="font-semibold text-sm">{plan.title}</h3>
-                              <p className="text-xs text-slate-400 mt-1">
+                              <p className="text-xs text-muted-foreground mt-1">
                                 {plan.totalDays} {t.plans.days}
                               </p>
                             </div>
                             <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
                           </div>
                           {plan.completedAt && (
-                            <p className="text-xs text-slate-400 mt-2">
+                            <p className="text-xs text-muted-foreground mt-2">
                               {t.plans.completedOn} {new Date(plan.completedAt).toLocaleDateString()}
                             </p>
                           )}
@@ -820,8 +820,8 @@ export default function Profile() {
               <CardContent>
                 {achievements.length === 0 ? (
                   <div className="text-center py-8">
-                    <Award className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-                    <p className="text-slate-400">
+                    <Award className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">
                       Continue lendo a Bíblia para desbloquear conquistas!
                     </p>
                   </div>
@@ -838,8 +838,8 @@ export default function Profile() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold mb-1">{achievement.name}</p>
-                          <p className="text-sm text-slate-400">{achievement.description}</p>
-                          <p className="text-xs text-slate-400 mt-2">
+                          <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                          <p className="text-xs text-muted-foreground mt-2">
                             +{achievement.xpReward} XP
                           </p>
                         </div>
@@ -873,8 +873,8 @@ export default function Profile() {
               <CardContent>
                 {prayers.length === 0 ? (
                   <div className="text-center py-8">
-                    <HandHeart className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-                    <p className="text-slate-400 mb-4">
+                    <HandHeart className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground mb-4">
                       Nenhuma oração registrada ainda
                     </p>
                     <Link href="/prayers">
@@ -889,7 +889,7 @@ export default function Profile() {
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold mb-1">{prayer.title}</h3>
                             {prayer.content && (
-                              <p className="text-sm text-slate-400 line-clamp-2">
+                              <p className="text-sm text-muted-foreground line-clamp-2">
                                 {prayer.content}
                               </p>
                             )}
@@ -902,7 +902,7 @@ export default function Profile() {
                             )}
                           </div>
                         </div>
-                        <p className="text-xs text-slate-400 mt-3">
+                        <p className="text-xs text-muted-foreground mt-3">
                           {new Date(prayer.createdAt!).toLocaleDateString()}
                         </p>
                       </div>
@@ -927,7 +927,7 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Membro desde</span>
+                    <span className="text-sm text-muted-foreground">Membro desde</span>
                     <span className="font-medium">
                       {new Date(user.createdAt!).toLocaleDateString('pt-BR', { 
                         month: 'long', 
@@ -937,14 +937,14 @@ export default function Profile() {
                   </div>
                   <Separator />
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Tema Atual</span>
+                    <span className="text-sm text-muted-foreground">Tema Atual</span>
                     <Badge variant="secondary" className="capitalize">
                       {user.selectedTheme?.replace('_', ' ') || 'Clássico'}
                     </Badge>
                   </div>
                   <Separator />
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-400">Total de XP</span>
+                    <span className="text-sm text-muted-foreground">Total de XP</span>
                     <span className="font-bold text-primary">{xp}</span>
                   </div>
                 </CardContent>
@@ -998,7 +998,7 @@ export default function Profile() {
           <p className="text-base font-medium text-primary">
             {APP_NAME} v{APP_VERSION}
           </p>
-          <p className="text-xs text-slate-300 mt-1 font-bold italic">Desenvolvido por FabriSite</p>
+          <p className="text-xs text-muted-foreground mt-1 font-bold italic">Desenvolvido por FabriSite</p>
         </div>
       </div>
     </div>

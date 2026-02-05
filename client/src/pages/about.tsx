@@ -55,8 +55,8 @@ export default function About() {
       description: "Regras e condições de uso do aplicativo",
       icon: FileText,
       href: "/terms",
-      color: "text-slate-600",
-      bgColor: "bg-slate-600/10"
+      color: "text-muted-foreground",
+      bgColor: "bg-muted-foreground/10"
     },
     {
       title: "Política de Segurança",
@@ -105,17 +105,17 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fdfaf5] relative overflow-hidden selection:bg-primary/30">
+    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/30">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-12 space-y-12">
         <div className="flex justify-start">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="rounded-2xl gap-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all font-black uppercase tracking-widest text-[10px]"
+            className="rounded-2xl gap-2 text-muted-foreground font-black uppercase tracking-widest text-[10px]"
             onClick={() => setLocation("/")}
           >
             <ArrowLeft className="h-3 w-3" />
@@ -131,43 +131,43 @@ export default function About() {
           <div className="flex justify-center">
             <div className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-br from-primary to-purple-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-              <div className="relative h-20 w-20 rounded-2xl bg-white flex items-center justify-center shadow-xl border border-slate-100">
+              <div className="relative h-20 w-20 rounded-2xl bg-card flex items-center justify-center shadow-xl border border-border">
                 <BookOpen className="h-10 w-10 text-primary drop-shadow-sm" />
               </div>
             </div>
           </div>
           <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-amber-700 uppercase italic">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-amber-700 dark:text-amber-500 uppercase italic">
               Sobre o BíbliaFS
             </h1>
           </div>
-          <p className="text-slate-500 text-base max-w-2xl mx-auto font-medium uppercase tracking-tight leading-tight">
+          <p className="text-muted-foreground text-base max-w-2xl mx-auto font-medium uppercase tracking-tight leading-tight">
             Transformando o estudo bíblico com tecnologia de ponta e inteligência artificial.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card className="rounded-[2.5rem] border-none bg-white shadow-xl overflow-hidden group">
+          <Card className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden group">
             <CardHeader className="p-8">
-              <CardTitle className="flex items-center gap-4 text-xl font-black text-slate-800 uppercase italic tracking-tight">
+              <CardTitle className="flex items-center gap-4 text-xl font-black text-foreground uppercase italic tracking-tight">
                 <Heart className="h-6 w-6 text-rose-500 fill-rose-500/20" />
                 Nossa Missão
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-8 pt-0 space-y-4 text-slate-600 font-medium">
+            <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium">
               <p>O BíbliaFS nasceu com o propósito de tornar o estudo da Palavra de Deus mais acessível, personalizado e envolvente.</p>
               <p>Acreditamos que a tecnologia pode ser uma ferramenta poderosa para aproximar as pessoas das Escrituras Sagradas.</p>
             </CardContent>
           </Card>
 
-          <Card className="rounded-[2.5rem] border-none bg-white shadow-xl overflow-hidden group">
+          <Card className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden group">
             <CardHeader className="p-8">
-              <CardTitle className="flex items-center gap-4 text-xl font-black text-slate-800 uppercase italic tracking-tight">
+              <CardTitle className="flex items-center gap-4 text-xl font-black text-foreground uppercase italic tracking-tight">
                 <Users className="h-6 w-6 text-indigo-500" />
                 100% Gratuito
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-8 pt-0 space-y-4 text-slate-600 font-medium">
+            <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium">
               <p>O BíbliaFS é mantido por doações de usuários como você. Nosso compromisso é manter o aplicativo 100% gratuito.</p>
               <p>Desenvolvido com dedicação pela equipe FabriSite.</p>
             </CardContent>
@@ -176,20 +176,20 @@ export default function About() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic">Informações Legais</h2>
+            <h2 className="text-2xl font-black text-foreground tracking-tight uppercase italic">Informações Legais</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {legalPages.map((page, index) => (
               <Link key={index} href={page.href}>
-                <Card className="rounded-3xl border-none bg-white shadow-sm cursor-pointer transition-all hover:shadow-md active:scale-95 group">
+                <Card className="rounded-3xl border-none bg-card shadow-sm cursor-pointer transition-all hover:shadow-md active:scale-95 group">
                   <CardContent className="p-6 flex items-center gap-4">
                     <div className={`h-12 w-12 rounded-xl ${page.bgColor} flex items-center justify-center flex-shrink-0`}>
                       <page.icon className={`h-6 w-6 ${page.color}`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-black text-slate-800 uppercase text-xs tracking-tight">{page.title}</h3>
+                      <h3 className="font-black text-foreground uppercase text-xs tracking-tight">{page.title}</h3>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                   </CardContent>
                 </Card>
               </Link>

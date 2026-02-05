@@ -333,8 +333,8 @@ export default function Podcasts() {
       <audio ref={audioRef} className="hidden" />
       
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <div className="relative z-10 max-w-7xl mx-auto p-6">
         <motion.div 
@@ -435,7 +435,7 @@ export default function Podcasts() {
                     <Card className="premium-card ring-2 ring-primary/10 rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
                       <div className="h-48 relative overflow-hidden bg-primary/10">
                         {podcast.imageUrl ? (
-                          <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
                             <Radio className="h-16 w-16 text-primary/40" />
@@ -443,7 +443,7 @@ export default function Podcasts() {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                          <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Leitura Bíblica'}</Badge>
+                          <Badge className="rounded-full bg-card/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Leitura Bíblica'}</Badge>
                         </div>
                       </div>
                       <CardHeader className="pb-4 relative">
@@ -487,7 +487,7 @@ export default function Podcasts() {
                             {podcast.episodes.slice(0, 2).map((ep: Episode) => (
                               <div 
                                 key={ep.id} 
-                                className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-primary/5 transition-colors cursor-pointer group/ep"
+                                className="flex items-center justify-between p-3 rounded-xl bg-muted/50  transition-colors cursor-pointer group/ep"
                                 onClick={() => playEpisode(ep, podcast)}
                               >
                                 <div className="flex-1 min-w-0">
@@ -508,7 +508,7 @@ export default function Podcasts() {
                       <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
                         <Button 
                           variant="ghost" 
-                          className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all"
+                          className="flex-1 rounded-xl h-11 font-bold  transition-all"
                           onClick={() => {
                             // Logic to view details could go here
                             toast({ title: "Em breve", description: "Visualização detalhada do podcast" });
@@ -519,7 +519,7 @@ export default function Podcasts() {
                         <Button 
                           size="icon" 
                           variant="ghost" 
-                          className="rounded-xl h-11 w-11 hover:bg-primary/10"
+                          className="rounded-xl h-11 w-11 "
                           onClick={() => {
                             const isSubscribed = subscriptions.some(s => s.id === podcast.id);
                             if (isSubscribed) {
@@ -559,7 +559,7 @@ export default function Podcasts() {
                       <Card className="premium-card ring-2 ring-primary/10 rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
                         <div className="h-48 relative overflow-hidden bg-primary/10">
                           {podcast.imageUrl ? (
-                            <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                            <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <Headphones className="h-16 w-16 text-primary/40" />
@@ -567,7 +567,7 @@ export default function Podcasts() {
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                            <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                            <Badge className="rounded-full bg-card/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
                           </div>
                         </div>
                         <CardHeader className="pb-4">
@@ -583,7 +583,7 @@ export default function Podcasts() {
                         <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
                           <Button 
                             variant="ghost" 
-                            className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all"
+                            className="flex-1 rounded-xl h-11 font-bold  transition-all"
                             onClick={() => {
                               toast({ title: "Em breve", description: "Visualização detalhada do podcast" });
                             }}
@@ -705,13 +705,13 @@ export default function Podcasts() {
                                 className="absolute top-4 left-4 z-10 cursor-pointer"
                                 onClick={() => togglePodcastSelection(podcast.id)}
                               >
-                                <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-white/80 border-white/50'}`}>
+                                <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-card/80 border-white/50'}`}>
                                   {selectedPodcasts.has(podcast.id) && <Check className="h-4 w-4 text-white" />}
                                 </div>
                               </div>
                             )}
                             {podcast.imageUrl ? (
-                              <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                              <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <Headphones className="h-16 w-16 text-primary/40" />
@@ -719,7 +719,7 @@ export default function Podcasts() {
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                             <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                              <Badge className="rounded-full bg-white/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                              <Badge className="rounded-full bg-card/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
                             </div>
                           </div>
                           <CardHeader className="pb-4">
@@ -733,7 +733,7 @@ export default function Podcasts() {
                             </div>
                           </CardContent>
                           <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
-                            <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold group-hover:bg-primary group-hover:text-white transition-all">
+                            <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold  transition-all">
                               Gerenciar
                             </Button>
                             {!selectionMode && (

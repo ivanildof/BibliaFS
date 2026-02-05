@@ -48,8 +48,8 @@ export default function Terms() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -63,7 +63,7 @@ export default function Terms() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <p className="text-slate-400">Voltar para Sobre</p>
+          <p className="text-muted-foreground">Voltar para Sobre</p>
         </motion.div>
 
         <motion.div 
@@ -72,14 +72,14 @@ export default function Terms() {
           className="text-center space-y-4 mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-3xl bg-white shadow-xl flex items-center justify-center relative overflow-hidden">
+            <div className="h-24 w-24 rounded-3xl bg-card shadow-xl flex items-center justify-center relative overflow-hidden">
               <FileText className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
-          <h1 className="text-5xl font-black bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent italic uppercase tracking-tighter">
+          <h1 className="text-5xl font-black bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent italic uppercase tracking-tighter">
             Termos de Uso
           </h1>
-          <p className="text-slate-400 font-bold italic">
+          <p className="text-muted-foreground font-bold italic">
             Última atualização: {new Date().toLocaleDateString('pt-BR')}
           </p>
         </motion.div>
@@ -91,27 +91,27 @@ export default function Terms() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + idx * 0.05 }}
           >
-            <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+            <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-primary shadow-sm">
+                <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+                  <div className="p-2.5 rounded-xl bg-muted border border-border text-primary shadow-sm">
                     <section.icon className="h-5 w-5" />
                   </div>
                   {section.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 text-slate-500 font-medium leading-relaxed relative z-10">
+              <CardContent className="space-y-4 text-muted-foreground font-medium leading-relaxed relative z-10">
                 {section.content && <p>{section.content}</p>}
-                {section.intro && <p className="text-slate-700 font-bold italic">{section.intro}</p>}
+                {section.intro && <p className="text-foreground font-bold italic">{section.intro}</p>}
                 {section.forbidden && (
                   <div className="space-y-3 pt-2">
-                    <p className="font-black text-slate-800 uppercase tracking-widest text-xs italic">Você concorda em NÃO:</p>
+                    <p className="font-black text-foreground uppercase tracking-widest text-xs italic">Você concorda em NÃO:</p>
                     <ul className="space-y-3">
                       {section.forbidden.map((item, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <span className="h-2 w-2 rounded-full bg-destructive/60 shadow-sm mt-2 flex-shrink-0" />
-                          <span className="text-slate-500">{item}</span>
+                          <span className="text-muted-foreground">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -123,17 +123,17 @@ export default function Terms() {
         ))}
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card className="rounded-[2rem] border-none bg-white shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-bl-full z-0" />
+          <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="flex items-center gap-3 text-slate-800 font-black uppercase italic tracking-tighter">
+              <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
                 <div className="p-2.5 rounded-xl bg-green-500/10 border border-green-100 shadow-sm">
                   <Mail className="h-5 w-5 text-green-600" />
                 </div>
                 7. Contato
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-slate-500 font-medium relative z-10">
+            <CardContent className="text-muted-foreground font-medium relative z-10">
               <p>
                 Se você tiver dúvidas sobre estes Termos de Uso, entre em contato conosco através 
                 da página "Fale Conosco".
@@ -154,17 +154,17 @@ export default function Terms() {
             { href: "/security", title: "Segurança", desc: "Medidas de segurança" }
           ].map((link, idx) => (
             <Link key={idx} href={link.href}>
-              <Card className="rounded-2xl border-none bg-white shadow-lg cursor-pointer h-full transition-all hover:shadow-xl hover:-translate-y-1">
+              <Card className="rounded-2xl border-none bg-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
                 <CardContent className="p-6 text-center">
-                  <h3 className="font-black text-slate-800 mb-1 uppercase tracking-tight">{link.title}</h3>
-                  <p className="text-sm text-slate-400 font-bold italic">{link.desc}</p>
+                  <h3 className="font-black text-foreground mb-1 uppercase tracking-tight">{link.title}</h3>
+                  <p className="text-sm text-muted-foreground font-bold italic">{link.desc}</p>
                 </CardContent>
               </Card>
             </Link>
           ))}
         </motion.div>
 
-        <footer className="text-center text-sm text-slate-400 py-8 border-t border-slate-100">
+        <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border">
           <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
           <p className="mt-1">
             Desenvolvido por{" "}

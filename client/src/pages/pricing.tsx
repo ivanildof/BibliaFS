@@ -43,7 +43,7 @@ const plans = [
     period: "para sempre",
     description: "Comece sua jornada bíblica",
     icon: Star,
-    iconBg: "bg-slate-500",
+    iconBg: "bg-muted0",
     features: [
       "Bíblia completa (4 versões)",
       "Versículo do Dia",
@@ -247,8 +247,8 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-slate-200/40 dark:bg-slate-700/30 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-slate-100/50 dark:bg-slate-800/40 rounded-full blur-[150px]" />
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 dark:bg-primary/5 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-muted/50 dark:bg-muted/30 rounded-full blur-[150px]" />
       
       {/* Header */}
       <div className="relative z-10 p-4 md:p-6">
@@ -271,7 +271,7 @@ export default function Pricing() {
           <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-4 tracking-tight" data-testid="text-page-title">
             Escolha seu Plano
           </h1>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto font-bold italic">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-bold italic">
             Transforme seu estudo bíblico com recursos premium
           </p>
           
@@ -307,7 +307,7 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none bg-white shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden ${
+                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none bg-card shadow-xl hover:shadow-2xl  overflow-hidden ${
                     plan.popular ? 'ring-2 ring-primary/40' : ''
                   } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
@@ -326,18 +326,18 @@ export default function Pricing() {
                     </div>
                     
                     <div>
-                      <CardTitle className="text-3xl font-black text-slate-800 tracking-tighter uppercase">{plan.name}</CardTitle>
-                      <CardDescription className="text-base mt-2 font-bold text-slate-400 italic">
+                      <CardTitle className="text-3xl font-black text-foreground tracking-tighter uppercase">{plan.name}</CardTitle>
+                      <CardDescription className="text-base mt-2 font-bold text-muted-foreground italic">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
                     <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden">
-                      <span className="text-xl font-black text-slate-300 mr-1.5 italic">R$</span>
-                      <span className="text-5xl font-black text-slate-800 tracking-tighter">
+                      <span className="text-xl font-black text-muted-foreground mr-1.5 italic">R$</span>
+                      <span className="text-5xl font-black text-foreground tracking-tighter">
                         {plan.price.replace('R$ ', '')}
                       </span>
-                      <span className="text-slate-300 text-xs ml-1.5 font-black uppercase tracking-widest italic">/{plan.period}</span>
+                      <span className="text-muted-foreground text-xs ml-1.5 font-black uppercase tracking-widest italic">/{plan.period}</span>
                     </div>
                   </CardHeader>
 
@@ -345,10 +345,10 @@ export default function Pricing() {
                     <ul className="space-y-4">
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-3 text-base" data-testid={`feature-${plan.id}-${i}`}>
-                          <div className="p-1 rounded-full bg-slate-50 border border-slate-100 mt-1 shadow-inner">
+                          <div className="p-1 rounded-full bg-muted border border-border mt-1 shadow-inner">
                             <Check className="h-3 w-3 text-primary" />
                           </div>
-                          <span className="font-bold text-slate-600 leading-relaxed">{feature}</span>
+                          <span className="font-bold text-muted-foreground leading-relaxed">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -357,7 +357,7 @@ export default function Pricing() {
                   <CardFooter className="pb-10 px-8 relative z-10">
                     <Button 
                       className={`w-full h-16 rounded-2xl font-black text-xl italic uppercase tracking-widest transition-all ${
-                        plan.popular ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100'
+                        plan.popular ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'bg-muted text-muted-foreground border border-border hover:bg-muted'
                       }`}
                       variant={plan.popular ? "default" : "outline"}
                       disabled={buttonConfig.disabled || checkoutMutation.isPending || portalMutation.isPending}
@@ -394,15 +394,15 @@ export default function Pricing() {
           className="max-w-4xl mx-auto"
         >
           <div className="flex flex-wrap justify-center gap-6 md:gap-10">
-            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-lg">
+            <div className="flex items-center gap-2 bg-card px-5 py-3 rounded-2xl border border-border shadow-lg">
               <Shield className="h-5 w-5 text-green-500" />
               <span className="text-sm font-medium">Pagamento seguro</span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-lg">
+            <div className="flex items-center gap-2 bg-card px-5 py-3 rounded-2xl border border-border shadow-lg">
               <Check className="h-5 w-5 text-green-500" />
               <span className="text-sm font-medium">Cancele quando quiser</span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-lg">
+            <div className="flex items-center gap-2 bg-card px-5 py-3 rounded-2xl border border-border shadow-lg">
               <Star className="h-5 w-5 text-amber-500" />
               <span className="text-sm font-medium">Garantia de 30 dias</span>
             </div>
@@ -422,13 +422,13 @@ export default function Pricing() {
             Perguntas Frequentes
           </h2>
           
-          <Accordion type="single" collapsible className="w-full bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+          <Accordion type="single" collapsible className="w-full bg-card rounded-3xl border border-border shadow-xl overflow-hidden">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-b-border/30 last:border-b-0 px-6">
                 <AccordionTrigger className="text-left py-5 text-base font-medium hover:no-underline" data-testid={`faq-question-${index}`}>
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-slate-500 pb-5 text-base font-medium">
+                <AccordionContent className="text-muted-foreground pb-5 text-base font-medium">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -445,7 +445,7 @@ export default function Pricing() {
           transition={{ delay: 0.7 }}
           className="max-w-2xl mx-auto text-center"
         >
-          <p className="text-slate-400 mb-6 text-lg font-bold italic">
+          <p className="text-muted-foreground mb-6 text-lg font-bold italic">
             Dúvidas? Estamos aqui para ajudar
           </p>
           <Link href="/contact">

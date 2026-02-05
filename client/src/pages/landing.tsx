@@ -170,8 +170,8 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary selection:text-white">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
       <div className="relative z-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1.5 bg-primary z-[60] origin-left" style={{ scaleX }} />
@@ -301,7 +301,7 @@ export default function Landing() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <Badge className="mb-8 bg-white/10 backdrop-blur-2xl text-primary border-primary/30 px-8 py-3 rounded-full font-black text-xs uppercase tracking-[0.3em] shadow-2xl border-2">
+            <Badge className="mb-8 bg-card/10 backdrop-blur-2xl text-primary border-primary/30 px-8 py-3 rounded-full font-black text-xs uppercase tracking-[0.3em] shadow-2xl border-2">
               A Nova Era do Estudo Bíblico
             </Badge>
           </motion.div>
@@ -342,7 +342,7 @@ export default function Landing() {
             <Button 
               size="lg"
               variant="outline"
-              className="h-16 px-12 rounded-full bg-background/50 backdrop-blur-2xl border-2 border-white/10 text-foreground hover:bg-white/5 shadow-2xl font-black text-base uppercase tracking-widest"
+              className="h-16 px-12 rounded-full bg-background/50 backdrop-blur-2xl border-2 border-white/10 text-foreground hover:bg-card/5 shadow-2xl font-black text-base uppercase tracking-widest"
               onClick={() => {
                 document.getElementById("recursos")?.scrollIntoView({ behavior: "smooth" });
               }}
@@ -409,10 +409,10 @@ export default function Landing() {
                   animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <Card className="rounded-[2.5rem] border-none glass-darker shadow-2xl overflow-hidden h-full group hover:-translate-y-2 transition-all duration-500">
+                  <Card className="rounded-[2.5rem] border-none glass-darker shadow-2xl overflow-hidden h-full group  transition-all duration-500">
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity`} />
                     <CardHeader className="p-8">
-                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-2xl mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all`}>
+                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-2xl mb-6 transform  transition-all`}>
                         <feature.icon className="h-8 w-8 text-white" />
                       </div>
                       <CardTitle className="text-2xl font-black tracking-tight mb-4">{feature.title}</CardTitle>
@@ -456,22 +456,22 @@ export default function Landing() {
                  whileInView={{ rotate: 0, scale: 1 }}
                  className="relative z-10 rounded-[3rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-8 border-white/5"
                >
-                 <div className="bg-slate-900 aspect-[9/16] p-8">
-                    <div className="flex items-center justify-between mb-10">
+                 <div className="bg-foreground aspect-[9/16] p-8">
+                    <div className="flex items-center justify-between gap-4 flex-wrap mb-10">
                       <Menu className="h-6 w-6 text-white" />
                       <div className="flex gap-2">
-                        <div className="h-2 w-2 rounded-full bg-white/20" />
-                        <div className="h-2 w-2 rounded-full bg-white/20" />
-                        <div className="h-2 w-2 rounded-full bg-white/20" />
+                        <div className="h-2 w-2 rounded-full bg-card/20" />
+                        <div className="h-2 w-2 rounded-full bg-card/20" />
+                        <div className="h-2 w-2 rounded-full bg-card/20" />
                       </div>
                     </div>
                     <div className="space-y-6">
-                      <div className="h-8 w-2/3 bg-white/10 rounded-full" />
+                      <div className="h-8 w-2/3 bg-card/10 rounded-full" />
                       <div className="space-y-3">
-                        <div className="h-4 w-full bg-white/5 rounded-full" />
-                        <div className="h-4 w-full bg-white/5 rounded-full" />
-                        <div className="h-4 w-5/6 bg-white/5 rounded-full" />
-                        <div className="h-4 w-full bg-white/5 rounded-full" />
+                        <div className="h-4 w-full bg-card/5 rounded-full" />
+                        <div className="h-4 w-full bg-card/5 rounded-full" />
+                        <div className="h-4 w-5/6 bg-card/5 rounded-full" />
+                        <div className="h-4 w-full bg-card/5 rounded-full" />
                       </div>
                       <div className="h-60 rounded-3xl bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center border-2 border-white/5">
                         <Sparkles className="h-20 w-20 text-primary/40 animate-pulse" />
@@ -499,7 +499,7 @@ export default function Landing() {
             </p>
             <div className="flex justify-center gap-4">
                {[Crown, Star, Flame, Zap].map((Icon, i) => (
-                 <div key={i} className="h-14 w-14 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/10 hover:scale-110 transition-transform cursor-pointer">
+                 <div key={i} className="h-14 w-14 rounded-2xl bg-card/10 backdrop-blur-xl flex items-center justify-center border border-white/10 hover:scale-110 transition-transform cursor-pointer">
                    <Icon className="h-6 w-6 text-amber-400" />
                  </div>
                ))}
@@ -526,7 +526,7 @@ export default function Landing() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Card className="rounded-[2.5rem] border-none glass-darker p-8 h-full shadow-2xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-150 transition-transform">
+                  <div className="absolute top-0 right-0 p-6 opacity-10  transition-transform">
                     <Star className="h-20 w-20 fill-current" />
                   </div>
                   <div className="flex gap-1 mb-6">
@@ -562,7 +562,7 @@ export default function Landing() {
             viewport={{ once: true }}
             className="rounded-[3rem] bg-gradient-to-br from-primary via-indigo-700 to-purple-800 p-12 md:p-20 text-center text-white shadow-[0_50px_100px_rgba(79,70,229,0.4)] relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-card/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/20 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
             
             <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tight relative z-10">Pronto Para Iniciar Sua Jornada?</h2>
@@ -572,7 +572,7 @@ export default function Landing() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center relative z-10">
               <Button 
                 size="lg"
-                className="h-16 px-12 rounded-full bg-white text-primary hover:bg-white/90 hover:scale-105 transition-all font-black text-base uppercase tracking-widest border-0"
+                className="h-16 px-12 rounded-full bg-card text-primary hover:bg-card/90 hover:scale-105 transition-all font-black text-base uppercase tracking-widest border-0"
                 onClick={() => setLocation("/register")}
               >
                 Criar Conta Grátis
