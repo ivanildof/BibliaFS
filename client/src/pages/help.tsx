@@ -76,7 +76,7 @@ export default function Help() {
               <HelpCircle className="h-12 w-12 text-amber-500 drop-shadow-sm relative z-10" />
             </div>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-clip-text text-transparent italic uppercase tracking-tighter">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-clip-text text-transparent italic uppercase tracking-tighter">
             Ajuda e Suporte
           </h1>
           <p className="text-muted-foreground text-lg font-bold">
@@ -88,7 +88,7 @@ export default function Help() {
           <Card data-testid="card-faq" className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="p-8 border-b border-border relative z-10">
-              <CardTitle className="flex items-center gap-3 text-2xl font-black text-foreground italic uppercase tracking-tighter">
+              <CardTitle className="flex items-center gap-3 text-2xl font-bold text-foreground italic uppercase tracking-tighter">
                 <div className="p-2.5 rounded-xl bg-muted border border-border text-muted-foreground shadow-sm">
                   <Book className="h-6 w-6" />
                 </div>
@@ -107,7 +107,7 @@ export default function Help() {
                     className="border-none bg-muted hover:bg-muted transition-colors rounded-2xl px-6 border border-border"
                     data-testid={`accordion-faq-${idx}`}
                   >
-                    <AccordionTrigger className="hover:no-underline py-6 font-black text-lg text-left text-foreground hover:text-foreground transition-colors" data-testid={`trigger-faq-${idx}`}>
+                    <AccordionTrigger className="hover:no-underline py-6 font-bold text-lg text-left text-foreground hover:text-foreground transition-colors" data-testid={`trigger-faq-${idx}`}>
                       <div className="flex items-center gap-4">
                         <faq.icon className="h-5 w-5 text-primary shrink-0" />
                         <span className="tracking-tight">{faq.q}</span>
@@ -128,7 +128,7 @@ export default function Help() {
             <Card data-testid="card-tutorials" className="rounded-[2rem] border-none bg-card shadow-xl h-full relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+                <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
                   <div className="p-2.5 rounded-xl bg-muted border border-border text-muted-foreground">
                     <Video className="h-6 w-6" />
                   </div>
@@ -142,7 +142,7 @@ export default function Help() {
                 <p className="text-muted-foreground font-medium leading-relaxed">
                   Em breve disponibilizaremos tutoriais em vídeo para ajudá-lo a explorar todos os recursos do BíbliaFS de forma visual e prática.
                 </p>
-                <Button variant="outline" className="w-full rounded-2xl h-12 border-border text-muted-foreground font-black italic uppercase tracking-widest bg-muted" disabled>
+                <Button variant="outline" className="w-full rounded-2xl h-12 border-border text-muted-foreground font-bold italic uppercase tracking-widest bg-muted" disabled>
                   <Video className="h-4 w-4 mr-2" />
                   Ver Tutoriais (Em Breve)
                 </Button>
@@ -154,7 +154,7 @@ export default function Help() {
             <Card data-testid="card-contact-support" className="rounded-[2rem] border-none bg-card shadow-xl h-full relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+                <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
                   <div className="p-2.5 rounded-xl bg-primary shadow-lg text-white">
                     <MessageCircle className="h-6 w-6" />
                   </div>
@@ -169,7 +169,7 @@ export default function Help() {
                   Se você não encontrou a resposta para sua dúvida nas FAQs acima, entre em contato conosco diretamente. Responderemos o mais breve possível!
                 </p>
                 <Link href="/contact" data-testid="link-contact-help">
-                  <Button className="w-full rounded-2xl h-12 shadow-xl shadow-primary/20 font-black italic uppercase tracking-widest" data-testid="button-contact-us">
+                  <Button className="w-full rounded-2xl h-12 shadow-xl shadow-primary/20 font-bold italic uppercase tracking-widest" data-testid="button-contact-us">
                     <Mail className="h-4 w-4 mr-2" />
                     Fale Conosco
                   </Button>

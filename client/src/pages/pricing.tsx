@@ -268,7 +268,7 @@ export default function Pricing() {
           transition={{ duration: 0.6 }}
         >
           <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Planos Premium</p>
-          <h1 className="font-display text-4xl md:text-6xl font-extrabold mb-4 tracking-tight" data-testid="text-page-title">
+          <h1 className="font-display text-2xl md:text-3xl font-extrabold mb-4 tracking-tight" data-testid="text-page-title">
             Escolha seu Plano
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-bold italic">
@@ -319,25 +319,25 @@ export default function Pricing() {
                         <IconComponent className="h-8 w-8 text-white drop-shadow-sm" />
                       </div>
                       {plan.popular && (
-                        <Badge className="bg-primary text-white text-[10px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/20 border-none">
+                        <Badge className="bg-primary text-white text-[10px] px-4 py-1.5 rounded-full font-semibold uppercase tracking-[0.2em] shadow-lg shadow-primary/20 border-none">
                           Popular
                         </Badge>
                       )}
                     </div>
                     
                     <div>
-                      <CardTitle className="text-3xl font-black text-foreground tracking-tighter uppercase">{plan.name}</CardTitle>
+                      <CardTitle className="text-3xl font-semibold text-foreground tracking-tight uppercase">{plan.name}</CardTitle>
                       <CardDescription className="text-base mt-2 font-bold text-muted-foreground italic">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
                     <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden">
-                      <span className="text-xl font-black text-muted-foreground mr-1.5 italic">R$</span>
-                      <span className="text-5xl font-black text-foreground tracking-tighter">
+                      <span className="text-xl font-semibold text-muted-foreground mr-1.5 italic">R$</span>
+                      <span className="text-5xl font-semibold text-foreground tracking-tight">
                         {plan.price.replace('R$ ', '')}
                       </span>
-                      <span className="text-muted-foreground text-xs ml-1.5 font-black uppercase tracking-widest italic">/{plan.period}</span>
+                      <span className="text-muted-foreground text-xs ml-1.5 font-semibold uppercase tracking-widest italic">/{plan.period}</span>
                     </div>
                   </CardHeader>
 
@@ -356,7 +356,7 @@ export default function Pricing() {
 
                   <CardFooter className="pb-10 px-8 relative z-10">
                     <Button 
-                      className={`w-full h-16 rounded-2xl font-black text-xl italic uppercase tracking-widest transition-all ${
+                      className={`w-full h-16 rounded-2xl font-semibold text-xl italic uppercase tracking-widest transition-all ${
                         plan.popular ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'bg-muted text-muted-foreground border border-border hover:bg-muted'
                       }`}
                       variant={plan.popular ? "default" : "outline"}

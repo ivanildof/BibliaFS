@@ -174,7 +174,7 @@ export default function ReadingPlans() {
           className="text-center space-y-2 mb-12"
         >
           <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">LEITURA BÍBLICA</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground" data-testid="text-page-title">
             {t.plans.title}
           </h1>
           <p className="text-sm text-muted-foreground">

@@ -115,7 +115,7 @@ export default function About() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="rounded-2xl gap-2 text-muted-foreground font-black uppercase tracking-widest text-[10px]"
+            className="rounded-2xl gap-2 text-muted-foreground font-semibold uppercase tracking-widest text-[10px]"
             onClick={() => setLocation("/")}
           >
             <ArrowLeft className="h-3 w-3" />
@@ -137,7 +137,7 @@ export default function About() {
             </div>
           </div>
           <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-amber-700 dark:text-amber-500 uppercase italic">
+            <h1 className="text-2xl md:text-3xl font-semibold tracking-tighter text-amber-700 dark:text-amber-500 uppercase italic">
               Sobre o BíbliaFS
             </h1>
           </div>
@@ -149,7 +149,7 @@ export default function About() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden group">
             <CardHeader className="p-8">
-              <CardTitle className="flex items-center gap-4 text-xl font-black text-foreground uppercase italic tracking-tight">
+              <CardTitle className="flex items-center gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tight">
                 <Heart className="h-6 w-6 text-rose-500 fill-rose-500/20" />
                 Nossa Missão
               </CardTitle>
@@ -162,7 +162,7 @@ export default function About() {
 
           <Card className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden group">
             <CardHeader className="p-8">
-              <CardTitle className="flex items-center gap-4 text-xl font-black text-foreground uppercase italic tracking-tight">
+              <CardTitle className="flex items-center gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tight">
                 <Users className="h-6 w-6 text-indigo-500" />
                 100% Gratuito
               </CardTitle>
@@ -176,7 +176,7 @@ export default function About() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-black text-foreground tracking-tight uppercase italic">Informações Legais</h2>
+            <h2 className="text-2xl font-semibold text-foreground tracking-tight uppercase italic">Informações Legais</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {legalPages.map((page, index) => (
@@ -187,7 +187,7 @@ export default function About() {
                       <page.icon className={`h-6 w-6 ${page.color}`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-black text-foreground uppercase text-xs tracking-tight">{page.title}</h3>
+                      <h3 className="font-semibold text-foreground uppercase text-xs tracking-tight">{page.title}</h3>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                   </CardContent>

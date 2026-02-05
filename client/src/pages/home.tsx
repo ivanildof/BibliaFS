@@ -112,8 +112,8 @@ export default function Home() {
             <Crown className="h-8 w-8 text-amber-500 fill-amber-500/30 drop-shadow-[0_0_12px_rgba(245,158,11,0.7)] animate-pulse" />
             <div className="h-px w-12 bg-gradient-to-l from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
           </div>
-          <p className="text-[12px] font-black text-muted-foreground uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
-          <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
+          <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
             Olá, {user?.firstName || "Estudante"}
           </h1>
           <p className="text-base text-muted-foreground font-medium">
@@ -145,18 +145,18 @@ export default function Home() {
                       <Calendar className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl font-black tracking-tight">Leitura de Hoje</CardTitle>
+                      <CardTitle className="text-xl font-semibold tracking-tight">Leitura de Hoje</CardTitle>
                       <CardDescription className="text-sm font-bold opacity-70 mt-0.5 uppercase tracking-wider">{currentPlan.title}</CardDescription>
                     </div>
                   </div>
-                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-black px-6 py-2 rounded-full text-xs shadow-lg shadow-primary/20">
+                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-semibold px-6 py-2 rounded-full text-xs shadow-lg shadow-primary/20">
                     DIA {currentPlan.currentDay}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6 pt-2 relative">
                 <div className="bg-muted/30 p-6 rounded-2xl border border-white/5">
-                  <div className="flex items-center justify-between text-xs mb-3 font-black uppercase tracking-widest text-muted-foreground">
+                  <div className="flex items-center justify-between text-xs mb-3 font-semibold uppercase tracking-widest text-muted-foreground">
                     <span>PROGRESSO DO PLANO</span>
                     <span className="text-primary">
                       {Math.round(((currentPlan.currentDay || 1) / (currentPlan.schedule?.length || 1)) * 100)}%
@@ -172,7 +172,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <Button size="lg" className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl  bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
+                <Button size="lg" className="w-full h-14 rounded-2xl font-semibold text-xs uppercase tracking-[0.2em] shadow-2xl  bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
                   <Link href="/bible">
                     <BookOpen className="mr-3 h-5 w-5" />
                     CONTINUAR LEITURA
@@ -187,7 +187,7 @@ export default function Home() {
         <motion.div variants={itemVariants} className="space-y-6">
           <div className="flex items-center gap-3">
              <div className="h-8 w-1 bg-primary rounded-full" />
-             <h2 className="font-black text-xl text-foreground tracking-tight uppercase">Ações Rápidas</h2>
+             <h2 className="font-semibold text-xl text-foreground tracking-tight uppercase">Ações Rápidas</h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
@@ -198,7 +198,7 @@ export default function Home() {
                       <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform  transition-all`}>
                         <action.icon className="h-6 w-6 text-white" />
                       </div>
-                      <p className="font-black text-xs text-foreground uppercase tracking-widest">{action.label}</p>
+                      <p className="font-semibold text-xs text-foreground uppercase tracking-widest">{action.label}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -217,8 +217,8 @@ export default function Home() {
                     <Sparkles className="h-7 w-7 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-3xl font-black bg-gradient-to-r from-indigo-400 via-primary to-purple-500 bg-clip-text text-transparent tracking-tighter">Atividade Recente</CardTitle>
-                    <p className="text-xs text-primary font-black uppercase tracking-[0.3em] mt-1">Sua Trilha de Evolução Exclusiva</p>
+                    <CardTitle className="text-3xl font-semibold bg-gradient-to-r from-indigo-400 via-primary to-purple-500 bg-clip-text text-transparent tracking-tighter">Atividade Recente</CardTitle>
+                    <p className="text-xs text-primary font-semibold uppercase tracking-[0.3em] mt-1">Sua Trilha de Evolução Exclusiva</p>
                   </div>
                 </div>
               </div>
@@ -229,7 +229,7 @@ export default function Home() {
                   <div className="flex justify-center py-20">
                     <div className="flex flex-col items-center gap-4">
                       <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                      <p className="text-sm font-black uppercase tracking-widest text-primary animate-pulse">Sincronizando Suas Glórias...</p>
+                      <p className="text-sm font-semibold uppercase tracking-widest text-primary animate-pulse">Sincronizando Suas Glórias...</p>
                     </div>
                   </div>
                 ) : recentActivity && recentActivity.length > 0 ? (
@@ -253,8 +253,8 @@ export default function Home() {
                          <Sparkles className="h-6 w-6 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-black text-base text-foreground truncate group-hover:text-primary transition-colors tracking-tight">{item.text}</p>
-                        <p className="text-xs font-black text-muted-foreground mt-1.5 uppercase tracking-widest opacity-80 group-hover:opacity-100">{item.time}</p>
+                        <p className="font-semibold text-base text-foreground truncate group-hover:text-primary transition-colors tracking-tight">{item.text}</p>
+                        <p className="text-xs font-semibold text-muted-foreground mt-1.5 uppercase tracking-widest opacity-80 group-hover:opacity-100">{item.time}</p>
                       </div>
                       <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary group-hover:text-white transition-all shadow-xl">
                         <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -272,7 +272,7 @@ export default function Home() {
                       <div className="h-32 w-32 rounded-[2.5rem] bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
                         <Sparkles className="h-16 w-16 text-primary/40" />
                       </div>
-                      <p className="text-2xl font-black text-foreground mb-3 tracking-tighter">O Livro está em Branco</p>
+                      <p className="text-2xl font-semibold text-foreground mb-3 tracking-tighter">O Livro está em Branco</p>
                       <p className="text-base text-muted-foreground max-w-[280px] font-bold mx-auto opacity-70">Sua jornada épica começa no momento em que você abre as Escrituras pela primeira vez.</p>
                     </div>
                   </motion.div>

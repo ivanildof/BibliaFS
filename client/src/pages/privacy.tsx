@@ -107,7 +107,7 @@ export default function Privacy() {
               <Shield className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
-          <h1 className="text-5xl font-black bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent italic uppercase tracking-tighter">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent italic uppercase tracking-tighter">
             Política de Privacidade
           </h1>
           <p className="text-muted-foreground font-bold italic">
@@ -119,7 +119,7 @@ export default function Privacy() {
           <Card data-testid="card-intro" className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="text-xl font-black text-foreground italic uppercase tracking-tighter">Introdução</CardTitle>
+              <CardTitle className="text-xl font-bold text-foreground italic uppercase tracking-tighter">Introdução</CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground font-medium text-lg relative z-10">
               <p>
@@ -140,7 +140,7 @@ export default function Privacy() {
             <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+                <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
                   <div className="p-2.5 rounded-xl bg-muted border border-border text-primary shadow-sm">
                     <section.icon className="h-5 w-5" />
                   </div>
@@ -155,7 +155,7 @@ export default function Privacy() {
                       <li key={i} className="flex items-start gap-4">
                         <span className="h-2 w-2 rounded-full bg-primary/60 shadow-sm mt-2 flex-shrink-0" />
                         <div>
-                          <strong className="text-foreground font-black uppercase italic tracking-wider text-[10px] block mb-1">{item.label}</strong>
+                          <strong className="text-foreground font-bold  tracking-wider text-[10px] block mb-1">{item.label}</strong>
                           <span className="text-muted-foreground">{item.desc}</span>
                         </div>
                       </li>
@@ -181,7 +181,7 @@ export default function Privacy() {
           <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+              <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
                 <div className="p-2.5 rounded-xl bg-pink-500/10 border border-pink-100 shadow-sm">
                   <Baby className="h-5 w-5 text-pink-600" />
                 </div>
@@ -202,7 +202,7 @@ export default function Privacy() {
           <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+              <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
                 <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-100 shadow-sm">
                   <RefreshCw className="h-5 w-5 text-amber-600" />
                 </div>
@@ -222,7 +222,7 @@ export default function Privacy() {
           <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
+              <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
                 <div className="p-2.5 rounded-xl bg-green-500/10 border border-green-100 shadow-sm">
                   <Mail className="h-5 w-5 text-green-600" />
                 </div>
@@ -252,7 +252,7 @@ export default function Privacy() {
             <Link key={idx} href={link.href}>
               <Card className="rounded-2xl border-none bg-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
                 <CardContent className="p-6 text-center">
-                  <h3 className="font-black text-foreground mb-1 uppercase tracking-tight">{link.title}</h3>
+                  <h3 className="font-bold text-foreground mb-1 uppercase tracking-tight">{link.title}</h3>
                   <p className="text-sm text-muted-foreground font-bold italic">{link.desc}</p>
                 </CardContent>
               </Card>

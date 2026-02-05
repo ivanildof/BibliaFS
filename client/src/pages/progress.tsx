@@ -126,7 +126,7 @@ export default function Progress() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-2 mb-10"
         >
-          <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-amber-700 dark:text-amber-500 drop-shadow-sm" data-testid="text-page-title">
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-amber-700 dark:text-amber-500 drop-shadow-sm" data-testid="text-page-title">
             {t.progress.title}
           </h1>
           <p className="text-sm text-muted-foreground font-bold italic uppercase tracking-wider">
@@ -149,21 +149,21 @@ export default function Progress() {
             >
               <Card className={`rounded-[2rem] border-none ${item.bg} shadow-sm overflow-hidden group hover:shadow-md transition-all duration-300`}>
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-1 relative p-6">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{item.title}</CardTitle>
+                  <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">{item.title}</CardTitle>
                   <div className={`p-1.5 rounded-lg ${item.iconBg}`}>
                     <item.icon className="h-3.5 w-3.5 text-white" />
                   </div>
                 </CardHeader>
                 <CardContent className="relative p-6 pt-0">
-                  <div className={`text-4xl font-black ${item.text}`}>
+                  <div className={`text-4xl font-semibold ${item.text}`}>
                     {item.val}
                   </div>
-                  <p className="text-[10px] font-black mt-1 text-muted-foreground uppercase tracking-wider">
+                  <p className="text-[10px] font-semibold mt-1 text-muted-foreground uppercase tracking-wider">
                     {item.sub}
                   </p>
                   {item.title === t.progress.level && (
                     <div className="mt-3">
-                      <div className="flex justify-between text-[8px] mb-1 font-black text-muted-foreground uppercase tracking-widest">
+                      <div className="flex justify-between text-[8px] mb-1 font-semibold text-muted-foreground uppercase tracking-widest">
                         <span>{xpProgressInfo.current} XP</span>
                         <span>{xpProgressInfo.needed} XP</span>
                       </div>
@@ -187,7 +187,7 @@ export default function Progress() {
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-black tracking-tight text-foreground">{t.progress.nextLevel}</CardTitle>
+                <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">{t.progress.nextLevel}</CardTitle>
                 <CardDescription className="text-sm font-bold text-muted-foreground">
                   {t.progress.continueReadingToLevel.replace('{level}', ((stats?.level || 1) + 1).toString())}
                 </CardDescription>
@@ -197,17 +197,17 @@ export default function Progress() {
               <div className="space-y-4">
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
-                    <span className="text-muted-foreground block font-black uppercase tracking-[0.2em] text-[10px]">Progresso da Jornada</span>
-                    <span className="text-4xl font-black text-indigo-700 dark:text-indigo-300">{Math.round(xpProgressInfo.percent)}%</span>
+                    <span className="text-muted-foreground block font-semibold uppercase tracking-[0.2em] text-[10px]">Progresso da Jornada</span>
+                    <span className="text-4xl font-semibold text-indigo-700 dark:text-indigo-300">{Math.round(xpProgressInfo.percent)}%</span>
                   </div>
-                  <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+                  <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">
                     {t.progress.xpNeededForLevel.replace('{xp}', (xpProgressInfo.needed - xpProgressInfo.current).toString()).replace('{level}', (currentLevel + 1).toString())}
                   </span>
                 </div>
                 <ProgressBar value={xpProgressInfo.percent} className="h-3 rounded-full bg-card shadow-inner" />
                 {currentLevel < 50 && (
                   <div className="mt-4 px-4 py-2 rounded-xl bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 w-fit">
-                    <span className="text-xs font-black text-orange-700 dark:text-orange-300 tracking-tight uppercase">
+                    <span className="text-xs font-semibold text-orange-700 dark:text-orange-300 tracking-tight uppercase">
                       <Zap className="h-3 w-3 inline mr-2 text-orange-500 fill-orange-500" />
                       Próximo Título: {getLevelInfo(currentLevel + 1).title}
                     </span>
@@ -224,7 +224,7 @@ export default function Progress() {
               <Trophy className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-orange-700 dark:text-orange-500 tracking-tight uppercase">
+              <h2 className="text-2xl font-semibold text-orange-700 dark:text-orange-500 tracking-tight uppercase">
                 {t.progress.achievements}
               </h2>
               <p className="text-xs text-muted-foreground font-bold italic">Domine as escrituras e desbloqueie tesouros</p>
@@ -239,8 +239,8 @@ export default function Progress() {
               <div key={category} className="mb-10">
                 <div className="flex items-center gap-3 mb-6">
                   <CategoryIcon className="h-5 w-5 text-foreground" />
-                  <h3 className="font-black text-xl capitalize text-foreground">{category}</h3>
-                  <Badge variant="secondary" className="rounded-full bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border-none px-3 font-black text-[10px]">
+                  <h3 className="font-semibold text-xl capitalize text-foreground">{category}</h3>
+                  <Badge variant="secondary" className="rounded-full bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border-none px-3 font-semibold text-[10px]">
                     {unlockedInCategory} / {categoryAchievements.length}
                   </Badge>
                 </div>
@@ -264,7 +264,7 @@ export default function Progress() {
                               <Lock className={`h-4 w-4 ${unlocked ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'}`} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <CardTitle className={`text-sm font-black tracking-tight ${
+                              <CardTitle className={`text-sm font-semibold tracking-tight ${
                                 unlocked ? 'text-foreground' : 'text-muted-foreground'
                               }`}>
                                 {achievement.name}
@@ -276,12 +276,12 @@ export default function Progress() {
                           </div>
                         </CardHeader>
                         <CardContent className="p-5 pt-0 flex items-center justify-between">
-                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
+                          <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-widest">
                             {unlocked ? 'CONQUISTADO' : 'BLOQUEADO'}
                           </span>
                           <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-50 border border-orange-100">
                             <Star className="h-2.5 w-2.5 text-orange-500 fill-orange-500" />
-                            <span className="font-black text-[10px] text-orange-700">+{achievement.xpReward} XP</span>
+                            <span className="font-semibold text-[10px] text-orange-700">+{achievement.xpReward} XP</span>
                           </div>
                         </CardContent>
                       </Card>

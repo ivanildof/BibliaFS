@@ -117,7 +117,7 @@ export default function Contact() {
                     <item.icon className="h-8 w-8 drop-shadow-sm" />
                   </div>
                   <div className="relative z-10">
-                    <p className="font-black text-xl text-foreground uppercase tracking-tighter">{item.label}</p>
+                    <p className="font-bold text-xl text-foreground uppercase tracking-tighter">{item.label}</p>
                     <p className="text-sm font-bold text-muted-foreground italic mt-1 leading-tight">{item.desc}</p>
                   </div>
                 </motion.div>
@@ -136,7 +136,7 @@ export default function Contact() {
                 </div>
                 <CardContent className="p-6 sm:p-8 space-y-6 relative z-10">
                   <div className="space-y-2">
-                    <h3 className="font-black text-2xl tracking-tight">Sua voz importa!</h3>
+                    <h3 className="font-bold text-2xl tracking-tight">Sua voz importa!</h3>
                     <p className="text-primary-foreground/80 text-sm">
                       O quanto você recomendaria o BíbliaFS para um amigo? (0-10)
                     </p>
@@ -153,7 +153,7 @@ export default function Contact() {
                           const event = new CustomEvent('open-nps-score', { detail: { score: num } });
                           window.dispatchEvent(event);
                         }}
-                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl text-sm font-black bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary transition-all transform hover:scale-110 active:scale-95 border border-primary-foreground/20"
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl text-sm font-bold bg-primary-foreground/10 hover:bg-primary-foreground hover:text-primary transition-all transform hover:scale-110 active:scale-95 border border-primary-foreground/20"
                       >
                         {num}
                       </button>
@@ -163,7 +163,7 @@ export default function Contact() {
                   <div className="pt-2 space-y-3">
                     <Button 
                       variant="secondary" 
-                      className="w-full rounded-2xl h-14 font-black shadow-lg"
+                      className="w-full rounded-2xl h-14 font-bold shadow-lg"
                       onClick={() => {
                         const event = new CustomEvent('open-nps-dialog');
                         window.dispatchEvent(event);
@@ -174,7 +174,7 @@ export default function Contact() {
                     
                     <Button 
                       variant="outline"
-                      className="w-full rounded-2xl h-14 font-black shadow-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none gap-3"
+                      className="w-full rounded-2xl h-14 font-bold shadow-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none gap-3"
                       onClick={() => {
                         window.open('https://play.google.com/store/apps/details?id=com.bibliafullstack.app', '_blank');
                       }}
@@ -202,7 +202,7 @@ export default function Contact() {
                   <Card className="rounded-[3rem] border-none bg-card shadow-2xl overflow-hidden relative">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-primary/5 via-transparent to-transparent rounded-bl-full z-0" />
                     <CardHeader className="p-8 sm:p-10 md:p-14 pb-0 relative z-10">
-                      <CardTitle className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground uppercase italic">Envie sua Mensagem</CardTitle>
+                      <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Envie sua Mensagem</CardTitle>
                       <CardDescription className="text-base sm:text-lg font-bold text-muted-foreground italic mt-2">
                         Preencha os campos abaixo e entraremos em contato.
                       </CardDescription>
@@ -211,7 +211,7 @@ export default function Contact() {
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
                         <div className="grid md:grid-cols-2 gap-10">
                           <div className="space-y-4">
-                            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Nome Completo</Label>
+                            <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Nome Completo</Label>
                             <Input
                               id="name"
                               placeholder="Como devemos te chamar?"
@@ -219,12 +219,12 @@ export default function Contact() {
                               {...form.register("name")}
                             />
                             {form.formState.errors.name && (
-                              <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.name.message}</p>
+                              <p className="text-[10px] text-destructive font-bold uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.name.message}</p>
                             )}
                           </div>
 
                           <div className="space-y-4">
-                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">E-mail de Contato</Label>
+                            <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">E-mail de Contato</Label>
                             <Input
                               id="email"
                               type="email"
@@ -233,13 +233,13 @@ export default function Contact() {
                               {...form.register("email")}
                             />
                             {form.formState.errors.email && (
-                              <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.email.message}</p>
+                              <p className="text-[10px] text-destructive font-bold uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.email.message}</p>
                             )}
                           </div>
                         </div>
 
                         <div className="space-y-4">
-                          <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Assunto</Label>
+                          <Label htmlFor="subject" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Assunto</Label>
                           <Input
                             id="subject"
                             placeholder="Sobre o que você gostaria de falar?"
@@ -247,12 +247,12 @@ export default function Contact() {
                             {...form.register("subject")}
                           />
                           {form.formState.errors.subject && (
-                            <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.subject.message}</p>
+                            <p className="text-[10px] text-destructive font-bold uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.subject.message}</p>
                           )}
                         </div>
 
                         <div className="space-y-4">
-                          <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Sua Mensagem</Label>
+                          <Label htmlFor="message" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Sua Mensagem</Label>
                           <Textarea
                             id="message"
                             placeholder="Conte-nos os detalhes..."
@@ -260,14 +260,14 @@ export default function Contact() {
                             {...form.register("message")}
                           />
                           {form.formState.errors.message && (
-                            <p className="text-[10px] text-destructive font-black uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.message.message}</p>
+                            <p className="text-[10px] text-destructive font-bold uppercase tracking-widest ml-2 animate-pulse">{form.formState.errors.message.message}</p>
                           )}
                         </div>
 
                         <Button 
                           type="submit" 
                           disabled={form.formState.isSubmitting}
-                          className="w-full rounded-[2.5rem] h-20 text-2xl font-black italic uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] bg-primary text-white"
+                          className="w-full rounded-[2.5rem] h-20 text-2xl font-bold italic uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] bg-primary text-white"
                         >
                           <Send className="h-7 w-7 mr-4 drop-shadow-md" />
                           Enviar agora
@@ -291,7 +291,7 @@ export default function Contact() {
                           <CheckCircle2 className="h-12 sm:h-16 w-12 sm:w-16 text-green-600" />
                         </div>
                       </div>
-                      <CardTitle className="text-2xl sm:text-4xl font-black">Mensagem Enviada!</CardTitle>
+                      <CardTitle className="text-lg sm:text-xl font-bold">Mensagem Enviada!</CardTitle>
                       <CardDescription className="text-base sm:text-xl px-4 sm:px-8 mt-4">
                         Recebemos seu contato com sucesso. Nossa equipe analisará sua mensagem e retornaremos em até 48 horas.
                       </CardDescription>
@@ -300,7 +300,7 @@ export default function Contact() {
                       <Button 
                         onClick={() => setSubmitted(false)} 
                         variant="outline"
-                        className="w-full rounded-[2rem] h-16 text-xl font-black border-2"
+                        className="w-full rounded-[2rem] h-16 text-xl font-bold border-2"
                       >
                         Enviar Outra Mensagem
                       </Button>

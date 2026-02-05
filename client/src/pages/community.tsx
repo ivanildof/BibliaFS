@@ -145,7 +145,7 @@ export default function Community() {
         {/* Header */}
         <div className="text-center space-y-2 mb-8">
           <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">CONEXÕES</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground" data-testid="text-page-title">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground" data-testid="text-page-title">
             {t.community.title}
           </h1>
           <p className="text-sm text-muted-foreground">

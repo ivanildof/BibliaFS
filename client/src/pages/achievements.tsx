@@ -59,7 +59,7 @@ export default function Achievements() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Resgatando Suas Glórias...</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Resgatando Suas Glórias...</p>
         </div>
       </div>
     );
@@ -89,8 +89,8 @@ export default function Achievements() {
             <Trophy className="h-7 w-7 text-amber-500 animate-bounce drop-shadow-sm" />
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-border" />
           </div>
-          <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
-          <h1 className="font-display text-4xl sm:text-5xl font-black bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
             Seus Troféus
           </h1>
           <p className="text-base text-muted-foreground font-bold italic">
@@ -112,18 +112,18 @@ export default function Achievements() {
                       <Sparkles className="h-8 w-8 text-white drop-shadow-sm" />
                     </div>
                     <div>
-                      <span className="text-3xl font-black text-foreground tracking-tighter">Progresso Lendário</span>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-1">Nível de Domínio das Escrituras</p>
+                      <span className="text-3xl font-semibold text-foreground tracking-tighter">Progresso Lendário</span>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.3em] mt-1">Nível de Domínio das Escrituras</p>
                     </div>
                   </div>
-                  <Badge className="rounded-full px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-black text-xs shadow-xl shadow-amber-200/50 dark:shadow-amber-900/50 tracking-widest uppercase">
+                  <Badge className="rounded-full px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-semibold text-xs shadow-xl shadow-amber-200/50 dark:shadow-amber-900/50 tracking-widest uppercase">
                     {unlockedCount} DE {totalCount} CONQUISTADAS
                   </Badge>
                 </div>
                 <div className="relative">
                   <ProgressBar value={progressPercent} className="h-6 rounded-full bg-muted shadow-inner" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.2em]">
                       {progressPercent.toFixed(0)}% CONCLUÍDO
                     </span>
                   </div>
@@ -143,8 +143,8 @@ export default function Achievements() {
               <div className="p-3 rounded-2xl bg-card shadow-lg border border-border">
                 <Trophy className="h-5 w-5 text-amber-500" />
               </div>
-              <h2 className="text-2xl font-black text-foreground tracking-tighter uppercase">Desbloqueadas</h2>
-              <Badge className="rounded-full text-xs font-black bg-muted text-muted-foreground border border-border px-3 py-1">
+              <h2 className="text-2xl font-semibold text-foreground tracking-tighter uppercase">Desbloqueadas</h2>
+              <Badge className="rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border px-3 py-1">
                 {unlockedCount}
               </Badge>
             </div>
@@ -166,7 +166,7 @@ export default function Achievements() {
                           {getAchievementIcon(achievement.icon, true)}
                         </div>
                         <div className="flex flex-col gap-1.5 flex-1">
-                          <CardTitle className="text-xl font-black tracking-tighter text-foreground">
+                          <CardTitle className="text-xl font-semibold tracking-tighter text-foreground">
                             {achievement.name}
                           </CardTitle>
                           <CardDescription className="text-sm font-bold text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">{achievement.description}</CardDescription>
@@ -176,13 +176,13 @@ export default function Achievements() {
                         </div>
                       </CardHeader>
                       <CardContent className="p-6 pt-0 relative z-10 flex justify-between items-center">
-                        <Badge className="rounded-full px-5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-200">
+                        <Badge className="rounded-full px-5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-semibold text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-200">
                           <Check className="h-3 w-3 mr-2" />
                           CONQUISTADO
                         </Badge>
                         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
                           <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          <span className="font-black text-amber-600 text-[11px] tracking-tighter">+{achievement.xpReward || 50} XP</span>
+                          <span className="font-semibold text-amber-600 text-[11px] tracking-tighter">+{achievement.xpReward || 50} XP</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -203,8 +203,8 @@ export default function Achievements() {
               <div className="p-3 rounded-2xl bg-card shadow-lg border border-border">
                 <Lock className="h-5 w-5 text-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-black text-muted-foreground tracking-tighter uppercase">Em Progresso</h2>
-              <Badge className="rounded-full text-xs font-black bg-muted text-muted-foreground border border-border px-3 py-1">
+              <h2 className="text-2xl font-semibold text-muted-foreground tracking-tighter uppercase">Em Progresso</h2>
+              <Badge className="rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border px-3 py-1">
                 {lockedAchievements.length}
               </Badge>
             </div>
@@ -231,7 +231,7 @@ export default function Achievements() {
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-0.5 flex-1">
-                            <CardTitle className="text-lg font-black text-foreground tracking-tighter leading-tight">
+                            <CardTitle className="text-lg font-semibold text-foreground tracking-tighter leading-tight">
                               {achievement.name}
                             </CardTitle>
                             <CardDescription className="text-xs font-bold text-muted-foreground leading-tight">
@@ -242,13 +242,13 @@ export default function Achievements() {
 
                         <CardContent className="px-6 pb-6 pt-2 relative z-10">
                           <div className="flex items-center justify-between mt-4">
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
                               BLOQUEADO
                             </span>
                             
                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
                               <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                              <span className="font-black text-amber-600 text-[11px] tracking-tight">+{achievement.xpReward || 50} XP</span>
+                              <span className="font-semibold text-amber-600 text-[11px] tracking-tight">+{achievement.xpReward || 50} XP</span>
                             </div>
                           </div>
                         </CardContent>
@@ -271,7 +271,7 @@ export default function Achievements() {
                 <div className="flex h-28 w-28 items-center justify-center rounded-[2.5rem] bg-muted mb-8 shadow-inner border border-border">
                   <Trophy className="h-14 w-14 text-muted-foreground" />
                 </div>
-                <h3 className="font-black text-3xl mb-3 tracking-tighter text-foreground uppercase italic">O Palácio está Silencioso</h3>
+                <h3 className="font-semibold text-3xl mb-3 tracking-tighter text-foreground uppercase italic">O Palácio está Silencioso</h3>
                 <p className="text-muted-foreground max-w-md text-base font-bold italic">
                   Suas glórias ainda não foram escritas. Abra as Escrituras e comece sua jornada para a eternidade.
                 </p>

@@ -373,7 +373,7 @@ export default function Settings() {
           transition={{ duration: 0.5 }}
           className="mb-10"
         >
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold mb-3 flex items-center gap-4 tracking-tight" data-testid="text-page-title">
+          <h1 className="font-display text-2xl md:text-3xl font-extrabold mb-3 flex items-center gap-4 tracking-tight" data-testid="text-page-title">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-indigo-600 shadow-lg shadow-primary/30">
               <SettingsIcon className="h-7 w-7 text-white" />
             </div>
@@ -1025,7 +1025,7 @@ export default function Settings() {
               <span className="text-sm font-medium">Informações do App</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-2xl font-black bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent" data-testid="text-app-name">
+              <span className="text-2xl font-semibold bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent" data-testid="text-app-name">
                 {APP_NAME}
               </span>
               <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold ring-1 ring-primary/20" data-testid="text-app-version">

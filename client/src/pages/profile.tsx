@@ -150,14 +150,14 @@ export default function Profile() {
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <User className="h-10 w-10 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-black">{t.profile?.title || "Meu Perfil"}</CardTitle>
+            <CardTitle className="text-2xl font-semibold">{t.profile?.title || "Meu Perfil"}</CardTitle>
             <CardDescription className="text-base px-6">
               Faça login para acessar suas conquistas, planos de leitura e configurações personalizadas.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center pb-12 px-8">
             <Link href="/login" className="w-full">
-              <Button size="lg" className="w-full h-14 rounded-2xl font-black text-lg shadow-xl shadow-primary/20">
+              <Button size="lg" className="w-full h-14 rounded-2xl font-semibold text-lg shadow-xl shadow-primary/20">
                 Entrar agora
               </Button>
             </Link>
@@ -341,7 +341,7 @@ export default function Profile() {
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     Nível {currentLevel.level} - {currentLevel.title}
                   </Badge>
-                  <Badge className="bg-gradient-to-r from-primary via-purple-600 to-indigo-600 text-white border-none shadow-[0_0_15px_rgba(var(--primary),0.4)] font-black italic tracking-tighter">
+                  <Badge className="bg-gradient-to-r from-primary via-purple-600 to-indigo-600 text-white border-none shadow-[0_0_15px_rgba(var(--primary),0.4)] font-semibold italic tracking-tighter">
                     v{APP_VERSION}
                   </Badge>
                 </div>
@@ -361,8 +361,8 @@ export default function Profile() {
                       <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-lg font-black text-foreground tracking-tight">{user.readingStreak || 0}</p>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{t.profile.reading_streak}</p>
+                      <p className="text-lg font-semibold text-foreground tracking-tight">{user.readingStreak || 0}</p>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest leading-none">{t.profile.reading_streak}</p>
                     </div>
                   </div>
                   
@@ -371,8 +371,8 @@ export default function Profile() {
                       <CheckCircle2 className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-black text-foreground tracking-tight">{completedPlans.length}</p>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{t.plans.completedPlans}</p>
+                      <p className="text-lg font-semibold text-foreground tracking-tight">{completedPlans.length}</p>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest leading-none">{t.plans.completedPlans}</p>
                     </div>
                   </div>
                   
@@ -381,8 +381,8 @@ export default function Profile() {
                       <Award className="h-5 w-5 text-amber-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-black text-foreground tracking-tight">{achievements.length}</p>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{t.profile.achievements}</p>
+                      <p className="text-lg font-semibold text-foreground tracking-tight">{achievements.length}</p>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest leading-none">{t.profile.achievements}</p>
                     </div>
                   </div>
                 </div>
@@ -504,10 +504,10 @@ export default function Profile() {
             {/* XP Progress Bar */}
             <div className="mt-8 pt-8 border-t border-border">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.2em]">
                   {t.progress.level} {currentLevel.title}
                 </span>
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
                   {isMaxLevel ? `${xp} ${t.progress.xp} (Máximo)` : `${xpProgressInfo.current} / ${xpProgressInfo.needed} ${t.progress.xp}`}
                 </span>
               </div>
@@ -518,7 +518,7 @@ export default function Profile() {
                 </p>
               )}
               {isMaxLevel && (
-                <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-2 italic">
+                <p className="text-[10px] text-primary font-semibold uppercase tracking-widest mt-2 italic">
                   Nível máximo alcançado!
                 </p>
               )}
@@ -537,15 +537,15 @@ export default function Profile() {
           <TabsList className="grid w-full grid-cols-3 h-auto bg-muted/50 backdrop-blur-xl rounded-2xl p-1.5 shadow-xl border border-border" data-testid="tabs-profile">
             <TabsTrigger value="plans" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-muted-foreground data-[state=active]:text-primary" data-testid="tab-plans">
               <BookOpen className="h-5 w-5" />
-              <span className="text-[10px] font-black uppercase tracking-widest">{t.profile.my_plans}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest">{t.profile.my_plans}</span>
             </TabsTrigger>
             <TabsTrigger value="prayers" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-muted-foreground data-[state=active]:text-primary" data-testid="tab-prayers">
               <HandHeart className="h-5 w-5" />
-              <span className="text-[10px] font-black uppercase tracking-widest">{t.nav.prayers}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest">{t.nav.prayers}</span>
             </TabsTrigger>
             <TabsTrigger value="donate" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-muted-foreground data-[state=active]:text-primary" data-testid="tab-donate">
               <Heart className="h-5 w-5" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Doar</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest">Doar</span>
             </TabsTrigger>
           </TabsList>
 
@@ -554,7 +554,7 @@ export default function Profile() {
             <Card className="rounded-[2.5rem] border-none bg-card shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-500/5 via-transparent to-transparent rounded-bl-full z-0" />
               <CardHeader className="p-8 sm:p-10 relative z-10">
-                <CardTitle className="flex items-start gap-4 text-xl font-black text-foreground uppercase italic tracking-tighter leading-tight">
+                <CardTitle className="flex items-start gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tighter leading-tight">
                   <Heart className="h-6 w-6 text-pink-600 fill-pink-600 mt-1 shrink-0 animate-pulse" />
                   <span>Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
                 </CardTitle>
@@ -566,13 +566,13 @@ export default function Profile() {
               </CardHeader>
               <CardContent className="p-8 sm:p-10 pt-0 relative z-10">
                 <Link href="/donate">
-                  <Button className="w-full h-16 rounded-2xl text-xl font-black italic uppercase tracking-widest shadow-xl shadow-primary/20" size="lg" data-testid="button-go-donate">
+                  <Button className="w-full h-16 rounded-2xl text-xl font-semibold italic uppercase tracking-widest shadow-xl shadow-primary/20" size="lg" data-testid="button-go-donate">
                     <Heart className="h-5 w-5 mr-3 fill-current" />
                     Fazer uma Doação
                   </Button>
                 </Link>
                 <div className="mt-10 pt-8 border-t border-border space-y-4">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Suas doações ajudam em:</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Suas doações ajudam em:</p>
                   <ul className="space-y-4">
                     <li className="flex items-center gap-4 bg-muted p-4 rounded-2xl border border-border/50">
                       <div className="p-1 rounded-full bg-green-500/10 shadow-inner">

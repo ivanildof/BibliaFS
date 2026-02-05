@@ -842,7 +842,7 @@ export default function Podcasts() {
               <div className="mx-auto h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
                 <AlertTriangle className="h-10 w-10 text-destructive animate-pulse" />
               </div>
-              <AlertDialogTitle className="text-2xl font-black text-center">Excluir Rádio?</AlertDialogTitle>
+              <AlertDialogTitle className="text-2xl font-semibold text-center">Excluir Rádio?</AlertDialogTitle>
               <AlertDialogDescription className="text-center text-base leading-relaxed">
                 Esta ação não pode ser desfeita. Isso excluirá permanentemente o rádio 
                 <span className="block font-bold text-foreground mt-2">"{selectedPodcast?.title}"</span>
