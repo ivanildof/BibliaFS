@@ -234,9 +234,9 @@ function AppContent() {
         <div className="flex h-screen w-full">
           <AppSidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
-            <header className="flex items-center justify-between gap-2 p-4 border-b bg-white shadow-sm shrink-0">
+            <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
