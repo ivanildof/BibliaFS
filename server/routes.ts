@@ -1484,6 +1484,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const prompt = `Você é um assistente especializado em educação bíblica. Gere conteúdo COMPLETO para uma aula bíblica de ${duration} minutos.
 
+ATENÇÃO - ABREVIAÇÕES BÍBLICAS IMPORTANTES:
+- "Jo" ou "Jó" = Livro de JÓ (Job) - Antigo Testamento, sobre sofrimento e fé
+- "João" ou "Jo" seguido de capítulo/versículo com números altos (ex: Jo 3:16) = Evangelho de JOÃO
+- "1Jo", "2Jo", "3Jo" = Epístolas de João
+- "Js" = Josué
+- "Jz" = Juízes
+- "Jr" = Jeremias
+- "Jl" = Joel
+- "Jn" = Jonas
+- "Jd" = Judas
+
+INTERPRETE O CONTEXTO: Se o usuário mencionar "Jo" sem capítulo/versículo OU com capítulos 1-42, provavelmente é o livro de JÓ.
+
 Título da Aula: ${title}
 Texto-Base: ${scriptureBase}
 Duração: ${duration} minutos
@@ -4275,6 +4288,11 @@ Responda em português do Brasil.`
           const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
           
           const prompt = `Você é um líder de estudo bíblico experiente. Crie UMA pergunta reflexiva e profunda para discussão em grupo baseada no seguinte:
+
+ATENÇÃO - ABREVIAÇÕES BÍBLICAS:
+- "Jo" ou "Jó" (capítulos 1-42) = Livro de JÓ (Job) - Antigo Testamento
+- "João" ou "Jo" com versículos como 3:16 = Evangelho de JOÃO
+- Use o CONTEXTO para identificar o livro correto
 
 Tema: ${title}
 ${description ? `Descrição: ${description}` : ""}
