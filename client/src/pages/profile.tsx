@@ -286,8 +286,8 @@ export default function Profile() {
               />
               
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <h1 className="font-display text-4xl md:text-5xl font-black tracking-tighter text-foreground uppercase" data-testid="text-profile-name">
+                <div className="flex items-center gap-3 mb-3">
+                  <h1 className="font-display text-xl md:text-2xl font-bold tracking-tight text-foreground whitespace-nowrap" data-testid="text-profile-name">
                     {user.firstName} {user.lastName}
                   </h1>
                   <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
