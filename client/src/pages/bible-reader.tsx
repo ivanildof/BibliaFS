@@ -1416,7 +1416,7 @@ export default function BibleReader() {
           <>
             {/* Book Name - Large Centered */}
             <h1 
-              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-[#4a4a4a]" 
+              className="book-name text-center text-3xl md:text-4xl font-serif font-semibold mb-2 text-foreground" 
               data-testid="text-book-name"
             >
               {t.bibleBooks[chapterData.book.abbrev] || chapterData.book.name}
@@ -1424,7 +1424,7 @@ export default function BibleReader() {
             
             {/* Chapter Number - Gigantic Centered */}
             <div 
-              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-[#4a4a4a]/60" 
+              className="chapter-number text-center text-8xl md:text-9xl font-display font-bold mb-8 text-muted-foreground" 
               data-testid="text-chapter-number"
             >
               {chapterData.chapter.number}
