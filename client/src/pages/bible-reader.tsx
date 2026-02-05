@@ -1072,7 +1072,12 @@ export default function BibleReader() {
     : "Leia e estude a Bíblia Sagrada com IA teológica e recursos premium.";
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] overflow-x-hidden">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+      </div>
       <SEO 
         title={seoTitle}
         description={seoDescription}

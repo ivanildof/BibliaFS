@@ -182,8 +182,10 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-slate-200/40 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 rounded-full blur-[150px]" />
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+      </div>
       
       {/* Mobile Header with Action Buttons */}
       <div className="md:hidden sticky top-0 z-20 bg-[#fcfaff]/90 backdrop-blur-2xl border-b border-slate-100 px-4 py-3">
