@@ -166,51 +166,67 @@ export default function Donate() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-rose-500/20 via-pink-500/15 to-transparent blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-amber-500/15 via-orange-500/10 to-transparent blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
       </div>
-      <div className="relative z-10 max-w-3xl mx-auto space-y-6 p-4 sm:p-6 md:p-8">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <Heart className="h-8 w-8 text-primary fill-primary" />
+      <div className="relative z-10 max-w-3xl mx-auto space-y-8 p-4 sm:p-6 md:p-8">
+        <Card className="border-none bg-gradient-to-br from-rose-500/10 via-pink-500/5 to-amber-500/10 shadow-2xl rounded-[2.5rem] overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-rose-500/20 to-transparent rounded-bl-full" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-amber-500/20 to-transparent rounded-tr-full" />
+          <CardContent className="p-8 md:p-10 text-center relative z-10">
+            <div className="flex justify-center mb-6">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-2xl shadow-rose-500/40">
+                <Heart className="h-10 w-10 text-white fill-white" />
+              </div>
             </div>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{t.donate.title}</h1>
-          <div className="text-muted-foreground text-base space-y-3 max-w-2xl mx-auto">
-            <p className="font-semibold text-foreground">
-              Faça parte dessa missão. Doe agora e transforme vidas através da Palavra!
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 bg-clip-text text-transparent">{t.donate.title}</h1>
+            <p className="text-muted-foreground mt-4 text-lg max-w-xl mx-auto">
+              Faça parte dessa missão. <span className="font-semibold text-foreground">Doe agora</span> e transforme vidas através da Palavra!
             </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <Card className="premium-card ring-2 ring-green-500/20 border-green-500/30 bg-green-500/5">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <Shield className="h-6 w-6 text-green-600 mt-0.5" />
+        <Card className="rounded-[2rem] border-none bg-gradient-to-r from-emerald-500/10 via-green-500/5 to-teal-500/10 shadow-lg overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-500/15 to-transparent rounded-bl-full" />
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-green-500/30 flex-shrink-0">
+                <Shield className="h-6 w-6 text-white" />
+              </div>
               <div>
-                <p className="font-medium text-foreground flex items-center gap-2">
-                  <Lock className="h-4 w-4" />
+                <p className="font-semibold text-foreground flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-green-600" />
                   Pagamento 100% Seguro
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Seus dados de cartão <strong>nunca passam pelo nosso servidor</strong>. O pagamento é processado diretamente pelo Stripe, a plataforma de pagamentos mais segura do mundo, usada por empresas como Amazon e Google.
+                <p className="text-sm text-muted-foreground mt-2">
+                  Seus dados de cartão <strong className="text-foreground">nunca passam pelo nosso servidor</strong>. O pagamento é processado diretamente pelo Stripe.
                 </p>
-                <ul className="text-xs text-muted-foreground mt-2 space-y-1">
-                  <li>• Criptografia de ponta a ponta (SSL/TLS)</li>
-                  <li>• Certificação PCI DSS Nível 1 (máxima segurança)</li>
-                  <li>• Valores validados no servidor (impossível alterar)</li>
-                  <li>• Nenhum dado de cartão armazenado</li>
-                </ul>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <CheckCircle2 className="h-3 w-3 text-green-500" />
+                    <span>Criptografia SSL/TLS</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <CheckCircle2 className="h-3 w-3 text-green-500" />
+                    <span>PCI DSS Nível 1</span>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          <Card data-testid="card-donation-form" className="premium-card ring-2 ring-primary/10">
-            <CardHeader>
-              <CardTitle>{t.donate.amount}</CardTitle>
+          <Card data-testid="card-donation-form" className="rounded-[2rem] border-none bg-gradient-to-br from-primary/5 via-card to-purple-500/5 shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full" />
+            <CardHeader className="relative z-10">
+              <CardTitle className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-purple-600 shadow-md">
+                  <CreditCard className="h-4 w-4 text-white" />
+                </div>
+                {t.donate.amount}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
