@@ -531,11 +531,29 @@ export default function Groups() {
       inviteForm.reset();
       setIsInviteDialogOpen(false);
       
-      const inviteUrl = `${window.location.origin}/invite/${invite.inviteCode}`;
+      const inviteUrl = `${window.location.origin}/groups?code=${invite.inviteCode}`;
+      const whatsappMessage = `Olá! Você foi convidado para o grupo "${selectedGroup?.name}" no BíbliaFS. Use o código: ${invite.inviteCode} ou acesse: ${inviteUrl}`;
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
       
       toast({
-        title: "Convite criado!",
-        description: `Código: ${invite.inviteCode}. Link: ${inviteUrl}`,
+        title: "Convite criado! 🎉",
+        description: (
+          <div className="flex flex-col gap-2 mt-2">
+            <p className="text-sm">Código: <span className="font-mono font-bold text-primary">{invite.inviteCode}</span></p>
+            <div className="flex gap-2">
+              <a 
+                href={whatsappUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <SiWhatsapp className="h-4 w-4" />
+                Enviar via WhatsApp
+              </a>
+            </div>
+          </div>
+        ),
+        duration: 15000,
       });
       
       // Auto copy to clipboard
