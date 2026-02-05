@@ -238,6 +238,7 @@ function AppContent() {
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-2">
                 <LanguageSelector />
+                <ThemeToggle />
                 <UserProfile />
               </div>
             </header>
