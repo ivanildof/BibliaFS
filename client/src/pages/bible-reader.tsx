@@ -130,7 +130,21 @@ export default function BibleReader() {
     }
     return 1;
   });
+  const [fontSize, setFontSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bible_font_size');
+      return saved ? parseInt(saved) : 18;
+    }
+    return 18;
+  });
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Save font size to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bible_font_size', fontSize.toString());
+    }
+  }, [fontSize]);
 
   // Save version, book, and chapter to localStorage whenever they change
   useEffect(() => {
@@ -1066,6 +1080,24 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl h-10 w-10 shadow-sm bg-card border-primary/20 hover:bg-primary/10 transition-all"
+              onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+              data-testid="button-font-decrease"
+            >
+              <span className="text-xs font-bold">A-</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl h-10 w-10 shadow-sm bg-card border-primary/20 hover:bg-primary/10 transition-all"
+              onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
+              data-testid="button-font-increase"
+            >
+              <span className="text-xs font-bold">A+</span>
+            </Button>
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
                 <Button 
@@ -1441,7 +1473,8 @@ export default function BibleReader() {
                           {verse.number}
                         </sup>
                         <p 
-                          className="verse-text flex-1 font-serif text-base md:text-lg leading-relaxed text-[#333333] dark:text-slate-300" 
+                          className="verse-text flex-1 font-serif leading-relaxed text-[#333333] dark:text-slate-300" 
+                          style={{ fontSize: `${fontSize}px` }}
                           data-testid={`verse-text-${verse.number}`}
                         >
                           {verse.text}
