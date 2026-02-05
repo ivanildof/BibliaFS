@@ -307,7 +307,7 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none bg-card shadow-xl hover:shadow-2xl  overflow-hidden ${
+                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none subtle-card shadow-xl hover:shadow-2xl  overflow-hidden ${
                     plan.popular ? 'ring-2 ring-primary/40' : ''
                   } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}

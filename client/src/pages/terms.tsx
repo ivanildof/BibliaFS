@@ -72,7 +72,7 @@ export default function Terms() {
           className="text-center space-y-4 mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-3xl bg-card shadow-xl flex items-center justify-center relative overflow-hidden">
+            <div className="h-24 w-24 rounded-3xl subtle-card shadow-xl flex items-center justify-center relative overflow-hidden">
               <FileText className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function Terms() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + idx * 0.05 }}
           >
-            <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden group">
+            <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
                 <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
@@ -123,7 +123,7 @@ export default function Terms() {
         ))}
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-black uppercase italic tracking-tighter">
@@ -154,7 +154,7 @@ export default function Terms() {
             { href: "/security", title: "Segurança", desc: "Medidas de segurança" }
           ].map((link, idx) => (
             <Link key={idx} href={link.href}>
-              <Card className="rounded-2xl border-none bg-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
+              <Card className="rounded-2xl border-none subtle-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
                 <CardContent className="p-6 text-center">
                   <h3 className="font-black text-foreground mb-1 uppercase tracking-tight">{link.title}</h3>
                   <p className="text-sm text-muted-foreground font-bold italic">{link.desc}</p>

@@ -86,6 +86,15 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
+/* Subtle gradient card - universal background for all cards */
+.subtle-card {
+  background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(40 35% 97%) 50%, hsl(220 20% 97%) 100%);
+}
+
+.dark .subtle-card {
+  background: linear-gradient(145deg, hsl(var(--card)) 0%, rgba(25, 25, 45, 0.95) 50%, rgba(30, 25, 50, 0.95) 100%);
+}
+
 /* LIGHT MODE - Premium Soft Theme: Warm Paper + Aged Gold + Soft Navy */
 :root {
   --button-outline: rgba(0,0,0, .08);

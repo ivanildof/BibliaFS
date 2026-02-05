@@ -71,7 +71,7 @@ export default function Help() {
           className="text-center space-y-4 mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-3xl bg-card shadow-xl flex items-center justify-center relative overflow-hidden group">
+            <div className="h-24 w-24 rounded-3xl subtle-card shadow-xl flex items-center justify-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent" />
               <HelpCircle className="h-12 w-12 text-amber-500 drop-shadow-sm relative z-10" />
             </div>
@@ -85,16 +85,16 @@ export default function Help() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-faq" className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
-            <CardHeader className="p-8 border-b border-border relative z-10">
-              <CardTitle className="flex items-center gap-3 text-2xl font-bold text-foreground italic uppercase tracking-tighter">
-                <div className="p-2.5 rounded-xl bg-muted border border-border text-muted-foreground shadow-sm">
+          <Card data-testid="card-faq" className="rounded-[2.5rem] border-none bg-gradient-to-br from-primary/5 via-card to-indigo-500/5 shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary/10 via-purple-500/5 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="p-8 border-b border-border/50 relative z-10">
+              <CardTitle className="flex items-center gap-3 text-2xl font-semibold text-foreground">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg">
                   <Book className="h-6 w-6" />
                 </div>
                 Perguntas Frequentes
               </CardTitle>
-              <CardDescription className="text-base font-bold text-muted-foreground italic">
+              <CardDescription className="text-base text-muted-foreground">
                 Clique nas perguntas para ver as respostas
               </CardDescription>
             </CardHeader>
@@ -125,16 +125,16 @@ export default function Help() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <Card data-testid="card-tutorials" className="rounded-[2rem] border-none bg-card shadow-xl h-full relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
+            <Card data-testid="card-tutorials" className="rounded-[2rem] border-none bg-gradient-to-br from-rose-500/10 via-card to-orange-500/5 shadow-xl h-full relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-rose-500/15 to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
-                  <div className="p-2.5 rounded-xl bg-muted border border-border text-muted-foreground">
+                <CardTitle className="flex items-center gap-3 text-foreground font-semibold">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-rose-500 to-orange-600 text-white shadow-lg">
                     <Video className="h-6 w-6" />
                   </div>
                   Tutoriais em Vídeo
                 </CardTitle>
-                <CardDescription className="text-base font-bold text-muted-foreground italic">
+                <CardDescription className="text-base text-muted-foreground">
                   Aprenda a usar todos os recursos
                 </CardDescription>
               </CardHeader>
@@ -151,11 +151,11 @@ export default function Help() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
-            <Card data-testid="card-contact-support" className="rounded-[2rem] border-none bg-card shadow-xl h-full relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full z-0" />
+            <Card data-testid="card-contact-support" className="rounded-[2rem] border-none bg-gradient-to-br from-emerald-500/10 via-card to-teal-500/5 shadow-xl h-full relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-500/15 to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
-                  <div className="p-2.5 rounded-xl bg-primary shadow-lg text-white">
+                <CardTitle className="flex items-center gap-3 text-foreground font-semibold">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg text-white">
                     <MessageCircle className="h-6 w-6" />
                   </div>
                   Precisa de Mais Ajuda?

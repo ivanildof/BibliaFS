@@ -204,7 +204,7 @@ export default function Progress() {
                     {t.progress.xpNeededForLevel.replace('{xp}', (xpProgressInfo.needed - xpProgressInfo.current).toString()).replace('{level}', (currentLevel + 1).toString())}
                   </span>
                 </div>
-                <ProgressBar value={xpProgressInfo.percent} className="h-3 rounded-full bg-card shadow-inner" />
+                <ProgressBar value={xpProgressInfo.percent} className="h-3 rounded-full subtle-card shadow-inner" />
                 {currentLevel < 50 && (
                   <div className="mt-4 px-4 py-2 rounded-xl bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 w-fit">
                     <span className="text-xs font-semibold text-orange-700 dark:text-orange-300 tracking-tight uppercase">

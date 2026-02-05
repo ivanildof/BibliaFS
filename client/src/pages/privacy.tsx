@@ -103,11 +103,11 @@ export default function Privacy() {
           className="text-center space-y-4 mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-3xl bg-card shadow-xl flex items-center justify-center relative overflow-hidden">
+            <div className="h-24 w-24 rounded-3xl subtle-card shadow-xl flex items-center justify-center relative overflow-hidden">
               <Shield className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent italic uppercase tracking-tighter">
+          <h1 className="text-2xl md:text-3xl font-semibold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Política de Privacidade
           </h1>
           <p className="text-muted-foreground font-bold italic">
@@ -116,10 +116,10 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card data-testid="card-intro" className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
+          <Card data-testid="card-intro" className="rounded-[2rem] border-none bg-gradient-to-br from-blue-500/10 via-card to-indigo-500/5 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/15 to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
-              <CardTitle className="text-xl font-bold text-foreground italic uppercase tracking-tighter">Introdução</CardTitle>
+              <CardTitle className="text-xl font-semibold text-foreground">Introdução</CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground font-medium text-lg relative z-10">
               <p>
@@ -137,11 +137,11 @@ export default function Privacy() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 + idx * 0.05 }}
           >
-            <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
+            <Card className="rounded-[2rem] border-none bg-gradient-to-br from-primary/5 via-card to-purple-500/5 shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full z-0" />
               <CardHeader className="relative z-10">
-                <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
-                  <div className="p-2.5 rounded-xl bg-muted border border-border text-primary shadow-sm">
+                <CardTitle className="flex items-center gap-3 text-foreground font-semibold">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg">
                     <section.icon className="h-5 w-5" />
                   </div>
                   {section.title}
@@ -178,7 +178,7 @@ export default function Privacy() {
         ))}
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
@@ -199,7 +199,7 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-          <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
@@ -219,7 +219,7 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <Card className="rounded-[2rem] border-none bg-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
@@ -250,7 +250,7 @@ export default function Privacy() {
             { href: "/security", title: "Segurança", desc: "Proteção de dados" }
           ].map((link, idx) => (
             <Link key={idx} href={link.href}>
-              <Card className="rounded-2xl border-none bg-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
+              <Card className="rounded-2xl border-none subtle-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
                 <CardContent className="p-6 text-center">
                   <h3 className="font-bold text-foreground mb-1 uppercase tracking-tight">{link.title}</h3>
                   <p className="text-sm text-muted-foreground font-bold italic">{link.desc}</p>

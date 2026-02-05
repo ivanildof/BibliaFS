@@ -1092,7 +1092,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className="rounded-xl h-10 w-10 shadow-xl bg-card border-border hover:bg-muted transition-all hover:scale-105" 
+                  className="rounded-xl h-10 w-10 shadow-xl subtle-card border-border hover:bg-muted transition-all hover:scale-105" 
                   data-testid="button-search-open"
                 >
                   <Search className="h-4 w-4 text-primary" />
@@ -1212,7 +1212,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl h-10 px-3 shadow-xl gap-1.5 bg-card border-border hover:bg-muted transition-all hover:scale-105" 
+                  className="rounded-xl h-10 px-3 shadow-xl gap-1.5 subtle-card border-border hover:bg-muted transition-all hover:scale-105" 
                   data-testid="button-menu"
                 >
                   <Book className="h-4 w-4 text-primary" />
@@ -1279,7 +1279,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl h-10 px-4 shadow-xl font-bold text-sm min-w-[60px] bg-card border-border hover:bg-muted transition-all hover:scale-105 text-foreground" 
+                  className="rounded-xl h-10 px-4 shadow-xl font-bold text-sm min-w-[60px] subtle-card border-border hover:bg-muted transition-all hover:scale-105 text-foreground" 
                   data-testid="button-version"
                 >
                   {VERSIONS.find(v => v.value === version)?.label || "NVI"}

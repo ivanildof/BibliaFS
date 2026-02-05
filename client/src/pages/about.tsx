@@ -147,27 +147,33 @@ export default function About() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden group">
-            <CardHeader className="p-8">
-              <CardTitle className="flex items-center gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tight">
-                <Heart className="h-6 w-6 text-rose-500 fill-rose-500/20" />
+          <Card className="rounded-[2.5rem] border-none bg-gradient-to-br from-rose-500/10 via-card to-pink-500/5 shadow-xl overflow-hidden group relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-rose-500/15 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="p-8 relative z-10">
+              <CardTitle className="flex items-center gap-4 text-xl font-semibold text-foreground">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg">
+                  <Heart className="h-5 w-5 text-white" />
+                </div>
                 Nossa Missão
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium">
+            <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium relative z-10">
               <p>O BíbliaFS nasceu com o propósito de tornar o estudo da Palavra de Deus mais acessível, personalizado e envolvente.</p>
               <p>Acreditamos que a tecnologia pode ser uma ferramenta poderosa para aproximar as pessoas das Escrituras Sagradas.</p>
             </CardContent>
           </Card>
 
-          <Card className="rounded-[2.5rem] border-none bg-card shadow-xl overflow-hidden group">
-            <CardHeader className="p-8">
-              <CardTitle className="flex items-center gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tight">
-                <Users className="h-6 w-6 text-indigo-500" />
+          <Card className="rounded-[2.5rem] border-none bg-gradient-to-br from-indigo-500/10 via-card to-purple-500/5 shadow-xl overflow-hidden group relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-500/15 to-transparent rounded-bl-full z-0" />
+            <CardHeader className="p-8 relative z-10">
+              <CardTitle className="flex items-center gap-4 text-xl font-semibold text-foreground">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
+                  <Users className="h-5 w-5 text-white" />
+                </div>
                 100% Gratuito
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium">
+            <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium relative z-10">
               <p>O BíbliaFS é mantido por doações de usuários como você. Nosso compromisso é manter o aplicativo 100% gratuito.</p>
               <p>Desenvolvido com dedicação pela equipe FabriSite.</p>
             </CardContent>
@@ -181,7 +187,7 @@ export default function About() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {legalPages.map((page, index) => (
               <Link key={index} href={page.href}>
-                <Card className="rounded-3xl border-none bg-card shadow-sm cursor-pointer transition-all hover:shadow-md active:scale-95 group">
+                <Card className="rounded-3xl border-none subtle-card shadow-sm cursor-pointer transition-all hover:shadow-md active:scale-95 group">
                   <CardContent className="p-6 flex items-center gap-4">
                     <div className={`h-12 w-12 rounded-xl ${page.bgColor} flex items-center justify-center flex-shrink-0`}>
                       <page.icon className={`h-6 w-6 ${page.color}`} />

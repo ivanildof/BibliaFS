@@ -90,19 +90,25 @@ export default function Contact() {
                   icon: MessageSquare, 
                   label: "Suporte Técnico", 
                   desc: "Dúvidas sobre o funcionamento do app",
-                  color: "bg-blue-500/10 text-blue-600"
+                  gradient: "from-blue-500/15 via-indigo-500/10 to-transparent",
+                  iconGradient: "from-blue-500 to-indigo-600",
+                  shadow: "shadow-blue-500/20"
                 },
                 { 
                   icon: Heart, 
                   label: "Doações & Apoio", 
                   desc: "Apoie o BíbliaFS gratuitamente",
-                  color: "bg-rose-500/10 text-rose-600"
+                  gradient: "from-rose-500/15 via-pink-500/10 to-transparent",
+                  iconGradient: "from-rose-500 to-pink-600",
+                  shadow: "shadow-rose-500/20"
                 },
                 { 
                   icon: Clock, 
                   label: "Tempo de Resposta", 
                   desc: "Normalmente em até 48 horas úteis",
-                  color: "bg-amber-500/10 text-amber-600"
+                  gradient: "from-amber-500/15 via-orange-500/10 to-transparent",
+                  iconGradient: "from-amber-500 to-orange-600",
+                  shadow: "shadow-amber-500/20"
                 }
               ].map((item, i) => (
                 <motion.div 
@@ -110,15 +116,15 @@ export default function Contact() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.1 }}
-                  className="group flex items-center gap-6 p-8 rounded-[2rem] bg-card border border-border hover:border-border transition-all shadow-xl relative overflow-hidden"
+                  className={`group flex items-center gap-6 p-6 rounded-[2rem] bg-gradient-to-r ${item.gradient} border-none shadow-lg ${item.shadow} relative overflow-hidden`}
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
-                  <div className={`h-16 w-16 rounded-2xl ${item.color} flex items-center justify-center transition-all duration-500  shadow-lg relative z-10 border border-white/50`}>
-                    <item.icon className="h-8 w-8 drop-shadow-sm" />
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-white/20 to-transparent rounded-bl-full z-0" />
+                  <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${item.iconGradient} flex items-center justify-center shadow-lg relative z-10`}>
+                    <item.icon className="h-7 w-7 text-white" />
                   </div>
                   <div className="relative z-10">
-                    <p className="font-bold text-xl text-foreground uppercase tracking-tighter">{item.label}</p>
-                    <p className="text-sm font-bold text-muted-foreground italic mt-1 leading-tight">{item.desc}</p>
+                    <p className="font-semibold text-lg text-foreground">{item.label}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -199,11 +205,12 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <Card className="rounded-[3rem] border-none bg-card shadow-2xl overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-primary/5 via-transparent to-transparent rounded-bl-full z-0" />
-                    <CardHeader className="p-8 sm:p-10 md:p-14 pb-0 relative z-10">
-                      <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Envie sua Mensagem</CardTitle>
-                      <CardDescription className="text-base sm:text-lg font-bold text-muted-foreground italic mt-2">
+                  <Card className="rounded-[2.5rem] border-none bg-gradient-to-br from-primary/5 via-card to-indigo-500/5 shadow-2xl overflow-hidden relative">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary/10 via-purple-500/5 to-transparent rounded-bl-full z-0" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-indigo-500/10 to-transparent rounded-tr-full z-0" />
+                    <CardHeader className="p-8 sm:p-10 md:p-12 pb-0 relative z-10">
+                      <CardTitle className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-primary via-indigo-600 to-purple-600 bg-clip-text text-transparent">Envie sua Mensagem</CardTitle>
+                      <CardDescription className="text-base text-muted-foreground mt-2">
                         Preencha os campos abaixo e entraremos em contato.
                       </CardDescription>
                     </CardHeader>
@@ -283,7 +290,7 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-12"
                 >
-                  <Card className="rounded-[3rem] border-none bg-card shadow-2xl text-center overflow-hidden relative">
+                  <Card className="rounded-[3rem] border-none subtle-card shadow-2xl text-center overflow-hidden relative">
                     <div className="h-4 w-full bg-green-500" />
                     <CardHeader className="pt-12 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-8">
                       <div className="flex justify-center mb-6 sm:mb-10">
