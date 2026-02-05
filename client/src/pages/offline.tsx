@@ -63,7 +63,12 @@ export default function OfflinePage() {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 space-y-6">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+      </div>
+      <div className="relative z-10 container max-w-4xl mx-auto p-4 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -193,6 +198,7 @@ export default function OfflinePage() {
           </p>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

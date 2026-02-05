@@ -292,8 +292,12 @@ export default function VersionCompare() {
   const maxVerses = Math.max(...versionsData.map(v => v.verses.length), 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="font-display text-4xl font-bold mb-2 flex items-center gap-3" data-testid="text-page-title">

@@ -146,8 +146,12 @@ export default function Favorites() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
-      <div className="container max-w-5xl mx-auto p-4 md:p-8 pb-32">
+    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+      </div>
+      <div className="relative z-10 container max-w-5xl mx-auto p-4 md:p-8 pb-32">
         {/* Header Section */}
         <div className="text-center space-y-2 mb-10">
           <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">MEUS TESOUROS</p>
