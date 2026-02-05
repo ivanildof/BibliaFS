@@ -1462,7 +1462,7 @@ export default function BibleReader() {
                           {verse.number}
                         </sup>
                           <p 
-                            className="verse-text flex-1 font-serif leading-relaxed text-[#1a1a1a] dark:text-slate-200" 
+                            className="verse-text flex-1 font-serif leading-relaxed text-[#111111] dark:text-slate-100" 
                             data-testid={`verse-text-${verse.number}`}
                             style={{ fontSize: `${fontSize}px` }}
                           >
