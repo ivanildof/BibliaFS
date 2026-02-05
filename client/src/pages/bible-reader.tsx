@@ -1645,6 +1645,21 @@ export default function BibleReader() {
                           size="sm"
                           className="w-full"
                           onClick={() => {
+                            handleAddBookmark(verse);
+                            setHighlightPopoverOpen(false);
+                            setSelectedVerse(null);
+                          }}
+                          data-testid={`button-bookmark-verse-${verse.number}`}
+                        >
+                          <BookmarkPlus className="h-4 w-4 mr-2" />
+                          Adicionar aos Favoritos
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
                             setVerseToShare(verse);
                             setShareSheetOpen(true);
                             setHighlightPopoverOpen(false);
