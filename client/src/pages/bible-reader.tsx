@@ -130,6 +130,7 @@ export default function BibleReader() {
     }
     return 1;
   });
+
   const [fontSize, setFontSize] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('bible_font_size');
@@ -137,6 +138,7 @@ export default function BibleReader() {
     }
     return 18;
   });
+
   const [searchQuery, setSearchQuery] = useState("");
 
   // Save font size to localStorage
@@ -1079,28 +1081,27 @@ export default function BibleReader() {
       {/* Top Header - Icons only */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-card border border-primary/20 rounded-xl px-1 h-10 shadow-sm">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 hover:bg-primary/10"
-                onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
-                data-testid="button-font-decrease"
-              >
-                <span className="text-xs font-bold text-primary">A-</span>
-              </Button>
-              <div className="w-[1px] h-4 bg-primary/20 mx-0.5" />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 hover:bg-primary/10"
-                onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
-                data-testid="button-font-increase"
-              >
-                <span className="text-xs font-bold text-primary">A+</span>
-              </Button>
-            </div>
+                          <div className="flex items-center bg-card border border-primary/20 rounded-xl px-1 h-10 shadow-sm">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-primary/10"
+                              onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+                              data-testid="button-font-decrease"
+                            >
+                              <span className="text-xs font-bold text-primary">A-</span>
+                            </Button>
+                            <div className="w-[1px] h-4 bg-primary/20 mx-0.5" />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-primary/10"
+                              onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
+                              data-testid="button-font-increase"
+                            >
+                              <span className="text-xs font-bold text-primary">A+</span>
+                            </Button>
+                          </div>
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
                 <Button 

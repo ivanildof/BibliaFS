@@ -118,6 +118,7 @@ function Router() {
       <Route path="/register" component={Register} />
       <Route path="/auth/callback" component={AuthCallback} />
       <Route path="/bible" component={BibleReader} />
+      <Route path="/biblia" component={BibleReader} />
       <Route path="/bible-reader" component={BibleReader} />
       <Route path="/compare" component={VersionCompare} />
       <Route path="/comparar" component={VersionCompare} />
