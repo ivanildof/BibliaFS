@@ -445,32 +445,32 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            <div className="flex-1 w-full max-w-sm mx-auto lg:max-w-none relative">
+            <div className="flex-1 relative">
                <motion.div 
                  initial={{ rotate: -5, scale: 0.9 }}
                  whileInView={{ rotate: 0, scale: 1 }}
-                 className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.3)] border-4 border-white/5"
+                 className="relative z-10 rounded-[3rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-8 border-white/5"
                >
-                 <div className="bg-slate-900 aspect-[9/16] p-4 sm:p-8">
-                    <div className="flex items-center justify-between mb-6 sm:mb-10">
-                      <Menu className="h-5 w-5 text-white" />
-                      <div className="flex gap-1.5">
-                        <div className="h-1.5 w-1.5 rounded-full bg-white/20" />
-                        <div className="h-1.5 w-1.5 rounded-full bg-white/20" />
-                        <div className="h-1.5 w-1.5 rounded-full bg-white/20" />
+                 <div className="bg-slate-900 aspect-[9/16] p-8">
+                    <div className="flex items-center justify-between mb-10">
+                      <Menu className="h-6 w-6 text-white" />
+                      <div className="flex gap-2">
+                        <div className="h-2 w-2 rounded-full bg-white/20" />
+                        <div className="h-2 w-2 rounded-full bg-white/20" />
+                        <div className="h-2 w-2 rounded-full bg-white/20" />
                       </div>
                     </div>
-                    <div className="space-y-4 sm:space-y-6">
-                      <div className="h-6 w-2/3 bg-white/10 rounded-full" />
-                      <div className="space-y-2 sm:space-y-3">
-                        <div className="h-3 w-full bg-white/5 rounded-full" />
-                        <div className="h-3 w-full bg-white/5 rounded-full" />
-                        <div className="h-3 w-5/6 bg-white/5 rounded-full" />
-                        <div className="h-3 w-full bg-white/5 rounded-full" />
+                    <div className="space-y-6">
+                      <div className="h-8 w-2/3 bg-white/10 rounded-full" />
+                      <div className="space-y-3">
+                        <div className="h-4 w-full bg-white/5 rounded-full" />
+                        <div className="h-4 w-full bg-white/5 rounded-full" />
+                        <div className="h-4 w-5/6 bg-white/5 rounded-full" />
+                        <div className="h-4 w-full bg-white/5 rounded-full" />
                       </div>
-                    <div className="h-32 sm:h-40 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-600/10 flex items-center justify-center border border-white/5">
-                      <Sparkles className="h-10 w-10 text-primary/30 animate-pulse" />
-                    </div>
+                      <div className="h-60 rounded-3xl bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center border-2 border-white/5">
+                        <Sparkles className="h-20 w-20 text-primary/40 animate-pulse" />
+                      </div>
                     </div>
                  </div>
                </motion.div>
