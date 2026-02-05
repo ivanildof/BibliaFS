@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SiWhatsapp } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -1168,6 +1169,19 @@ export default function Groups() {
                                     ) : (
                                       <Copy className="h-4 w-4" />
                                     )}
+                                  </Button>
+                                  <Button 
+                                    size="icon" 
+                                    variant="ghost"
+                                    className="h-9 w-9 rounded-xl text-green-600 hover:text-green-700 hover:bg-green-50 transition-all"
+                                    onClick={() => {
+                                      const inviteUrl = `${window.location.origin}/groups?code=${invite.inviteCode}`;
+                                      const message = `Olá! Você foi convidado para o grupo "${selectedGroup?.name}" no BíbliaFS. Use o código: ${invite.inviteCode} ou acesse: ${inviteUrl}`;
+                                      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                                    }}
+                                    data-testid={`button-whatsapp-${invite.id}`}
+                                  >
+                                    <SiWhatsapp className="h-4 w-4" />
                                   </Button>
                                 </div>
                               </div>
