@@ -1792,23 +1792,23 @@ export default function BibleReader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm flex-shrink-0"
+                className="h-6 w-6 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm flex-shrink-0"
                 onClick={() => setFontSize(Math.max(12, fontSize - 2))}
                 title="Diminuir fonte"
                 data-testid="button-decrease-font"
               >
-                <span className="text-[10px] font-bold">A-</span>
+                <span className="text-[9px] font-bold">A-</span>
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm flex-shrink-0"
+                className="h-6 w-6 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm flex-shrink-0"
                 onClick={() => setFontSize(Math.min(32, fontSize + 2))}
                 title="Aumentar fonte"
                 data-testid="button-increase-font"
               >
-                <span className="text-xs font-bold">A+</span>
+                <span className="text-[10px] font-bold">A+</span>
               </Button>
             </div>
 
