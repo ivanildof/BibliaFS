@@ -223,11 +223,11 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-xl  transition-all duration-500 bg-card shadow-lg relative">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
+                      <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl transition-all duration-500 bg-card shadow-xl relative">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted/80 to-transparent rounded-bl-full z-0" />
                         
                         <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-6 pb-2 relative z-10">
-                          <div className="p-3 rounded-xl bg-muted border border-border shadow-sm transition-all ">
+                          <div className="p-3 rounded-2xl bg-gradient-to-br from-muted to-muted/60 border border-border/50 shadow-lg transition-all">
                             {getAchievementIcon(achievement.icon, false)}
                           </div>
                           <div className="flex flex-col gap-0.5 flex-1">
