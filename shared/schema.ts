@@ -1069,11 +1069,11 @@ export type Highlight = typeof highlights.$inferSelect;
 export const insertBookmarkSchema = createInsertSchema(bookmarks)
   .omit({ id: true, createdAt: true })
   .extend({
-    book: z.string().min(2).max(50),
+    book: z.string().min(1).max(50),
     chapter: z.number().int().min(1).max(150),
     verse: z.number().int().min(1).max(176),
-    verseText: z.string().min(1).max(1000),
-    version: z.enum(["nvi", "acf", "arc", "ra"]).optional().nullable(),
+    verseText: z.string().min(1).max(2000),
+    version: z.string().max(20).optional().nullable(),
     note: z.string().max(1000).optional().nullable(),
   });
 export type InsertBookmark = z.infer<typeof insertBookmarkSchema>;
