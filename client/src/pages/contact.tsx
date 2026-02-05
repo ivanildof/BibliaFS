@@ -67,7 +67,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-2xl md:text-3xl font-bold tracking-tight text-foreground"
+            className="text-xl md:text-2xl font-bold tracking-tight text-foreground"
           >
             Como podemos <span className="text-primary">ajudar você?</span>
           </motion.h1>
@@ -75,7 +75,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto font-bold italic"
+            className="text-base text-muted-foreground max-w-2xl mx-auto"
           >
             Tem dúvidas, sugestões ou feedback? Adoraríamos ouvir você! Nossa equipe está pronta para oferecer suporte e ouvir suas ideias.
           </motion.p>
@@ -110,15 +110,14 @@ export default function Contact() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.1 }}
-                  className="group flex items-center gap-6 p-8 rounded-[2rem] bg-card border border-border hover:border-border transition-all shadow-xl relative overflow-hidden"
+                  className="group flex items-center gap-4 p-5 rounded-2xl bg-card dark:bg-card border border-border transition-all shadow-md relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
-                  <div className={`h-16 w-16 rounded-2xl ${item.color} flex items-center justify-center transition-all duration-500  shadow-lg relative z-10 border border-white/50`}>
-                    <item.icon className="h-8 w-8 drop-shadow-sm" />
+                  <div className={`h-12 w-12 rounded-xl ${item.color} dark:bg-opacity-20 flex items-center justify-center shadow-sm relative z-10`}>
+                    <item.icon className="h-5 w-5" />
                   </div>
                   <div className="relative z-10">
-                    <p className="font-bold text-xl text-foreground uppercase tracking-tighter">{item.label}</p>
-                    <p className="text-sm font-bold text-muted-foreground italic mt-1 leading-tight">{item.desc}</p>
+                    <p className="font-semibold text-base text-foreground">{item.label}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
