@@ -1072,14 +1072,14 @@ export default function BibleReader() {
     : "Leia e estude a Bíblia Sagrada com IA teológica e recursos premium.";
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-[#fcfaff] overflow-x-hidden">
       <SEO 
         title={seoTitle}
         description={seoDescription}
         ogType="book"
       />
       {/* Top Header - Icons only */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-2">
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>

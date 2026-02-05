@@ -186,7 +186,7 @@ export default function Profile() {
       <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 rounded-full blur-[150px]" />
       
       {/* Mobile Header with Action Buttons */}
-      <div className="md:hidden sticky top-0 z-20 bg-white/90 backdrop-blur-2xl border-b border-slate-100 px-4 py-3">
+      <div className="md:hidden sticky top-0 z-20 bg-[#fcfaff]/90 backdrop-blur-2xl border-b border-slate-100 px-4 py-3">
         <div className="flex items-center justify-end gap-2">
           <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-share-profile-mobile">
             <Share2 className="h-5 w-5" />
@@ -532,7 +532,7 @@ export default function Profile() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 shadow-xl border border-slate-100" data-testid="tabs-profile">
+          <TabsList className="grid w-full grid-cols-3 h-auto bg-slate-50/50 backdrop-blur-xl rounded-2xl p-1.5 shadow-xl border border-slate-100" data-testid="tabs-profile">
             <TabsTrigger value="plans" className="flex-col gap-1.5 py-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:shadow-sm transition-all text-slate-400 data-[state=active]:text-primary" data-testid="tab-plans">
               <BookOpen className="h-5 w-5" />
               <span className="text-[10px] font-black uppercase tracking-widest">{t.profile.my_plans}</span>
