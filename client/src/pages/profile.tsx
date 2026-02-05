@@ -276,8 +276,9 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-        <Card className="rounded-[2.5rem] border-none bg-card shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
+        <Card className="rounded-[2.5rem] border-none profile-hero-card shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary/10 via-purple-500/10 to-transparent rounded-bl-full z-0" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-amber-500/10 to-transparent rounded-tr-full z-0" />
           <CardContent className="pt-10 pb-10 px-10 relative z-10">
             <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
               <ProfileImageUpload 
@@ -356,32 +357,32 @@ export default function Profile() {
                 
                 {/* Quick Stats */}
                 <div className="flex flex-wrap gap-4 md:gap-6">
-                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted border border-border shadow-sm">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl stat-card-primary">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20">
                       <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-foreground tracking-tight">{user.readingStreak || 0}</p>
+                      <p className="text-lg font-bold text-foreground tracking-tight">{user.readingStreak || 0}</p>
                       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest leading-none">{t.profile.reading_streak}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted border border-border shadow-sm">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl stat-card-green">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20">
                       <CheckCircle2 className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-foreground tracking-tight">{completedPlans.length}</p>
+                      <p className="text-lg font-bold text-foreground tracking-tight">{completedPlans.length}</p>
                       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest leading-none">{t.plans.completedPlans}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted border border-border shadow-sm">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
+                  <div className="flex items-center gap-2 p-3 rounded-2xl stat-card-amber">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20">
                       <Award className="h-5 w-5 text-amber-600" />
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-foreground tracking-tight">{achievements.length}</p>
+                      <p className="text-lg font-bold text-foreground tracking-tight">{achievements.length}</p>
                       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest leading-none">{t.profile.achievements}</p>
                     </div>
                   </div>

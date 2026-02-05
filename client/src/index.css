@@ -40,6 +40,52 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Gradient stat cards with colorful accents */
+.stat-card-primary {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.15);
+}
+
+.stat-card-green {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  box-shadow: 0 4px 15px -3px rgba(34, 197, 94, 0.15);
+}
+
+.stat-card-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.12) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 4px 15px -3px rgba(245, 158, 11, 0.15);
+}
+
+.stat-card-rose {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(251, 113, 133, 0.12) 100%);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  box-shadow: 0 4px 15px -3px rgba(244, 63, 94, 0.15);
+}
+
+.stat-card-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(96, 165, 250, 0.12) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.15);
+}
+
+/* Premium profile card with gradient overlay */
+.profile-hero-card {
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(40 50% 97%) 50%, hsl(250 30% 96%) 100%);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1),
+              0 12px 24px -8px rgba(0, 0, 0, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.dark .profile-hero-card {
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, rgba(30, 30, 60, 0.9) 50%, rgba(40, 25, 60, 0.9) 100%);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4),
+              0 12px 24px -8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
 /* LIGHT MODE - Premium Soft Theme: Warm Paper + Aged Gold + Soft Navy */
 :root {
   --button-outline: rgba(0,0,0, .08);
