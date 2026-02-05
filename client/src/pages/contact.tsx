@@ -46,11 +46,11 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative">
+    <div className="min-h-screen bg-background relative">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-slate-200/40 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-100/50 blur-[120px] animate-pulse" />
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-[120px] animate-pulse" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 md:py-20">

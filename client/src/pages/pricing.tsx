@@ -245,10 +245,10 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-slate-200/40 rounded-full blur-[150px]" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-slate-100/50 rounded-full blur-[150px]" />
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-slate-200/40 dark:bg-slate-700/30 rounded-full blur-[150px]" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-slate-100/50 dark:bg-slate-800/40 rounded-full blur-[150px]" />
       
       {/* Header */}
       <div className="relative z-10 p-4 md:p-6">

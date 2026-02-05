@@ -77,10 +77,10 @@ export default function ResetPassword() {
   // If no access token but redirected from recovery, show error
   if (!accessToken && type === 'recovery') {
     return (
-      <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+      <div className="min-h-screen bg-background relative overflow-hidden">
         <div className="pointer-events-none fixed inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
         </div>
         <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md">
@@ -114,10 +114,10 @@ export default function ResetPassword() {
 
   if (passwordReset) {
     return (
-      <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+      <div className="min-h-screen bg-background relative overflow-hidden">
         <div className="pointer-events-none fixed inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
         </div>
         <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md">
@@ -144,10 +144,10 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
       </div>
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md">

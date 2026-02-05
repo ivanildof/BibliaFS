@@ -168,10 +168,10 @@ export default function Landing() {
   ];
   
   return (
-    <div className="min-h-screen bg-[#fcfaff] relative overflow-hidden selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary selection:text-white">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-slate-200/40 dark:bg-slate-700/30 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-slate-100/50 dark:bg-slate-800/40 blur-3xl" />
       </div>
       <div className="relative z-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1.5 bg-primary z-[60] origin-left" style={{ scaleX }} />
