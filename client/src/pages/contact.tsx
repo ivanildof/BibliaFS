@@ -67,7 +67,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic"
+            className="text-2xl md:text-3xl font-bold tracking-tight text-foreground"
           >
             Como podemos <span className="text-primary">ajudar você?</span>
           </motion.h1>
