@@ -1080,24 +1080,27 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-xl h-10 w-10 shadow-sm bg-card border-primary/20 hover:bg-primary/10 transition-all"
-              onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
-              data-testid="button-font-decrease"
-            >
-              <span className="text-xs font-bold">A-</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-xl h-10 w-10 shadow-sm bg-card border-primary/20 hover:bg-primary/10 transition-all"
-              onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
-              data-testid="button-font-increase"
-            >
-              <span className="text-xs font-bold">A+</span>
-            </Button>
+            <div className="flex items-center bg-card border border-primary/20 rounded-xl px-1 h-10 shadow-sm">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-primary/10"
+                onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+                data-testid="button-font-decrease"
+              >
+                <span className="text-xs font-bold text-primary">A-</span>
+              </Button>
+              <div className="w-[1px] h-4 bg-primary/20 mx-0.5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-primary/10"
+                onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
+                data-testid="button-font-increase"
+              >
+                <span className="text-xs font-bold text-primary">A+</span>
+              </Button>
+            </div>
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
                 <Button 
