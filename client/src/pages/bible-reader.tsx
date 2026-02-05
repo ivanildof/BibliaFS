@@ -998,12 +998,12 @@ export default function BibleReader() {
   };
 
   const highlightColors = [
-    { name: "yellow", bg: "bg-yellow-200/50 dark:bg-yellow-900/30", numberColor: "text-yellow-700 dark:text-yellow-400", label: t.bible.yellow },
-    { name: "green", bg: "bg-green-200/50 dark:bg-green-900/30", numberColor: "text-green-700 dark:text-green-400", label: t.bible.green },
-    { name: "blue", bg: "bg-blue-200/50 dark:bg-blue-900/30", numberColor: "text-blue-700 dark:text-blue-400", label: t.bible.blue },
-    { name: "purple", bg: "bg-purple-200/50 dark:bg-purple-900/30", numberColor: "text-purple-700 dark:text-purple-400", label: t.bible.purple },
-    { name: "pink", bg: "bg-pink-200/50 dark:bg-pink-900/30", numberColor: "text-pink-700 dark:text-pink-400", label: t.bible.pink },
-    { name: "orange", bg: "bg-orange-200/50 dark:bg-orange-900/30", numberColor: "text-orange-700 dark:text-orange-400", label: t.bible.orange },
+    { name: "yellow", bg: "bg-yellow-200/50", numberColor: "text-yellow-700", label: t.bible.yellow },
+    { name: "green", bg: "bg-green-200/50", numberColor: "text-green-700", label: t.bible.green },
+    { name: "blue", bg: "bg-blue-200/50", numberColor: "text-blue-700", label: t.bible.blue },
+    { name: "purple", bg: "bg-purple-200/50", numberColor: "text-purple-700", label: t.bible.purple },
+    { name: "pink", bg: "bg-pink-200/50", numberColor: "text-pink-700", label: t.bible.pink },
+    { name: "orange", bg: "bg-orange-200/50", numberColor: "text-orange-700", label: t.bible.orange },
   ];
 
   const getHighlightBg = (color: string) => {
@@ -1087,7 +1087,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className="rounded-xl h-10 w-10 shadow-sm bg-card border-primary/20 hover:bg-primary/10 transition-all hover:scale-105" 
+                  className="rounded-xl h-10 w-10 shadow-xl bg-white border-slate-200 hover:bg-slate-50 transition-all hover:scale-105" 
                   data-testid="button-search-open"
                 >
                   <Search className="h-4 w-4 text-primary" />
@@ -1111,7 +1111,7 @@ export default function BibleReader() {
                         {searchMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-slate-500">
                       Busque qualquer palavra, nome, expressão ou tema na Bíblia
                     </p>
                   </div>
@@ -1146,7 +1146,7 @@ export default function BibleReader() {
                                       <div className="font-semibold text-sm">
                                         {t.bibleBooks[book.abbrev.pt] || book.name}
                                       </div>
-                                      <div className="text-xs text-muted-foreground">
+                                      <div className="text-xs text-slate-500">
                                         {book.chapters} {book.chapters === 1 ? 'capítulo' : 'capítulos'}
                                       </div>
                                     </div>
@@ -1182,16 +1182,16 @@ export default function BibleReader() {
                                   <div className="font-semibold text-sm mb-1">
                                     {t.bibleBooks[result.book.abbrev.pt] || result.book.name} {result.chapter}:{result.number}
                                   </div>
-                                  <p className="text-sm text-muted-foreground font-serif">{result.text}</p>
+                                  <p className="text-sm text-slate-500 font-serif">{result.text}</p>
                                 </button>
                               </SheetClose>
-                            )) || <p className="text-center text-muted-foreground py-4">Nenhum versículo encontrado.</p>}
+                            )) || <p className="text-center text-slate-500 py-4">Nenhum versículo encontrado.</p>}
                           </div>
                         </div>
                       )}
                       
                       {!searchMutation.data && matchedBooks.length === 0 && searchMutation.isIdle && (
-                        <div className="text-center text-muted-foreground py-8">
+                        <div className="text-center text-slate-500 py-8">
                           <Search className="h-12 w-12 mx-auto mb-2 opacity-50" />
                           <p>Digite para buscar livros ou versículos</p>
                         </div>
@@ -1207,7 +1207,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl h-10 px-3 shadow-sm gap-1.5 bg-card border-primary/20 hover:bg-primary/10 transition-all hover:scale-105" 
+                  className="rounded-xl h-10 px-3 shadow-xl gap-1.5 bg-white border-slate-200 hover:bg-slate-50 transition-all hover:scale-105" 
                   data-testid="button-menu"
                 >
                   <Book className="h-4 w-4 text-primary" />
@@ -1274,7 +1274,7 @@ export default function BibleReader() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl h-10 px-4 shadow-sm font-bold text-sm min-w-[60px] bg-card border-primary/20 hover:bg-primary/10 transition-all hover:scale-105 text-primary" 
+                  className="rounded-xl h-10 px-4 shadow-xl font-bold text-sm min-w-[60px] bg-white border-slate-200 hover:bg-slate-50 transition-all hover:scale-105 text-slate-800" 
                   data-testid="button-version"
                 >
                   {VERSIONS.find(v => v.value === version)?.label || "NVI"}
@@ -1457,7 +1457,7 @@ export default function BibleReader() {
                           {verse.number}
                         </sup>
                         <p 
-                          className="verse-text flex-1 font-serif leading-relaxed text-[#333333] dark:text-slate-300" 
+                          className="verse-text flex-1 font-serif leading-relaxed text-slate-800" 
                           style={{ fontSize: `${fontSize}px` }}
                           data-testid={`verse-text-${verse.number}`}
                         >
@@ -1692,7 +1692,7 @@ export default function BibleReader() {
             </div>
           </>
         ) : (
-          <div className="text-center py-20 text-muted-foreground">
+          <div className="text-center py-20 text-slate-500">
             {t.bible.selectBookToStart}
           </div>
         )}
@@ -1838,7 +1838,7 @@ export default function BibleReader() {
             <div className="mt-4">
               {/* Verse Text */}
               <div className="bg-muted p-4 rounded-lg mb-4">
-                <p className="text-sm font-semibold text-muted-foreground mb-1">
+                <p className="text-sm font-semibold text-slate-500 mb-1">
                   {selectedBook} {selectedChapter}:{verseForCommentary.number}
                 </p>
                 <p className="font-serif text-base leading-relaxed">
@@ -1895,7 +1895,7 @@ export default function BibleReader() {
                 <Volume2 className="h-5 w-5" />
                 <span className="font-semibold">Versículo Selecionado</span>
               </div>
-              <p className="text-sm text-muted-foreground text-left">
+              <p className="text-sm text-slate-500 text-left">
                 {selectedVerse !== null ? `Ouvir apenas versículo ${selectedVerse}` : 'Selecione um versículo primeiro'}
               </p>
             </Button>
@@ -1910,7 +1910,7 @@ export default function BibleReader() {
                 <Book className="h-5 w-5" />
                 <span className="font-semibold">Capítulo Atual</span>
               </div>
-              <p className="text-sm text-muted-foreground text-left">
+              <p className="text-sm text-slate-500 text-left">
                 Ouvir apenas {selectedBook} {selectedChapter}
               </p>
             </Button>
@@ -1925,7 +1925,7 @@ export default function BibleReader() {
                 <Book className="h-5 w-5" />
                 <span className="font-semibold">Livro Completo</span>
               </div>
-              <p className="text-sm text-muted-foreground text-left">
+              <p className="text-sm text-slate-500 text-left">
                 Ouvir todo o livro de {currentBook?.name || selectedBook} em sequência
               </p>
             </Button>
@@ -1987,7 +1987,7 @@ function CommentaryContent({
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-3 text-sm text-muted-foreground">Gerando comentário...</span>
+        <span className="ml-3 text-sm text-slate-500">Gerando comentário...</span>
       </div>
     );
   }
