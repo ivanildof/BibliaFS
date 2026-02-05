@@ -40,48 +40,42 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* LIGHT MODE - Premium Pastel Theme per User Specification */
+/* LIGHT MODE - Premium Soft Theme: Warm Paper + Aged Gold + Soft Navy */
 :root {
   --button-outline: rgba(0,0,0, .08);
   --badge-outline: rgba(0,0,0, .04);
   --opaque-button-border-intensity: -6;
-  --elevate-1: rgba(128, 0, 128, .06);
-  --elevate-2: rgba(128, 0, 128, .12);
-  --background: 240 100% 99%;
-  --foreground: 0 0% 20%;
-  --border: 240 20% 95%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 20%;
-  --card-border: 240 20% 95%;
-  --sidebar: 240 100% 99%;
-  --sidebar-foreground: 0 0% 20%;
-  --sidebar-border: 240 20% 95%;
-  --sidebar-primary: 38 100% 50%;
+  --elevate-1: rgba(59, 82, 120, .06);
+  --elevate-2: rgba(59, 82, 120, .12);
+  --background: 40 30% 98%;
+  --foreground: 220 20% 25%;
+  --border: 40 15% 88%;
+  --card: 40 40% 99%;
+  --card-foreground: 220 20% 22%;
+  --card-border: 40 20% 90%;
+  --sidebar: 40 25% 97%;
+  --sidebar-foreground: 220 20% 30%;
+  --sidebar-border: 40 20% 88%;
+  --sidebar-primary: 220 35% 38%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 50% 97%;
-  --sidebar-accent-foreground: 0 0% 30%;
-  --sidebar-ring: 38 100% 50%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 20%;
-  --popover-border: 240 20% 95%;
-  --primary: 38 100% 50%;
+  --sidebar-accent: 40 40% 94%;
+  --sidebar-accent-foreground: 220 30% 32%;
+  --sidebar-ring: 220 35% 38%;
+  --popover: 40 35% 99%;
+  --popover-foreground: 220 20% 22%;
+  --popover-border: 40 20% 88%;
+  --primary: 220 35% 38%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 50% 97%;
-  --secondary-foreground: 0 0% 40%;
-  --muted: 240 30% 96%;
-  --muted-foreground: 0 0% 40%;
-  --accent: 38 100% 50%;
-  --accent-foreground: 0 0% 100%;
+  --secondary: 40 25% 93%;
+  --secondary-foreground: 220 30% 35%;
+  --muted: 40 20% 95%;
+  --muted-foreground: 220 15% 45%;
+  --accent: 38 75% 48%;
+  --accent-foreground: 220 30% 15%;
   --destructive: 0 70% 55%;
   --destructive-foreground: 0 0% 100%;
-  --input: 240 20% 92%;
-  --ring: 38 100% 50%;
-  
-  /* Card semantic colors per specification */
-  --card-level: 204 71% 90%;
-  --card-points: 28 100% 87%;
-  --card-reading: 350 100% 91%;
-  --card-achievements: 240 67% 94%;
+  --input: 40 20% 85%;
+  --ring: 220 35% 38%;
   --chart-1: 220 40% 45%;
   --chart-2: 40 80% 50%;
   --chart-3: 16 75% 50%;
@@ -217,7 +211,7 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    background: linear-gradient(160deg, #F8F8FF 0%, #FFFFFF 100%);
+    background: linear-gradient(160deg, hsl(var(--background)) 0%, hsl(40 35% 96%) 40%, hsl(40 45% 97%) 100%);
   }
 
   .dark body {

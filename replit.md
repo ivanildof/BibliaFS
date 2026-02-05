@@ -27,18 +27,6 @@ BíbliaFS is a premium, personalized, and intelligent Bible study application de
 - **Audio System**: Supabase Storage streaming + IndexedDB for offline capabilities
 - **UI/UX**: Reading themes (Sepia, Aged Paper, Night Mode) with localStorage persistence; mobile-responsive design for components like study group buttons and sidebar.
 
-### Design System (Light Premium Pastel)
-- **Background Gradient**: `linear-gradient(160deg, #F8F8FF 0%, #FFFFFF 100%)`
-- **Semantic Card Colors**:
-  - Level (blue): `#D6EAF8` - bg-card-level
-  - Points (peach): `#FFDAB9` - bg-card-points
-  - Reading (pink): `#FFD1DC` - bg-card-reading
-  - Achievements (lavender): `#E6E6FA` - bg-card-achievements
-- **Interactive Elements**: Orange `#FFA500` with white text, hover: `#FF8C00`
-- **Progress Bars**: Purple `#800080`
-- **Typography**: Primary text `#333333`, Secondary text `#666666`
-- **Cards**: White backgrounds with subtle shadows, no dark theme variants
-
 ### Backend
 - **Server**: Express.js + TypeScript
 - **Authentication**: OpenID Connect (Replit Auth) + Passport.js; Supabase native OTP for email verification.
