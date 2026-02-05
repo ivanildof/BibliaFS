@@ -1747,6 +1747,26 @@ export default function BibleReader() {
               <span className="text-xs font-bold text-slate-500">A+</span>
             </Button>
 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+              onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+              data-testid="button-font-decrease"
+            >
+              <span className="text-xs font-bold text-slate-500">A-</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+              onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
+              data-testid="button-font-increase"
+            >
+              <span className="text-xs font-bold text-slate-500">A+</span>
+            </Button>
+
             {/* Audio Button */}
             <Button
               variant="ghost"
