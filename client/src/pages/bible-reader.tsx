@@ -1082,25 +1082,6 @@ export default function BibleReader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center justify-between px-4 h-14 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-2">
-            <div className="flex items-center bg-white border border-slate-200 rounded-[2rem] px-1 shadow-xl">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
-                data-testid="button-font-decrease"
-              >
-                <span className="text-xs font-bold text-slate-600">A-</span>
-              </Button>
-              <div className="w-[1px] h-4 bg-slate-200 mx-0.5" />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
-                data-testid="button-font-increase"
-              >
-                <span className="text-xs font-bold text-slate-600">A+</span>
-              </Button>
-            </div>
             <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <SheetTrigger asChild>
                 <Button 
@@ -1744,6 +1725,26 @@ export default function BibleReader() {
               data-testid="button-previous-chapter"
             >
               <ChevronLeft className="h-5 w-5 text-amber-600" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+              onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+              data-testid="button-font-decrease"
+            >
+              <span className="text-xs font-bold text-slate-500">A-</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-slate-500/10 transition-all hover:scale-110 active:scale-95"
+              onClick={() => setFontSize(prev => Math.min(32, prev + 2))}
+              data-testid="button-font-increase"
+            >
+              <span className="text-xs font-bold text-slate-500">A+</span>
             </Button>
 
             {/* Audio Button */}
