@@ -34,6 +34,24 @@ export function UpdatePopup() {
 
   useEffect(() => {
     checkForUpdates();
+    
+    const handleSWUpdate = () => {
+      console.log("[UpdatePopup] SW updateAvailable event received");
+      setUpdateInfo(prev => prev || {
+        currentVersion: APP_VERSION,
+        latestVersion: "Nova",
+        downloadSize: "~15 MB",
+        releaseNotes: [
+          { icon: "sparkles", title: "Novos recursos", description: "Melhorias na experiência de estudo" },
+          { icon: "bug", title: "Correções", description: "Bugs corrigidos para maior estabilidade" },
+          { icon: "zap", title: "Performance", description: "App mais rápido e responsivo" },
+        ],
+      });
+      setIsVisible(true);
+    };
+
+    window.addEventListener('updateAvailable', handleSWUpdate);
+    return () => window.removeEventListener('updateAvailable', handleSWUpdate);
   }, []);
 
   const checkForUpdates = async () => {

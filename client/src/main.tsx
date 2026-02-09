@@ -14,6 +14,7 @@ if ('serviceWorker' in navigator) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 console.log('[PWA] New content available, refresh to update');
+                window.dispatchEvent(new CustomEvent('updateAvailable'));
               }
             });
           }
