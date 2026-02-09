@@ -245,7 +245,7 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
       {/* Decorative background elements */}
       <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 dark:bg-primary/5 rounded-full blur-[150px]" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-muted/50 dark:bg-muted/30 rounded-full blur-[150px]" />

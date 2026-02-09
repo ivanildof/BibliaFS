@@ -136,7 +136,7 @@ export default function Community() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
@@ -259,7 +259,7 @@ export default function Community() {
         </div>
 
         {/* Stats Banner */}
-        <Card className="mb-8 premium-card border-none rounded-2xl ring-2 ring-primary/10">
+        <Card className="mb-8 glass-premium hover-premium border-none rounded-2xl ring-2 ring-primary/10">
           <CardContent className="pt-6">
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
@@ -299,7 +299,7 @@ export default function Community() {
           ) : (
             <>
               {/* AI Suggestion Card */}
-              <Card className="premium-card border-none rounded-2xl ring-2 ring-slate-500/20">
+              <Card className="glass-premium hover-premium border-none rounded-2xl ring-2 ring-slate-500/20">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-muted-foreground" />

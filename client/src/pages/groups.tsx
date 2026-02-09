@@ -754,7 +754,7 @@ export default function Groups() {
     const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
     
     return (
-      <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
         <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 relative z-10">
           <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
             <Button 
@@ -860,7 +860,7 @@ export default function Groups() {
             )}
           </div>
 
-          <Card className="border-none premium-card rounded-[2.5rem] overflow-hidden ring-2 ring-primary/15">
+          <Card className="border-none glass-premium hover-premium rounded-[2.5rem] overflow-hidden ring-2 ring-primary/15">
             <CardHeader className="pb-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -1701,7 +1701,7 @@ export default function Groups() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
@@ -1768,7 +1768,7 @@ export default function Groups() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
-                <Card className="border-none premium-card rounded-3xl ring-2 ring-primary/10">
+                <Card className="border-none glass-premium hover-premium rounded-3xl ring-2 ring-primary/10">
                   <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary/10 mb-6 rotate-3">
                       <Users className="h-10 w-10 text-primary" />
@@ -1911,7 +1911,7 @@ export default function Groups() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="group border-none premium-card rounded-3xl ring-2 ring-primary/10 hover:ring-primary/30 transition-all duration-500 overflow-hidden">
+                  <Card className="group border-none glass-premium hover-premium rounded-3xl ring-2 ring-primary/10 hover:ring-primary/30 transition-all duration-500 overflow-hidden">
                     <CardHeader className="pb-4">
                       <div className="p-3.5 rounded-2xl bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors w-fit mb-4">
                         <Globe className="h-7 w-7 text-blue-500" />

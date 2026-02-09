@@ -387,7 +387,7 @@ export default function ReadingPlans() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + idx * 0.1 }}
             >
-              <Card className="rounded-3xl border-none premium-card ring-2 ring-primary/10 hover:ring-primary/30 group transition-all">
+              <Card className="rounded-3xl border-none glass-premium hover-premium group transition-all">
                 <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
                   <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{stat.title}</CardTitle>
                   <stat.icon className={`h-5 w-5 ${stat.color}`} />
@@ -458,7 +458,7 @@ export default function ReadingPlans() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + planIdx * 0.1 }}
                   >
-                    <Card className="rounded-[2.5rem] border-none premium-card ring-2 ring-primary/10 hover:ring-primary/30 overflow-hidden transition-all" data-testid={`card-plan-${plan.id}`}>
+                    <Card className="rounded-[2.5rem] border-none glass-premium hover-premium overflow-hidden transition-all" data-testid={`card-plan-${plan.id}`}>
                       <CardHeader className="pb-4">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">

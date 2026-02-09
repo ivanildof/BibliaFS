@@ -135,7 +135,7 @@ export default function Home() {
 
         {currentPlan && (
           <motion.div variants={itemVariants}>
-            <Card className="relative premium-card border-none overflow-hidden rounded-[2rem] group hover:shadow-primary/20 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
+            <Card className="relative glass-premium hover-premium border-none overflow-hidden rounded-[2rem] group hover:shadow-primary/20 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-primary to-indigo-600" />
               <CardHeader className="pb-4 relative">

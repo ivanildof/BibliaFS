@@ -146,7 +146,7 @@ export default function Favorites() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
@@ -217,7 +217,7 @@ export default function Favorites() {
                     <EmptyState icon={BookmarkIcon} text={search ? "Nenhum favorito encontrado" : `${t.favorites.no_favorites}. ${t.favorites.add_first}!`} />
                   ) : (
                     filteredBookmarks.map((bookmark) => (
-                      <Card key={bookmark.id} className="premium-card ring-2 ring-primary/10 group relative overflow-hidden border-primary/5 bg-card/40 backdrop-blur-sm hover:bg-card/60 hover:border-primary/20 hover:shadow-xl transition-all duration-500 rounded-3xl">
+                      <Card key={bookmark.id} className="glass-premium hover-premium group relative overflow-hidden border-primary/5 bg-card/40 backdrop-blur-sm hover:bg-card/60 hover:border-primary/20 hover:shadow-xl transition-all duration-500 rounded-3xl">
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
                         <CardHeader className="pb-3 flex flex-row items-start justify-between">
                           <div className="space-y-1.5">
@@ -267,7 +267,7 @@ export default function Favorites() {
                     <EmptyState icon={Highlighter} text={search ? "Nenhum destaque encontrado" : `${t.favorites.no_favorites}. ${t.favorites.add_first}!`} />
                   ) : (
                     filteredHighlights.map((highlight) => (
-                      <Card key={highlight.id} className={`premium-card ring-2 ring-primary/10 group relative overflow-hidden border-2 transition-all duration-500 rounded-3xl ${getHighlightCardStyles(highlight.color)} shadow-sm hover:shadow-lg`}>
+                      <Card key={highlight.id} className={`glass-premium hover-premium group relative overflow-hidden border-2 transition-all duration-500 rounded-3xl ${getHighlightCardStyles(highlight.color)} shadow-sm hover:shadow-lg`}>
                         <CardHeader className="pb-3 flex flex-row items-start justify-between">
                           <div className="space-y-2">
                             <Link href={`/bible?book=${highlight.book.toLowerCase()}&chapter=${highlight.chapter}&verse=${highlight.verse}`}>
@@ -312,7 +312,7 @@ export default function Favorites() {
                     <EmptyState icon={FileText} text={search ? "Nenhuma nota encontrada" : `${t.favorites.no_favorites}. ${t.favorites.add_first}!`} />
                   ) : (
                     filteredNotes.map((note) => (
-                      <Card key={note.id} className="premium-card ring-2 ring-primary/10 group relative overflow-hidden border-primary/5 bg-card/40 backdrop-blur-sm hover:bg-card/60 transition-all duration-500 rounded-3xl">
+                      <Card key={note.id} className="glass-premium hover-premium group relative overflow-hidden border-primary/5 bg-card/40 backdrop-blur-sm hover:bg-card/60 transition-all duration-500 rounded-3xl">
                         <CardHeader className="pb-3 flex flex-row items-start justify-between">
                           <div className="space-y-1.5">
                             <Link href={`/bible?book=${note.book.toLowerCase()}&chapter=${note.chapter}${note.verse ? `&verse=${note.verse}` : ''}`}>

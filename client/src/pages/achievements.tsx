@@ -35,17 +35,31 @@ const getAchievementIcon = (icon: string, isUnlocked: boolean) => {
   }
 };
 
-const getAchievementGradient = (index: number, isUnlocked: boolean) => {
-  if (!isUnlocked) return "from-muted-foreground to-foreground";
-  const gradients = [
-    "from-amber-500 to-orange-700",
-    "from-emerald-500 to-teal-700",
-    "from-blue-600 to-indigo-800",
-    "from-purple-600 to-pink-800",
-    "from-rose-600 to-red-800",
-    "from-cyan-600 to-blue-800",
-  ];
-  return gradients[index % gradients.length];
+const cardAccents = [
+  { gradient: "from-amber-500 to-orange-600", shadow: "shadow-amber-500/20", accent: "card-accent-amber" },
+  { gradient: "from-emerald-500 to-teal-600", shadow: "shadow-emerald-500/20", accent: "card-accent-emerald" },
+  { gradient: "from-blue-500 to-indigo-600", shadow: "shadow-blue-500/20", accent: "card-accent-blue" },
+  { gradient: "from-purple-500 to-violet-600", shadow: "shadow-purple-500/20", accent: "card-accent-purple" },
+  { gradient: "from-rose-500 to-pink-600", shadow: "shadow-rose-500/20", accent: "card-accent-rose" },
+  { gradient: "from-cyan-500 to-blue-600", shadow: "shadow-cyan-500/20", accent: "card-accent-blue" },
+];
+
+const categoryNames: Record<string, string> = {
+  community: "Comunidade",
+  study: "Destaques",
+  exploration: "Exploração",
+  reading: "Leitura",
+  prayer: "Oração",
+  general: "Geral",
+};
+
+const categoryIcons: Record<string, typeof Users> = {
+  community: Users,
+  study: Star,
+  exploration: Trophy,
+  reading: BookOpen,
+  prayer: Sparkles,
+  general: Award,
 };
 
 export default function Achievements() {
@@ -59,221 +73,181 @@ export default function Achievements() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Resgatando Suas Glórias...</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground animate-pulse" data-testid="text-loading">Carregando conquistas...</p>
         </div>
       </div>
     );
   }
 
-  const unlockedAchievements = achievements?.filter((a) => a.unlockedAt) || [];
-  const lockedAchievements = achievements?.filter((a) => !a.unlockedAt) || [];
-  const unlockedCount = unlockedAchievements.length;
-  const totalCount = achievements?.length || 0;
+  const allAchievements = achievements || [];
+  const unlockedCount = allAchievements.filter((a) => a.unlockedAt).length;
+  const totalCount = allAchievements.length;
   const progressPercent = totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0;
 
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
-      </div>
+  const categories = allAchievements.reduce<Record<string, Achievement[]>>((acc, a) => {
+    const cat = a.category || "general";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(a);
+    return acc;
+  }, {});
 
-      <div className="relative z-10 max-w-4xl mx-auto py-10 px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }} 
+  return (
+    <div className="min-h-screen relative overflow-hidden mesh-primary">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4 mb-14"
+          className="flex items-center gap-5"
         >
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-border" />
-            <Trophy className="h-7 w-7 text-amber-500 animate-bounce drop-shadow-sm" />
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-border" />
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-xl shadow-amber-500/30" data-testid="icon-trophy-header">
+            <Trophy className="h-8 w-8 text-white" />
           </div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.3em]">SALÃO DE CONQUISTAS</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-            Seus Troféus
-          </h1>
-          <p className="text-base text-muted-foreground font-bold italic">
-            Cada marco é uma prova da sua dedicação à Palavra.
-          </p>
+          <div>
+            <h1 className="font-display text-3xl sm:text-4xl font-black tracking-tight text-foreground" data-testid="text-page-title">
+              CONQUISTAS
+            </h1>
+            <p className="text-muted-foreground font-medium mt-1">Domine as escrituras e desbloqueie tesouros</p>
+          </div>
         </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
+        {/* Progress Overview Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-            <Card className="rounded-[2.5rem] border-none glass-premium hover-premium shadow-xl mb-12 overflow-hidden relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-muted/50 via-card to-muted/50 opacity-70 group-hover:opacity-100 transition-opacity z-0" />
-              <CardContent className="p-8 relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                  <div className="flex items-center gap-5">
-                    <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-xl shadow-amber-200 transform  transition-transform border border-white/50">
-                      <Sparkles className="h-8 w-8 text-white drop-shadow-sm" />
-                    </div>
-                    <div>
-                      <span className="text-3xl font-semibold text-foreground tracking-tighter">Progresso Lendário</span>
-                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.3em] mt-1">Nível de Domínio das Escrituras</p>
-                    </div>
+          <Card className="glass-premium hover-premium rounded-2xl border-none overflow-hidden" data-testid="card-progress-overview">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/25">
+                    <Sparkles className="h-6 w-6 text-white" />
                   </div>
-                  <Badge className="rounded-full px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-semibold text-xs shadow-xl shadow-amber-200/50 dark:shadow-amber-900/50 tracking-widest uppercase">
-                    {unlockedCount} DE {totalCount} CONQUISTADAS
-                  </Badge>
-                </div>
-                <div className="relative">
-                  <ProgressBar value={progressPercent} className="h-6 rounded-full bg-muted shadow-inner" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                      {progressPercent.toFixed(0)}% CONCLUÍDO
-                    </span>
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground tracking-tight" data-testid="text-progress-title">Progresso Geral</h2>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mt-0.5">Nível de domínio das escrituras</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none font-bold text-xs px-4 py-1.5 shadow-lg shadow-amber-500/20" data-testid="badge-progress-count">
+                  {unlockedCount} / {totalCount}
+                </Badge>
+              </div>
+              <div className="relative">
+                <ProgressBar value={progressPercent} className="h-4 rounded-full" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-[10px] font-bold text-foreground/70 uppercase tracking-wider">
+                    {progressPercent.toFixed(0)}% concluído
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
 
-        {unlockedAchievements.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-14"
-          >
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-2xl glass-premium hover-premium shadow-lg border border-border">
-                <Trophy className="h-5 w-5 text-amber-500" />
+        {/* Category Sections */}
+        {Object.entries(categories).map(([category, categoryAchievements], catIndex) => {
+          const CatIcon = categoryIcons[category] || Award;
+          const unlockedInCat = categoryAchievements.filter(a => a.unlockedAt).length;
+
+          return (
+            <motion.section
+              key={category}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 + catIndex * 0.08 }}
+              className="space-y-5"
+            >
+              <div className="flex items-center gap-3 flex-wrap">
+                <CatIcon className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-bold text-foreground tracking-tight" data-testid={`text-category-${category}`}>
+                  {categoryNames[category] || category}
+                </h2>
+                <Badge variant="secondary" className="bg-primary/10 text-primary font-bold text-xs" data-testid={`badge-category-count-${category}`}>
+                  {unlockedInCat} / {categoryAchievements.length}
+                </Badge>
               </div>
-              <h2 className="text-2xl font-semibold text-foreground tracking-tighter uppercase">Desbloqueadas</h2>
-              <Badge className="rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border px-3 py-1">
-                {unlockedCount}
-              </Badge>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2">
-              <AnimatePresence mode="popLayout">
-                {unlockedAchievements.map((achievement, idx) => (
-                  <motion.div
-                    key={achievement.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.05 }}
-                  >
-                    <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl  transition-all duration-500 glass-premium hover-premium shadow-xl relative">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.05] group-hover:opacity-[0.1] transition-opacity z-0`} />
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
-                      <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative z-10">
-                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${getAchievementGradient(idx, true)} shadow-xl transform  transition-all border border-white/50`}>
-                          {getAchievementIcon(achievement.icon, true)}
-                        </div>
-                        <div className="flex flex-col gap-1.5 flex-1">
-                          <CardTitle className="text-xl font-semibold tracking-tighter text-foreground">
-                            {achievement.name}
-                          </CardTitle>
-                          <CardDescription className="text-sm font-bold text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">{achievement.description}</CardDescription>
-                        </div>
-                        <div className="absolute top-4 right-4">
-                          <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-6 pt-0 relative z-10 flex justify-between items-center">
-                        <Badge className="rounded-full px-5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-none font-semibold text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-200">
-                          <Check className="h-3 w-3 mr-2" />
-                          CONQUISTADO
-                        </Badge>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          <span className="font-semibold text-amber-600 text-[11px] tracking-tighter">+{achievement.xpReward || 50} XP</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        )}
 
-        {lockedAchievements.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-2xl glass-premium hover-premium shadow-lg border border-border">
-                <Lock className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <h2 className="text-2xl font-semibold text-muted-foreground tracking-tighter uppercase">Em Progresso</h2>
-              <Badge className="rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border px-3 py-1">
-                {lockedAchievements.length}
-              </Badge>
-            </div>
-          <div className="grid gap-6 md:grid-cols-2">
-              <AnimatePresence mode="popLayout">
-                {lockedAchievements.map((achievement, idx) => {
-                  const currentVal = achievement.currentValue ?? 0;
-                  const requiredVal = achievement.requirementValue ?? 1;
-                  const progress = requiredVal > 0 ? (currentVal / requiredVal) * 100 : 0;
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <AnimatePresence mode="popLayout">
+                  {categoryAchievements.map((achievement, idx) => {
+                    const isUnlocked = !!achievement.unlockedAt;
+                    const style = cardAccents[(catIndex * 3 + idx) % cardAccents.length];
 
-                  return (
-                    <motion.div
-                      key={achievement.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                    >
-                      <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl transition-all duration-500 glass-premium hover-premium shadow-xl relative">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted/80 to-transparent rounded-bl-full z-0" />
-                        
-                        <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-6 pb-2 relative z-10">
-                          <div className="p-3 rounded-2xl bg-gradient-to-br from-muted to-muted/60 border border-border/50 shadow-lg transition-all">
-                            {getAchievementIcon(achievement.icon, false)}
-                          </div>
-                          <div className="flex flex-col gap-0.5 flex-1">
-                            <CardTitle className="text-lg font-semibold text-foreground tracking-tighter leading-tight">
-                              {achievement.name}
-                            </CardTitle>
-                            <CardDescription className="text-xs font-bold text-muted-foreground leading-tight">
-                              {achievement.description}
-                            </CardDescription>
-                          </div>
-                        </CardHeader>
-
-                        <CardContent className="px-6 pb-6 pt-2 relative z-10">
-                          <div className="flex items-center justify-between mt-4">
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                              BLOQUEADO
-                            </span>
-                            
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-100 shadow-sm">
-                              <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                              <span className="font-semibold text-amber-600 text-[11px] tracking-tight">+{achievement.xpReward || 50} XP</span>
+                    return (
+                      <motion.div
+                        key={achievement.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.04 }}
+                      >
+                        <Card
+                          className={`rounded-2xl border-none overflow-hidden hover-premium transition-all duration-300 ${
+                            isUnlocked ? style.accent : 'glass-premium opacity-70'
+                          }`}
+                          data-testid={`card-achievement-${achievement.id}`}
+                        >
+                          <CardContent className="p-5 sm:p-6">
+                            <div className="flex items-start gap-4">
+                              <div className={`p-3.5 rounded-xl shrink-0 ${
+                                isUnlocked 
+                                  ? `bg-gradient-to-br ${style.gradient} shadow-lg ${style.shadow}` 
+                                  : 'bg-muted/80 border border-border'
+                              }`}>
+                                {getAchievementIcon(achievement.icon, isUnlocked)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className={`text-base font-bold tracking-tight leading-tight ${
+                                  isUnlocked ? 'text-foreground' : 'text-muted-foreground'
+                                }`} data-testid={`text-achievement-name-${achievement.id}`}>
+                                  {achievement.name}
+                                </h3>
+                                <p className="text-sm text-muted-foreground mt-1 leading-relaxed" data-testid={`text-achievement-desc-${achievement.id}`}>
+                                  {achievement.description}
+                                </p>
+                                <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
+                                  {isUnlocked ? (
+                                    <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px] uppercase tracking-wider" data-testid={`badge-unlocked-${achievement.id}`}>
+                                      <Check className="h-3 w-3 mr-1.5" />
+                                      Conquistado
+                                    </Badge>
+                                  ) : (
+                                    <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest" data-testid={`text-locked-${achievement.id}`}>
+                                      Bloqueado
+                                    </span>
+                                  )}
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/15" data-testid={`badge-xp-${achievement.id}`}>
+                                    <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                                    <span className="font-bold text-amber-600 dark:text-amber-400 text-[11px]">+{achievement.xpReward || 50} XP</span>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        )}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </motion.section>
+          );
+        })}
 
-        {(!achievements || achievements.length === 0) && (
+        {totalCount === 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="rounded-[3rem] border-2 border-dashed border-border glass-premium hover-premium shadow-sm">
-              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="flex h-28 w-28 items-center justify-center rounded-[2.5rem] bg-muted mb-8 shadow-inner border border-border">
-                  <Trophy className="h-14 w-14 text-muted-foreground" />
+            <Card className="glass-premium rounded-2xl border-none" data-testid="card-empty-achievements">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="h-20 w-20 rounded-2xl bg-muted/80 flex items-center justify-center mb-6 border border-border">
+                  <Trophy className="h-10 w-10 text-muted-foreground" />
                 </div>
-                <h3 className="font-semibold text-3xl mb-3 tracking-tighter text-foreground uppercase italic">O Palácio está Silencioso</h3>
-                <p className="text-muted-foreground max-w-md text-base font-bold italic">
-                  Suas glórias ainda não foram escritas. Abra as Escrituras e comece sua jornada para a eternidade.
+                <h3 className="font-bold text-xl mb-2 text-foreground">Nenhuma conquista ainda</h3>
+                <p className="text-muted-foreground max-w-sm text-sm">
+                  Abra as Escrituras e comece sua jornada para desbloquear conquistas.
                 </p>
               </CardContent>
             </Card>

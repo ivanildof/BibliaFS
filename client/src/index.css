@@ -95,72 +95,88 @@
   background: linear-gradient(145deg, hsl(var(--card)) 0%, rgba(25, 25, 45, 0.95) 50%, rgba(30, 25, 50, 0.95) 100%);
 }
 
-/* Premium Glassmorphism & Depth Effects */
+/* Premium Glassmorphism & Depth Effects - FIXED CSS SYNTAX */
 .glass-premium {
-  background: linear-gradient(135deg, hsla(var(--card), 0.9), hsla(var(--background), 0.8));
+  background: linear-gradient(135deg, 
+    hsl(var(--card) / 0.95) 0%, 
+    hsl(var(--background) / 0.85) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid hsla(var(--primary), 0.2);
+  border: 1px solid hsl(var(--primary) / 0.15);
   box-shadow: 
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1),
-    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    0 10px 30px -5px rgba(0, 0, 0, 0.12),
+    0 4px 12px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .dark .glass-premium {
-  background: linear-gradient(135deg, hsla(220, 25%, 12%, 0.9), hsla(220, 30%, 8%, 0.8));
-  border: 1px solid hsla(var(--primary), 0.3);
+  background: linear-gradient(135deg, 
+    rgba(20, 22, 40, 0.95) 0%, 
+    rgba(12, 14, 30, 0.9) 100%);
+  border: 1px solid hsl(var(--primary) / 0.25);
   box-shadow: 
-    0 20px 40px -10px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 hsla(0, 0%, 100%, 0.05);
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    0 0 30px -5px hsl(var(--primary) / 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06);
 }
 
 .hover-premium {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-premium:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   box-shadow: 
-    0 20px 40px -10px rgba(0, 0, 0, 0.2),
-    0 0 20px -5px hsla(var(--primary), 0.3);
-  border-color: hsla(var(--primary), 0.5);
+    0 25px 50px -10px rgba(0, 0, 0, 0.2),
+    0 0 30px -5px hsl(var(--primary) / 0.25);
+  border-color: hsl(var(--primary) / 0.4);
 }
 
 .dark .hover-premium:hover {
   box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.6),
-    0 0 30px -10px hsla(var(--primary), 0.4);
-  border-color: hsla(var(--primary), 0.6);
+    0 30px 60px -12px rgba(0, 0, 0, 0.7),
+    0 0 40px -10px hsl(var(--primary) / 0.35);
+  border-color: hsl(var(--primary) / 0.5);
 }
 
-/* Page Headers - Large & Bold */
-.page-title {
-  @apply font-display text-4xl font-black tracking-tight uppercase;
-  background: linear-gradient(to bottom right, hsl(var(--foreground)), hsl(var(--primary)));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-.section-title {
-  @apply font-sans text-xl font-extrabold tracking-tight text-foreground/90 flex items-center gap-3 mb-6;
-}
-
-/* Mesh Gradient Backgrounds */
+/* Mesh Gradient Backgrounds - FIXED CSS SYNTAX */
 .mesh-primary {
-  background-color: hsla(var(--background), 1);
+  background-color: hsl(var(--background));
   background-image: 
-    radial-gradient(at 0% 0%, hsla(var(--primary), 0.15) 0, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(var(--accent), 0.1) 0, transparent 50%),
-    radial-gradient(at 50% 50%, hsla(var(--primary), 0.05) 0, transparent 50%);
+    radial-gradient(ellipse at 0% 0%, hsl(var(--primary) / 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, hsl(var(--accent) / 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, hsl(var(--primary) / 0.04) 0%, transparent 60%);
 }
 
-/* Badge/XP Styles */
-.badge-premium {
-  @apply px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border-none shadow-sm;
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
-  color: white;
+/* Colored accent cards */
+.card-accent-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(251, 191, 36, 0.1) 50%, hsl(var(--card) / 0.95) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 8px 25px -5px rgba(245, 158, 11, 0.12);
+}
+
+.card-accent-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(99, 102, 241, 0.1) 50%, hsl(var(--card) / 0.95) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.12);
+}
+
+.card-accent-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(52, 211, 153, 0.1) 50%, hsl(var(--card) / 0.95) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.12);
+}
+
+.card-accent-rose {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.06) 0%, rgba(251, 113, 133, 0.1) 50%, hsl(var(--card) / 0.95) 100%);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  box-shadow: 0 8px 25px -5px rgba(244, 63, 94, 0.12);
+}
+
+.card-accent-purple {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, rgba(168, 85, 247, 0.1) 50%, hsl(var(--card) / 0.95) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.12);
 }
 
 /* LIGHT MODE - Premium Soft Theme */

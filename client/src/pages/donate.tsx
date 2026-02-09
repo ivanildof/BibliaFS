@@ -139,7 +139,7 @@ export default function Donate() {
   if (donationSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="premium-card ring-2 ring-primary/10 max-w-md w-full">
+        <Card className="glass-premium hover-premium max-w-md w-full">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
@@ -164,7 +164,7 @@ export default function Donate() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-rose-500/20 via-pink-500/15 to-transparent blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-amber-500/15 via-orange-500/10 to-transparent blur-3xl" />
@@ -371,7 +371,7 @@ export default function Donate() {
           </Card>
         </form>
 
-        <Card className="premium-card ring-2 ring-primary/10">
+        <Card className="glass-premium hover-premium">
           <CardHeader>
             <CardTitle className="text-lg">Sobre as doações</CardTitle>
           </CardHeader>

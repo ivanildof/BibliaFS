@@ -329,7 +329,7 @@ export default function Podcasts() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-40">
+    <div className="min-h-screen bg-background relative overflow-hidden pb-40 mesh-primary">
       <audio ref={audioRef} className="hidden" />
       
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -432,7 +432,7 @@ export default function Podcasts() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <Card className="premium-card ring-2 ring-primary/10 rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
+                    <Card className="glass-premium hover-premium rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
                       <div className="h-48 relative overflow-hidden bg-primary/10">
                         {podcast.imageUrl ? (
                           <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
@@ -556,7 +556,7 @@ export default function Podcasts() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="premium-card ring-2 ring-primary/10 rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
+                      <Card className="glass-premium hover-premium rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
                         <div className="h-48 relative overflow-hidden bg-primary/10">
                           {podcast.imageUrl ? (
                             <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
@@ -698,7 +698,7 @@ export default function Podcasts() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <Card className={`premium-card rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : 'ring-2 ring-primary/10'}`}>
+                        <Card className={`glass-premium hover-premium rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : 'ring-2 ring-primary/10'}`}>
                           <div className="h-48 relative overflow-hidden bg-primary/10">
                             {selectionMode && (
                               <div 
@@ -775,7 +775,7 @@ export default function Podcasts() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.03 }}
                       >
-                        <Card className={`premium-card rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-sm group overflow-hidden ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : 'ring-2 ring-primary/10'}`}>
+                        <Card className={`glass-premium hover-premium rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-sm group overflow-hidden ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : 'ring-2 ring-primary/10'}`}>
                           <div className="flex items-center gap-4 p-4">
                             {selectionMode && (
                               <div 
