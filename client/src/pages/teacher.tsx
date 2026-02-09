@@ -713,11 +713,12 @@ export default function Teacher() {
                           <FormControl>
                             <Input 
                               type="number"
+                              min={1}
                               placeholder="Ex: 50"
                               data-testid="input-lesson-duration"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                              value={field.value || 50}
+                              onChange={(e) => field.onChange(e.target.value === "" ? "" : parseInt(e.target.value))}
+                              value={field.value ?? ""}
                             />
                           </FormControl>
                           <FormMessage />
