@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   Heart, 
   Users, 
-  Globe, 
-  Sparkles,
   Shield,
   FileText,
   Lock,
   HelpCircle,
   Mail,
-  ExternalLink,
   ChevronRight,
   BookOpen,
   Smartphone,
@@ -157,11 +153,7 @@ export default function About() {
           </Button>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: -40 }} 
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
-        >
+        <div className="text-center space-y-4">
           <div className="flex justify-center">
             <div className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-br from-primary to-purple-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
@@ -178,7 +170,7 @@ export default function About() {
           <p className="text-muted-foreground text-base max-w-2xl mx-auto font-medium uppercase tracking-tight leading-tight">
             Transformando o estudo bíblico com tecnologia de ponta e inteligência artificial.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card className="rounded-[2.5rem] border-none bg-gradient-to-br from-rose-500/10 via-card to-pink-500/5 shadow-xl overflow-hidden group relative">
@@ -214,7 +206,7 @@ export default function About() {
           </Card>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-6">
+        <div className="space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-foreground tracking-tight uppercase italic">Apoie o App</h2>
           </div>
@@ -267,9 +259,9 @@ export default function About() {
               </CardContent>
             </Card>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-6">
+        <div className="space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-foreground tracking-tight uppercase italic">Informações Legais</h2>
           </div>
@@ -290,7 +282,7 @@ export default function About() {
               </Link>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
