@@ -10,8 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import { supabase, getSupabase } from "@/lib/supabase";
+import { initSupabase } from "@/lib/supabase";
 import { isNative } from "@/lib/config";
+import { APP_URL } from "@/lib/env-config";
 import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
@@ -53,24 +54,29 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
+      const client = await initSupabase();
+      
+      const { data: authData, error } = await client.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
       
       if (error) {
-        throw new Error(error.message === "Invalid login credentials" 
-          ? "E-mail ou senha incorretos." 
-          : error.message);
+        console.error("[Login] signInWithPassword error:", error.message, error.status);
+        if (error.message === "Invalid login credentials") {
+          throw new Error("E-mail ou senha incorretos.");
+        } else if (error.message === "Email not confirmed") {
+          throw new Error("Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.");
+        } else {
+          throw new Error(error.message);
+        }
       }
       
       return authData;
     },
     onSuccess: async () => {
-      // Small delay to ensure Supabase internal state is updated
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // First invalidate, then wait for refetch to complete before redirecting
       await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
       
@@ -79,8 +85,7 @@ export default function Login() {
         description: "Bem-vindo de volta!",
       });
       
-      // Use replace instead of push to avoid back-button to login
-      setLocation("/", { replace: true });
+      window.location.href = "/";
     },
     onError: (error: any) => {
       toast({
@@ -91,13 +96,18 @@ export default function Login() {
     },
   });
 
+  const getRedirectUrl = () => {
+    if (isNative) return "bibliafs://login-callback";
+    const appUrl = APP_URL || window.location.origin;
+    return `${appUrl}/`;
+  };
+
   const googleLoginMutation = useMutation({
     mutationFn: async () => {
-      const redirectUrl = isNative 
-        ? "bibliafs://login-callback" 
-        : `${window.location.origin}/`;
+      const client = await initSupabase();
+      const redirectUrl = getRedirectUrl();
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
@@ -117,11 +127,10 @@ export default function Login() {
 
   const appleLoginMutation = useMutation({
     mutationFn: async () => {
-      const redirectUrl = isNative 
-        ? "bibliafs://login-callback" 
-        : `${window.location.origin}/`;
+      const client = await initSupabase();
+      const redirectUrl = getRedirectUrl();
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: 'apple',
         options: {
           redirectTo: redirectUrl,

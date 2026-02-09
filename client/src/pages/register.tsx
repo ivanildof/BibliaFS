@@ -10,8 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import { supabase, getSupabase } from "@/lib/supabase";
+import { initSupabase } from "@/lib/supabase";
 import { apiFetch, isNative } from "@/lib/config";
+import { APP_URL } from "@/lib/env-config";
 import { Book, Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import { Link } from "wouter";
@@ -290,8 +291,9 @@ export default function Register() {
                   type="button"
                   className="h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-border/50 bg-card hover:bg-muted/50 transition-all shadow-sm"
                   onClick={async () => {
-                    const redirectUrl = isNative ? "https://bibliafs.com.br/" : `${window.location.origin}/`;
-                    await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
+                    const client = await initSupabase();
+                    const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
+                    await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
                   }}
                   data-testid="button-register-google"
                 >
@@ -304,8 +306,9 @@ export default function Register() {
                   type="button"
                   className="h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-border/50 bg-card hover:bg-muted/50 transition-all shadow-sm"
                   onClick={async () => {
-                    const redirectUrl = isNative ? "https://bibliafs.com.br/" : `${window.location.origin}/`;
-                    await supabase.auth.signInWithOAuth({ provider: 'apple', options: { redirectTo: redirectUrl } });
+                    const client = await initSupabase();
+                    const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
+                    await client.auth.signInWithOAuth({ provider: 'apple', options: { redirectTo: redirectUrl } });
                   }}
                   data-testid="button-register-apple"
                 >
