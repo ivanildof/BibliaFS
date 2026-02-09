@@ -145,7 +145,7 @@ export default function Profile() {
   if (!user && !isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-md w-full rounded-3xl border-none subtle-card shadow-xl">
+        <Card className="max-w-md w-full rounded-3xl border-none glass-premium hover-premium shadow-xl">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <User className="h-10 w-10 text-primary" />
@@ -552,7 +552,7 @@ export default function Profile() {
 
           {/* Donate Tab */}
           <TabsContent value="donate" className="space-y-6 mt-10">
-            <Card className="rounded-[2.5rem] border-none subtle-card shadow-xl relative overflow-hidden group">
+            <Card className="rounded-[2.5rem] border-none glass-premium hover-premium shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-500/5 via-transparent to-transparent rounded-bl-full z-0" />
               <CardHeader className="p-8 sm:p-10 relative z-10">
                 <CardTitle className="flex items-start gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tighter leading-tight">

@@ -290,7 +290,7 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-12"
                 >
-                  <Card className="rounded-[3rem] border-none subtle-card shadow-2xl text-center overflow-hidden relative">
+                  <Card className="rounded-[3rem] border-none glass-premium hover-premium shadow-2xl text-center overflow-hidden relative">
                     <div className="h-4 w-full bg-green-500" />
                     <CardHeader className="pt-12 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-8">
                       <div className="flex justify-center mb-6 sm:mb-10">

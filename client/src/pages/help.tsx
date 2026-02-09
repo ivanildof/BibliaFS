@@ -71,7 +71,7 @@ export default function Help() {
           className="text-center space-y-4 mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-3xl subtle-card shadow-xl flex items-center justify-center relative overflow-hidden group">
+            <div className="h-24 w-24 rounded-3xl glass-premium hover-premium shadow-xl flex items-center justify-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent" />
               <HelpCircle className="h-12 w-12 text-amber-500 drop-shadow-sm relative z-10" />
             </div>

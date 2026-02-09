@@ -103,7 +103,7 @@ export default function Privacy() {
           className="text-center space-y-4 mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-3xl subtle-card shadow-xl flex items-center justify-center relative overflow-hidden">
+            <div className="h-24 w-24 rounded-3xl glass-premium hover-premium shadow-xl flex items-center justify-center relative overflow-hidden">
               <Shield className="h-12 w-12 text-blue-600 drop-shadow-sm" />
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function Privacy() {
         ))}
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none glass-premium hover-premium shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
@@ -199,7 +199,7 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none glass-premium hover-premium shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
@@ -219,7 +219,7 @@ export default function Privacy() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-          <Card className="rounded-[2rem] border-none subtle-card shadow-xl relative overflow-hidden">
+          <Card className="rounded-[2rem] border-none glass-premium hover-premium shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-foreground font-bold  tracking-tighter">
@@ -250,7 +250,7 @@ export default function Privacy() {
             { href: "/security", title: "Segurança", desc: "Proteção de dados" }
           ].map((link, idx) => (
             <Link key={idx} href={link.href}>
-              <Card className="rounded-2xl border-none subtle-card shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
+              <Card className="rounded-2xl border-none glass-premium hover-premium shadow-lg cursor-pointer h-full transition-all hover:shadow-xl ">
                 <CardContent className="p-6 text-center">
                   <h3 className="font-bold text-foreground mb-1 uppercase tracking-tight">{link.title}</h3>
                   <p className="text-sm text-muted-foreground font-bold italic">{link.desc}</p>

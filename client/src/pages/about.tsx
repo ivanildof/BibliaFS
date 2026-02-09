@@ -187,7 +187,7 @@ export default function About() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {legalPages.map((page, index) => (
               <Link key={index} href={page.href}>
-                <Card className="rounded-3xl border-none subtle-card shadow-sm cursor-pointer transition-all hover:shadow-md active:scale-95 group">
+                <Card className="rounded-3xl border-none glass-premium hover-premium shadow-sm cursor-pointer transition-all hover:shadow-md active:scale-95 group">
                   <CardContent className="p-6 flex items-center gap-4">
                     <div className={`h-12 w-12 rounded-xl ${page.bgColor} flex items-center justify-center flex-shrink-0`}>
                       <page.icon className={`h-6 w-6 ${page.color}`} />
