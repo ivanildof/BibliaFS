@@ -97,49 +97,70 @@
 
 /* Premium Glassmorphism & Depth Effects */
 .glass-premium {
-  background: linear-gradient(135deg, hsla(var(--card), 0.98), hsla(var(--background), 0.95));
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid hsla(var(--primary), 0.15);
+  background: linear-gradient(135deg, hsla(var(--card), 0.9), hsla(var(--background), 0.8));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--primary), 0.2);
   box-shadow: 
-    0 15px 35px -5px rgba(0, 0, 0, 0.08),
-    0 10px 15px -6px rgba(0, 0, 0, 0.05),
-    inset 0 1px 2px hsla(0, 0%, 100%, 0.9);
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .dark .glass-premium {
-  background: linear-gradient(135deg, hsla(220, 25%, 15%, 0.98), hsla(220, 30%, 8%, 0.95));
-  border: 1px solid hsla(var(--primary), 0.2);
+  background: linear-gradient(135deg, hsla(220, 25%, 12%, 0.9), hsla(220, 30%, 8%, 0.8));
+  border: 1px solid hsla(var(--primary), 0.3);
   box-shadow: 
-    0 25px 55px -12px rgba(0, 0, 0, 0.6),
-    inset 0 1px 1px hsla(0, 0%, 100%, 0.08);
+    0 20px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.05);
 }
 
 .hover-premium {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-premium:hover {
-  transform: translateY(-8px) scale(1.01);
+  transform: translateY(-4px);
   box-shadow: 
-    0 30px 60px -12px rgba(0, 0, 0, 0.15),
-    0 0 25px -5px hsla(var(--primary), 0.15);
-  border-color: hsla(var(--primary), 0.4);
+    0 20px 40px -10px rgba(0, 0, 0, 0.2),
+    0 0 20px -5px hsla(var(--primary), 0.3);
+  border-color: hsla(var(--primary), 0.5);
 }
 
 .dark .hover-premium:hover {
   box-shadow: 
-    0 40px 80px -15px rgba(0, 0, 0, 0.7),
-    0 0 35px -10px hsla(var(--primary), 0.3);
-  border-color: hsla(var(--primary), 0.5);
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 30px -10px hsla(var(--primary), 0.4);
+  border-color: hsla(var(--primary), 0.6);
+}
+
+/* Page Headers - Large & Bold */
+.page-title {
+  @apply font-display text-4xl font-black tracking-tight uppercase;
+  background: linear-gradient(to bottom right, hsl(var(--foreground)), hsl(var(--primary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.section-title {
+  @apply font-sans text-xl font-extrabold tracking-tight text-foreground/90 flex items-center gap-3 mb-6;
 }
 
 /* Mesh Gradient Backgrounds */
 .mesh-primary {
-  background-color: hsla(var(--primary), 0.03);
+  background-color: hsla(var(--background), 1);
   background-image: 
-    radial-gradient(at 0% 0%, hsla(var(--primary), 0.08) 0, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(var(--accent), 0.05) 0, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(var(--primary), 0.15) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(var(--accent), 0.1) 0, transparent 50%),
+    radial-gradient(at 50% 50%, hsla(var(--primary), 0.05) 0, transparent 50%);
+}
+
+/* Badge/XP Styles */
+.badge-premium {
+  @apply px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border-none shadow-sm;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+  color: white;
 }
 
 /* LIGHT MODE - Premium Soft Theme */
