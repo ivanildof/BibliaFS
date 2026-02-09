@@ -215,7 +215,7 @@ export default function Landing() {
               {t.landing.nav_testimonials}
             </a>
             <a 
-              href="#faq" 
+              href="/help" 
               className="text-sm font-bold text-muted-foreground hover:text-primary transition-all hover:tracking-widest"
             >
               {t.landing.nav_faq}
@@ -264,10 +264,10 @@ export default function Landing() {
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl">
-                  <a href="#faq" className="cursor-pointer py-3 font-bold flex items-center gap-3">
+                  <Link href="/help" className="cursor-pointer py-3 font-bold flex items-center gap-3 w-full">
                     <Sparkles className="h-4 w-4 text-primary" />
                     {t.landing.nav_faq}
-                  </a>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl bg-primary/10 mt-2">
                   <Link href="/login" className="cursor-pointer py-3 font-black text-primary flex items-center gap-3">
@@ -609,7 +609,7 @@ export default function Landing() {
           <div>
             <h4 className="font-black text-xs uppercase tracking-[0.2em] mb-6">Suporte</h4>
             <ul className="space-y-4">
-              <li><Link href="/help" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Central de Ajuda</Link></li>
+              <li><Link href="/help" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Central de Ajuda (FAQ)</Link></li>
               <li><Link href="/contact" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Fale Conosco</Link></li>
               <li><Link href="/privacy" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Privacidade</Link></li>
             </ul>

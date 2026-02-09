@@ -150,6 +150,32 @@ export default function ReadingPlans() {
   // Show templates loading if no plans and templates are loading
   const showTemplatesOnEmpty = activePlans.length === 0 && completedPlans.length === 0 && !templatesLoading && templates.length > 0;
 
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-6 text-center space-y-6">
+        <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center">
+          <Calendar className="h-12 w-12 text-primary" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Planos de Leitura</h1>
+          <p className="text-muted-foreground max-w-sm">
+            Para gerenciar seus planos de leitura e progresso, você precisa estar conectado.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Button onClick={() => window.location.href = "/login"} className="w-full h-12 rounded-xl text-lg font-bold">
+            Entrar Agora
+          </Button>
+          <Button variant="outline" onClick={() => window.location.href = "/"} className="w-full h-12 rounded-xl font-bold">
+            Voltar ao Início
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (plansLoading && activePlans.length === 0 && completedPlans.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">

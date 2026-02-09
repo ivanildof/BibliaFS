@@ -330,6 +330,32 @@ export default function Podcasts() {
     return `${mins}:${String(secs).padStart(2, '0')}`;
   };
 
+  const { user, isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-6 text-center space-y-6">
+        <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center">
+          <Headphones className="h-12 w-12 text-primary" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Podcasts</h1>
+          <p className="text-muted-foreground max-w-sm">
+            Para ouvir os podcasts e a BíbliaFS Rádio, você precisa estar conectado.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Button onClick={() => window.location.href = "/login"} className="w-full h-12 rounded-xl text-lg font-bold">
+            Entrar Agora
+          </Button>
+          <Button variant="outline" onClick={() => window.location.href = "/"} className="w-full h-12 rounded-xl font-bold">
+            Voltar ao Início
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-40 mesh-primary">
       <audio ref={audioRef} className="hidden" />
