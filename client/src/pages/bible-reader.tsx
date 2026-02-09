@@ -1998,6 +1998,13 @@ function CommentaryContent({
         { credentials: 'include' }
       );
       
+      if (response.status === 401) {
+        throw new Error('LOGIN_REQUIRED');
+      }
+      if (response.status === 429) {
+        const data = await response.json();
+        throw new Error(data.error || 'QUOTA_EXCEEDED');
+      }
       if (!response.ok) {
         throw new Error('Falha ao carregar comentário');
       }
@@ -2017,10 +2024,35 @@ function CommentaryContent({
   }
 
   if (error) {
+    const errorMessage = error.message;
+    if (errorMessage === 'LOGIN_REQUIRED') {
+      return (
+        <div className="bg-muted/50 border border-border rounded-lg p-4 text-center">
+          <p className="text-sm text-muted-foreground mb-2">
+            Faça login para acessar os comentários de IA.
+          </p>
+          <a href="/login" className="text-sm text-primary font-medium hover:underline" data-testid="link-login-commentary">
+            Entrar na conta
+          </a>
+        </div>
+      );
+    }
+    if (errorMessage.includes('esgotou') || errorMessage === 'QUOTA_EXCEEDED') {
+      return (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 text-center">
+          <p className="text-sm text-amber-700 dark:text-amber-400 mb-2">
+            {errorMessage !== 'QUOTA_EXCEEDED' ? errorMessage : 'Você atingiu o limite de perguntas do plano gratuito.'}
+          </p>
+          <a href="/pricing" className="text-sm text-primary font-medium hover:underline" data-testid="link-upgrade-commentary">
+            Ver planos
+          </a>
+        </div>
+      );
+    }
     return (
       <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
         <p className="text-sm text-destructive">
-          Erro ao carregar comentário. Verifique se o OpenAI está configurado.
+          Erro ao carregar comentário. Tente novamente mais tarde.
         </p>
       </div>
     );

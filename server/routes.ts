@@ -136,11 +136,27 @@ const AI_REQUEST_COST = 0.01; // Cost per AI request in USD (for tracking)
 // Helper to check AI quota for ALL users (based on their plan limits)
 async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaining: number; limit: number; plan: string; message?: string }> {
   try {
+    if (!userId || userId === 'guest') {
+      return { 
+        allowed: false, 
+        remaining: 0, 
+        limit: 0, 
+        plan: 'guest',
+        message: "Faça login para usar os recursos de IA."
+      };
+    }
+
     const user = await storage.getUser(userId);
     
-    // If no user found, treat as free with no prior usage
     if (!user) {
-      return { allowed: true, remaining: 20, limit: 20, plan: 'free' };
+      console.warn(`[AI Quota] User not found: ${userId} - blocking AI access`);
+      return { 
+        allowed: false, 
+        remaining: 0, 
+        limit: 20, 
+        plan: 'free',
+        message: "Usuário não encontrado. Faça login novamente para usar a IA."
+      };
     }
     
     const plan = user.subscriptionPlan || 'free';
@@ -150,15 +166,14 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     let totalRequests = user.aiRequestsCount || 0;
     const resetAt = user.aiRequestsResetAt;
     
-    // Check if counter should be reset based on plan period
     if (config.resetPeriod !== 'never' && resetAt && now >= new Date(resetAt)) {
-      // Period has passed, counter will be reset on next increment
       totalRequests = 0;
     }
     
     const remaining = Math.max(0, config.limit - totalRequests);
     
-    // Check if limit reached
+    console.log(`[AI Quota] Check: user=${userId}, plan=${plan}, used=${totalRequests}/${config.limit}, remaining=${remaining}`);
+    
     if (totalRequests >= config.limit) {
       let message = "";
       
@@ -181,7 +196,6 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
       };
     }
 
-    // Warning at 75% of limit
     const warningThreshold = Math.floor(config.limit * 0.75);
     if (totalRequests >= warningThreshold && remaining > 0) {
       let upgradeMessage = "";
@@ -203,8 +217,14 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
     
     return { allowed: true, remaining, limit: config.limit, plan };
   } catch (error) {
-    console.error("[AI Quota] Error checking quota:", error);
-    return { allowed: true, remaining: 0, limit: 20, plan: 'free' };
+    console.error("[AI Quota] Error checking quota - BLOCKING access as safety measure:", error);
+    return { 
+      allowed: false, 
+      remaining: 0, 
+      limit: 20, 
+      plan: 'free',
+      message: "Erro ao verificar sua cota de IA. Tente novamente mais tarde."
+    };
   }
 }
 
@@ -2084,7 +2104,27 @@ IMPORTANTE:
       .map((v: any) => `${v.number}. ${v.text}`)
       .join('\n');
 
-    const userPrompt = `Analise o seguinte versículo bíblico no contexto do capítulo:\n\n**${book} ${chapter}:${verse}**\n"${verseText}"\n\n**Contexto (versículos próximos):**\n${surroundingVerses}\n\nForneça um comentário ${commentaryType} detalhado e específico sobre o versículo ${verse} (2-3 parágrafos). IMPORTANTE: Seja específico sobre este versículo em particular, não genérico.`;
+    const bookNames: Record<string, string> = {
+      gn: "Gênesis", ex: "Êxodo", lv: "Levítico", nm: "Números", dt: "Deuteronômio",
+      js: "Josué", jz: "Juízes", rt: "Rute", "1sm": "1 Samuel", "2sm": "2 Samuel",
+      "1rs": "1 Reis", "2rs": "2 Reis", "1cr": "1 Crônicas", "2cr": "2 Crônicas",
+      ed: "Esdras", ne: "Neemias", et: "Ester", job: "Jó", sl: "Salmos",
+      pv: "Provérbios", ec: "Eclesiastes", ct: "Cânticos", is: "Isaías",
+      jr: "Jeremias", lm: "Lamentações", ez: "Ezequiel", dn: "Daniel",
+      os: "Oséias", jl: "Joel", am: "Amós", ob: "Obadias", jn: "Jonas",
+      mq: "Miquéias", na: "Naum", hc: "Habacuque", sf: "Sofonias",
+      ag: "Ageu", zc: "Zacarias", ml: "Malaquias",
+      mt: "Mateus", mc: "Marcos", lc: "Lucas", jo: "João",
+      at: "Atos", rm: "Romanos", "1co": "1 Coríntios", "2co": "2 Coríntios",
+      gl: "Gálatas", ef: "Efésios", fp: "Filipenses", cl: "Colossenses",
+      "1ts": "1 Tessalonicenses", "2ts": "2 Tessalonicenses",
+      "1tm": "1 Timóteo", "2tm": "2 Timóteo", tt: "Tito", fm: "Filemom",
+      hb: "Hebreus", tg: "Tiago", "1pe": "1 Pedro", "2pe": "2 Pedro",
+      "1jo": "1 João", "2jo": "2 João", "3jo": "3 João", jd: "Judas", ap: "Apocalipse"
+    };
+    const fullBookName = bookNames[book.toLowerCase()] || book;
+
+    const userPrompt = `Analise o seguinte versículo bíblico no contexto do capítulo:\n\n**${fullBookName} ${chapter}:${verse}**\n"${verseText}"\n\n**Contexto do capítulo ${chapter} de ${fullBookName}:**\n${surroundingVerses}\n\nForneça um comentário ${commentaryType} detalhado e específico sobre ${fullBookName} ${chapter}:${verse} (2-3 parágrafos). IMPORTANTE: Seja específico sobre ESTE versículo em particular, citando o texto exato e explicando seu significado dentro do contexto de ${fullBookName}. NÃO dê respostas genéricas.`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -2112,10 +2152,12 @@ IMPORTANTE:
   }
 
   // Bible Commentary Route (with Global Cache for cost reduction)
-  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", async (req: any, res) => {
+  app.get("/api/bible/commentary/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
     try {
-      // Use guest ID if not authenticated
-      const userId = req.user?.claims?.sub || 'guest';
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "Faça login para acessar comentários de IA" });
+      }
       const { version, book, chapter, verse } = req.params;
       const { type } = req.query; // exegese, historico, aplicacao, referencias, teologico
       
@@ -2460,29 +2502,33 @@ IMPORTANTE:
 
       const openai = new OpenAI();
       
-      const systemPrompt = `Você é um especialista em Bíblia e teologia. O usuário fará uma pergunta ou buscará por um tema.
-Sua tarefa é retornar versículos bíblicos relevantes para a busca.
+      const systemPrompt = `Você é um teólogo experiente e especialista em Bíblia Sagrada. O usuário fará uma pergunta ou buscará por um tema bíblico.
+Sua tarefa é retornar versículos bíblicos ESPECÍFICOS e RELEVANTES para a busca, com textos EXATOS da Bíblia.
 
 IMPORTANTE: Retorne um JSON válido com a seguinte estrutura:
 {
-  "summary": "Um breve resumo de 1-2 frases sobre o tema na Bíblia",
+  "summary": "Um resumo teológico preciso de 2-3 frases sobre o tema, explicando o conceito bíblico com profundidade",
   "results": [
     {
       "reference": "João 3:16",
       "book": "jo",
       "chapter": 3,
       "verse": 16,
-      "text": "Texto do versículo aqui",
+      "text": "Texto EXATO do versículo na tradução ARC",
       "relevance": "Alta"
     }
   ]
 }
 
-Regras:
-- Retorne entre 3 e 8 versículos mais relevantes
+REGRAS OBRIGATÓRIAS:
+- Retorne entre 3 e 8 versículos MAIS relevantes para o tema
+- Os textos dos versículos devem ser EXATOS da tradução ARC (Almeida Revista e Corrigida)
+- NÃO invente ou parafrase textos bíblicos - cite o texto real
+- O "summary" deve ser teologicamente profundo e específico ao tema, NÃO genérico
+- Organize os resultados por relevância (mais relevante primeiro)
 - Use abreviações de livros em português minúsculo: gn, ex, lv, nm, dt, js, jz, rt, 1sm, 2sm, 1rs, 2rs, 1cr, 2cr, ed, ne, et, job, sl, pv, ec, ct, is, jr, lm, ez, dn, os, jl, am, ob, jn, mq, na, hc, sf, ag, zc, ml, mt, mc, lc, jo, at, rm, 1co, 2co, gl, ef, fp, cl, 1ts, 2ts, 1tm, 2tm, tt, fm, hb, tg, 1pe, 2pe, 1jo, 2jo, 3jo, jd, ap
 - Relevance deve ser: "Alta", "Média" ou "Relacionado"
-- Use a tradução NVI ou ARC para o texto
+- ATENÇÃO: "Jo" pode significar João ou Jó - use o contexto para decidir
 - Retorne APENAS o JSON, sem markdown ou explicações adicionais`;
 
       const completion = await openai.chat.completions.create({
@@ -3607,20 +3653,18 @@ Regras:
   app.post("/api/ai/study", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { question } = req.body;
+      const { question, book, chapter, verse, verseText, chapterVerses } = req.body;
       
       if (!question) {
         return res.status(400).json({ error: "Pergunta é obrigatória" });
       }
 
-      // Check if OpenAI API key is configured
       if (!process.env.OPENAI_API_KEY) {
         return res.status(503).json({ 
           error: "Assistente de IA não configurado. Por favor, configure sua chave de API OpenAI." 
         });
       }
 
-      // Check AI quota for free plan users
       const quota = await checkAiQuota(userId);
       if (!quota.allowed) {
         return res.status(429).json({ 
@@ -3630,12 +3674,21 @@ Regras:
         });
       }
 
-      // Initialize OpenAI client
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      // Call OpenAI API with enhanced theological context
+      let bibleContext = "";
+      if (book && chapter) {
+        bibleContext = `\n\nCONTEXTO DE LEITURA ATUAL DO USUÁRIO:
+- Livro: ${book}
+- Capítulo: ${chapter}${verse ? `\n- Versículo em foco: ${verse}` : ""}${verseText ? `\n- Texto do versículo: "${verseText}"` : ""}`;
+        if (chapterVerses && Array.isArray(chapterVerses)) {
+          const versesContext = chapterVerses.slice(0, 15).map((v: any) => `${v.number}. ${v.text}`).join('\n');
+          bibleContext += `\n\nVERSÍCULOS DO CAPÍTULO (para contexto):\n${versesContext}`;
+        }
+      }
+
       const completion = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
@@ -3645,28 +3698,34 @@ Regras:
 
 REGRA PRINCIPAL - FOCO ABSOLUTO:
 - Responda EXCLUSIVAMENTE sobre o que foi perguntado
-- Se a pergunta é sobre João, fale APENAS sobre o Evangelho de João
+- Se a pergunta é sobre João, fale APENAS sobre o Evangelho de João  
 - Se a pergunta é sobre Gênesis, fale APENAS sobre Gênesis
 - NUNCA desvie para outros livros ou temas que não foram perguntados
 - NUNCA dê respostas genéricas sobre "a Bíblia em geral"
 - Analise a pergunta e identifique: livro, capítulo, versículo ou tema ESPECÍFICO
+- Se o usuário está lendo um capítulo específico, concentre sua resposta NAQUELE capítulo
+
+ABREVIAÇÕES BÍBLICAS IMPORTANTES:
+- "Jo" ou "Jó" (capítulos 1-42) = Livro de JÓ (Job) - Antigo Testamento
+- "João" ou "Jo" com versículos como 3:16 = Evangelho de JOÃO
+- Use o CONTEXTO para identificar o livro correto
 
 REGRAS ADICIONAIS:
-1. SEMPRE cite versículos ESPECÍFICOS do livro/texto perguntado
+1. SEMPRE cite versículos ESPECÍFICOS do livro/texto perguntado com número exato
 2. Explique o contexto histórico e cultural DAQUELE texto específico
 3. Mencione o autor, destinatários e propósito DAQUELE livro específico
 4. Use linguagem acessível mas precisa teologicamente
 5. Quando houver diferentes interpretações, apresente as principais perspectivas
-6. Estruture sua resposta com parágrafos claros
-7. Cite comentaristas bíblicos clássicos quando relevante
+6. Estruture sua resposta com parágrafos claros e use formatação markdown
+7. Cite comentaristas bíblicos clássicos quando relevante (ex: Matthew Henry, John Calvin, etc.)
 
 FORMATO DE RESPOSTA:
 - Contexto do texto perguntado (1-2 parágrafos)
-- Explicação específica (2-3 parágrafos)  
-- Aplicação prática (1 parágrafo)
-- Versículos relacionados DO MESMO LIVRO para estudo
+- Explicação específica e profunda (2-3 parágrafos)  
+- Aplicação prática para a vida cristã (1 parágrafo)
+- Versículos relacionados DO MESMO LIVRO para aprofundamento
 
-Responda em português do Brasil.`
+Responda em português do Brasil.${bibleContext}`
           },
           {
             role: "user",
@@ -3674,7 +3733,7 @@ Responda em português do Brasil.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 1500,
+        max_tokens: 2000,
       });
 
       let answer = completion.choices[0]?.message?.content || "Desculpe, não consegui gerar uma resposta.";
