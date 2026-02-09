@@ -72,7 +72,7 @@ function Router() {
   }, [isLoading, isAuthenticated, location, setLocation]);
 
   useEffect(() => {
-    if (isAuthenticated && (location === "/login" || location === "/register")) {
+    if (isAuthenticated && location === "/login") {
       setLocation("/", { replace: true });
     }
   }, [isAuthenticated, location, setLocation]);
