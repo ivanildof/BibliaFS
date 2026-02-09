@@ -164,7 +164,7 @@ const exportLessonToPDF = (lesson: Lesson) => {
 
       <div class="footer">
         <p>Material gerado pelo BíbliaFS | www.bibliafs.app</p>
-        <p>© 2026 - BíbliaFS. Todos os direitos reservados. Desenvolvido por | <a href="https://fabrisite.com.br/" target="_blank">FabriSite</a></p>
+        <p>© 2026 BíbliaFS | Desenvolvido por | <a href="https://fabrisite.com.br/" target="_blank">FabriSite</a></p>
       </div>
 
       <script>

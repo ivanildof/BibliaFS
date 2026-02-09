@@ -602,7 +602,7 @@ export default function Landing() {
             <h4 className="font-black text-xs uppercase tracking-[0.2em] mb-6">Explorar</h4>
             <ul className="space-y-4">
               <li><Link href="/bible" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Bíblia Online</Link></li>
-              <li><Link href="/reading-plans" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Planos de Leitura</Link></li>
+              <li><Link href="/plans" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Planos de Leitura</Link></li>
               <li><Link href="/podcasts" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Podcasts</Link></li>
             </ul>
           </div>
@@ -616,7 +616,7 @@ export default function Landing() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">© 2026 BíbliaFS. Todos os direitos reservados.</p>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">© 2026 BíbliaFS | Desenvolvido por | <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline transition-colors">FabriSite</a></p>
           <div className="flex gap-8">
              <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
              <Globe className="h-4 w-4 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />

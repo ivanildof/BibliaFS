@@ -327,7 +327,7 @@ export default function Contact() {
             <span className="w-1.5 h-1.5 rounded-full bg-border" />
             <a href="#" className="hover:text-primary transition-colors font-bold">Privacidade</a>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground font-bold italic">© 2026 BíbliaFS. Criado com dedicação para sua jornada espiritual.</p>
+          <p className="text-xs sm:text-sm text-muted-foreground font-bold italic">© 2026 BíbliaFS | Desenvolvido por | <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">FabriSite</a></p>
         </footer>
       </div>
     </div>

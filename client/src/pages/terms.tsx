@@ -165,18 +165,7 @@ export default function Terms() {
         </motion.div>
 
         <footer className="text-center text-sm text-muted-foreground py-8 border-t border-border">
-          <p>© 2026 - BíbliaFS. Todos os direitos reservados.</p>
-          <p className="mt-1">
-            Desenvolvido por{" "}
-            <a 
-              href="https://fabrisite.com.br/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium"
-            >
-              FabriSite
-            </a>
-          </p>
+          <p>© 2026 BíbliaFS | Desenvolvido por | <a href="https://fabrisite.com.br/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">FabriSite</a></p>
         </footer>
       </div>
     </div>

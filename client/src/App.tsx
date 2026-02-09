@@ -105,6 +105,14 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
         <Route path="/groups" component={Groups} />
+        <Route path="/help" component={Help} />
+        <Route path="/bible" component={BibleReader} />
+        <Route path="/biblia" component={BibleReader} />
+        <Route path="/podcasts" component={Podcasts} />
+        <Route path="/plans" component={ReadingPlans} />
+        <Route path="/reading-plans" component={ReadingPlans} />
+        <Route path="/donate" component={Donate} />
+        <Route path="/doar" component={Donate} />
         <Route component={NotFound} />
       </Switch>
     );
