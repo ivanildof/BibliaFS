@@ -103,7 +103,7 @@ export default function Achievements() {
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.1 }}
         >
-            <Card className="rounded-[2.5rem] border-none subtle-card shadow-xl mb-12 overflow-hidden relative group">
+            <Card className="rounded-[2.5rem] border-none glass-premium hover-premium shadow-xl mb-12 overflow-hidden relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-muted/50 via-card to-muted/50 opacity-70 group-hover:opacity-100 transition-opacity z-0" />
               <CardContent className="p-8 relative z-10">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -140,7 +140,7 @@ export default function Achievements() {
             className="mb-14"
           >
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-2xl subtle-card shadow-lg border border-border">
+              <div className="p-3 rounded-2xl glass-premium hover-premium shadow-lg border border-border">
                 <Trophy className="h-5 w-5 text-amber-500" />
               </div>
               <h2 className="text-2xl font-semibold text-foreground tracking-tighter uppercase">Desbloqueadas</h2>
@@ -158,7 +158,7 @@ export default function Achievements() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl  transition-all duration-500 subtle-card shadow-xl relative">
+                    <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl  transition-all duration-500 glass-premium hover-premium shadow-xl relative">
                       <div className={`absolute inset-0 bg-gradient-to-br ${getAchievementGradient(idx, true)} opacity-[0.05] group-hover:opacity-[0.1] transition-opacity z-0`} />
                       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-muted to-transparent rounded-bl-full z-0" />
                       <CardHeader className="flex flex-row items-center gap-5 space-y-0 p-6 relative z-10">
@@ -200,7 +200,7 @@ export default function Achievements() {
             transition={{ delay: 0.3 }}
           >
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-2xl subtle-card shadow-lg border border-border">
+              <div className="p-3 rounded-2xl glass-premium hover-premium shadow-lg border border-border">
                 <Lock className="h-5 w-5 text-muted-foreground" />
               </div>
               <h2 className="text-2xl font-semibold text-muted-foreground tracking-tighter uppercase">Em Progresso</h2>
@@ -223,7 +223,7 @@ export default function Achievements() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl transition-all duration-500 subtle-card shadow-xl relative">
+                      <Card className="rounded-[2rem] border-none h-full overflow-hidden group hover:shadow-2xl transition-all duration-500 glass-premium hover-premium shadow-xl relative">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-muted/80 to-transparent rounded-bl-full z-0" />
                         
                         <CardHeader className="flex flex-row items-center gap-4 space-y-0 p-6 pb-2 relative z-10">
@@ -266,7 +266,7 @@ export default function Achievements() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="rounded-[3rem] border-2 border-dashed border-border subtle-card shadow-sm">
+            <Card className="rounded-[3rem] border-2 border-dashed border-border glass-premium hover-premium shadow-sm">
               <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="flex h-28 w-28 items-center justify-center rounded-[2.5rem] bg-muted mb-8 shadow-inner border border-border">
                   <Trophy className="h-14 w-14 text-muted-foreground" />

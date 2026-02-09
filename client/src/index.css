@@ -95,7 +95,60 @@
   background: linear-gradient(145deg, hsl(var(--card)) 0%, rgba(25, 25, 45, 0.95) 50%, rgba(30, 25, 50, 0.95) 100%);
 }
 
-/* LIGHT MODE - Premium Soft Theme: Warm Paper + Aged Gold + Soft Navy */
+/* Premium Glassmorphism & Depth Effects */
+.glass-premium {
+  background: linear-gradient(135deg, hsla(var(--card), 0.95), hsla(var(--background), 0.98));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--border), 0.6);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px hsla(0, 0%, 100%, 0.8);
+}
+
+.dark .glass-premium {
+  background: linear-gradient(135deg, hsla(220, 20%, 10%, 0.95), hsla(220, 25%, 5%, 0.98));
+  border: 1px solid hsla(220, 20%, 20%, 0.4);
+  box-shadow: 
+    0 20px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.05);
+}
+
+/* Premium Glow Cards */
+.glow-primary {
+  box-shadow: 0 0 20px -5px hsla(var(--primary), 0.2);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px -5px hsla(var(--accent), 0.2);
+}
+
+/* Hover Elevation for Premium Feel */
+.hover-premium {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  border-color: hsla(var(--primary), 0.3);
+}
+
+.dark .hover-premium:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  border-color: hsla(var(--primary), 0.4);
+}
+
+/* Mesh Gradient Backgrounds */
+.mesh-primary {
+  background-color: hsla(var(--primary), 0.03);
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(var(--primary), 0.08) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(var(--accent), 0.05) 0, transparent 50%);
+}
+
+/* LIGHT MODE - Premium Soft Theme */
 :root {
   --button-outline: rgba(0,0,0, .08);
   --badge-outline: rgba(0,0,0, .04);

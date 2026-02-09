@@ -94,7 +94,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
@@ -192,10 +192,10 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
-                <Card className="cursor-pointer border-none premium-card hover:shadow-primary/20  transition-all duration-300 rounded-[1.75rem] overflow-visible group ring-2 ring-primary/10 hover:ring-primary/30" data-testid={`card-quick-action-${index}`}>
+                <Card className="cursor-pointer border-none glass-premium hover-premium transition-all duration-300 rounded-[2rem] overflow-visible group" data-testid={`card-quick-action-${index}`}>
                   <CardContent className="p-6">
                     <div className="flex flex-col items-center text-center space-y-4">
-                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform  transition-all`}>
+                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform group-hover:scale-110 transition-transform duration-300`}>
                         <action.icon className="h-6 w-6 text-white" />
                       </div>
                       <p className="font-semibold text-xs text-foreground uppercase tracking-widest">{action.label}</p>
@@ -208,8 +208,8 @@ export default function Home() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="premium-card border-none rounded-[2.5rem] overflow-hidden ring-2 ring-indigo-500/20 hover:ring-indigo-500/40 transition-all">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-transparent to-purple-500/20" />
+          <Card className="glass-premium hover-premium border-none rounded-[2.5rem] overflow-hidden transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 pointer-events-none" />
             <CardHeader className="p-8 pb-4 relative">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-5">
@@ -239,7 +239,7 @@ export default function Home() {
                       initial={{ opacity: 0, x: -30 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 + i * 0.1, type: "spring", stiffness: 100 }}
-                      className="flex items-center gap-6 p-6 rounded-[2rem] bg-gradient-to-r from-white/5 to-transparent hover:from-primary/20 hover:to-primary/5 transition-all duration-500 group cursor-pointer border border-white/5 hover:border-primary/30 shadow-lg hover:shadow-2xl"
+                      className="flex items-center gap-6 p-6 rounded-[2rem] bg-gradient-to-r from-white/5 to-transparent hover:from-primary/10 hover:to-transparent transition-all duration-500 group cursor-pointer border border-white/5 hover:border-primary/20 shadow-sm hover:shadow-xl"
                     >
                       <div className={`p-5 rounded-2xl bg-gradient-to-br ${
                         item.type === 'read' ? 'from-blue-600 to-indigo-900 shadow-blue-600/50' :
