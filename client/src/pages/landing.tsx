@@ -168,7 +168,7 @@ export default function Landing() {
   ];
   
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary selection:text-white mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
