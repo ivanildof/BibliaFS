@@ -59,7 +59,7 @@ import type { ReadingPlan, Highlight, Note, Bookmark, Prayer, Achievement as Ach
 import { getLevelByXp, getXpProgressInLevel, GAMIFICATION_LEVELS } from "@/lib/gamification-levels";
 
 export default function Profile() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("plans");
@@ -142,9 +142,9 @@ export default function Profile() {
   }
 
   // Show login prompt if not authenticated
-  if (!user && !isLoading) {
+  if (!isAuthenticated && !isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 mesh-primary">
         <Card className="max-w-md w-full rounded-3xl border-none glass-premium hover-premium shadow-xl">
           <CardHeader className="text-center pt-8">
             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
@@ -156,18 +156,29 @@ export default function Profile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center pb-12 px-8">
-            <Link href="/login" className="w-full">
+            <a href="/api/login" className="w-full">
               <Button size="lg" className="w-full h-14 rounded-2xl font-semibold text-lg shadow-xl shadow-primary/20">
                 Entrar agora
               </Button>
-            </Link>
+            </a>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  // Double check if user is still null even if isLoading is false (unexpected but possible)
+  // Double check if user is still null even if isLoading is false
+  if (!user && isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground font-bold italic">Carregando dados do usuário...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!user) return null;
 
   const xp = user.experiencePoints || 0;

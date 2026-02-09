@@ -113,6 +113,8 @@ function Router() {
         <Route path="/reading-plans" component={ReadingPlans} />
         <Route path="/donate" component={Donate} />
         <Route path="/doar" component={Donate} />
+        <Route path="/perfil" component={Profile} />
+        <Route path="/profile" component={Profile} />
         <Route component={NotFound} />
       </Switch>
     );
