@@ -104,6 +104,8 @@ export default function Podcasts() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPodcasts, setSelectedPodcasts] = useState<Set<string>>(new Set());
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [detailPodcast, setDetailPodcast] = useState<Podcast | null>(null);
+  const [episodeSearch, setEpisodeSearch] = useState("");
 
   useEffect(() => {
     async function loadDownloaded() {
@@ -484,35 +486,47 @@ export default function Podcasts() {
                         </div>
                         {podcast.episodes?.length > 0 && (
                           <div className="space-y-2">
-                            {podcast.episodes.slice(0, 2).map((ep: Episode) => (
+                            {podcast.episodes.slice(0, 3).map((ep: Episode) => (
                               <div 
                                 key={ep.id} 
-                                className="flex items-center justify-between p-3 rounded-xl bg-muted/50  transition-colors cursor-pointer group/ep"
+                                className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover-elevate active-elevate-2 cursor-pointer"
                                 onClick={() => playEpisode(ep, podcast)}
+                                data-testid={`card-episode-${ep.id}`}
                               >
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-bold truncate group-hover/ep:text-primary">{ep.title}</p>
-                                  <p className="text-xs text-muted-foreground flex items-center gap-2">
-                                    {formatTime(ep.duration)}
-                                    {downloadedEpisodes.has(ep.id) && <Badge variant="secondary" className="h-4 text-[8px] bg-green-500/10 text-green-600 border-none">OFFLINE</Badge>}
-                                  </p>
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                  <span className="text-xs font-bold text-muted-foreground w-6 text-center flex-shrink-0">
+                                    {ep.chapterNumber || ''}
+                                  </span>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold truncate">{ep.title}</p>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-2">
+                                      Cap. {ep.chapterNumber || '?'}
+                                      {downloadedEpisodes.has(ep.id) && <Badge variant="secondary" className="h-4 text-[8px]">OFFLINE</Badge>}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover/ep:bg-primary group-hover/ep:text-white transition-all">
+                                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                                   <Play className="h-4 w-4 fill-current" />
                                 </div>
                               </div>
                             ))}
+                            {podcast.episodes.length > 3 && (
+                              <p className="text-xs text-center text-muted-foreground pt-1">
+                                + {podcast.episodes.length - 3} episódios
+                              </p>
+                            )}
                           </div>
                         )}
                       </CardContent>
                       <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
                         <Button 
                           variant="ghost" 
-                          className="flex-1 rounded-xl h-11 font-bold  transition-all"
+                          className="flex-1 rounded-xl h-11 font-bold transition-all"
                           onClick={() => {
-                            // Logic to view details could go here
-                            toast({ title: "Em breve", description: "Visualização detalhada do podcast" });
+                            setDetailPodcast(podcast);
+                            setEpisodeSearch("");
                           }}
+                          data-testid={`button-view-podcast-${podcast.id}`}
                         >
                           Ver Podcast
                         </Button>
@@ -583,17 +597,19 @@ export default function Podcasts() {
                         <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
                           <Button 
                             variant="ghost" 
-                            className="flex-1 rounded-xl h-11 font-bold  transition-all"
+                            className="flex-1 rounded-xl h-11 font-bold transition-all"
                             onClick={() => {
-                              toast({ title: "Em breve", description: "Visualização detalhada do podcast" });
+                              setDetailPodcast(podcast);
+                              setEpisodeSearch("");
                             }}
+                            data-testid={`button-view-sub-podcast-${podcast.id}`}
                           >
                             Ver Podcast
                           </Button>
                           <Button 
                             size="icon" 
                             variant="ghost" 
-                            className="rounded-xl h-11 w-11 hover:bg-destructive/10 text-destructive"
+                            className="rounded-xl h-11 w-11 text-destructive"
                             onClick={() => {
                               setSelectedPodcast(podcast);
                               setDeleteDialogOpen(true);
@@ -733,14 +749,14 @@ export default function Podcasts() {
                             </div>
                           </CardContent>
                           <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
-                            <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold  transition-all">
+                            <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold transition-all" onClick={() => { setDetailPodcast(podcast); setEpisodeSearch(""); }} data-testid={`button-manage-podcast-${podcast.id}`}>
                               Gerenciar
                             </Button>
                             {!selectionMode && (
                               <Button 
                                 size="icon" 
                                 variant="ghost" 
-                                className="rounded-xl h-11 w-11 hover:bg-destructive/10 text-destructive"
+                                className="rounded-xl h-11 w-11"
                                 onClick={() => {
                                   setSelectedPodcast(podcast);
                                   setDeleteDialogOpen(true);
@@ -803,14 +819,14 @@ export default function Podcasts() {
                               </div>
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
-                              <Button variant="ghost" className="rounded-xl h-9 font-bold">
+                              <Button variant="ghost" className="rounded-xl h-9 font-bold" onClick={() => { setDetailPodcast(podcast); setEpisodeSearch(""); }} data-testid={`button-manage-list-podcast-${podcast.id}`}>
                                 Gerenciar
                               </Button>
                               {!selectionMode && (
                                 <Button 
                                   size="icon" 
                                   variant="ghost" 
-                                  className="rounded-xl h-9 w-9 hover:bg-destructive/10 text-destructive"
+                                  className="rounded-xl h-9 w-9 text-destructive"
                                   onClick={() => {
                                     setSelectedPodcast(podcast);
                                     setDeleteDialogOpen(true);
@@ -834,6 +850,95 @@ export default function Podcasts() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Episode Detail Dialog */}
+        <Dialog open={!!detailPodcast} onOpenChange={(open) => { if (!open) setDetailPodcast(null); }}>
+          <DialogContent className="rounded-2xl border-none bg-card/95 backdrop-blur-2xl shadow-2xl max-w-lg max-h-[85vh] flex flex-col p-0 overflow-hidden">
+            {detailPodcast && (
+              <>
+                <div className="p-6 pb-4 border-b border-border/50">
+                  <div className="flex items-start gap-4">
+                    <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Radio className="h-8 w-8 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <DialogTitle className="text-xl font-bold line-clamp-1">{detailPodcast.title}</DialogTitle>
+                      <DialogDescription className="line-clamp-2 mt-1">
+                        {detailPodcast.description || 'Sem descrição'}
+                      </DialogDescription>
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground font-bold uppercase tracking-wider flex-wrap">
+                        <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {(detailPodcast as any).episodes?.length || 0} Episódios</span>
+                        {(detailPodcast as any).bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {(detailPodcast as any).bibleBook}</span>}
+                      </div>
+                    </div>
+                  </div>
+                  {(detailPodcast as any).episodes?.length > 6 && (
+                    <div className="mt-4 relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Buscar episódio..."
+                        className="pl-10 rounded-xl"
+                        value={episodeSearch}
+                        onChange={(e) => setEpisodeSearch(e.target.value)}
+                        data-testid="input-episode-search"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-1">
+                  {(() => {
+                    const episodes = ((detailPodcast as any).episodes || []) as Episode[];
+                    const filtered = episodeSearch
+                      ? episodes.filter((ep: Episode) => ep.title.toLowerCase().includes(episodeSearch.toLowerCase()))
+                      : episodes;
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="py-12 text-center text-muted-foreground">
+                          {episodeSearch ? 'Nenhum episódio encontrado' : 'Nenhum episódio disponível'}
+                        </div>
+                      );
+                    }
+                    return filtered.map((ep: Episode, idx: number) => (
+                      <div
+                        key={ep.id}
+                        className="flex items-center justify-between p-3 rounded-xl hover-elevate active-elevate-2 cursor-pointer"
+                        onClick={() => { playEpisode(ep, detailPodcast as any); }}
+                        data-testid={`episode-item-${ep.id}`}
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <span className="text-xs font-bold text-muted-foreground w-8 text-center flex-shrink-0 tabular-nums">
+                            {ep.chapterNumber || idx + 1}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold truncate">{ep.title}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
+                              Capítulo {ep.chapterNumber || idx + 1}
+                              {currentEpisode?.id === ep.id && isPlaying && (
+                                <Badge variant="secondary" className="h-4 text-[8px]">TOCANDO</Badge>
+                              )}
+                              {downloadedEpisodes.has(ep.id) && (
+                                <Badge variant="secondary" className="h-4 text-[8px]">OFFLINE</Badge>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          {currentEpisode?.id === ep.id && isPlaying ? (
+                            <Pause className="h-4 w-4 fill-current" />
+                          ) : currentEpisode?.id === ep.id && isLoadingAudio ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Play className="h-4 w-4 fill-current" />
+                          )}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
