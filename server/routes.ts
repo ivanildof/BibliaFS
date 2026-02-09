@@ -25,6 +25,7 @@ import {
   insertSharedLinkSchema,
   insertFeedbackSchema,
 } from "@shared/schema";
+import nodemailer from "nodemailer";
 import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
 import { runMigrations } from "./migrations";
@@ -506,53 +507,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
-  // Send OTP via email using Nodemailer
+  // Send OTP via email using Gmail SMTP (Nodemailer)
   async function sendOTPEmail(email: string, code: string): Promise<boolean> {
     try {
-      // Try to send email using Resend API (cloud email service)
-      const resendApiKey = process.env.RESEND_API_KEY;
-      
-      if (resendApiKey) {
-        // Use Resend API if configured
-        const response = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify({
-            from: 'noreply@bibliafs.com',
-            to: email,
-            subject: 'Código de Verificação BíbliaFS',
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
-                <h2 style="color: #333;">Bem-vindo à BíbliaFS! 🙏</h2>
-                <p>Seu código de verificação é:</p>
-                <div style="background: #f0f0f0; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
-                  <h1 style="font-size: 36px; color: #667eea; letter-spacing: 5px; margin: 0;">${code}</h1>
-                </div>
-                <p style="color: #666;">Este código expira em 1 hora.</p>
-                <p style="color: #999; font-size: 12px;">Que a Palavra de Deus ilumine seus dias!</p>
-              </div>
-            `,
-          }),
-        });
-        
-        if (response.ok) {
-          console.log(`✅ [Resend] Email enviado para ${email}`);
-          return true;
-        }
+      const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+      const gmailUser = 'bibliafs3@gmail.com';
+
+      if (!gmailPassword) {
+        console.log(`[OTP Email] GMAIL_APP_PASSWORD not configured`);
+        console.log(`[OTP Email] Code for ${email}: ${code}`);
+        return true;
       }
-      
-      // Fallback: log in console for development
-      console.log(`\n📧 [OTP Email] Código para ${email}: ${code}`);
-      console.log(`⚠️  Email real não foi enviado. Configure RESEND_API_KEY para enviar emails de verdade.\n`);
-      return true; // Still return true so registration works
-      
+
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: gmailUser,
+          pass: gmailPassword,
+        },
+      });
+
+      await transporter.sendMail({
+        from: `"BíbliaFS" <${gmailUser}>`,
+        to: email,
+        subject: 'Código de Verificação - BíbliaFS',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #333;">Bem-vindo à BíbliaFS!</h2>
+            <p>Seu código de verificação é:</p>
+            <div style="background: #f0f0f0; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+              <h1 style="font-size: 36px; color: #667eea; letter-spacing: 5px; margin: 0;">${code}</h1>
+            </div>
+            <p style="color: #666;">Este código expira em 1 hora.</p>
+            <p style="color: #999; font-size: 12px;">Que a Palavra de Deus ilumine seus dias!</p>
+          </div>
+        `,
+      });
+
+      console.log(`[OTP Email] Email enviado para ${email}`);
+      return true;
+
     } catch (error) {
-      console.error("[OTP Email] Error:", error);
-      console.log(`📧 Código: ${code}`); // Always log code as fallback
-      return true; // Don't fail registration if email fails
+      console.error("[OTP Email] Erro ao enviar:", error);
+      console.log(`[OTP Email] Code for ${email}: ${code}`);
+      return true;
     }
   }
 
