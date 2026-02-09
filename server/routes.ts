@@ -570,14 +570,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Por favor, use um endereço de e-mail válido. E-mails temporários não são permitidos." });
       }
       
-      // Create user with confirmed email (so they don't get signup link)
       if (!supabaseAdmin) {
         throw new Error("Supabase Admin client not initialized");
       }
       const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        email_confirm: true, // Confirm email immediately to avoid signup link
+        email_confirm: false,
         user_metadata: {
           first_name: firstName,
           last_name: lastName,
@@ -637,34 +636,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Verify OTP code
   app.post('/api/auth/verify-otp', async (req, res) => {
     try {
-      const { email, code } = req.body;
+      const { email, code, userId } = req.body;
       
       if (!email || !code) {
-        return res.status(400).json({ message: "Email e código são obrigatórios" });
+        return res.status(400).json({ message: "Email e codigo sao obrigatorios" });
       }
       
       if (code.length !== 6) {
-        return res.status(400).json({ message: "Código deve ter 6 dígitos" });
+        return res.status(400).json({ message: "Codigo deve ter 6 digitos" });
       }
       
-      // Verify OTP
       const isValid = await storage.verifyOTP(email, code);
       
       if (!isValid) {
-        return res.status(400).json({ message: "Código inválido ou expirado" });
+        return res.status(400).json({ message: "Codigo invalido ou expirado" });
       }
       
-      // Clean up OTP after successful verification
       await storage.deleteOTPByEmail(email);
+      
+      if (supabaseAdmin) {
+        if (userId) {
+          const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+            email_confirm: true,
+          });
+          if (confirmError) {
+            console.error(`[Verify OTP] Failed to confirm email for userId ${userId}:`, confirmError);
+            return res.status(500).json({ message: "Erro ao confirmar email. Tente novamente." });
+          }
+          console.log(`✅ Email confirmed for user: ${email} (id: ${userId})`);
+        } else {
+          console.error(`[Verify OTP] No userId provided for ${email}, cannot confirm email`);
+          return res.status(400).json({ message: "Erro interno: userId nao fornecido" });
+        }
+      }
       
       console.log(`✅ Email verified: ${email}`);
       res.json({ message: "Email verificado com sucesso!", verified: true });
     } catch (error: any) {
       console.error("[Verify OTP] Error:", error);
-      res.status(500).json({ message: "Erro ao verificar código" });
+      res.status(500).json({ message: "Erro ao verificar codigo" });
     }
   });
 
