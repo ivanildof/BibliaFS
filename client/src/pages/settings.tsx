@@ -20,7 +20,9 @@ import {
   Send,
   Loader2,
   BookOpen,
-  Info
+  Info,
+  Star,
+  Share2
 } from "lucide-react";
 import { APP_VERSION, APP_NAME } from "@/lib/config";
 import { motion } from "framer-motion";
@@ -32,6 +34,8 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useTheme, readingThemes } from "@/contexts/ThemeContext";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { Globe } from "lucide-react";
+
+const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.bibliafullstack.app&pcampaignid=web_share";
 
 const predefinedThemes = [
   { 
@@ -962,6 +966,73 @@ export default function Settings() {
           </TabsContent>
 
           <TabsContent value="feedback" className="space-y-6">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Card className="rounded-3xl border-none bg-gradient-to-br from-amber-500/10 via-card to-yellow-500/5 shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg">
+                      <Star className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground text-sm">Avalie o App</h3>
+                      <p className="text-xs text-muted-foreground">Sua nota nos ajuda a crescer</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl gap-2"
+                    onClick={() => window.open(PLAY_STORE_URL, '_blank')}
+                    data-testid="button-rate-app-settings"
+                  >
+                    <Star className="h-4 w-4" />
+                    Avaliar na Play Store
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-3xl border-none bg-gradient-to-br from-emerald-500/10 via-card to-teal-500/5 shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg">
+                      <Share2 className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground text-sm">Compartilhar</h3>
+                      <p className="text-xs text-muted-foreground">Convide amigos para o app</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl gap-2"
+                    onClick={async () => {
+                      const shareData = {
+                        title: "BíbliaFS - Estudo Bíblico Premium",
+                        text: "Conheça o BíbliaFS! Estudo bíblico com IA teológica, planos de leitura, comunidade e muito mais. Baixe agora:",
+                        url: PLAY_STORE_URL,
+                      };
+                      try {
+                        if (navigator.share) {
+                          await navigator.share(shareData);
+                        } else {
+                          await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+                          toast({ title: "Link copiado!", description: "O link do app foi copiado." });
+                        }
+                      } catch (err: any) {
+                        if (err.name !== "AbortError") {
+                          await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+                          toast({ title: "Link copiado!", description: "O link do app foi copiado." });
+                        }
+                      }
+                    }}
+                    data-testid="button-share-app-settings"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    Compartilhar o App
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
             <Card className="rounded-3xl border-none glass-premium hover-premium">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

@@ -19,13 +19,19 @@ import {
   Monitor,
   Tablet,
   ArrowLeft,
-  ChevronUp
+  ChevronUp,
+  Star,
+  Share2
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.bibliafullstack.app&pcampaignid=web_share";
+
 export default function About() {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -41,6 +47,34 @@ export default function About() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   
+  const handleShareApp = async () => {
+    const shareData = {
+      title: "BíbliaFS - Estudo Bíblico Premium",
+      text: "Conheça o BíbliaFS! Estudo bíblico com IA teológica, planos de leitura, comunidade e muito mais. Baixe agora:",
+      url: PLAY_STORE_URL,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+        toast({
+          title: "Link copiado!",
+          description: "O link do app foi copiado para a área de transferência.",
+        });
+      }
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+        toast({
+          title: "Link copiado!",
+          description: "O link do app foi copiado para a área de transferência.",
+        });
+      }
+    }
+  };
+
   const legalPages = [
     {
       title: "Política de Privacidade",
@@ -179,6 +213,61 @@ export default function About() {
             </CardContent>
           </Card>
         </div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-foreground tracking-tight uppercase italic">Apoie o App</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Card className="rounded-3xl border-none bg-gradient-to-br from-amber-500/10 via-card to-yellow-500/5 shadow-xl overflow-hidden group relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/15 to-transparent rounded-bl-full z-0" />
+              <CardContent className="p-6 relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg">
+                    <Star className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Avalie o App</h3>
+                    <p className="text-xs text-muted-foreground">Deixe sua avaliacao na Play Store</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl gap-2"
+                  onClick={() => window.open(PLAY_STORE_URL, '_blank')}
+                  data-testid="button-rate-app"
+                >
+                  <Star className="h-4 w-4" />
+                  Avaliar na Play Store
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-3xl border-none bg-gradient-to-br from-emerald-500/10 via-card to-teal-500/5 shadow-xl overflow-hidden group relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-500/15 to-transparent rounded-bl-full z-0" />
+              <CardContent className="p-6 relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg">
+                    <Share2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Compartilhar</h3>
+                    <p className="text-xs text-muted-foreground">Convide amigos para usar o app</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl gap-2"
+                  onClick={handleShareApp}
+                  data-testid="button-share-app"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Compartilhar o App
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-6">
           <div className="text-center">
