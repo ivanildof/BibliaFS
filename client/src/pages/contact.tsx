@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Send, CheckCircle2, MessageSquare, Heart, Clock, ExternalLink, Star } from "lucide-react";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from "@/hooks/useAuth";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),

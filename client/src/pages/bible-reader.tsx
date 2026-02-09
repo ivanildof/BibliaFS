@@ -46,6 +46,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useOffline } from "@/contexts/OfflineContext";
 import { useTheme, readingThemes } from "@/contexts/ThemeContext";
 import type { Bookmark, Highlight, Note } from "@shared/schema";

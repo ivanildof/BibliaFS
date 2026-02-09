@@ -263,6 +263,61 @@ export default function About() {
 
         <div className="space-y-6">
           <div className="text-center">
+            <h2 className="text-2xl font-semibold text-foreground tracking-tight uppercase italic">Apoie o App</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Card className="rounded-3xl border-none bg-gradient-to-br from-amber-500/10 via-card to-yellow-500/5 shadow-xl overflow-hidden group relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/15 to-transparent rounded-bl-full z-0" />
+              <CardContent className="p-6 relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg">
+                    <Star className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Avalie o App</h3>
+                    <p className="text-xs text-muted-foreground">Deixe sua avaliacao na Play Store</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl gap-2"
+                  onClick={() => window.open(PLAY_STORE_URL, '_blank')}
+                  data-testid="button-rate-app"
+                >
+                  <Star className="h-4 w-4" />
+                  Avaliar na Play Store
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-3xl border-none bg-gradient-to-br from-emerald-500/10 via-card to-teal-500/5 shadow-xl overflow-hidden group relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-500/15 to-transparent rounded-bl-full z-0" />
+              <CardContent className="p-6 relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg">
+                    <Share2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Compartilhar</h3>
+                    <p className="text-xs text-muted-foreground">Convide amigos para usar o app</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl gap-2"
+                  onClick={handleShareApp}
+                  data-testid="button-share-app"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Compartilhar o App
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="text-center">
             <h2 className="text-2xl font-semibold text-foreground tracking-tight uppercase italic">Informações Legais</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

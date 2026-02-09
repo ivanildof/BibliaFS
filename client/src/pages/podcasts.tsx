@@ -45,6 +45,7 @@ import { podcastStorage } from "@/lib/offline/podcastStorage";
 import { apiFetch } from "@/lib/config";
 import type { Podcast } from "@shared/schema";
 import { AudioPlayer } from "@/components/bible-reader/audio-player";
+import { useAuth } from "@/hooks/useAuth";
 
 const BIBLE_BOOKS = [
   "Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio",

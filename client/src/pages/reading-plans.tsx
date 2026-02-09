@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { type ReadingPlan, type ReadingPlanTemplate } from "@shared/schema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getBookName } from "@/lib/i18n";
+import { useAuth } from "@/hooks/useAuth";
 
 const BIBLE_VERSIONS = ["nvi", "acf", "arc", "ra"];
 const BIBLE_BOOKS = [
