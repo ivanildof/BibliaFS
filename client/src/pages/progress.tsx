@@ -237,10 +237,12 @@ export default function Progress() {
             
             return (
               <div key={category} className="mb-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <CategoryIcon className="h-5 w-5 text-foreground" />
-                  <h3 className="font-semibold text-xl capitalize text-foreground">{category}</h3>
-                  <Badge variant="secondary" className="rounded-full bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border-none px-3 font-semibold text-[10px]">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${getCategoryGradient(category)} shadow-lg shadow-primary/20 text-white`}>
+                    <CategoryIcon className="h-6 w-6" />
+                  </div>
+                  <h3 className="font-black text-2xl tracking-tighter uppercase text-foreground">{category}</h3>
+                  <Badge className="rounded-full bg-primary/10 text-primary border-primary/20 px-4 py-1.5 font-black text-sm shadow-sm">
                     {unlockedInCategory} / {categoryAchievements.length}
                   </Badge>
                 </div>
@@ -252,36 +254,50 @@ export default function Progress() {
                     return (
                       <Card 
                         key={achievement.id}
-                        className={`rounded-2xl border-none shadow-sm overflow-hidden group transition-all duration-300 relative bg-card ${
-                          !unlocked && 'opacity-70'
+                        className={`rounded-2xl border-2 shadow-xl overflow-hidden group transition-all duration-500 relative ${
+                          unlocked 
+                            ? 'bg-white dark:bg-zinc-900 border-primary/20 shadow-primary/5 hover:scale-[1.02] hover:shadow-primary/10' 
+                            : 'bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 opacity-80'
                         }`}
                       >
-                        <CardHeader className="p-5 pb-3">
-                          <div className="flex items-start gap-4">
-                            <div className={`p-3 rounded-xl border ${
-                              unlocked ? 'bg-indigo-50 dark:bg-indigo-950 border-indigo-100 dark:border-indigo-800' : 'bg-muted border-border'
+                        <CardHeader className="p-6 pb-3">
+                          <div className="flex items-start gap-5">
+                            <div className={`p-4 rounded-2xl border-2 transition-transform duration-500 group-hover:scale-110 ${
+                              unlocked 
+                                ? 'bg-primary/10 border-primary/20 text-primary shadow-lg shadow-primary/10' 
+                                : 'bg-muted border-zinc-200 dark:border-zinc-800 text-zinc-400'
                             }`}>
-                              <Lock className={`h-4 w-4 ${unlocked ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'}`} />
+                              {unlocked ? <Trophy className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <CardTitle className={`text-sm font-semibold tracking-tight ${
-                                unlocked ? 'text-foreground' : 'text-muted-foreground'
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <CardTitle className={`text-lg font-black tracking-tight leading-none uppercase ${
+                                unlocked ? 'text-foreground' : 'text-zinc-500 dark:text-zinc-400'
                               }`}>
                                 {achievement.name}
                               </CardTitle>
-                              <CardDescription className="text-[11px] mt-0.5 font-bold text-muted-foreground">
+                              <CardDescription className={`text-sm font-bold leading-relaxed italic ${
+                                unlocked ? 'text-primary' : 'text-zinc-400'
+                              }`}>
                                 {achievement.description}
                               </CardDescription>
                             </div>
                           </div>
                         </CardHeader>
-                        <CardContent className="p-5 pt-0 flex items-center justify-between">
-                          <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-widest">
+                        <CardContent className="p-6 pt-0 flex items-center justify-between">
+                          <Badge className={`px-4 py-1 rounded-full font-black text-[10px] tracking-[0.2em] border-none shadow-md ${
+                            unlocked 
+                              ? 'bg-primary text-white' 
+                              : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500'
+                          }`}>
                             {unlocked ? 'CONQUISTADO' : 'BLOQUEADO'}
-                          </span>
-                          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-50 border border-orange-100">
-                            <Star className="h-2.5 w-2.5 text-orange-500 fill-orange-500" />
-                            <span className="font-semibold text-[10px] text-orange-700">+{achievement.xpReward} XP</span>
+                          </Badge>
+                          <div className={`flex items-center gap-2 px-4 py-1.5 rounded-2xl border-2 shadow-lg ${
+                            unlocked
+                              ? 'bg-orange-50 border-orange-200 text-orange-700'
+                              : 'bg-zinc-100 border-zinc-200 text-zinc-400 opacity-50'
+                          }`}>
+                            <Star className={`h-4 w-4 ${unlocked ? 'text-orange-500 fill-orange-500' : ''}`} />
+                            <span className="font-black text-xs">+{achievement.xpReward} XP</span>
                           </div>
                         </CardContent>
                       </Card>
