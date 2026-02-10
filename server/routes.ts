@@ -4790,6 +4790,92 @@ Formato da resposta:
     }
   });
 
+  // Helper function to escape HTML special characters
+  function escapeHtml(text: string): string {
+    const map: { [key: string]: string } = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, char => map[char] || char);
+  }
+
+  // Contact form endpoint - Public endpoint for contact messages
+  app.post("/api/contact", async (req: any, res) => {
+    try {
+      const { name, email, subject, message } = req.body;
+
+      // Validate all fields are present
+      if (!name || !email || !subject || !message) {
+        return res.status(400).json({ message: "Nome, email, assunto e mensagem são obrigatórios" });
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Email inválido" });
+      }
+
+      const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+      const gmailUser = 'bibliafs3@gmail.com';
+
+      // If GMAIL_APP_PASSWORD is not configured, log the contact and return success
+      if (!gmailPassword) {
+        console.log(`[Contact Form] GMAIL_APP_PASSWORD not configured`);
+        console.log(`[Contact Form] Message received from ${email} (${name}): ${subject}`);
+        console.log(`[Contact Form] Body: ${message}`);
+        return res.json({ message: "Mensagem enviada com sucesso" });
+      }
+
+      // Send email using nodemailer with Gmail SMTP
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: gmailUser,
+          pass: gmailPassword,
+        },
+      });
+
+      await transporter.sendMail({
+        from: `"BíbliaFS Contato" <${gmailUser}>`,
+        to: gmailUser,
+        replyTo: email,
+        subject: `[BíbliaFS Contato] ${subject}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
+            <h2 style="color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Nova Mensagem de Contato</h2>
+            
+            <div style="background-color: #fff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+              <p><strong style="color: #667eea;">Nome:</strong> ${escapeHtml(name)}</p>
+              <p><strong style="color: #667eea;">Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+              <p><strong style="color: #667eea;">Assunto:</strong> ${escapeHtml(subject)}</p>
+            </div>
+            
+            <div style="background-color: #fff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+              <strong style="color: #667eea;">Mensagem:</strong>
+              <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(message)}</p>
+            </div>
+            
+            <p style="color: #999; font-size: 12px; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">
+              Esta é uma mensagem automática de contato da aplicação BíbliaFS.
+            </p>
+          </div>
+        `,
+      });
+
+      console.log(`[Contact Form] Email enviado com sucesso para ${gmailUser} (responder para ${email})`);
+      return res.json({ message: "Mensagem enviada com sucesso" });
+
+    } catch (error: any) {
+      console.error("[Contact Form] Error:", error);
+      return res.status(500).json({ message: "Erro ao enviar mensagem. Tente novamente mais tarde." });
+    }
+  });
+
   // Feedback routes - Allow anonymous feedback if not authenticated
   app.post("/api/feedback", async (req: any, res) => {
     try {

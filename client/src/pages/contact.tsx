@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Send, CheckCircle2, MessageSquare, Heart, Clock, ExternalLink, Star } from "lucide-react";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from "@/hooks/useAuth";
+import { apiRequest } from "@/lib/queryClient";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -27,6 +29,38 @@ export default function Contact() {
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const [submitted, setSubmitted] = useState(false);
+
+  const form = useForm<ContactForm>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
+  });
+
+  const contactMutation = useMutation({
+    mutationFn: async (data: ContactForm) => {
+      const response = await apiRequest("POST", "/api/contact", data);
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: t.contact.success,
+        description: "Retornaremos em breve. Obrigado pelo contato!",
+      });
+      setSubmitted(true);
+      form.reset();
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao enviar mensagem",
+        description: error instanceof Error ? error.message : "Ocorreu um erro ao enviar sua mensagem. Tente novamente.",
+        variant: "destructive",
+      });
+    },
+  });
 
   if (!isAuthenticated) {
     return (
@@ -51,25 +85,6 @@ export default function Contact() {
       </div>
     );
   }
-
-  const form = useForm<ContactForm>({
-    resolver: zodResolver(contactSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
-  });
-
-  const onSubmit = async (data: ContactForm) => {
-    console.log("Contact form:", data);
-    toast({
-      title: t.contact.success,
-      description: "Retornaremos em breve. Obrigado pelo contato!",
-    });
-    setSubmitted(true);
-  };
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -241,7 +256,7 @@ export default function Contact() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 sm:p-10 md:p-14 relative z-10">
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+                      <form onSubmit={form.handleSubmit((data) => contactMutation.mutate(data))} className="space-y-10">
                         <div className="grid md:grid-cols-2 gap-10">
                           <div className="space-y-4">
                             <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground ml-2 italic">Nome Completo</Label>
@@ -299,11 +314,11 @@ export default function Contact() {
 
                         <Button 
                           type="submit" 
-                          disabled={form.formState.isSubmitting}
+                          disabled={contactMutation.isPending}
                           className="w-full rounded-[2.5rem] h-20 text-2xl font-bold italic uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.99] bg-primary text-white"
                         >
                           <Send className="h-7 w-7 mr-4 drop-shadow-md" />
-                          Enviar agora
+                          {contactMutation.isPending ? "Enviando..." : "Enviar agora"}
                         </Button>
                       </form>
                     </CardContent>
