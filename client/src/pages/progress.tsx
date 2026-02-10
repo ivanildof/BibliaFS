@@ -250,54 +250,56 @@ export default function Progress() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                   {categoryAchievements.map((achievement, achIdx) => {
                     const unlocked = isAchievementUnlocked(achievement.id);
+                    const gradientClass = getCategoryGradient(category);
                     
                     return (
                       <Card 
                         key={achievement.id}
-                        className={`rounded-2xl border-2 shadow-xl overflow-hidden group transition-all duration-500 relative ${
+                        className={`rounded-2xl border overflow-visible group transition-all duration-300 relative ${
                           unlocked 
-                            ? 'bg-white dark:bg-zinc-900 border-primary/20 shadow-primary/5 hover:scale-[1.02] hover:shadow-primary/10' 
-                            : 'bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 opacity-80'
+                            ? 'bg-card border-primary/30 shadow-md hover-elevate' 
+                            : 'bg-card border-border hover-elevate'
                         }`}
                       >
-                        <CardHeader className="p-6 pb-3">
-                          <div className="flex items-start gap-5">
-                            <div className={`p-4 rounded-2xl border-2 transition-transform duration-500 group-hover:scale-110 ${
+                        <CardHeader className="p-5 pb-2">
+                          <div className="flex items-start gap-4">
+                            <div className={`p-3 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-105 ${
                               unlocked 
-                                ? 'bg-primary/10 border-primary/20 text-primary shadow-lg shadow-primary/10' 
-                                : 'bg-muted border-zinc-200 dark:border-zinc-800 text-zinc-400'
+                                ? `bg-gradient-to-br ${gradientClass} shadow-lg text-white` 
+                                : 'bg-muted border border-border text-muted-foreground'
                             }`}>
                               {unlocked ? <Trophy className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
                             </div>
                             <div className="flex-1 min-w-0 space-y-1">
-                              <CardTitle className={`text-lg font-black tracking-tight leading-none uppercase ${
-                                unlocked ? 'text-foreground' : 'text-zinc-500 dark:text-zinc-400'
+                              <CardTitle className={`text-base font-bold tracking-tight leading-tight ${
+                                unlocked ? 'text-foreground' : 'text-foreground/70'
                               }`}>
                                 {achievement.name}
                               </CardTitle>
-                              <CardDescription className={`text-sm font-bold leading-relaxed italic ${
-                                unlocked ? 'text-primary' : 'text-zinc-400'
+                              <CardDescription className={`text-sm leading-relaxed ${
+                                unlocked ? 'text-muted-foreground' : 'text-muted-foreground/80'
                               }`}>
                                 {achievement.description}
                               </CardDescription>
                             </div>
                           </div>
                         </CardHeader>
-                        <CardContent className="p-6 pt-0 flex items-center justify-between">
-                          <Badge className={`px-4 py-1 rounded-full font-black text-[10px] tracking-[0.2em] border-none shadow-md ${
-                            unlocked 
-                              ? 'bg-primary text-white' 
-                              : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500'
-                          }`}>
-                            {unlocked ? 'CONQUISTADO' : 'BLOQUEADO'}
+                        <CardContent className="p-5 pt-2 flex items-center justify-between flex-wrap gap-2">
+                          <Badge variant={unlocked ? "default" : "secondary"} className={unlocked 
+                              ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px] uppercase tracking-wider' 
+                              : 'font-bold text-[10px] uppercase tracking-wider'
+                          }>
+                            {unlocked ? (
+                              <><Check className="h-3 w-3 mr-1" /> CONQUISTADO</>
+                            ) : 'BLOQUEADO'}
                           </Badge>
-                          <div className={`flex items-center gap-2 px-4 py-1.5 rounded-2xl border-2 shadow-lg ${
+                          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${
                             unlocked
-                              ? 'bg-orange-50 border-orange-200 text-orange-700'
-                              : 'bg-zinc-100 border-zinc-200 text-zinc-400 opacity-50'
+                              ? 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400'
+                              : 'bg-amber-500/5 border-amber-500/10 text-amber-600/60 dark:text-amber-400/60'
                           }`}>
-                            <Star className={`h-4 w-4 ${unlocked ? 'text-orange-500 fill-orange-500' : ''}`} />
-                            <span className="font-black text-xs">+{achievement.xpReward} XP</span>
+                            <Star className={`h-3.5 w-3.5 ${unlocked ? 'text-amber-500 fill-amber-500' : 'text-amber-400/60'}`} />
+                            <span className="font-bold text-xs">+{achievement.xpReward} XP</span>
                           </div>
                         </CardContent>
                       </Card>
