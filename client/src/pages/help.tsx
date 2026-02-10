@@ -38,8 +38,8 @@ export default function Help() {
       icon: Clock
     },
     {
-      q: "O aplicativo é realmente 100% gratuito?",
-      a: "Sim! O BíbliaFS é completamente gratuito e sempre será. O aplicativo é mantido por doações voluntárias de usuários que desejam apoiar o desenvolvimento e manter o app acessível para todos.",
+      q: "Igrejas podem usar o BíbliaFS para dar aulas?",
+      a: "Sim! Se alguma igreja tiver interesse de usar para dar aulas para alunos, entre em contato que criamos um plano de acordo com a quantidade de membros.",
       icon: Heart
     }
   ];

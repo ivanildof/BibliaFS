@@ -196,11 +196,11 @@ export default function About() {
                 <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
                   <Users className="h-5 w-5 text-white" />
                 </div>
-                100% Gratuito
+                Para Igrejas e Grupos
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 pt-0 space-y-4 text-muted-foreground font-medium relative z-10">
-              <p>O BíbliaFS é mantido por doações de usuários como você. Nosso compromisso é manter o aplicativo 100% gratuito.</p>
+              <p>Se alguma igreja tiver interesse de usar para dar aulas para alunos, entre em contato que criamos um plano de acordo com a quantidade de membros.</p>
               <p>Desenvolvido com dedicação pela equipe FabriSite.</p>
             </CardContent>
           </Card>

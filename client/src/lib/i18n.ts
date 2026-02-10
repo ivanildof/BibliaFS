@@ -494,7 +494,7 @@ export const translations: Record<Language, Translations> = {
     },
     donate: {
       title: 'Apoie o BíbliaFS',
-      subtitle: 'Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas. Cada contribuição sustenta o desenvolvimento contínuo do app, permitindo melhorias constantes, novos recursos e maior acessibilidade. Você não está apenas doando — está sendo parte da história de quem busca a Palavra, onde quer que esteja.',
+      subtitle: 'Sua doação ajuda a levar a Palavra a mais pessoas, em mais idiomas. Cada contribuição sustenta o desenvolvimento contínuo do app, permitindo melhorias constantes, novos recursos e maior acessibilidade. Você não está apenas doando — está sendo parte da história de quem busca a Palavra, onde quer que esteja.',
       one_time: 'Doação Única',
       recurring: 'Doação Recorrente',
       monthly: 'Mensal',

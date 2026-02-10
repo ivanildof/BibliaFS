@@ -568,7 +568,7 @@ export default function Profile() {
               <CardHeader className="p-8 sm:p-10 relative z-10">
                 <CardTitle className="flex items-start gap-4 text-xl font-semibold text-foreground uppercase italic tracking-tighter leading-tight">
                   <Heart className="h-6 w-6 text-pink-600 fill-pink-600 mt-1 shrink-0 animate-pulse" />
-                  <span>Sua doação mantém o BíbliaFS 100% gratuito e ajuda a levar a Palavra a mais pessoas, em mais idiomas.</span>
+                  <span>Sua doação ajuda a levar a Palavra a mais pessoas, em mais idiomas, e mantém o app acessível para todos.</span>
                 </CardTitle>
                 <CardDescription className="mt-4 text-base font-bold text-muted-foreground italic leading-relaxed">
                   Mas não é só isso: cada contribuição sustenta os desenvolvedores que trabalham incansavelmente — dia e noite — para aprimorar a experiência, corrigir bugs, adicionar recursos e tornar o app mais leve, rápido e acessível para todos.
