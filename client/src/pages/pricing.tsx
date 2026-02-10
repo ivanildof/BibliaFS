@@ -307,11 +307,14 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none glass-premium hover-premium shadow-xl hover:shadow-2xl  overflow-hidden ${
-                    plan.popular ? 'ring-2 ring-primary/40' : ''
-                  } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
+                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none glass-premium hover-premium shadow-2xl hover:shadow-primary/20 overflow-hidden ${
+                    plan.popular ? 'ring-4 ring-primary shadow-primary/30 scale-105 z-20' : 'hover:scale-[1.02]'
+                  } ${isCurrentPlan ? 'ring-4 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >
+                  {plan.popular && (
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+                  )}
                   <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl ${plan.id === 'monthly' ? 'from-primary/5' : plan.id === 'yearly' ? 'from-amber-500/5' : 'from-blue-600/5'} via-transparent to-transparent z-0`} />
                   <CardHeader className="pb-4 space-y-4 pt-10 px-8 relative z-10">
                     <div className="flex items-center justify-between">
@@ -319,25 +322,25 @@ export default function Pricing() {
                         <IconComponent className="h-8 w-8 text-white drop-shadow-sm" />
                       </div>
                       {plan.popular && (
-                        <Badge className="bg-primary text-white text-[10px] px-4 py-1.5 rounded-full font-semibold uppercase tracking-[0.2em] shadow-lg shadow-primary/20 border-none">
-                          Popular
+                        <Badge className="bg-primary text-white text-xs px-5 py-2 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/40 border-none animate-pulse">
+                          MAIS POPULAR
                         </Badge>
                       )}
                     </div>
                     
                     <div>
-                      <CardTitle className="text-3xl font-semibold text-foreground tracking-tight uppercase">{plan.name}</CardTitle>
-                      <CardDescription className="text-base mt-2 font-bold text-muted-foreground italic">
+                      <CardTitle className="text-3xl font-black text-foreground tracking-tighter uppercase">{plan.name}</CardTitle>
+                      <CardDescription className="text-base mt-2 font-bold text-primary italic bg-primary/5 inline-block px-3 py-1 rounded-lg">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
-                    <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden">
-                      <span className="text-xl font-semibold text-muted-foreground mr-1.5 italic">R$</span>
-                      <span className="text-5xl font-semibold text-foreground tracking-tight">
+                    <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden bg-primary/5 rounded-2xl p-4 border border-primary/10">
+                      <span className="text-xl font-bold text-primary mr-1.5">R$</span>
+                      <span className="text-5xl font-extrabold text-foreground tracking-tighter">
                         {plan.price.replace('R$ ', '')}
                       </span>
-                      <span className="text-muted-foreground text-xs ml-1.5 font-semibold uppercase tracking-widest italic">/{plan.period}</span>
+                      <span className="text-primary text-sm ml-2 font-black uppercase tracking-tighter">/{plan.period.toUpperCase()}</span>
                     </div>
                   </CardHeader>
 
@@ -356,8 +359,8 @@ export default function Pricing() {
 
                   <CardFooter className="pb-10 px-8 relative z-10">
                     <Button 
-                      className={`w-full h-16 rounded-2xl font-semibold text-xl italic uppercase tracking-widest transition-all ${
-                        plan.popular ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'bg-muted text-muted-foreground border border-border hover:bg-muted'
+                      className={`w-full h-16 rounded-2xl font-black text-xl italic uppercase tracking-tighter transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                        plan.popular ? 'bg-primary text-white shadow-2xl shadow-primary/40 hover:bg-primary/90' : 'bg-white dark:bg-zinc-900 text-foreground border-2 border-primary/20 hover:border-primary shadow-xl'
                       }`}
                       variant={plan.popular ? "default" : "outline"}
                       disabled={buttonConfig.disabled || checkoutMutation.isPending || portalMutation.isPending}
