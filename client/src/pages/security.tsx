@@ -72,9 +72,9 @@ export default function Security() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 dark:bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/10 dark:bg-primary/5 blur-[120px] animate-pulse" />
       </div>
       <div className="relative z-10 max-w-4xl mx-auto p-4 md:p-8 space-y-8">
         <motion.div 

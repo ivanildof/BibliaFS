@@ -39,7 +39,8 @@ import {
   Pause,
   Play,
   DownloadCloud,
-  Check
+  Check,
+  BookOpen
 } from "lucide-react";
 import { getAudioUrl, downloadChapterAudio, formatTime } from "@/lib/audioService";
 import { useQuery, useMutation } from "@tanstack/react-query";
