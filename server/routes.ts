@@ -2309,43 +2309,19 @@ IMPORTANTE:
   
   // Get all Bible books (with retry + fallback)
   app.get("/api/bible/books", async (req, res) => {
-    const result = await fetchWithFallback(
-      `${BIBLE_API_BASE}/books`,
-      () => BIBLE_BOOKS_FALLBACK,
-      { timeout: 8000, retries: 2 }
-    );
-    
-    // Handle complete failure (both API and fallback failed)
-    if (result.error) {
-      console.error("Bible books API and fallback failed:", result.error);
-      return res.json(BIBLE_BOOKS_FALLBACK);
+    try {
+      const { fetchBibleBooks } = await import("./multilingual-bible-apis");
+      const books = await fetchBibleBooks();
+      
+      if (!books || books.length === 0) {
+        return res.json(BIBLE_BOOKS_FALLBACK);
+      }
+      
+      res.json(books);
+    } catch (error) {
+      console.error("[Bible API] Error fetching books:", error);
+      res.json(BIBLE_BOOKS_FALLBACK);
     }
-    
-    // Extract books array from response (handles multiple API formats)
-    let books: any[] = [];
-    const data = result.data as any;
-    
-    if (Array.isArray(data)) {
-      // API returned array directly: [{...}, {...}] (or fallback)
-      books = data;
-    } else if (data?.books && Array.isArray(data.books)) {
-      // API returned {books: [{...}]} format
-      books = data.books;
-    } else if (data?.data?.books && Array.isArray(data.data.books)) {
-      // API returned nested {data: {books: [{...}]}} format
-      books = data.data.books;
-    } else if (data?.data && Array.isArray(data.data)) {
-      // API returned {data: [{...}]} format
-      books = data.data;
-    }
-    
-    // Validate we have books
-    if (books.length === 0) {
-      console.warn("No books found in response, using fallback");
-      return res.json(BIBLE_BOOKS_FALLBACK);
-    }
-    
-    res.json(books);
   });
   
   // Get specific chapter with multilingual support

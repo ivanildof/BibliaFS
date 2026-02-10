@@ -197,6 +197,38 @@ export async function fetchPortugueseBible(version: string, book: string, chapte
   }
 }
 
+// Fetch Bible Books (multi-version support)
+export async function fetchBibleBooks(): Promise<BibleBook[]> {
+  try {
+    // Primary API: abibliadigital.com.br
+    const response = await fetchWithTimeout("https://www.abibliadigital.com.br/api/books", 5000);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (e: any) {
+    console.warn("[Bible API] Primary books fetch failed, trying static fallback:", e.message);
+  }
+
+  // Static Fallback: GitHub thiagobodruk/bible (Stable)
+  try {
+    const url = "https://raw.githubusercontent.com/thiagobodruk/bible/master/json/pt_nvi.json";
+    const response = await fetchWithTimeout(url, 5000);
+    if (response.ok) {
+      const data = await response.json();
+      return data.map((b: any) => ({
+        abbrev: { pt: b.abbrev.toLowerCase() },
+        name: b.name,
+        chapters: b.chapters.length,
+        testament: b.testament || ""
+      }));
+    }
+  } catch (e: any) {
+    console.error("[Bible API] All book fetch attempts failed:", e.message);
+  }
+
+  return [];
+}
+
 // Main function - Switch based on language with caching
 export async function fetchBibleChapter(
   language: string,
