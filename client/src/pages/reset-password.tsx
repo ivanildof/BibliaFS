@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { apiFetch } from "@/lib/config";
 import { Book, Loader2, Eye, EyeOff, CheckCircle, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { getSupabase } from "@/lib/supabase";
@@ -36,6 +37,9 @@ export default function ResetPassword() {
   const accessToken = params.get("access_token");
   const refreshToken = params.get("refresh_token");
   const type = params.get("type");
+  const customToken = params.get("token");
+
+  const hasValidToken = !!(accessToken || customToken);
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -47,12 +51,22 @@ export default function ResetPassword() {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async (data: ResetPasswordFormData) => {
-      // Use Supabase directly to update password since we are redirected with tokens
-      const { error } = await getSupabase().auth.updateUser({
-        password: data.password
-      });
-      if (error) throw error;
-      return { success: true };
+      if (customToken) {
+        const res = await apiFetch("/api/auth/reset-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: customToken, password: data.password }),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || "Erro ao redefinir senha");
+        return result;
+      } else {
+        const { error } = await getSupabase().auth.updateUser({
+          password: data.password
+        });
+        if (error) throw error;
+        return { success: true };
+      }
     },
     onSuccess: () => {
       setPasswordReset(true);
@@ -74,8 +88,7 @@ export default function ResetPassword() {
     resetPasswordMutation.mutate(data);
   };
 
-  // If no access token but redirected from recovery, show error
-  if (!accessToken && type === 'recovery') {
+  if (!hasValidToken && type === 'recovery') {
     return (
       <div className="min-h-screen bg-background relative overflow-hidden">
         <div className="pointer-events-none fixed inset-0 overflow-hidden">
