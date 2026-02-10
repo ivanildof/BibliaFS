@@ -2362,17 +2362,24 @@ IMPORTANTE:
         parseInt(chapter)
       );
       
+      if (!chapterData || !chapterData.verses || chapterData.verses.length === 0) {
+        throw new Error("No verses found for this chapter");
+      }
+      
       res.json(chapterData);
     } catch (error: any) {
       console.error(`[Multilingual Bible] Error:`, error);
       
-      // Fallback to Portuguese if other languages fail
-      if (req.params.language !== 'pt') {
+      // Attempt fallback for any error
+      try {
+        const { getFallbackChapter } = await import("./bible-chapters-fallback");
         const fallback = getFallbackChapter(req.params.version, req.params.abbrev, parseInt(req.params.chapter));
         if (fallback) {
-          console.warn(`Using Portuguese fallback for ${req.params.language}`);
+          console.warn(`[Multilingual Bible] Using fallback for ${req.params.language} - ${req.params.version}`);
           return res.json(fallback);
         }
+      } catch (fallbackError) {
+        console.error(`[Multilingual Bible] Fallback system failed:`, fallbackError);
       }
       
       res.status(503).json({ 
