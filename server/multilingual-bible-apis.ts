@@ -19,8 +19,22 @@ export interface BibleBook {
   testament: string;
 }
 
-// Cache local da Bíblia em português
-let portugueseBibleCache: Record<string, any> = {};
+// Cache local da Bíblia em português e outras linguas
+let bibleCache: Record<string, any> = {};
+
+// Helper to fetch with retry and timeout
+async function fetchWithTimeout(url: string, timeout = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (e) {
+    clearTimeout(id);
+    throw e;
+  }
+}
 
 // Book name mappings for each language
 const BOOK_MAPPINGS: Record<string, Record<string, string>> = {
@@ -62,67 +76,12 @@ const BOOK_MAPPINGS: Record<string, Record<string, string>> = {
   },
 };
 
-// Fetch Portuguese Bible (GitHub thiagobodruk/bible - JSON estático, SEM RATE LIMITS!)
-export async function fetchPortugueseBible(version: string, book: string, chapter: number): Promise<BibleChapter> {
-  const versionMap: Record<string, string> = {
-    'nvi': 'pt_nvi',
-    'acf': 'pt_acf',
-    'arc': 'pt_acf',
-    'ra': 'pt_nvi',
-  };
-  
-  const githubVersion = versionMap[version] || 'pt_nvi';
-  
-  try {
-    if (!portugueseBibleCache[githubVersion]) {
-      const url = `https://raw.githubusercontent.com/thiagobodruk/bible/master/json/${githubVersion}.json`;
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`Portuguese Bible API error: ${response.status}`);
-      }
-      
-      portugueseBibleCache[githubVersion] = await response.json();
-    }
-    
-    const bibleData = portugueseBibleCache[githubVersion];
-    const bookData = bibleData.find((b: any) => b.abbrev.toLowerCase() === book.toLowerCase());
-    
-    if (!bookData || !bookData.chapters[chapter - 1]) {
-      throw new Error(`Chapter not found: ${book} ${chapter}`);
-    }
-    
-    const verses = bookData.chapters[chapter - 1];
-    
-    return {
-      book: { 
-        name: bookData.name || book, 
-        abbrev: book 
-      },
-      chapter: { number: chapter },
-      verses: verses.map((text: string, index: number) => ({
-        number: index + 1,
-        text: text.trim(),
-      })),
-    };
-  } catch (error) {
-    console.warn(`[Portuguese Bible] Fallback triggered for ${book} ${chapter}:`, error);
-    // Import and use fallback
-    const { getFallbackChapter } = await import('./bible-chapters-fallback');
-    const fallback = getFallbackChapter(version, book, chapter);
-    if (fallback) {
-      return fallback;
-    }
-    throw error;
-  }
-}
-
 // Fetch English Bible (wldeh/bible-api via CDN)
 export async function fetchEnglishBible(book: string, chapter: number): Promise<BibleChapter> {
   const bookName = BOOK_MAPPINGS.en[book] || book;
   const url = `https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/eng-web/books/${bookName}/chapters/${chapter}.json`;
   
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   
   if (!response.ok) {
     throw new Error(`English Bible API error: ${response.status}`);
@@ -145,7 +104,7 @@ export async function fetchSpanishBible(book: string, chapter: number): Promise<
   const bookName = BOOK_MAPPINGS.es[book] || book;
   const url = `https://ajphchgh0i.execute-api.us-west-2.amazonaws.com/dev/api/books/${bookName}/verses?range=${chapter}:1-${chapter}:200`;
   
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   
   if (!response.ok) {
     throw new Error(`Spanish Bible API error: ${response.status}`);
@@ -168,7 +127,7 @@ export async function fetchDutchBible(book: string, chapter: number): Promise<Bi
   const bookName = BOOK_MAPPINGS.en[book] || book; // Use English mapping as fallback
   const url = `https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/nld-sv/books/${bookName}/chapters/${chapter}.json`;
   
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   
   if (!response.ok) {
     throw new Error(`Dutch Bible API error: ${response.status}`);
@@ -186,23 +145,102 @@ export async function fetchDutchBible(book: string, chapter: number): Promise<Bi
   };
 }
 
-// Main function - Switch based on language
+// Fetch Portuguese Bible (GitHub thiagobodruk/bible - JSON estático, SEM RATE LIMITS!)
+export async function fetchPortugueseBible(version: string, book: string, chapter: number): Promise<BibleChapter> {
+  const versionMap: Record<string, string> = {
+    'nvi': 'pt_nvi',
+    'acf': 'pt_acf',
+    'arc': 'pt_acf',
+    'ra': 'pt_nvi',
+  };
+  
+  const githubVersion = versionMap[version] || 'pt_nvi';
+  const cacheKey = `full-${githubVersion}`;
+  
+  try {
+    if (!bibleCache[cacheKey]) {
+      console.log(`[Bible API] Loading full Portuguese Bible: ${githubVersion}`);
+      const url = `https://raw.githubusercontent.com/thiagobodruk/bible/master/json/${githubVersion}.json`;
+      const response = await fetchWithTimeout(url, 15000); // 15s for full bible load
+      
+      if (!response.ok) {
+        throw new Error(`Portuguese Bible API error: ${response.status}`);
+      }
+      
+      bibleCache[cacheKey] = await response.json();
+    }
+    
+    const bibleData = bibleCache[cacheKey];
+    // Exact mapping for thiagobodruk abbreviations
+    const bookData = bibleData.find((b: any) => b.abbrev.toLowerCase() === book.toLowerCase());
+    
+    if (!bookData || !bookData.chapters || !bookData.chapters[chapter - 1]) {
+      throw new Error(`Chapter not found in JSON: ${book} ${chapter}`);
+    }
+    
+    const verses = bookData.chapters[chapter - 1];
+    
+    return {
+      book: { 
+        name: bookData.name || book, 
+        abbrev: book 
+      },
+      chapter: { number: chapter },
+      verses: Array.isArray(verses) ? verses.map((text: string, index: number) => ({
+        number: index + 1,
+        text: typeof text === 'string' ? text.trim() : (text as any).text || '',
+      })) : [],
+    };
+  } catch (error) {
+    console.warn(`[Portuguese Bible] Error for ${book} ${chapter}:`, error);
+    throw error;
+  }
+}
+
+// Main function - Switch based on language with caching
 export async function fetchBibleChapter(
   language: string,
   version: string,
   book: string,
   chapter: number
 ): Promise<BibleChapter> {
-  switch (language) {
-    case 'pt':
-      return fetchPortugueseBible(version, book, chapter);
-    case 'en':
-      return fetchEnglishBible(book, chapter);
-    case 'es':
-      return fetchSpanishBible(book, chapter);
-    case 'nl':
-      return fetchDutchBible(book, chapter);
-    default:
-      return fetchPortugueseBible(version, book, chapter);
+  const cacheKey = `${language}-${version}-${book}-${chapter}`;
+  if (bibleCache[cacheKey]) {
+    return bibleCache[cacheKey];
+  }
+
+  let result: BibleChapter;
+  try {
+    switch (language) {
+      case 'pt':
+        result = await fetchPortugueseBible(version, book, chapter);
+        break;
+      case 'en':
+        result = await fetchEnglishBible(book, chapter);
+        break;
+      case 'es':
+        result = await fetchSpanishBible(book, chapter);
+        break;
+      case 'nl':
+        result = await fetchDutchBible(book, chapter);
+        break;
+      default:
+        result = await fetchPortugueseBible(version, book, chapter);
+    }
+
+    // Cache only if it has verses
+    if (result && result.verses && result.verses.length > 0) {
+      bibleCache[cacheKey] = result;
+    }
+    return result;
+  } catch (error) {
+    console.error(`[Bible API] Error fetching ${cacheKey}:`, error);
+    // Try fallback for Portuguese if main fetch fails
+    if (language === 'pt') {
+      const { getFallbackChapter } = await import('./bible-chapters-fallback');
+      const fallback = getFallbackChapter(version, book, chapter);
+      if (fallback) return fallback;
+    }
+    throw error;
   }
 }
