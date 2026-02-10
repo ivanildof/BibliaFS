@@ -307,8 +307,8 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-500 rounded-[2.5rem] border-none glass-premium hover-premium shadow-2xl hover:shadow-primary/20 overflow-hidden ${
-                    plan.popular ? 'ring-4 ring-primary shadow-primary/30 scale-105 z-20' : 'hover:scale-[1.02]'
+                  className={`relative flex flex-col transition-all duration-700 rounded-[3rem] border-none glass-premium hover-premium shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:shadow-primary/30 overflow-hidden ${
+                    plan.popular ? 'ring-4 ring-primary shadow-primary/40 scale-105 z-20' : 'hover:scale-[1.03] border-2 border-transparent hover:border-primary/20'
                   } ${isCurrentPlan ? 'ring-4 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >
@@ -335,12 +335,18 @@ export default function Pricing() {
                       </CardDescription>
                     </div>
                     
-                    <div className="pt-4 flex items-baseline whitespace-nowrap overflow-hidden bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                      <span className="text-xl font-bold text-primary mr-1.5">R$</span>
-                      <span className="text-5xl font-extrabold text-foreground tracking-tighter">
-                        {plan.price.replace('R$ ', '')}
-                      </span>
-                      <span className="text-primary text-sm ml-2 font-black uppercase tracking-tighter">/{plan.period.toUpperCase()}</span>
+                    <div className="pt-6 flex flex-col items-center justify-center bg-primary/10 rounded-[2rem] p-6 border-2 border-primary/20 shadow-inner">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-primary">R$</span>
+                        <span className="text-6xl font-black text-foreground tracking-tighter">
+                          {plan.price.replace('R$ ', '')}
+                        </span>
+                      </div>
+                      <div className="mt-2 bg-primary px-4 py-1 rounded-full shadow-lg shadow-primary/30">
+                        <span className="text-white text-base font-black uppercase tracking-widest">
+                          /{plan.period.toUpperCase()}
+                        </span>
+                      </div>
                     </div>
                   </CardHeader>
 
