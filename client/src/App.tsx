@@ -97,8 +97,10 @@ function Router() {
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/auth/callback" component={AuthCallback} />
-        <Route path="/planos" component={Pricing} />
         <Route path="/pricing" component={Pricing} />
+        <Route path="/planos" component={Pricing} />
+        <Route path="/progress" component={Progress} />
+        <Route path="/progresso" component={Progress} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/security" component={Security} />
