@@ -19,7 +19,16 @@ export interface BibleBook {
   testament: string;
 }
 
-// Cache local da Bíblia em português e outras linguas
+const OLD_TESTAMENT_ABBREVS = new Set([
+  "gn","ex","lv","nm","dt","js","jz","rt","1sm","2sm","1rs","2rs",
+  "1cr","2cr","ed","ne","et","jó","sl","pv","ec","ct","is","jr",
+  "lm","ez","dn","os","jl","am","ob","jn","mq","na","hc","sf","ag","zc","ml"
+]);
+
+function getTestament(abbrev: string): string {
+  return OLD_TESTAMENT_ABBREVS.has(abbrev.toLowerCase()) ? "VT" : "NT";
+}
+
 let bibleCache: Record<string, any> = {};
 
 // Helper to fetch with retry and timeout
@@ -199,34 +208,39 @@ export async function fetchPortugueseBible(version: string, book: string, chapte
 
 // Fetch Bible Books (multi-version support)
 export async function fetchBibleBooks(): Promise<BibleBook[]> {
+  let books: BibleBook[] = [];
+
   try {
-    // Primary API: abibliadigital.com.br
     const response = await fetchWithTimeout("https://www.abibliadigital.com.br/api/books", 5000);
     if (response.ok) {
-      return await response.json();
+      books = await response.json();
     }
   } catch (e: any) {
     console.warn("[Bible API] Primary books fetch failed, trying static fallback:", e.message);
   }
 
-  // Static Fallback: GitHub thiagobodruk/bible (Stable)
-  try {
-    const url = "https://raw.githubusercontent.com/thiagobodruk/bible/master/json/pt_nvi.json";
-    const response = await fetchWithTimeout(url, 5000);
-    if (response.ok) {
-      const data = await response.json();
-      return data.map((b: any) => ({
-        abbrev: { pt: b.abbrev.toLowerCase() },
-        name: b.name,
-        chapters: b.chapters.length,
-        testament: b.testament || ""
-      }));
+  if (books.length === 0) {
+    try {
+      const url = "https://raw.githubusercontent.com/thiagobodruk/bible/master/json/pt_nvi.json";
+      const response = await fetchWithTimeout(url, 5000);
+      if (response.ok) {
+        const data = await response.json();
+        books = data.map((b: any) => ({
+          abbrev: { pt: b.abbrev.toLowerCase() },
+          name: b.name,
+          chapters: b.chapters.length,
+          testament: ""
+        }));
+      }
+    } catch (e: any) {
+      console.error("[Bible API] All book fetch attempts failed:", e.message);
     }
-  } catch (e: any) {
-    console.error("[Bible API] All book fetch attempts failed:", e.message);
   }
 
-  return [];
+  return books.map(b => ({
+    ...b,
+    testament: (b.testament && b.testament !== "") ? b.testament : getTestament(b.abbrev?.pt || "")
+  }));
 }
 
 // Main function - Switch based on language with caching
