@@ -66,8 +66,8 @@ const premiumFeatures = [
 
 const testimonials = [
   {
-    name: "Pastora de São Paulo",
-    role: "Líder de Comunidade",
+    name: "Líder de Igreja em São Paulo",
+    role: "Coordenadora de Estudos",
     content: "Os planos de leitura customizáveis e o modo offline transformaram como nossa comunidade estuda juntos. A profundidade aumentou muito.",
     initials: "PS",
     stars: 5

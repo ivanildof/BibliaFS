@@ -136,8 +136,8 @@ const faqs = [
     answer: "Sim! Use em todos os seus dispositivos com sincronização automática."
   },
   {
-    question: "Tem desconto para pastores?",
-    answer: "Sim! 50% de desconto para estudantes de teologia, pastores e líderes. Entre em contato."
+    question: "Igrejas podem usar o BíbliaFS para dar aulas?",
+    answer: "Sim! Se alguma igreja tiver interesse de usar para dar aulas para alunos, entre em contato que criamos um plano de acordo com a quantidade de membros."
   },
 ];
 
