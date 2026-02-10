@@ -412,60 +412,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email é obrigatório" });
       }
 
-      // Find user by email
       const user = await storage.getUserByEmail(email);
       
-      // Always return success to prevent email enumeration attacks
       if (!user) {
         console.log(`[Forgot Password] Email not found: ${email}`);
         return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
       }
 
-      // Generate reset token
       const token = generateResetToken();
-      const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
-
-      // Store token
+      const expiresAt = Date.now() + 60 * 60 * 1000;
       resetTokens.set(token, { email: user.email!, expiresAt });
 
-      // Clean up expired tokens periodically
       const entriesToDelete: string[] = [];
       resetTokens.forEach((data, t) => {
-        if (data.expiresAt < Date.now()) {
-          entriesToDelete.push(t);
-        }
+        if (data.expiresAt < Date.now()) entriesToDelete.push(t);
       });
       entriesToDelete.forEach(t => resetTokens.delete(t));
 
-      // Generate reset link - use production domain for redirect
       const baseUrl = process.env.NODE_ENV === 'production' 
         ? 'https://bibliafs.com.br'
         : process.env.REPLIT_DOMAINS 
           ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
           : `${req.protocol}://${req.get('host')}`;
-      
-      // Use Supabase resetPasswordForEmail to send email automatically
-      if (!supabaseAdmin) {
-        throw new Error("Supabase Admin client not initialized");
-      }
-      
-      // In production, redirectTo must match exactly one of the allowed Redirect URLs in Supabase dashboard
-      // Configure in Supabase: https://bibliafs.com.br/**
-      const redirectTo = `${baseUrl}/reset-password`;
-      console.log(`[Forgot Password] BaseURL: ${baseUrl}, RedirectTo: ${redirectTo}`);
 
-      // Use resetPasswordForEmail which SENDS the email automatically (not just generates link)
-      const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectTo
-      });
+      let emailSent = false;
 
-      if (resetError) {
-        console.error("[Forgot Password] Supabase Error:", resetError);
-        // Don't expose error details to prevent email enumeration
-        return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
+      if (supabaseAdmin) {
+        try {
+          const redirectTo = `${baseUrl}/reset-password`;
+          console.log(`[Forgot Password] Trying Supabase. RedirectTo: ${redirectTo}`);
+          const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, { redirectTo });
+          if (!resetError) {
+            emailSent = true;
+            console.log(`[Password Reset] Email enviado via Supabase para: ${email}`);
+          } else {
+            console.warn("[Forgot Password] Supabase failed:", resetError.message);
+          }
+        } catch (supaError: any) {
+          console.warn("[Forgot Password] Supabase exception:", supaError.message);
+        }
       }
 
-      console.log(`✅ [Password Reset] Email enviado via Supabase para: ${email}`);
+      if (!emailSent) {
+        console.log("[Forgot Password] Falling back to Gmail SMTP");
+        const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+        const gmailUser = 'bibliafs3@gmail.com';
+        const resetLink = `${baseUrl}/reset-password?token=${token}`;
+
+        if (gmailPassword) {
+          try {
+            const transporter = nodemailer.createTransport({
+              host: 'smtp.gmail.com',
+              port: 465,
+              secure: true,
+              auth: { user: gmailUser, pass: gmailPassword },
+            });
+
+            await transporter.sendMail({
+              from: `"BíbliaFS" <${gmailUser}>`,
+              to: email,
+              subject: 'Recuperação de Senha - BíbliaFS',
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                  <h2 style="color: #333;">Recuperação de Senha</h2>
+                  <p>Olá! Recebemos uma solicitação para redefinir sua senha no BíbliaFS.</p>
+                  <p>Clique no botão abaixo para criar uma nova senha:</p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="${resetLink}" style="background: #667eea; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                      Redefinir Senha
+                    </a>
+                  </div>
+                  <p style="color: #666; font-size: 13px;">Se o botão não funcionar, copie e cole este link no seu navegador:</p>
+                  <p style="color: #667eea; font-size: 12px; word-break: break-all;">${resetLink}</p>
+                  <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+                  <p style="color: #999; font-size: 12px;">Este link expira em 1 hora. Se você não solicitou a redefinição, ignore este email.</p>
+                </div>
+              `,
+            });
+            emailSent = true;
+            console.log(`[Password Reset] Email enviado via Gmail SMTP para: ${email}`);
+          } catch (gmailError: any) {
+            console.error("[Forgot Password] Gmail SMTP error:", gmailError.message);
+          }
+        } else {
+          console.warn("[Forgot Password] GMAIL_APP_PASSWORD not configured");
+        }
+      }
+
+      if (emailSent) {
+        console.log(`[Password Reset] Email enviado com sucesso para: ${email}`);
+      } else {
+        console.error(`[Password Reset] FALHA: Nenhum método de envio funcionou para: ${email}`);
+      }
+
       return res.json({ message: "Se este email estiver cadastrado, você receberá um link de recuperação." });
     } catch (error: any) {
       console.error("Erro ao processar forgot-password:", error);
