@@ -90,32 +90,7 @@ import { ShareSheet } from "@/components/ShareSheet";
 export default function BibleReader() {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-6 text-center space-y-6">
-        <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center">
-          <BookOpen className="h-12 w-12 text-primary" />
-        </div>
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Bíblia Online</h1>
-          <p className="text-muted-foreground max-w-sm">
-            Para acessar a Bíblia Online e todos os recursos de estudo, você precisa estar conectado.
-          </p>
-        </div>
-        <div className="flex flex-col gap-3 w-full max-w-xs">
-          <Button onClick={() => window.location.href = "/login"} className="w-full h-12 rounded-xl text-lg font-bold">
-            Entrar Agora
-          </Button>
-          <Button variant="outline" onClick={() => window.location.href = "/"} className="w-full h-12 rounded-xl font-bold">
-            Voltar ao Início
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { isOnline, isChapterOffline, downloadChapter, deleteChapter, getOfflineChapter, getSqliteBooks } = useOffline();
   const { readingTheme } = useTheme();
   const currentReadingTheme = readingThemes[readingTheme];
@@ -1098,6 +1073,38 @@ export default function BibleReader() {
   const seoDescription = chapterData && chapterData.verses.length > 0
     ? chapterData.verses.slice(0, 3).map(v => `${v.number}. ${v.text}`).join(" ")
     : "Leia e estude a Bíblia Sagrada com IA teológica e recursos premium.";
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-6 text-center space-y-6">
+        <div className="h-24 w-24 rounded-3xl bg-primary/10 flex items-center justify-center">
+          <BookOpen className="h-12 w-12 text-primary" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Bíblia Online</h1>
+          <p className="text-muted-foreground max-w-sm">
+            Para acessar a Bíblia Online e todos os recursos de estudo, você precisa estar conectado.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Button onClick={() => window.location.href = "/login"} className="w-full h-12 rounded-xl text-lg font-bold" data-testid="button-login-redirect">
+            Entrar Agora
+          </Button>
+          <Button variant="outline" onClick={() => window.location.href = "/"} className="w-full h-12 rounded-xl font-bold" data-testid="button-home-redirect">
+            Voltar ao Início
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
