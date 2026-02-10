@@ -14,7 +14,6 @@ import {
   GraduationCap, 
   Plus, 
   Calendar,
-  Users,
   FileText,
   Download,
   BarChart,
@@ -1067,8 +1066,8 @@ export default function Teacher() {
             {[
               { title: "Total de Aulas", value: lessons.length, icon: BookOpen, color: "text-primary", bg: "bg-primary/10", testId: "text-total-lessons" },
               { title: "Publicadas", value: publishedLessons.length, icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10" },
-              { title: `${t.teacherMode.students} Ativos`, value: 24, icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
-              { title: "Taxa de Conclusão", value: "87%", icon: BarChart, color: "text-amber-500", bg: "bg-amber-500/10" },
+              { title: "Rascunhos", value: lessons.length - publishedLessons.length, icon: Clock, color: "text-blue-500", bg: "bg-blue-500/10" },
+              { title: "Referências", value: lessons.reduce((acc, l) => acc + (l.scriptureReferences?.length || 0), 0), icon: BarChart, color: "text-amber-500", bg: "bg-amber-500/10" },
             ].map((stat, idx) => (
               <motion.div
                 key={stat.title}
@@ -1159,12 +1158,14 @@ export default function Teacher() {
                                       Aula Agendada
                                     </div>
                                   )}
-                                  <div className="flex items-center gap-3 text-muted-foreground">
-                                    <div className="p-1.5 rounded-lg bg-muted">
-                                      <Users className="h-4 w-4" />
+                                  {lesson.createdAt && (
+                                    <div className="flex items-center gap-3 text-muted-foreground">
+                                      <div className="p-1.5 rounded-lg bg-muted">
+                                        <Clock className="h-4 w-4" />
+                                      </div>
+                                      Criada em {new Date(lesson.createdAt).toLocaleDateString("pt-BR")}
                                     </div>
-                                    12 alunos participando
-                                  </div>
+                                  )}
                                 </div>
                               </CardContent>
                               <CardFooter className="pt-4 gap-2 flex-wrap">
