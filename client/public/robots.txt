@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://bibliafs.com.br/sitemap.xml
+
+# Bloquear páginas privadas e sensíveis
 Disallow: /auth/callback
 Disallow: /reset-password
 Disallow: /forgot-password
@@ -7,4 +11,5 @@ Disallow: /settings
 Disallow: /configurações
 Disallow: /offline
 
-Sitemap: https://bibliafs.com.br/sitemap.xml
+# Bloquear parâmetros de busca duplicados
+Disallow: /*?*

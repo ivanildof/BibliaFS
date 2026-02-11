@@ -1,0 +1,434 @@
+sitemap.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+    
+    <!-- Páginas Principais -->
+    <url>
+        <loc>https://bibliafs.com.br/</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/login</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/register</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/planos</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/precos</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/dashboard</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- Páginas da Bíblia -->
+    <url>
+        <loc>https://bibliafs.com.br/biblia</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/busca</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/planos-leitura</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/comparar-versoes</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Livros do Antigo Testamento -->
+    <url>
+        <loc>https://bibliafs.com.br/biblia/genesis</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/exodo</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/levitico</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/numeros</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/deuteronomio</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Adicionar demais livros do AT... -->
+    
+    <!-- Livros do Novo Testamento -->
+    <url>
+        <loc>https://bibliafs.com.br/biblia/mateus</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/marcos</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/lucas</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/joao</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/biblia/atos</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Adicionar demais livros do NT... -->
+    
+    <!-- Páginas de Áudio -->
+    <url>
+        <loc>https://bibliafs.com.br/audio</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/audio/player</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/audio/biblioteca</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/audio/downloads</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Ferramentas de Estudo -->
+    <url>
+        <loc>https://bibliafs.com.br/ferramentas</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/ferramentas/dicionario</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/ferramentas/mapas</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/ferramentas/linha-tempo</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/ferramentas/concordancia</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/ferramentas/comentarios</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Área do Usuário -->
+    <url>
+        <loc>https://bibliafs.com.br/perfil</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/configuracoes</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/anotacoes</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/favoritos</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/historico</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Suporte e Documentação -->
+    <url>
+        <loc>https://bibliafs.com.br/suporte</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/suporte/faq</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/suporte/tutoriais</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/suporte/documentacao</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/suporte/contato</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Sobre -->
+    <url>
+        <loc>https://bibliafs.com.br/sobre</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/sobre/quem-somos</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/sobre/missao-visao</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/sobre/equipe</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <!-- Versículo do Dia (Atualiza diariamente) -->
+    <url>
+        <loc>https://bibliafs.com.br/versiculo-do-dia</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <!-- Versões da Bíblia -->
+    <url>
+        <loc>https://bibliafs.com.br/versoes/acf</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/versoes/arc</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/versoes/nvi</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/versoes/ra</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Páginas de Erro -->
+    <url>
+        <loc>https://bibliafs.com.br/404</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/500</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <!-- Políticas -->
+    <url>
+        <loc>https://bibliafs.com.br/politica-privacidade</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/termos-uso</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://bibliafs.com.br/cookies</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+</urlset>
+
+sitemap-index.xml 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <sitemap>
+        <loc>https://bibliafs.com.br/sitemap-principal.xml</loc>
+        <lastmod>2026-02-11</lastmod>
+    </sitemap>
+    
+    <sitemap>
+        <loc>https://bibliafs.com.br/sitemap-biblia.xml</loc>
+        <lastmod>2026-02-11</lastmod>
+    </sitemap>
+    
+    <sitemap>
+        <loc>https://bibliafs.com.br/sitemap-audio.xml</loc>
+        <lastmod>2026-02-11</lastmod>
+    </sitemap>
+    
+    <sitemap>
+        <loc>https://bibliafs.com.br/sitemap-ferramentas.xml</loc>
+        <lastmod>2026-02-11</lastmod>
+    </sitemap>
+    
+    <sitemap>
+        <loc>https://bibliafs.com.br/sitemap-usuarios.xml</loc>
+        <lastmod>2026-02-11</lastmod>
+    </sitemap>
+    
+    <sitemap>
+        <loc>https://bibliafs.com.br/sitemap-suporte.xml</loc>
+        <lastmod>2026-02-11</lastmod>
+    </sitemap>
+    
+</sitemapindex>
+
+
+
+
+
+
+
+
+
+robots.txt
+
+User-agent: *
+Allow: /
+
+Sitemap: https://bibliafs.com.br/sitemap.xml
+Sitemap: https://bibliafs.com.br/sitemap-index.xml
+
+# Bloquear páginas administrativas
+Disallow: /admin/
+Disallow: /wp-admin/
+
+# Bloquear arquivos sensíveis
+Disallow: /wp-config.php
+Disallow: /xmlrpc.php
+
+# Bloquear buscas duplicadas
+Disallow: /*?*
+Disallow: /*&*
+
+# Permitir acesso a conteúdo público
+Allow: /biblia/
+Allow: /audio/
+Allow: /ferramentas/
+Allow: /suporte/
+
+
+
+bibliafs.com.br/
+├── sitemap.xml (principal - até 50.000 URLs)
+├── sitemap-index.xml (índice para múltiplos sitemaps)
+├── sitemap-principal.xml (páginas principais)
+├── sitemap-biblia.xml (livros e capítulos)
+├── sitemap-audio.xml (conteúdo de áudio)
+├── sitemap-ferramentas.xml (ferramentas de estudo)
+├── sitemap-usuarios.xml (área do usuário)
+├── sitemap-suporte.xml (suporte e documentação)
+└── robots.txt
