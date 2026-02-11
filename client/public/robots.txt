@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /auth/callback
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /settings
+Disallow: /configurações
+Disallow: /offline
+
+Sitemap: https://bibliafs.com.br/sitemap.xml
