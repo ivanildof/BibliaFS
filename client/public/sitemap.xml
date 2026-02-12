@@ -73,7 +73,7 @@
     </url>
 
     <url>
-        <loc>https://bibliafs.com.br/favorites</loc>
+        <loc>https://bibliafs.com.br/favoritos</loc>
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
     </url>
