@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
@@ -23,6 +23,17 @@ if ('serviceWorker' in navigator) {
       .catch((error) => {
         console.error('[PWA] Service Worker registration failed:', error);
       });
+  });
+} else if ('serviceWorker' in navigator && !import.meta.env.PROD) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => {
+      registration.unregister();
+      console.log('[PWA] Service Worker unregistered in development');
+    });
+  });
+  caches.keys().then((names) => {
+    names.forEach((name) => caches.delete(name));
+    console.log('[PWA] All caches cleared in development');
   });
 }
 
