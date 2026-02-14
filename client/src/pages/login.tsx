@@ -114,7 +114,21 @@ export default function Login() {
 
       const google = (window as any).google;
       if (!google?.accounts?.id) {
-        throw new Error("Google Identity Services não carregado");
+        // Fallback para OAuth tradicional se o Identity Services não estiver disponível
+        console.warn("[Google Login] Identity Services not available, using fallback");
+        const client = await initSupabase();
+        const { error } = await client.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: getRedirectUrl(),
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            },
+          }
+        });
+        if (error) throw error;
+        return;
       }
 
       google.accounts.id.initialize({
@@ -168,35 +182,37 @@ export default function Login() {
 
       google.accounts.id.prompt((notification: any) => {
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          setGoogleLoading(false);
-          google.accounts.id.renderButton(
-            document.createElement('div'),
-            { theme: 'outline', size: 'large' }
-          );
-          const parent = document.createElement('div');
-          parent.style.position = 'fixed';
-          parent.style.top = '50%';
-          parent.style.left = '50%';
-          parent.style.transform = 'translate(-50%, -50%)';
-          parent.style.zIndex = '99999';
-          parent.style.background = 'white';
-          parent.style.padding = '24px';
-          parent.style.borderRadius = '12px';
-          parent.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
-          
-          const overlay = document.createElement('div');
-          overlay.style.position = 'fixed';
-          overlay.style.inset = '0';
-          overlay.style.background = 'rgba(0,0,0,0.5)';
-          overlay.style.zIndex = '99998';
-          overlay.onclick = () => {
-            overlay.remove();
-            parent.remove();
-            setGoogleLoading(false);
-          };
-          
-          document.body.appendChild(overlay);
-          document.body.appendChild(parent);
+          console.log("[Google Login] Prompt not displayed, rendering button");
+          const parentId = "google-button-container";
+          let parent = document.getElementById(parentId);
+          if (!parent) {
+            parent = document.createElement('div');
+            parent.id = parentId;
+            parent.style.position = 'fixed';
+            parent.style.top = '50%';
+            parent.style.left = '50%';
+            parent.style.transform = 'translate(-50%, -50%)';
+            parent.style.zIndex = '99999';
+            parent.style.background = 'white';
+            parent.style.padding = '24px';
+            parent.style.borderRadius = '12px';
+            parent.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+            
+            const overlay = document.createElement('div');
+            overlay.id = "google-button-overlay";
+            overlay.style.position = 'fixed';
+            overlay.style.inset = '0';
+            overlay.style.background = 'rgba(0,0,0,0.5)';
+            overlay.style.zIndex = '99998';
+            overlay.onclick = () => {
+              overlay.remove();
+              parent?.remove();
+              setGoogleLoading(false);
+            };
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(parent);
+          }
           
           google.accounts.id.renderButton(parent, {
             theme: 'outline',
@@ -207,6 +223,7 @@ export default function Login() {
         }
       });
     } catch (error: any) {
+      console.error("[Google Login] Main error:", error);
       setGoogleLoading(false);
       toast({
         title: "Erro no login com Google",

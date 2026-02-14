@@ -425,12 +425,22 @@ export default function Register() {
                         onClick={async () => {
                           const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
                           const google = (window as any).google;
-                          if (!clientId || !google?.accounts?.id) {
-                            const client = await initSupabase();
-                            const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
-                            await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
+                          if (!clientId) {
+                            toast({ title: "Erro", description: "Google Client ID não configurado", variant: "destructive" });
                             return;
                           }
+                          
+                          if (!google?.accounts?.id) {
+                            // Fallback para OAuth tradicional
+                            const client = await initSupabase();
+                            const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
+                            await client.auth.signInWithOAuth({ 
+                              provider: 'google', 
+                              options: { redirectTo: redirectUrl } 
+                            });
+                            return;
+                          }
+                          
                           google.accounts.id.initialize({
                             client_id: clientId,
                             callback: async (response: any) => {
@@ -458,13 +468,18 @@ export default function Register() {
                           });
                           google.accounts.id.prompt((notification: any) => {
                             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                              const parent = document.createElement('div');
-                              parent.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:white;padding:24px;border-radius:12px;box-shadow:0 25px 50px rgba(0,0,0,0.3)';
-                              const overlay = document.createElement('div');
-                              overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99998';
-                              overlay.onclick = () => { overlay.remove(); parent.remove(); };
-                              document.body.appendChild(overlay);
-                              document.body.appendChild(parent);
+                              const parentId = "google-register-container";
+                              let parent = document.getElementById(parentId);
+                              if (!parent) {
+                                parent = document.createElement('div');
+                                parent.id = parentId;
+                                parent.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:white;padding:24px;border-radius:12px;box-shadow:0 25px 50px rgba(0,0,0,0.3)';
+                                const overlay = document.createElement('div');
+                                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99998';
+                                overlay.onclick = () => { overlay.remove(); parent?.remove(); };
+                                document.body.appendChild(overlay);
+                                document.body.appendChild(parent);
+                              }
                               google.accounts.id.renderButton(parent, { theme: 'outline', size: 'large', text: 'signup_with', width: 300 });
                             }
                           });
