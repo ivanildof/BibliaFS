@@ -431,6 +431,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }, 60 * 1000);
 
+  app.get('/api/auth/google/debug', (req, res) => {
+    res.json({
+      hasClientId: !!GOOGLE_CLIENT_ID,
+      clientIdPrefix: GOOGLE_CLIENT_ID ? GOOGLE_CLIENT_ID.substring(0, 10) + '...' : 'missing',
+      hasClientSecret: !!GOOGLE_CLIENT_SECRET,
+      secretLength: GOOGLE_CLIENT_SECRET ? GOOGLE_CLIENT_SECRET.length : 0,
+      appUrl: GOOGLE_OAUTH_APP_URL,
+      redirectUri: `${GOOGLE_OAUTH_APP_URL}/api/auth/google/callback`,
+      nodeEnv: process.env.NODE_ENV,
+    });
+  });
+
   app.get('/api/auth/google', (req, res) => {
     try {
       if (!GOOGLE_CLIENT_ID) {
