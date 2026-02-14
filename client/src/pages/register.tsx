@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { initSupabase } from "@/lib/supabase";
 import { apiFetch, isNative } from "@/lib/config";
-import { APP_URL } from "@/lib/env-config";
+import { APP_URL, GOOGLE_CLIENT_ID } from "@/lib/env-config";
 import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, Mail, RefreshCw } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import { Link } from "wouter";
@@ -423,9 +423,39 @@ export default function Register() {
                         type="button"
                         className="h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-border/50 bg-card transition-all shadow-sm"
                         onClick={async () => {
-                          const client = await initSupabase();
-                          const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
-                          await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
+                          const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                          const google = (window as any).google;
+                          if (!clientId || !google?.accounts?.oauth2) {
+                            const client = await initSupabase();
+                            const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
+                            await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
+                            return;
+                          }
+                          const tokenClient = google.accounts.oauth2.initTokenClient({
+                            client_id: clientId,
+                            scope: 'openid email profile',
+                            callback: async (response: any) => {
+                              if (response.error) return;
+                              try {
+                                const client = await initSupabase();
+                                const { error } = await client.auth.signInWithIdToken({
+                                  provider: 'google',
+                                  token: response.access_token,
+                                  access_token: response.access_token,
+                                });
+                                if (error) {
+                                  const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
+                                  await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
+                                  return;
+                                }
+                                await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+                                window.location.href = "/";
+                              } catch (err) {
+                                console.error("[Register Google] Error:", err);
+                              }
+                            },
+                          });
+                          tokenClient.requestAccessToken({ prompt: 'select_account' });
                         }}
                         data-testid="button-register-google"
                       >
