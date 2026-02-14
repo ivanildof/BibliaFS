@@ -408,20 +408,20 @@ export default function Register() {
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4 px-8 pb-6 bg-muted/20 rounded-b-3xl border-t border-border/50">
                   <div className="w-full space-y-3 pt-4">
-                    <div className="relative">
+                    <div className="relative py-2">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-border" />
                       </div>
                       <div className="relative flex justify-center text-[10px] uppercase">
-                        <span className="bg-muted px-2 text-muted-foreground font-bold">Ou continue com</span>
+                        <span className="bg-muted px-4 text-muted-foreground font-bold tracking-wider">Registrar com Google</span>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col pt-1">
                       <Button
                         variant="outline"
                         type="button"
-                        className="w-full h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-border/50 bg-card transition-all shadow-sm"
+                        className="w-full h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-3 border-border/50 bg-card transition-all shadow-sm hover:bg-muted/50"
                         onClick={async () => {
                           const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
                           const google = (window as any).google;
@@ -471,8 +471,8 @@ export default function Register() {
                         }}
                         data-testid="button-register-google"
                       >
-                        <SiGoogle className="h-4 w-4 text-[#4285F4]" />
-                        Continuar com Google
+                        <SiGoogle className="h-5 w-5 text-[#4285F4]" />
+                        Criar conta com Google
                       </Button>
                     </div>
 

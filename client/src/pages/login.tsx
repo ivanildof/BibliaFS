@@ -330,27 +330,27 @@ export default function Login() {
                   )}
                 </Button>
                 
-                <div className="relative py-2">
+                <div className="relative py-4">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-border/50" />
                   </div>
                   <div className="relative flex justify-center text-[10px] uppercase">
-                    <span className="bg-card px-2 text-muted-foreground font-medium">
-                      Ou continue com
+                    <span className="bg-card px-4 text-muted-foreground font-semibold tracking-wider">
+                      Entrar com Google
                     </span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col pt-2">
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-11 rounded-xl font-bold text-sm border-primary/10 hover:bg-muted/50 transition-all flex items-center justify-center gap-2"
+                    className="w-full h-12 rounded-xl font-bold text-base border-primary/20 hover:bg-muted/50 transition-all flex items-center justify-center gap-3 shadow-sm"
                     onClick={handleGoogleLogin}
                     disabled={googleLoading}
                     data-testid="button-google-login"
                   >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24">
                       <path
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                         fill="#4285F4"
@@ -368,7 +368,7 @@ export default function Login() {
                         fill="#EA4335"
                       />
                     </svg>
-                    Continuar com Google
+                    Acessar com Google
                   </Button>
                 </div>
 
