@@ -515,8 +515,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tokenData = await tokenResponse.json();
 
       if (!tokenResponse.ok || !tokenData.id_token) {
+        const errDetail = tokenData.error_description || tokenData.error || 'unknown';
         console.error("[Google OAuth Callback] Token exchange failed. Status:", tokenResponse.status, "Error:", tokenData.error, "Description:", tokenData.error_description, "Redirect URI used:", redirectUri);
-        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=token_exchange_failed`);
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=token_exchange_failed&detail=${encodeURIComponent(errDetail)}`);
       }
 
       console.log("[Google OAuth Callback] Token exchange successful, signing in with Supabase");
