@@ -1,3 +1,30 @@
+const IS_DEV = self.location.hostname === 'localhost' || 
+               self.location.hostname.includes('replit') ||
+               self.location.hostname.includes('.dev') ||
+               self.location.port === '5000';
+
+if (IS_DEV) {
+  self.addEventListener('install', () => {
+    self.skipWaiting();
+  });
+  
+  self.addEventListener('activate', (event) => {
+    event.waitUntil(
+      caches.keys().then((names) => {
+        return Promise.all(names.map((name) => caches.delete(name)));
+      }).then(() => {
+        return self.registration.unregister();
+      }).then(() => {
+        return self.clients.matchAll();
+      }).then((clients) => {
+        clients.forEach((client) => client.navigate(client.url));
+      })
+    );
+  });
+  
+  return;
+}
+
 const CACHE_NAME = 'bibliasf-v1.1.0';
 const STATIC_CACHE = 'bibliasf-static-v1.1.0';
 const DYNAMIC_CACHE = 'bibliasf-dynamic-v1.1.0';
