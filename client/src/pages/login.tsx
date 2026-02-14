@@ -371,6 +371,8 @@ export default function Login() {
                     Acessar com Google
                   </Button>
                 </div>
+                {/* Botão Apple removido */}
+
 
                 <div className="pt-2">
                   <Link href="/" className="w-full">

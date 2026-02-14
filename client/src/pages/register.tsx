@@ -475,6 +475,8 @@ export default function Register() {
                         Criar conta com Google
                       </Button>
                     </div>
+                    {/* Botão Apple removido */}
+
 
                     <Link href="/" className="w-full block">
                       <Button
