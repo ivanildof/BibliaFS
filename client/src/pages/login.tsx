@@ -102,11 +102,12 @@ export default function Login() {
     const params = new URLSearchParams(window.location.search);
     const error = params.get('error');
     if (error) {
+      const detail = params.get('detail');
       const errorMessages: Record<string, string> = {
         google_denied: "Login com Google foi cancelado.",
         google_init_failed: "Erro ao iniciar login com Google.",
-        token_exchange_failed: "Erro na autenticação com Google. Tente novamente.",
-        supabase_auth_failed: "Erro ao autenticar. Tente novamente.",
+        token_exchange_failed: `Erro na autenticação com Google.${detail ? ` (${detail})` : ''} Tente novamente.`,
+        supabase_auth_failed: `Erro ao autenticar.${detail ? ` (${detail})` : ''} Tente novamente.`,
         config_error: "Google OAuth não está configurado.",
         supabase_config: "Configuração do servidor incompleta. Contate o suporte.",
         no_code: "Resposta inválida do Google.",
