@@ -440,14 +440,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const redirectUri = `${GOOGLE_OAUTH_APP_URL}/api/auth/google/callback`;
       const state = crypto.randomBytes(32).toString('hex');
 
-      pendingOAuthStates.set(state, { createdAt: Date.now() });
-
       res.cookie('oauth_state', state, {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
         maxAge: 10 * 60 * 1000,
-        path: '/api/auth/google',
+        path: '/',
       });
 
       const params = new URLSearchParams({
@@ -478,19 +476,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const cookieState = req.cookies?.oauth_state;
 
-      if (!state || typeof state !== 'string' || !pendingOAuthStates.has(state)) {
-        console.error("[Google OAuth Callback] Invalid or missing state parameter - possible CSRF");
+      if (!state || typeof state !== 'string') {
+        console.error("[Google OAuth Callback] Missing state parameter");
         return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=invalid_state`);
       }
 
       if (!cookieState || cookieState !== state) {
-        console.error("[Google OAuth Callback] State mismatch between cookie and query - possible CSRF");
-        pendingOAuthStates.delete(state);
+        console.error("[Google OAuth Callback] State mismatch - cookie:", cookieState ? "present" : "missing", "query state:", state ? "present" : "missing");
         return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=invalid_state`);
       }
 
-      pendingOAuthStates.delete(state);
-      res.clearCookie('oauth_state', { path: '/api/auth/google' });
+      res.clearCookie('oauth_state', { path: '/' });
 
       if (!code || typeof code !== 'string') {
         console.error("[Google OAuth Callback] No code received");
