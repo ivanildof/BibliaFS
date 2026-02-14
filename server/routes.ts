@@ -455,8 +455,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         redirect_uri: redirectUri,
         response_type: 'code',
         scope: 'openid email profile',
-        access_type: 'offline',
-        prompt: 'consent',
         state: state,
       });
 
