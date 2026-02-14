@@ -450,7 +450,7 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            <div className="flex-1 relative flex justify-center max-w-[220px] lg:max-w-[200px] mx-auto">
+            <div className="relative flex justify-center w-[200px] shrink-0">
                <motion.div 
                  initial={{ rotate: -5, scale: 0.9 }}
                  whileInView={{ rotate: 0, scale: 1 }}
