@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { initSupabase } from "@/lib/supabase";
 import { isNative } from "@/lib/config";
-import { APP_URL } from "@/lib/env-config";
+import { APP_URL, GOOGLE_CLIENT_ID } from "@/lib/env-config";
 import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
@@ -102,28 +102,96 @@ export default function Login() {
     return `${appUrl}/`;
   };
 
-  const googleLoginMutation = useMutation({
-    mutationFn: async () => {
-      const client = await initSupabase();
-      const redirectUrl = getRedirectUrl();
-      
-      const { data, error } = await client.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-        }
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
+      if (!clientId) {
+        throw new Error("Google Client ID não configurado");
+      }
+
+      const google = (window as any).google;
+      if (!google?.accounts?.oauth2) {
+        throw new Error("Google Identity Services não carregado");
+      }
+
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'openid email profile',
+        callback: async (response: any) => {
+          if (response.error) {
+            setGoogleLoading(false);
+            toast({
+              title: "Erro no login com Google",
+              description: response.error_description || "Não foi possível entrar com Google",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          try {
+            const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${response.access_token}` },
+            });
+            const userInfo = await userInfoRes.json();
+
+            const idTokenRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${response.access_token}`);
+            const tokenInfo = await idTokenRes.json();
+
+            const client = await initSupabase();
+            const { data, error } = await client.auth.signInWithIdToken({
+              provider: 'google',
+              token: response.access_token,
+              access_token: response.access_token,
+            });
+
+            if (error) {
+              const { data: oauthData, error: oauthError } = await client.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: getRedirectUrl(),
+                  skipBrowserRedirect: false,
+                }
+              });
+              if (oauthError) throw oauthError;
+              return;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+            await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+
+            toast({
+              title: "Login realizado!",
+              description: "Bem-vindo de volta!",
+            });
+
+            window.location.href = "/";
+          } catch (err: any) {
+            console.error("[Google Login] Error:", err);
+            toast({
+              title: "Erro no login com Google",
+              description: err.message || "Não foi possível entrar com Google",
+              variant: "destructive",
+            });
+          } finally {
+            setGoogleLoading(false);
+          }
+        },
       });
-      if (error) throw error;
-      return data;
-    },
-    onError: (error: any) => {
+
+      tokenClient.requestAccessToken({ prompt: 'select_account' });
+    } catch (error: any) {
+      setGoogleLoading(false);
       toast({
         title: "Erro no login com Google",
         description: error.message || "Não foi possível entrar com Google",
         variant: "destructive",
       });
     }
-  });
+  };
 
   const appleLoginMutation = useMutation({
     mutationFn: async () => {
@@ -278,8 +346,8 @@ export default function Login() {
                     type="button"
                     variant="outline"
                     className="h-11 rounded-xl font-bold text-sm border-primary/10 hover:bg-muted/50 transition-all flex items-center justify-center gap-2"
-                    onClick={() => googleLoginMutation.mutate()}
-                    disabled={googleLoginMutation.isPending}
+                    onClick={handleGoogleLogin}
+                    disabled={googleLoading}
                     data-testid="button-google-login"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">

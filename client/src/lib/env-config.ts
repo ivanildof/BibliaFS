@@ -15,6 +15,7 @@ const envDefaults = {
   VITE_STRIPE_DONATION_100_PRICE_ID: "price_1SoqxZLxcUHgdisLYgHEFqgT",
   VITE_STRIPE_DONATION_CUSTOM_PRICE_ID: "price_1SoqxbLxcUHgdisLbln2YRd7",
   VITE_APP_URL: "https://bibliafs.com.br",
+  VITE_GOOGLE_CLIENT_ID: "",
 };
 
 // Get environment variable with fallback to default
@@ -36,3 +37,4 @@ export const APP_URL = getEnv('VITE_APP_URL');
 export const STRIPE_MONTHLY_PRICE_ID = getEnv('VITE_STRIPE_MONTHLY_PRICE_ID');
 export const STRIPE_YEARLY_PRICE_ID = getEnv('VITE_STRIPE_YEARLY_PRICE_ID');
 export const STRIPE_PREMIUM_PLUS_PRICE_ID = getEnv('VITE_STRIPE_PREMIUM_PLUS_PRICE_ID');
+export const GOOGLE_CLIENT_ID = getEnv('VITE_GOOGLE_CLIENT_ID');
