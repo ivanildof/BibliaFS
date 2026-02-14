@@ -107,127 +107,34 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
-      if (!clientId) {
-        throw new Error("Google Client ID não configurado");
-      }
-
-      const google = (window as any).google;
-      if (!google?.accounts?.id) {
-        // Fallback para OAuth tradicional se o Identity Services não estiver disponível
-        console.warn("[Google Login] Identity Services not available, using fallback");
-        const client = await initSupabase();
-        const { error } = await client.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: getRedirectUrl(),
-            queryParams: {
-              access_type: 'offline',
-              prompt: 'consent',
-            },
-          }
-        });
-        if (error) throw error;
-        return;
-      }
-
-      google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (response: any) => {
-          if (!response.credential) {
-            setGoogleLoading(false);
-            toast({
-              title: "Erro no login com Google",
-              description: "Não foi possível obter credenciais do Google",
-              variant: "destructive",
-            });
-            return;
-          }
-
-          try {
-            const client = await initSupabase();
-            const { data, error } = await client.auth.signInWithIdToken({
-              provider: 'google',
-              token: response.credential,
-            });
-
-            if (error) {
-              console.error("[Google Login] signInWithIdToken error:", error);
-              throw new Error(error.message);
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 500));
-            await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-            await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
-
-            toast({
-              title: "Login realizado!",
-              description: "Bem-vindo de volta!",
-            });
-
-            window.location.href = "/";
-          } catch (err: any) {
-            console.error("[Google Login] Error:", err);
-            setGoogleLoading(false);
-            toast({
-              title: "Erro no login com Google",
-              description: err.message || "Não foi possível entrar com Google",
-              variant: "destructive",
-            });
-          }
-        },
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
-
-      google.accounts.id.prompt((notification: any) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          console.log("[Google Login] Prompt not displayed, rendering button");
-          const parentId = "google-button-container";
-          let parent = document.getElementById(parentId);
-          if (!parent) {
-            parent = document.createElement('div');
-            parent.id = parentId;
-            parent.style.position = 'fixed';
-            parent.style.top = '50%';
-            parent.style.left = '50%';
-            parent.style.transform = 'translate(-50%, -50%)';
-            parent.style.zIndex = '99999';
-            parent.style.background = 'white';
-            parent.style.padding = '24px';
-            parent.style.borderRadius = '12px';
-            parent.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
-            
-            const overlay = document.createElement('div');
-            overlay.id = "google-button-overlay";
-            overlay.style.position = 'fixed';
-            overlay.style.inset = '0';
-            overlay.style.background = 'rgba(0,0,0,0.5)';
-            overlay.style.zIndex = '99998';
-            overlay.onclick = () => {
-              overlay.remove();
-              parent?.remove();
-              setGoogleLoading(false);
-            };
-            
-            document.body.appendChild(overlay);
-            document.body.appendChild(parent);
-          }
-          
-          google.accounts.id.renderButton(parent, {
-            theme: 'outline',
-            size: 'large',
-            text: 'signin_with',
-            width: 300,
-          });
+      const client = await initSupabase();
+      const redirectUrl = getRedirectUrl();
+      console.log("[Google Login] Starting OAuth flow with redirect:", redirectUrl);
+      
+      const { data, error } = await client.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
+
+      if (error) {
+        throw error;
+      }
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (error: any) {
-      console.error("[Google Login] Main error:", error);
+      console.error("[Google Login] OAuth error:", error);
       setGoogleLoading(false);
       toast({
         title: "Erro no login com Google",
-        description: error.message || "Não foi possível entrar com Google",
+        description: error.message || "Não foi possível iniciar o login com Google",
         variant: "destructive",
       });
     }

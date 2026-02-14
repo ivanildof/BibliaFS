@@ -423,66 +423,32 @@ export default function Register() {
                         type="button"
                         className="w-full h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-3 border-border/50 bg-card transition-all shadow-sm hover:bg-muted/50"
                         onClick={async () => {
-                          const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
-                          const google = (window as any).google;
-                          if (!clientId) {
-                            toast({ title: "Erro", description: "Google Client ID não configurado", variant: "destructive" });
-                            return;
-                          }
-                          
-                          if (!google?.accounts?.id) {
-                            // Fallback para OAuth tradicional
+                          try {
                             const client = await initSupabase();
                             const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
-                            await client.auth.signInWithOAuth({ 
-                              provider: 'google', 
-                              options: { redirectTo: redirectUrl } 
+                            console.log("[Register Google] Starting OAuth flow with redirect:", redirectUrl);
+                            
+                            const { data, error } = await client.auth.signInWithOAuth({
+                              provider: 'google',
+                              options: {
+                                redirectTo: redirectUrl,
+                                queryParams: {
+                                  access_type: 'offline',
+                                  prompt: 'consent',
+                                },
+                              }
                             });
-                            return;
+
+                            if (error) throw error;
+                            if (data?.url) window.location.href = data.url;
+                          } catch (err: any) {
+                            console.error("[Register Google] OAuth error:", err);
+                            toast({
+                              title: "Erro no cadastro com Google",
+                              description: err.message || "Não foi possível iniciar o cadastro com Google",
+                              variant: "destructive",
+                            });
                           }
-                          
-                          google.accounts.id.initialize({
-                            client_id: clientId,
-                            callback: async (response: any) => {
-                              if (!response.credential) return;
-                              try {
-                                const client = await initSupabase();
-                                const { error } = await client.auth.signInWithIdToken({
-                                  provider: 'google',
-                                  token: response.credential,
-                                });
-                                if (error) {
-                                  console.error("[Register Google] signInWithIdToken error:", error);
-                                  const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
-                                  await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
-                                  return;
-                                }
-                                await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-                                window.location.href = "/";
-                              } catch (err) {
-                                console.error("[Register Google] Error:", err);
-                              }
-                            },
-                            auto_select: false,
-                            cancel_on_tap_outside: true,
-                          });
-                          google.accounts.id.prompt((notification: any) => {
-                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                              const parentId = "google-register-container";
-                              let parent = document.getElementById(parentId);
-                              if (!parent) {
-                                parent = document.createElement('div');
-                                parent.id = parentId;
-                                parent.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:white;padding:24px;border-radius:12px;box-shadow:0 25px 50px rgba(0,0,0,0.3)';
-                                const overlay = document.createElement('div');
-                                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99998';
-                                overlay.onclick = () => { overlay.remove(); parent?.remove(); };
-                                document.body.appendChild(overlay);
-                                document.body.appendChild(parent);
-                              }
-                              google.accounts.id.renderButton(parent, { theme: 'outline', size: 'large', text: 'signup_with', width: 300 });
-                            }
-                          });
                         }}
                         data-testid="button-register-google"
                       >
