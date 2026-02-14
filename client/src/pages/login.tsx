@@ -113,50 +113,33 @@ export default function Login() {
       }
 
       const google = (window as any).google;
-      if (!google?.accounts?.oauth2) {
+      if (!google?.accounts?.id) {
         throw new Error("Google Identity Services não carregado");
       }
 
-      const tokenClient = google.accounts.oauth2.initTokenClient({
+      google.accounts.id.initialize({
         client_id: clientId,
-        scope: 'openid email profile',
         callback: async (response: any) => {
-          if (response.error) {
+          if (!response.credential) {
             setGoogleLoading(false);
             toast({
               title: "Erro no login com Google",
-              description: response.error_description || "Não foi possível entrar com Google",
+              description: "Não foi possível obter credenciais do Google",
               variant: "destructive",
             });
             return;
           }
 
           try {
-            const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-              headers: { Authorization: `Bearer ${response.access_token}` },
-            });
-            const userInfo = await userInfoRes.json();
-
-            const idTokenRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${response.access_token}`);
-            const tokenInfo = await idTokenRes.json();
-
             const client = await initSupabase();
             const { data, error } = await client.auth.signInWithIdToken({
               provider: 'google',
-              token: response.access_token,
-              access_token: response.access_token,
+              token: response.credential,
             });
 
             if (error) {
-              const { data: oauthData, error: oauthError } = await client.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                  redirectTo: getRedirectUrl(),
-                  skipBrowserRedirect: false,
-                }
-              });
-              if (oauthError) throw oauthError;
-              return;
+              console.error("[Google Login] signInWithIdToken error:", error);
+              throw new Error(error.message);
             }
 
             await new Promise(resolve => setTimeout(resolve, 500));
@@ -171,18 +154,58 @@ export default function Login() {
             window.location.href = "/";
           } catch (err: any) {
             console.error("[Google Login] Error:", err);
+            setGoogleLoading(false);
             toast({
               title: "Erro no login com Google",
               description: err.message || "Não foi possível entrar com Google",
               variant: "destructive",
             });
-          } finally {
-            setGoogleLoading(false);
           }
         },
+        auto_select: false,
+        cancel_on_tap_outside: true,
       });
 
-      tokenClient.requestAccessToken({ prompt: 'select_account' });
+      google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          setGoogleLoading(false);
+          google.accounts.id.renderButton(
+            document.createElement('div'),
+            { theme: 'outline', size: 'large' }
+          );
+          const parent = document.createElement('div');
+          parent.style.position = 'fixed';
+          parent.style.top = '50%';
+          parent.style.left = '50%';
+          parent.style.transform = 'translate(-50%, -50%)';
+          parent.style.zIndex = '99999';
+          parent.style.background = 'white';
+          parent.style.padding = '24px';
+          parent.style.borderRadius = '12px';
+          parent.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+          
+          const overlay = document.createElement('div');
+          overlay.style.position = 'fixed';
+          overlay.style.inset = '0';
+          overlay.style.background = 'rgba(0,0,0,0.5)';
+          overlay.style.zIndex = '99998';
+          overlay.onclick = () => {
+            overlay.remove();
+            parent.remove();
+            setGoogleLoading(false);
+          };
+          
+          document.body.appendChild(overlay);
+          document.body.appendChild(parent);
+          
+          google.accounts.id.renderButton(parent, {
+            theme: 'outline',
+            size: 'large',
+            text: 'signin_with',
+            width: 300,
+          });
+        }
+      });
     } catch (error: any) {
       setGoogleLoading(false);
       toast({

@@ -425,25 +425,24 @@ export default function Register() {
                         onClick={async () => {
                           const clientId = GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID;
                           const google = (window as any).google;
-                          if (!clientId || !google?.accounts?.oauth2) {
+                          if (!clientId || !google?.accounts?.id) {
                             const client = await initSupabase();
                             const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
                             await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
                             return;
                           }
-                          const tokenClient = google.accounts.oauth2.initTokenClient({
+                          google.accounts.id.initialize({
                             client_id: clientId,
-                            scope: 'openid email profile',
                             callback: async (response: any) => {
-                              if (response.error) return;
+                              if (!response.credential) return;
                               try {
                                 const client = await initSupabase();
                                 const { error } = await client.auth.signInWithIdToken({
                                   provider: 'google',
-                                  token: response.access_token,
-                                  access_token: response.access_token,
+                                  token: response.credential,
                                 });
                                 if (error) {
+                                  console.error("[Register Google] signInWithIdToken error:", error);
                                   const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
                                   await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
                                   return;
@@ -454,8 +453,21 @@ export default function Register() {
                                 console.error("[Register Google] Error:", err);
                               }
                             },
+                            auto_select: false,
+                            cancel_on_tap_outside: true,
                           });
-                          tokenClient.requestAccessToken({ prompt: 'select_account' });
+                          google.accounts.id.prompt((notification: any) => {
+                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                              const parent = document.createElement('div');
+                              parent.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:white;padding:24px;border-radius:12px;box-shadow:0 25px 50px rgba(0,0,0,0.3)';
+                              const overlay = document.createElement('div');
+                              overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99998';
+                              overlay.onclick = () => { overlay.remove(); parent.remove(); };
+                              document.body.appendChild(overlay);
+                              document.body.appendChild(parent);
+                              google.accounts.id.renderButton(parent, { theme: 'outline', size: 'large', text: 'signup_with', width: 300 });
+                            }
+                          });
                         }}
                         data-testid="button-register-google"
                       >
