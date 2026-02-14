@@ -145,6 +145,8 @@ export default function Login() {
     loginMutation.mutate(data);
   };
 
+  if (isLoading) return null;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -295,7 +297,6 @@ export default function Login() {
                     Acessar com Google
                   </Button>
                 </div>
-
 
                 <div className="pt-2">
                   <Link href="/" className="w-full">

@@ -229,6 +229,8 @@ export default function Register() {
     registerMutation.mutate(data);
   };
 
+  if (isLoading) return null;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -456,7 +458,6 @@ export default function Register() {
                         Criar conta com Google
                       </Button>
                     </div>
-
 
                     <Link href="/" className="w-full block">
                       <Button
