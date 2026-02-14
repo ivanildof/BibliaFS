@@ -30,18 +30,18 @@ import { motion } from "framer-motion";
 export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false);
 
   // Redirect to home if user is already authenticated when page loads
   // This handles the case where user navigates to /login but is already logged in
   useEffect(() => {
-    if (!isLoading && isAuthenticated && !hasAttemptedLogin) {
+    if (!authLoading && isAuthenticated && !hasAttemptedLogin) {
       // Small delay to ensure state is synchronized
       const timer = setTimeout(() => setLocation("/"), 100);
       return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, isLoading, setLocation, hasAttemptedLogin]);
+  }, [isAuthenticated, authLoading, setLocation, hasAttemptedLogin]);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormData>({
@@ -145,7 +145,7 @@ export default function Login() {
     loginMutation.mutate(data);
   };
 
-  if (isLoading) return null;
+  if (authLoading) return null;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">

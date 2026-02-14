@@ -38,6 +38,7 @@ type Step = "register" | "verify" | "success";
 export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { isLoading: authLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState<Step>("register");
@@ -229,7 +230,7 @@ export default function Register() {
     registerMutation.mutate(data);
   };
 
-  if (isLoading) return null;
+  if (authLoading) return null;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
