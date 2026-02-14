@@ -232,6 +232,14 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
+  if (process.env.NODE_ENV !== 'production') {
+    app.get('/sw.js', (req, res) => {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Content-Type', 'application/javascript');
+      res.send('self.addEventListener("install",()=>{self.skipWaiting()});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(n=>Promise.all(n.map(k=>caches.delete(k)))).then(()=>self.registration.unregister()))});');
+    });
+  }
+
   // Android App Links verification - serves assetlinks.json for Deep Links
   app.get("/.well-known/assetlinks.json", (req, res) => {
     const assetLinks = [
