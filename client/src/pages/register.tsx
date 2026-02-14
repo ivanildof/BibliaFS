@@ -12,10 +12,11 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { initSupabase } from "@/lib/supabase";
 import { apiFetch, isNative } from "@/lib/config";
-import { APP_URL, GOOGLE_CLIENT_ID } from "@/lib/env-config";
+import { APP_URL } from "@/lib/env-config";
 import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, Mail, RefreshCw } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 import logoImage from "../assets/logo-new.png";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -425,33 +426,10 @@ export default function Register() {
                         variant="outline"
                         type="button"
                         className="w-full h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-3 border-border/50 bg-card transition-all shadow-sm hover:bg-muted/50"
-                        onClick={async () => {
-                          try {
-                            const client = await initSupabase();
-                            const redirectUrl = isNative ? "bibliafs://login-callback" : `${APP_URL || window.location.origin}/`;
-                            console.log("[Register Google] Starting OAuth flow with redirect:", redirectUrl);
-                            
-                            const { data, error } = await client.auth.signInWithOAuth({
-                              provider: 'google',
-                              options: {
-                                redirectTo: redirectUrl,
-                                queryParams: {
-                                  access_type: 'offline',
-                                  prompt: 'consent',
-                                },
-                              }
-                            });
-
-                            if (error) throw error;
-                            if (data?.url) window.location.href = data.url;
-                          } catch (err: any) {
-                            console.error("[Register Google] OAuth error:", err);
-                            toast({
-                              title: "Erro no cadastro com Google",
-                              description: err.message || "Não foi possível iniciar o cadastro com Google",
-                              variant: "destructive",
-                            });
-                          }
+                        onClick={() => {
+                          console.log("[Register Google] Redirecting to backend OAuth flow");
+                          const baseUrl = APP_URL || window.location.origin;
+                          window.location.href = `${baseUrl}/api/auth/google`;
                         }}
                         data-testid="button-register-google"
                       >

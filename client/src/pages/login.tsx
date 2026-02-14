@@ -12,8 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { initSupabase } from "@/lib/supabase";
 import { isNative } from "@/lib/config";
-import { APP_URL, GOOGLE_CLIENT_ID } from "@/lib/env-config";
-import { Book, Eye, EyeOff, Loader2 } from "lucide-react";
+import { APP_URL } from "@/lib/env-config";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -96,48 +96,37 @@ export default function Login() {
     },
   });
 
-  const getRedirectUrl = () => {
-    if (isNative) return "bibliafs://login-callback";
-    const appUrl = APP_URL || window.location.origin;
-    return `${appUrl}/`;
-  };
-
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    try {
-      const client = await initSupabase();
-      const redirectUrl = getRedirectUrl();
-      console.log("[Google Login] Starting OAuth flow with redirect:", redirectUrl);
-      
-      const { data, error } = await client.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-      
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error: any) {
-      console.error("[Google Login] OAuth error:", error);
-      setGoogleLoading(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+    if (error) {
+      const errorMessages: Record<string, string> = {
+        google_denied: "Login com Google foi cancelado.",
+        google_init_failed: "Erro ao iniciar login com Google.",
+        token_exchange_failed: "Erro na autenticação com Google. Tente novamente.",
+        supabase_auth_failed: "Erro ao autenticar. Tente novamente.",
+        config_error: "Google OAuth não está configurado.",
+        supabase_config: "Configuração do servidor incompleta. Contate o suporte.",
+        no_code: "Resposta inválida do Google.",
+        invalid_state: "Sessão expirada. Tente novamente.",
+        unexpected: "Erro inesperado. Tente novamente.",
+      };
       toast({
         title: "Erro no login com Google",
-        description: error.message || "Não foi possível iniciar o login com Google",
+        description: errorMessages[error] || "Erro desconhecido no login.",
         variant: "destructive",
       });
+      window.history.replaceState({}, '', '/login');
     }
+  }, [toast]);
+
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
+    console.log("[Google Login] Redirecting to backend OAuth flow");
+    const baseUrl = APP_URL || window.location.origin;
+    window.location.href = `${baseUrl}/api/auth/google`;
   };
 
   const onSubmit = (data: LoginFormData) => {

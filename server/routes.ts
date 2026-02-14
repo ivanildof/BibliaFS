@@ -1,5 +1,6 @@
 // Authentication: Supabase Auth with JWT, AI with OpenAI, Payments with Stripe
 import express, { type Express } from "express";
+import cookieParser from "cookie-parser";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { isAuthenticated, supabaseAdmin } from "./supabaseAuth";
@@ -229,6 +230,8 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  app.use(cookieParser());
+
   // Android App Links verification - serves assetlinks.json for Deep Links
   app.get("/.well-known/assetlinks.json", (req, res) => {
     const assetLinks = [
@@ -402,6 +405,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     return token;
   }
+
+  // Google OAuth - Custom flow through backend (shows bibliafs.com.br on Google consent screen)
+  const GOOGLE_CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID;
+  const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+  const GOOGLE_OAUTH_APP_URL = process.env.VITE_APP_URL || 'https://bibliafs.com.br';
+
+  const crypto = await import("crypto");
+  const pendingOAuthStates = new Map<string, { createdAt: number }>();
+
+  setInterval(() => {
+    const now = Date.now();
+    for (const [state, data] of pendingOAuthStates) {
+      if (now - data.createdAt > 10 * 60 * 1000) {
+        pendingOAuthStates.delete(state);
+      }
+    }
+  }, 60 * 1000);
+
+  app.get('/api/auth/google', (req, res) => {
+    try {
+      if (!GOOGLE_CLIENT_ID) {
+        return res.status(500).json({ message: "Google OAuth not configured" });
+      }
+
+      const redirectUri = `${GOOGLE_OAUTH_APP_URL}/api/auth/google/callback`;
+      const state = crypto.randomBytes(32).toString('hex');
+
+      pendingOAuthStates.set(state, { createdAt: Date.now() });
+
+      res.cookie('oauth_state', state, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        maxAge: 10 * 60 * 1000,
+        path: '/api/auth/google',
+      });
+
+      const params = new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        scope: 'openid email profile',
+        access_type: 'offline',
+        prompt: 'consent',
+        state: state,
+      });
+
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+      console.log("[Google OAuth] Redirecting to Google with redirect_uri:", redirectUri);
+      res.redirect(googleAuthUrl);
+    } catch (error: any) {
+      console.error("[Google OAuth] Error initiating flow:", error);
+      res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=google_init_failed`);
+    }
+  });
+
+  app.get('/api/auth/google/callback', async (req, res) => {
+    try {
+      const { code, error: oauthError, state } = req.query;
+
+      if (oauthError) {
+        console.error("[Google OAuth Callback] Error from Google:", oauthError);
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=google_denied`);
+      }
+
+      const cookieState = req.cookies?.oauth_state;
+
+      if (!state || typeof state !== 'string' || !pendingOAuthStates.has(state)) {
+        console.error("[Google OAuth Callback] Invalid or missing state parameter - possible CSRF");
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=invalid_state`);
+      }
+
+      if (!cookieState || cookieState !== state) {
+        console.error("[Google OAuth Callback] State mismatch between cookie and query - possible CSRF");
+        pendingOAuthStates.delete(state);
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=invalid_state`);
+      }
+
+      pendingOAuthStates.delete(state);
+      res.clearCookie('oauth_state', { path: '/api/auth/google' });
+
+      if (!code || typeof code !== 'string') {
+        console.error("[Google OAuth Callback] No code received");
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=no_code`);
+      }
+
+      if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+        console.error("[Google OAuth Callback] Missing Google credentials");
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=config_error`);
+      }
+
+      const redirectUri = `${GOOGLE_OAUTH_APP_URL}/api/auth/google/callback`;
+
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code,
+          client_id: GOOGLE_CLIENT_ID,
+          client_secret: GOOGLE_CLIENT_SECRET,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+        }),
+      });
+
+      const tokenData = await tokenResponse.json();
+
+      if (!tokenResponse.ok || !tokenData.id_token) {
+        console.error("[Google OAuth Callback] Token exchange failed:", tokenData);
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=token_exchange_failed`);
+      }
+
+      console.log("[Google OAuth Callback] Token exchange successful, signing in with Supabase");
+
+      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.error("[Google OAuth Callback] Supabase not configured");
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=supabase_config`);
+      }
+
+      const { createClient } = await import("@supabase/supabase-js");
+      const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      });
+
+      const { data: authData, error: signInError } = await supabaseClient.auth.signInWithIdToken({
+        provider: 'google',
+        token: tokenData.id_token,
+        access_token: tokenData.access_token,
+      });
+
+      if (signInError || !authData.session) {
+        console.error("[Google OAuth Callback] Supabase signInWithIdToken error:", signInError?.message);
+        return res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=supabase_auth_failed`);
+      }
+
+      console.log("[Google OAuth Callback] Supabase auth successful, user:", authData.user?.email);
+
+      const accessToken = authData.session.access_token;
+      const refreshToken = authData.session.refresh_token;
+
+      const redirectUrl = `${GOOGLE_OAUTH_APP_URL}/auth/callback#access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&token_type=bearer&type=signup`;
+
+      res.redirect(redirectUrl);
+    } catch (error: any) {
+      console.error("[Google OAuth Callback] Unexpected error:", error.message);
+      res.redirect(`${GOOGLE_OAUTH_APP_URL}/login?error=unexpected`);
+    }
+  });
 
   // Forgot password - request reset link
   app.post('/api/auth/forgot-password', async (req, res) => {
