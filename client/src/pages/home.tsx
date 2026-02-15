@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -95,6 +96,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
+      <Helmet>
+        <title>Dashboard - BíbliaFS | Sua Jornada Espiritual</title>
+        <meta name="description" content="Acesse seu progresso de leitura, planos de estudo e ferramentas de IA teológica no BíbliaFS." />
+        <link rel="canonical" href="https://bibliafs.com.br/home" />
+      </Helmet>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />

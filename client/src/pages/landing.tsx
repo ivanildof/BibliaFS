@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -169,6 +170,25 @@ export default function Landing() {
   
   return (
     <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary selection:text-white mesh-primary">
+      <Helmet>
+        <title>BíbliaFS - Leia a Bíblia Online, Grátis e Completa em Português</title>
+        <meta name="description" content="BíbliaFS: Leia a Bíblia Sagrada online gratuitamente. Versões completa em português, busca por versículos, comparação de traduções e recursos exclusivos para seu estudo bíblico." />
+        <meta name="keywords" content="bíblia online, bíblia sagrada, ler bíblia, estudo bíblico, versículos" />
+        <link rel="canonical" href="https://bibliafs.com.br/" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "BibliaFS",
+            "url": "https://bibliafs.com.br/",
+            "description": "Plataforma online para leitura da Bíblia Sagrada",
+            "publisher": {
+              "@type": "Organization",
+              "name": "BibliaFS"
+            }
+          })}
+        </script>
+      </Helmet>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
@@ -312,7 +332,7 @@ export default function Landing() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-display text-6xl md:text-9xl font-black text-foreground mb-8 tracking-tighter leading-none"
           >
-            Sua Fé com <span className="bg-gradient-to-r from-primary via-purple-500 to-amber-500 bg-clip-text text-transparent">Poder Digital</span>
+            <h1>BíbliaFS - <span className="bg-gradient-to-r from-primary via-purple-500 to-amber-500 bg-clip-text text-transparent">Sua Bíblia Online Completa e Gratuita</span></h1>
           </motion.h1>
           
           <motion.p 

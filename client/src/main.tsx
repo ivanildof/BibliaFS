@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./index.css";
 
@@ -41,7 +42,11 @@ const rootElement = document.getElementById("root");
 
 if (rootElement) {
   try {
-    createRoot(rootElement).render(<App />);
+    createRoot(rootElement).render(
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
+    );
   } catch (error) {
     console.error("[BíbliaFS] Error rendering app:", error);
     rootElement.innerHTML = `
