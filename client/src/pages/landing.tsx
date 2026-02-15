@@ -332,7 +332,7 @@ export default function Landing() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-display text-6xl md:text-9xl font-black text-foreground mb-8 tracking-tighter leading-none"
           >
-            <h1>BíbliaFS - <span className="bg-gradient-to-r from-primary via-purple-500 to-amber-500 bg-clip-text text-transparent">Sua Bíblia Online Completa e Gratuita</span></h1>
+            BíbliaFS - <span className="bg-gradient-to-r from-primary via-purple-500 to-amber-500 bg-clip-text text-transparent">Sua Bíblia Online Completa e Gratuita</span>
           </motion.h1>
           
           <motion.p 
@@ -411,11 +411,11 @@ export default function Landing() {
           <div className="text-center mb-24">
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest">FUNCIONALIDADES</Badge>
             <h2 className="font-display text-5xl md:text-7xl font-black mb-6 tracking-tight">
-              Estudo Bíblico de <span className="bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent">Nova Geração</span>
+              Leia a Bíblia Sagrada em <span className="bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent">Diferentes Versões</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-              Ferramentas profissionais desenhadas para elevar sua conexão com a Palavra.
-            </p>
+            <h3 className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+              Escolha sua Tradução Preferida
+            </h3>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
