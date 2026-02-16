@@ -838,6 +838,7 @@ export default function Groups() {
   if (selectedGroup) {
     const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
     const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
+  // console.log("Group Role:", selectedGroup.role, "IsLeaderOrMod:", isLeaderOrMod);
     
     return (
       <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
@@ -982,11 +983,11 @@ export default function Groups() {
                     <MessageCircle className="h-3.5 w-3.5 mr-2" />
                     Chat
                   </TabsTrigger>
-                  <TabsTrigger value="calendar" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-calendar">
+                  <TabsTrigger value="calendar" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-calendar" onClick={() => setActiveTab("calendar")}>
                     <CalendarIcon className="h-3.5 w-3.5 mr-2" />
                     Agenda
                   </TabsTrigger>
-                  <TabsTrigger value="resources" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-resources">
+                  <TabsTrigger value="resources" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-resources" onClick={() => setActiveTab("resources")}>
                     <LinkIcon className="h-3.5 w-3.5 mr-2" />
                     Arquivos
                   </TabsTrigger>
