@@ -68,6 +68,12 @@ import {
   sharedLinks,
   type InsertSharedLink,
   type SharedLink,
+  groupMeetings,
+  type GroupMeeting,
+  type InsertGroupMeeting,
+  groupResources,
+  type GroupResource,
+  type InsertGroupResource,
 } from "@shared/schema";
 
 import { db } from "./db";
