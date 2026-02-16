@@ -37,7 +37,10 @@ import {
   FileText,
   ChevronRight,
   Settings,
-  MoreVertical
+  MoreVertical,
+  Calendar as CalendarIcon,
+  Link as LinkIcon,
+  Video
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -182,6 +185,31 @@ interface GroupAnswer {
   };
 }
 
+interface GroupMeeting {
+  id: string;
+  groupId: string;
+  title: string;
+  description?: string;
+  meetingDate: string;
+  location?: string;
+  isOnline: boolean;
+  meetingLink?: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+interface GroupResource {
+  id: string;
+  groupId: string;
+  title: string;
+  description?: string;
+  resourceType: string;
+  url?: string;
+  lessonId?: string;
+  createdBy: string;
+  createdAt: string;
+}
+
 
 export default function Groups() {
   const { user } = useAuth();
@@ -189,7 +217,7 @@ export default function Groups() {
   const { t } = useLanguage();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [activeTab, setActiveTab] = useState<"chat" | "members" | "invites" | "discussions">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "members" | "invites" | "discussions" | "calendar" | "resources">("chat");
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -297,6 +325,8 @@ export default function Groups() {
   const [isDiscussionDialogOpen, setIsDiscussionDialogOpen] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState<GroupDiscussion | null>(null);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
+  const [isResourceDialogOpen, setIsResourceDialogOpen] = useState(false);
 
   const { data: allGroups = [], isLoading: loadingAll } = useQuery<Group[]>({
     queryKey: ["/api/groups"],
@@ -327,6 +357,16 @@ export default function Groups() {
 
   const { data: groupDiscussions = [], isLoading: loadingDiscussions } = useQuery<GroupDiscussion[]>({
     queryKey: ["/api/groups", selectedGroup?.id, "discussions"],
+    enabled: !!selectedGroup,
+  });
+
+  const { data: groupMeetings = [] } = useQuery<GroupMeeting[]>({
+    queryKey: ["/api/groups", selectedGroup?.id, "meetings"],
+    enabled: !!selectedGroup,
+  });
+
+  const { data: groupResources = [] } = useQuery<GroupResource[]>({
+    queryKey: ["/api/groups", selectedGroup?.id, "resources"],
     enabled: !!selectedGroup,
   });
 
@@ -418,6 +458,52 @@ export default function Groups() {
       content: "",
       verseReference: "",
     },
+  });
+
+  const meetingForm = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      meetingDate: new Date().toISOString().slice(0, 16),
+      location: "",
+      isOnline: false,
+      meetingLink: "",
+    }
+  });
+
+  const resourceForm = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      resourceType: "link",
+      url: "",
+    }
+  });
+
+  const createMeetingMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("POST", `/api/groups/${selectedGroup?.id}/meetings`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
+      setIsMeetingDialogOpen(false);
+      meetingForm.reset();
+      toast({ title: "Reunião agendada!" });
+    }
+  });
+
+  const createResourceMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("POST", `/api/groups/${selectedGroup?.id}/resources`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "resources"] });
+      setIsResourceDialogOpen(false);
+      resourceForm.reset();
+      toast({ title: "Recurso adicionado!" });
+    }
   });
 
   const createMutation = useMutation({
@@ -891,10 +977,22 @@ export default function Groups() {
 
             <CardContent>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="w-full justify-start mb-8 p-1 bg-muted/50 rounded-2xl gap-1">
+                <TabsList className="w-full justify-start mb-8 p-1 bg-muted/50 rounded-2xl gap-1 overflow-x-auto h-auto">
                   <TabsTrigger value="chat" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-chat">
                     <MessageCircle className="h-3.5 w-3.5 mr-2" />
                     Chat
+                  </TabsTrigger>
+                  <TabsTrigger value="calendar" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-calendar">
+                    <CalendarIcon className="h-3.5 w-3.5 mr-2" />
+                    Agenda
+                  </TabsTrigger>
+                  <TabsTrigger value="resources" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-resources">
+                    <LinkIcon className="h-3.5 w-3.5 mr-2" />
+                    Arquivos
+                  </TabsTrigger>
+                  <TabsTrigger value="discussions" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-discussions">
+                    <GraduationCap className="h-3.5 w-3.5 mr-2" />
+                    Estudos ({groupDiscussions.length})
                   </TabsTrigger>
                   <TabsTrigger value="members" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-members">
                     <Users className="h-3.5 w-3.5 mr-2" />
@@ -906,11 +1004,100 @@ export default function Groups() {
                       Convites
                     </TabsTrigger>
                   )}
-                  <TabsTrigger value="discussions" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-discussions">
-                    <GraduationCap className="h-3.5 w-3.5 mr-2" />
-                    Estudos ({groupDiscussions.length})
-                  </TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="calendar" className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-bold">Próximas Reuniões</h3>
+                    {isLeaderOrMod && (
+                      <Button onClick={() => setIsMeetingDialogOpen(true)} size="sm" className="rounded-xl">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Agendar
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid gap-4">
+                    {groupMeetings.length === 0 ? (
+                      <div className="text-center py-12 border-2 border-dashed rounded-2xl">
+                        <CalendarIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+                        <p className="text-muted-foreground">Nenhuma reunião agendada</p>
+                      </div>
+                    ) : (
+                      groupMeetings.map((meeting) => (
+                        <Card key={meeting.id} className="hover-elevate">
+                          <CardContent className="p-4">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-bold">{meeting.title}</h4>
+                                <p className="text-sm text-muted-foreground">{meeting.description}</p>
+                                <div className="flex gap-4 mt-2 text-xs font-medium text-primary">
+                                  <span className="flex items-center gap-1">
+                                    <CalendarIcon className="h-3 w-3" />
+                                    {new Date(meeting.meetingDate).toLocaleDateString()}
+                                  </span>
+                                  {meeting.location && (
+                                    <span className="flex items-center gap-1">
+                                      <Globe className="h-3 w-3" />
+                                      {meeting.location}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              {meeting.isOnline && meeting.meetingLink && (
+                                <Button asChild size="sm" variant="outline" className="rounded-xl">
+                                  <a href={meeting.meetingLink} target="_blank" rel="noopener noreferrer">
+                                    <Video className="h-4 w-4 mr-2" />
+                                    Entrar
+                                  </a>
+                                </Button>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="resources" className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-bold">Materiais e Links</h3>
+                    {isLeaderOrMod && (
+                      <Button onClick={() => setIsResourceDialogOpen(true)} size="sm" className="rounded-xl">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {groupResources.length === 0 ? (
+                      <div className="col-span-full text-center py-12 border-2 border-dashed rounded-2xl">
+                        <LinkIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+                        <p className="text-muted-foreground">Nenhum recurso disponível</p>
+                      </div>
+                    ) : (
+                      groupResources.map((resource) => (
+                        <Card key={resource.id} className="hover-elevate">
+                          <CardContent className="p-4">
+                            <Badge variant="secondary" className="mb-2">
+                              {resource.resourceType === 'link' ? 'Link' : 'Arquivo'}
+                            </Badge>
+                            <h4 className="font-bold text-sm">{resource.title}</h4>
+                            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{resource.description}</p>
+                            {resource.url && (
+                              <Button asChild size="sm" variant="ghost" className="w-full mt-3 rounded-xl border border-primary/10">
+                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                                  <Globe className="h-3.5 w-3.5 mr-2" />
+                                  Acessar
+                                </a>
+                              </Button>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </TabsContent>
 
                 <TabsContent value="chat" className="space-y-4">
                   <ScrollArea className="h-[400px] border rounded-lg p-4">
@@ -2177,6 +2364,76 @@ export default function Groups() {
             <Button variant="destructive" onClick={() => gridDeleteMutation.mutate()} disabled={gridDeleteMutation.isPending} data-testid="button-grid-confirm-delete" className="rounded-xl h-12 flex-1 order-1 sm:order-2 font-bold">
               {gridDeleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Confirmar Exclusão
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Modal Nova Reunião */}
+      <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Agendar Reunião</DialogTitle>
+            <DialogDescription>Defina os detalhes do próximo encontro do grupo.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Título</label>
+              <Input {...meetingForm.register("title")} placeholder="Ex: Estudo de Romanos" className="rounded-xl" />
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Data e Hora</label>
+              <Input {...meetingForm.register("meetingDate")} type="datetime-local" className="rounded-xl" />
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Local/Plataforma</label>
+              <Input {...meetingForm.register("location")} placeholder="Ex: Casa do João ou Google Meet" className="rounded-xl" />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch 
+                checked={meetingForm.watch("isOnline")} 
+                onCheckedChange={(checked) => meetingForm.setValue("isOnline", checked)} 
+              />
+              <label className="text-sm font-medium">É Online?</label>
+            </div>
+            {meetingForm.watch("isOnline") && (
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Link da Reunião</label>
+                <Input {...meetingForm.register("meetingLink")} placeholder="https://..." className="rounded-xl" />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button onClick={meetingForm.handleSubmit((data) => createMeetingMutation.mutate(data))} className="rounded-xl w-full">
+              {createMeetingMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Agendar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Novo Recurso */}
+      <Dialog open={isResourceDialogOpen} onOpenChange={setIsResourceDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Adicionar Recurso</DialogTitle>
+            <DialogDescription>Compartilhe materiais úteis com o grupo.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Título</label>
+              <Input {...resourceForm.register("title")} placeholder="Ex: PDF do Estudo" className="rounded-xl" />
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Descrição</label>
+              <Textarea {...resourceForm.register("description")} placeholder="Do que se trata este material?" className="rounded-xl" />
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">URL / Link</label>
+              <Input {...resourceForm.register("url")} placeholder="https://..." className="rounded-xl" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={resourceForm.handleSubmit((data) => createResourceMutation.mutate(data))} className="rounded-xl w-full">
+              {createResourceMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Adicionar"}
             </Button>
           </DialogFooter>
         </DialogContent>
