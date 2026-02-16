@@ -469,6 +469,42 @@ export const postReactions = pgTable("post_reactions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Group Meetings (Schedule/Calendar)
+export const groupMeetings = pgTable("group_meetings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  groupId: varchar("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  meetingDate: timestamp("meeting_date").notNull(),
+  location: text("location"), // Physical address or online link
+  isOnline: boolean("is_online").default(false),
+  meetingLink: text("meeting_link"),
+  createdBy: varchar("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Group Resources (Repository/Files)
+export const groupResources = pgTable("group_resources", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  groupId: varchar("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  resourceType: varchar("resource_type", { length: 50 }).default("link"), // link, file, lesson_ref
+  url: text("url"),
+  lessonId: varchar("lesson_id").references(() => lessons.id, { onDelete: "set null" }),
+  tags: text("tags").array(),
+  createdBy: varchar("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Zod schemas for new tables
+export const insertGroupMeetingSchema = createInsertSchema(groupMeetings).omit({ id: true, createdAt: true, updatedAt: true });
+export type GroupMeeting = typeof groupMeetings.$inferSelect;
+
+export const insertGroupResourceSchema = createInsertSchema(groupResources).omit({ id: true, createdAt: true, });
+export type GroupResource = typeof groupResources.$inferSelect;
+
 // ============================================
 // 5. GAMIFICATION
 // ============================================

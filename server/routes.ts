@@ -25,6 +25,8 @@ import {
   insertDonationSchema,
   insertSharedLinkSchema,
   insertFeedbackSchema,
+  insertGroupMeetingSchema,
+  insertGroupResourceSchema,
 } from "@shared/schema";
 import nodemailer from "nodemailer";
 import { readingPlanTemplates } from "./seed-reading-plans";
@@ -392,6 +394,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[Activity] Error:", error);
       res.status(500).json({ error: "Erro ao buscar atividades" });
+    }
+  });
+
+  // --- Group Meetings & Resources ---
+
+  app.get("/api/groups/:groupId/meetings", isAuthenticated, async (req, res) => {
+    try {
+      const meetings = await storage.getGroupMeetings(req.params.groupId);
+      res.json(meetings);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao buscar reuniões" });
+    }
+  });
+
+  app.post("/api/groups/:groupId/meetings", isAuthenticated, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      const result = insertGroupMeetingSchema.safeParse({
+        ...req.body,
+        groupId: req.params.groupId,
+        createdBy: user.id,
+        meetingDate: req.body.meetingDate ? new Date(req.body.meetingDate) : new Date(),
+      });
+      if (!result.success) {
+        return res.status(400).json({ error: result.error });
+      }
+      const meeting = await storage.createGroupMeeting(result.data);
+      res.json(meeting);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao criar reunião" });
+    }
+  });
+
+  app.get("/api/groups/:groupId/resources", isAuthenticated, async (req, res) => {
+    try {
+      const resources = await storage.getGroupResources(req.params.groupId);
+      res.json(resources);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao buscar recursos" });
+    }
+  });
+
+  app.post("/api/groups/:groupId/resources", isAuthenticated, async (req, res) => {
+    try {
+      const user = (req as any).user;
+      const result = insertGroupResourceSchema.safeParse({
+        ...req.body,
+        groupId: req.params.groupId,
+        createdBy: user.id,
+      });
+      if (!result.success) {
+        return res.status(400).json({ error: result.error });
+      }
+      const resource = await storage.createGroupResource(result.data);
+      res.json(resource);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao criar recurso" });
     }
   });
   

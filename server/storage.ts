@@ -199,6 +199,16 @@ export interface IStorage {
   createSharedLink(link: InsertSharedLink): Promise<SharedLink>;
   // Feedback
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
+
+  // Group Meetings
+  getGroupMeetings(groupId: string): Promise<GroupMeeting[]>;
+  createGroupMeeting(meeting: InsertGroupMeeting): Promise<GroupMeeting>;
+  deleteGroupMeeting(id: string, userId: string): Promise<boolean>;
+
+  // Group Resources
+  getGroupResources(groupId: string): Promise<GroupResource[]>;
+  createGroupResource(resource: InsertGroupResource): Promise<GroupResource>;
+  deleteGroupResource(id: string, userId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1852,6 +1862,36 @@ export class DatabaseStorage implements IStorage {
   async createFeedback(feedbackData: InsertFeedback): Promise<Feedback> {
     const [created] = await db.insert(feedback).values(feedbackData).returning();
     return created;
+  }
+
+  // Group Meetings
+  async getGroupMeetings(groupId: string): Promise<GroupMeeting[]> {
+    return await db.select().from(groupMeetings).where(eq(groupMeetings.groupId, groupId)).orderBy(desc(groupMeetings.meetingDate));
+  }
+
+  async createGroupMeeting(meetingData: any): Promise<GroupMeeting> {
+    const [result] = await db.insert(groupMeetings).values(meetingData).returning();
+    return result;
+  }
+
+  async deleteGroupMeeting(id: string, userId: string): Promise<boolean> {
+    const result = await db.delete(groupMeetings).where(eq(groupMeetings.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // Group Resources
+  async getGroupResources(groupId: string): Promise<GroupResource[]> {
+    return await db.select().from(groupResources).where(eq(groupResources.groupId, groupId)).orderBy(desc(groupResources.createdAt));
+  }
+
+  async createGroupResource(resourceData: any): Promise<GroupResource> {
+    const [result] = await db.insert(groupResources).values(resourceData).returning();
+    return result;
+  }
+
+  async deleteGroupResource(id: string, userId: string): Promise<boolean> {
+    const result = await db.delete(groupResources).where(eq(groupResources.id, id)).returning();
+    return result.length > 0;
   }
 }
 
