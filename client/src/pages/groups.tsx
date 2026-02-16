@@ -1009,12 +1009,10 @@ export default function Groups() {
                 <TabsContent value="calendar" className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-bold">Próximas Reuniões</h3>
-                    {isLeaderOrMod && (
-                      <Button onClick={() => setIsMeetingDialogOpen(true)} size="sm" className="rounded-xl">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Agendar
-                      </Button>
-                    )}
+                    <Button onClick={() => setIsMeetingDialogOpen(true)} size="sm" className="rounded-xl">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Agendar
+                    </Button>
                   </div>
                   <div className="grid gap-4">
                     {groupMeetings.length === 0 ? (
@@ -1062,12 +1060,10 @@ export default function Groups() {
                 <TabsContent value="resources" className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-bold">Materiais e Links</h3>
-                    {isLeaderOrMod && (
-                      <Button onClick={() => setIsResourceDialogOpen(true)} size="sm" className="rounded-xl">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Adicionar
-                      </Button>
-                    )}
+                    <Button onClick={() => setIsResourceDialogOpen(true)} size="sm" className="rounded-xl">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar
+                    </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {groupResources.length === 0 ? (
