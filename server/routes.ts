@@ -424,11 +424,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   setInterval(() => {
     const now = Date.now();
-    for (const [state, data] of pendingOAuthStates) {
+    Array.from(pendingOAuthStates.entries()).forEach(([state, data]) => {
       if (now - data.createdAt > 10 * 60 * 1000) {
         pendingOAuthStates.delete(state);
       }
-    }
+    });
   }, 60 * 1000);
 
   app.get('/api/auth/google/debug', (req, res) => {
