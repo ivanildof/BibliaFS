@@ -1727,11 +1727,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Calcular quantidade de conteúdo baseado em duração
-      const numObjectives = duration <= 30 ? 2 : duration <= 60 ? 4 : 6;
-      const numContentBlocks = duration <= 30 ? 3 : duration <= 60 ? 5 : 7;
-      const numQuestions = duration <= 30 ? 2 : duration <= 60 ? 5 : 8;
+      const numObjectives = duration <= 30 ? 3 : duration <= 60 ? 5 : 8;
+      const numContentBlocks = duration <= 30 ? 4 : duration <= 60 ? 8 : 12;
+      const numQuestions = duration <= 30 ? 5 : duration <= 60 ? 15 : 20;
 
-      const prompt = `Você é um assistente especializado em educação bíblica. Gere conteúdo COMPLETO para uma aula bíblica de ${duration} minutos.
+      const prompt = `Você é um assistente especializado em educação bíblica premium. Sua tarefa é gerar conteúdo EXTREMAMENTE DETALHADO, PROFUNDO e EXTENSO para uma aula bíblica de ${duration} minutos.
+
+ATENÇÃO: O usuário reclamou que as descrições e conteúdos estão muito curtos. Você DEVE escrever textos longos, substantivos e teologicamente ricos.
 
 ATENÇÃO - ABREVIAÇÕES BÍBLICAS IMPORTANTES:
 - "Jo" ou "Jó" = Livro de JÓ (Job) - Antigo Testamento, sobre sofrimento e fé
@@ -1750,40 +1752,35 @@ Título da Aula: ${title}
 Texto-Base: ${scriptureBase}
 Duração: ${duration} minutos
 
-ESTRUTURA DA AULA:
-1. Descrição concisa (o que é a aula)
-2. ${numObjectives} Objetivos de aprendizado
-3. ${numContentBlocks} BLOCOS DE CONTEÚDO PRINCIPAL (com 2-3 pontos cada, com versículos bíblicos)
-4. ${numQuestions} PERGUNTAS PARA DISCUSSÃO com RESPOSTAS/GABARITO (para o FINAL da aula)
+ESTRUTURA DA AULA (SEJA EXTENSO):
+1. Descrição Detalhada: Um texto de 2 a 3 parágrafos robustos explicando a importância teológica e o propósito da aula.
+2. ${numObjectives} Objetivos de aprendizado claros e pedagógicos.
+3. ${numContentBlocks} BLOCOS DE CONTEÚDO PRINCIPAL: Cada bloco deve ter um título e um texto de 3 a 4 parágrafos substanciais, com análise exegética, referências bíblicas (ex: João 3:16) e aplicações práticas profundas. Não use bullet points curtos, use prosa rica.
+4. ${numQuestions} PERGUNTAS PARA DISCUSSÃO com RESPOSTAS DETALHADAS: Cada resposta deve ter pelo menos 3 frases explicando a fundamentação bíblica.
 
 Responda em JSON com a seguinte estrutura:
 {
-  "description": "Uma descrição concisa da aula (2-3 frases)",
+  "description": "Texto longo e detalhado da descrição...",
   "objectives": ["Objetivo 1", "Objetivo 2", ...],
   "contentBlocks": [
     {
-      "title": "Título do bloco de conteúdo",
-      "content": "2-3 parágrafos explicativos com versículos bíblicos (ex: João 3:16) e aplicações práticas"
-    },
-    {
-      "title": "Segundo bloco",
-      "content": "Conteúdo detalhado..."
+      "title": "Título do bloco 1",
+      "content": "Texto longo e profundo do bloco 1..."
     },
     ...
   ],
   "questions": [
-    {"question": "Pergunta de reflexão para o final", "answer": "Resposta/gabarito (2-3 frases com fundamentação)"},
+    {"question": "Pergunta 1", "answer": "Resposta detalhada 1"},
     ...
   ]
 }
 
-REGRAS IMPORTANTES:
-- ${numContentBlocks} blocos de conteúdo é OBRIGATÓRIO
-- Cada bloco tem TÍTULO + CONTEÚDO substantivo (não genérico)
-- Use versículos bíblicos reais para fundamentar
-- Perguntas vêm no FINAL da aula para discussão
-- Para ${duration} minutos: tempo proporcionalmente distribuído
-- TODAS as respostas em português do Brasil`;
+REGRAS OBRIGATÓRIAS:
+- Escreva MUITO conteúdo. Para uma aula de ${duration} minutos, o professor precisa de muito material de leitura.
+- ${numContentBlocks} blocos de conteúdo é o MÍNIMO absoluto.
+- ${numQuestions} perguntas e respostas é o MÍNIMO absoluto.
+- Use versículos bíblicos reais para fundamentar cada ponto.
+- TODAS as respostas em português do Brasil.`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const response = await openaiInstance.chat.completions.create({
