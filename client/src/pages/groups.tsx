@@ -838,7 +838,6 @@ export default function Groups() {
   if (selectedGroup) {
     const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
     const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
-  // console.log("Group Role:", selectedGroup.role, "IsLeaderOrMod:", isLeaderOrMod);
     
     return (
       <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
