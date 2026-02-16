@@ -1875,7 +1875,7 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(groupMeetings).where(eq(groupMeetings.groupId, groupId)).orderBy(desc(groupMeetings.meetingDate));
   }
 
-  async createGroupMeeting(meetingData: any): Promise<GroupMeeting> {
+  async createGroupMeeting(meetingData: InsertGroupMeeting): Promise<GroupMeeting> {
     const [result] = await db.insert(groupMeetings).values(meetingData).returning();
     return result;
   }
@@ -1890,7 +1890,7 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(groupResources).where(eq(groupResources.groupId, groupId)).orderBy(desc(groupResources.createdAt));
   }
 
-  async createGroupResource(resourceData: any): Promise<GroupResource> {
+  async createGroupResource(resourceData: InsertGroupResource): Promise<GroupResource> {
     const [result] = await db.insert(groupResources).values(resourceData).returning();
     return result;
   }

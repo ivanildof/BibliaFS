@@ -501,9 +501,11 @@ export const groupResources = pgTable("group_resources", {
 // Zod schemas for new tables
 export const insertGroupMeetingSchema = createInsertSchema(groupMeetings).omit({ id: true, createdAt: true, updatedAt: true });
 export type GroupMeeting = typeof groupMeetings.$inferSelect;
+export type InsertGroupMeeting = z.infer<typeof insertGroupMeetingSchema>;
 
 export const insertGroupResourceSchema = createInsertSchema(groupResources).omit({ id: true, createdAt: true, });
 export type GroupResource = typeof groupResources.$inferSelect;
+export type InsertGroupResource = z.infer<typeof insertGroupResourceSchema>;
 
 // ============================================
 // 5. GAMIFICATION
