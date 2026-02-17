@@ -14,7 +14,6 @@ import {
   Heart,
   MessageCircle,
   Share2,
-  Sparkles,
   BookOpen,
   TrendingUp,
   Loader2
@@ -258,25 +257,22 @@ export default function Community() {
           </Dialog>
         </div>
 
-        {/* Stats Banner */}
-        <Card className="mb-8 glass-premium hover-premium border-none rounded-2xl ring-2 ring-primary/10">
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-3 gap-6 text-center">
-              <div>
-                <div className="text-3xl font-bold text-primary" data-testid="text-total-posts">{posts.length}</div>
-                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Publicações</p>
+        {posts.length > 0 && (
+          <Card className="mb-8 rounded-xl border">
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-2 gap-6 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-primary" data-testid="text-total-posts">{posts.length}</div>
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Publicações</p>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold" data-testid="text-total-members">{new Set(posts.map(p => p.userId)).size}</div>
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Participantes</p>
+                </div>
               </div>
-              <div>
-                <div className="text-3xl font-bold">127</div>
-                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Membros</p>
-              </div>
-              <div>
-                <div className="text-3xl font-bold">1.2k</div>
-                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Conexões</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Feed */}
         <div className="space-y-6">
@@ -298,31 +294,6 @@ export default function Community() {
             </Card>
           ) : (
             <>
-              {/* AI Suggestion Card */}
-              <Card className="glass-premium hover-premium border-none rounded-2xl ring-2 ring-slate-500/20">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="font-bold text-sm">Sugestão da IA</h3>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-xs text-muted-foreground mb-4 font-medium">
-                    Conecte-se com outros que estão estudando temas similares:
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border-2 border-background">
-                      <AvatarFallback className="bg-muted-foreground text-white font-bold">MS</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm truncate">Maria Silva</p>
-                      <p className="text-[10px] text-muted-foreground font-medium">Estudando Provérbios</p>
-                    </div>
-                    <Button size="sm" variant="outline" className="rounded-full px-4 h-8 text-xs font-bold">Conectar</Button>
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Posts */}
               {posts.map((post) => (
                 <Card key={post.id} className="border-0 glass rounded-2xl hover-elevate overflow-hidden" data-testid={`card-post-${post.id}`}>
@@ -414,30 +385,42 @@ export default function Community() {
           )}
         </div>
 
-        {/* Trending Topics */}
-        <Card className="mt-8">
-          <CardHeader>
-            <h3 className="font-semibold flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              {t.community.trending_topics}
-            </h3>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {["Fé e Obras", "Jejum Bíblico", "Perdão", "Oração Eficaz"].map((topic, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between gap-2 p-2 rounded hover-elevate cursor-pointer"
-                >
-                  <span className="text-sm">{topic}</span>
-                  <Badge variant="secondary">
-                    {Math.floor(Math.random() * 50) + 10} posts
-                  </Badge>
+        {posts.length > 0 && (() => {
+          const verseCounts: Record<string, number> = {};
+          posts.forEach(p => {
+            if (p.verseReference) {
+              const book = p.verseReference.split(/\s*\d/)[0].trim();
+              if (book) verseCounts[book] = (verseCounts[book] || 0) + 1;
+            }
+          });
+          const sortedBooks = Object.entries(verseCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+          if (sortedBooks.length === 0) return null;
+          return (
+            <Card className="mt-6 rounded-xl border">
+              <CardHeader>
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  Livros Mais Estudados
+                </h3>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-1">
+                  {sortedBooks.map(([book, count], index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between gap-2 p-2 rounded-lg hover-elevate"
+                    >
+                      <span className="text-sm">{book}</span>
+                      <Badge variant="secondary" className="text-[10px]">
+                        {count} {count === 1 ? 'post' : 'posts'}
+                      </Badge>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          );
+        })()}
       </div>
     </div>
   );
