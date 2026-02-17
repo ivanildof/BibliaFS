@@ -112,17 +112,17 @@ export default function Home() {
         animate="visible"
         className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8"
       >
-        <motion.div variants={itemVariants} className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
-            <Crown className="h-8 w-8 text-amber-500 fill-amber-500/30 drop-shadow-[0_0_12px_rgba(245,158,11,0.7)] animate-pulse" />
-            <div className="h-px w-12 bg-gradient-to-l from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(251,191,36,0.4)]" />
+        <motion.div variants={itemVariants} className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+            <Crown className="h-6 w-6 text-amber-500 fill-amber-500/30 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+            <div className="h-px w-10 bg-gradient-to-l from-transparent via-amber-400 to-transparent" />
           </div>
-          <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-[0.5em] drop-shadow-sm">RECONHECIMENTO DE USUÁRIO</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.4em]">BEM-VINDO</p>
+          <h1 className="font-display text-xl sm:text-2xl font-semibold bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent" data-testid="text-welcome">
             Olá, {user?.firstName || "Estudante"}
           </h1>
-          <p className="text-base text-muted-foreground font-medium">
+          <p className="text-sm text-muted-foreground font-medium">
             Sua jornada espiritual continua com força total hoje.
           </p>
         </motion.div>
@@ -141,28 +141,28 @@ export default function Home() {
 
         {currentPlan && (
           <motion.div variants={itemVariants}>
-            <Card className="relative glass-premium hover-premium border-none overflow-hidden rounded-[2rem] group hover:shadow-primary/20 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
+            <Card className="relative glass-premium hover-premium border-none overflow-hidden rounded-2xl group hover:shadow-primary/20 transition-all duration-500 ring-2 ring-primary/20 hover:ring-primary/40">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-primary to-indigo-600" />
-              <CardHeader className="pb-4 relative">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-primary to-indigo-700 shadow-xl shadow-primary/20">
-                      <Calendar className="h-6 w-6 text-white" />
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary to-indigo-600" />
+              <CardHeader className="pb-3 relative">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-indigo-700 shadow-lg shadow-primary/20">
+                      <Calendar className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl font-semibold tracking-tight">Leitura de Hoje</CardTitle>
-                      <CardDescription className="text-sm font-bold opacity-70 mt-0.5 uppercase tracking-wider">{currentPlan.title}</CardDescription>
+                      <CardTitle className="text-base font-semibold tracking-tight">Leitura de Hoje</CardTitle>
+                      <CardDescription className="text-xs font-bold opacity-70 mt-0.5 uppercase tracking-wider">{currentPlan.title}</CardDescription>
                     </div>
                   </div>
-                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-semibold px-6 py-2 rounded-full text-xs shadow-lg shadow-primary/20">
+                  <Badge className="bg-gradient-to-r from-primary to-indigo-600 text-white border-none font-semibold px-4 py-1 rounded-full text-xs shadow-md shadow-primary/20">
                     DIA {currentPlan.currentDay}
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-6 pt-2 relative">
-                <div className="bg-muted/30 p-6 rounded-2xl border border-white/5">
-                  <div className="flex items-center justify-between text-xs mb-3 font-semibold uppercase tracking-widest text-muted-foreground">
+              <CardContent className="space-y-4 pt-2 relative">
+                <div className="bg-muted/30 p-4 rounded-xl border border-white/5">
+                  <div className="flex items-center justify-between text-xs mb-2 font-semibold uppercase tracking-widest text-muted-foreground">
                     <span>PROGRESSO DO PLANO</span>
                     <span className="text-primary">
                       {Math.round(((currentPlan.currentDay || 1) / (currentPlan.schedule?.length || 1)) * 100)}%
@@ -178,11 +178,11 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <Button size="lg" className="w-full h-14 rounded-2xl font-semibold text-xs uppercase tracking-[0.2em] shadow-2xl  bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
+                <Button className="w-full h-10 rounded-xl font-semibold text-xs uppercase tracking-[0.2em] shadow-lg bg-gradient-to-r from-primary to-indigo-700 border-0" asChild data-testid="button-continue-reading">
                   <Link href="/bible">
-                    <BookOpen className="mr-3 h-5 w-5" />
+                    <BookOpen className="mr-2 h-4 w-4" />
                     CONTINUAR LEITURA
-                    <ChevronRight className="ml-3 h-5 w-5" />
+                    <ChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </CardContent>
@@ -198,11 +198,11 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
               <Link key={index} href={action.href}>
-                <Card className="cursor-pointer border-none glass-premium hover-premium transition-all duration-300 rounded-[2rem] overflow-visible group" data-testid={`card-quick-action-${index}`}>
-                  <CardContent className="p-6">
-                    <div className="flex flex-col items-center text-center space-y-4">
-                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${action.gradient} shadow-2xl ${action.shadow} transform group-hover:scale-110 transition-transform duration-300`}>
-                        <action.icon className="h-6 w-6 text-white" />
+                <Card className="cursor-pointer border-none glass-premium hover-premium transition-all duration-300 rounded-2xl overflow-visible group" data-testid={`card-quick-action-${index}`}>
+                  <CardContent className="p-4">
+                    <div className="flex flex-col items-center text-center space-y-3">
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${action.gradient} shadow-lg ${action.shadow} transform group-hover:scale-105 transition-transform duration-300`}>
+                        <action.icon className="h-5 w-5 text-white" />
                       </div>
                       <p className="font-semibold text-xs text-foreground uppercase tracking-widest">{action.label}</p>
                     </div>
@@ -216,20 +216,20 @@ export default function Home() {
         <motion.div variants={itemVariants}>
           <Card className="glass-premium hover-premium border-none rounded-xl overflow-hidden transition-all duration-500">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 pointer-events-none" />
-            <CardHeader className="p-4 sm:p-5 pb-2 relative">
+            <CardHeader className="p-3 sm:p-4 pb-1 relative">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-800 shadow-lg shadow-indigo-500/30">
-                    <Sparkles className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-800 shadow-md shadow-indigo-500/20">
+                    <Sparkles className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-indigo-400 via-primary to-purple-500 bg-clip-text text-transparent tracking-tight">Atividade Recente</CardTitle>
-                    <p className="text-[10px] text-primary font-semibold uppercase tracking-[0.2em] mt-0.5">Sua Trilha de Evolução</p>
+                    <CardTitle className="text-base font-semibold bg-gradient-to-r from-indigo-400 via-primary to-purple-500 bg-clip-text text-transparent tracking-tight">Atividade Recente</CardTitle>
+                    <p className="text-[9px] text-primary font-semibold uppercase tracking-[0.2em] mt-0.5">Sua Trilha de Evolução</p>
                   </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-4 sm:p-5 pt-2 relative">
+            <CardContent className="p-3 sm:p-4 pt-1 relative">
               <div className="space-y-3">
                 {isLoadingActivity ? (
                   <div className="flex justify-center py-8">
@@ -272,14 +272,14 @@ export default function Home() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="flex items-center justify-center py-8 px-4 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border-2 border-dashed border-primary/20"
+                    className="flex items-center justify-center py-6 px-4 rounded-xl bg-gradient-to-br from-primary/5 to-transparent border-2 border-dashed border-primary/20"
                   >
                     <div className="text-center">
-                      <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center mx-auto mb-3 animate-pulse">
-                        <Sparkles className="h-7 w-7 text-primary/40" />
+                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/20 to-indigo-600/20 flex items-center justify-center mx-auto mb-2 animate-pulse">
+                        <Sparkles className="h-5 w-5 text-primary/40" />
                       </div>
-                      <p className="text-base font-semibold text-foreground mb-1">O Livro está em Branco</p>
-                      <p className="text-sm text-muted-foreground max-w-[260px] mx-auto">Sua jornada começa quando você abre as Escrituras pela primeira vez.</p>
+                      <p className="text-sm font-semibold text-foreground mb-1">O Livro está em Branco</p>
+                      <p className="text-xs text-muted-foreground max-w-[240px] mx-auto">Sua jornada começa quando você abre as Escrituras pela primeira vez.</p>
                     </div>
                   </motion.div>
                 )}
