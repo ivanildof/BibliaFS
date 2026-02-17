@@ -1442,14 +1442,43 @@ export default function Groups() {
                 </TabsContent>
 
                 <TabsContent value="members">
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-4 gap-2">
                     <h3 className="text-lg font-bold">Membros</h3>
-                    {isLeader && (
-                      <Button onClick={() => setActiveTab("invites")} size="sm" className="rounded-xl">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Convidar
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {isLeader && (
+                        <>
+                          <Button onClick={() => setActiveTab("invites")} size="sm" className="rounded-xl">
+                            <UserPlus className="h-4 w-4 mr-1.5" />
+                            Convidar
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" data-testid="button-group-settings">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl w-48">
+                              <DropdownMenuItem 
+                                className="cursor-pointer"
+                                onClick={() => setIsEditDialogOpen(true)}
+                                data-testid="menu-edit-group-members"
+                              >
+                                <Settings className="h-4 w-4 mr-2" />
+                                Editar Grupo
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                className="text-destructive cursor-pointer"
+                                onClick={() => setIsDeleteDialogOpen(true)}
+                                data-testid="menu-delete-group-members"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Excluir Grupo
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-2">
                     {groupMembers.map((member) => (
@@ -1503,6 +1532,7 @@ export default function Groups() {
                       </div>
                     ))}
                   </div>
+                  <p className="text-sm text-muted-foreground mt-3">{groupMembers.length} membro{groupMembers.length !== 1 ? 's' : ''}</p>
                 </TabsContent>
 
                 {isLeaderOrMod && (
