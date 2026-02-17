@@ -307,67 +307,61 @@ export default function Pricing() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                 <Card 
-                  className={`relative flex flex-col transition-all duration-700 rounded-[3rem] border-none glass-premium hover-premium shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:shadow-primary/30 overflow-hidden ${
-                    plan.popular ? 'ring-4 ring-primary shadow-primary/40 scale-105 z-20' : 'hover:scale-[1.03] border-2 border-transparent hover:border-primary/20'
-                  } ${isCurrentPlan ? 'ring-4 ring-green-500/50' : ''}`}
+                  className={`relative flex flex-col rounded-2xl overflow-hidden transition-shadow duration-300 ${
+                    plan.popular ? 'ring-2 ring-primary shadow-md' : 'shadow-sm hover:shadow-md'
+                  } ${isCurrentPlan ? 'ring-2 ring-green-500/50' : ''}`}
                   data-testid={`card-plan-${plan.id}`}
                 >
                   {plan.popular && (
                     <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
                   )}
-                  <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl ${plan.id === 'monthly' ? 'from-primary/5' : plan.id === 'yearly' ? 'from-amber-500/5' : 'from-blue-600/5'} via-transparent to-transparent z-0`} />
-                  <CardHeader className="pb-4 space-y-4 pt-10 px-8 relative z-10">
-                    <div className="flex items-center justify-between">
-                      <div className={`h-16 w-16 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-lg border border-white/50`}>
-                        <IconComponent className="h-8 w-8 text-white drop-shadow-sm" />
+                  <CardHeader className="pb-3 space-y-3 pt-6 px-5 relative z-10">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className={`h-10 w-10 rounded-xl ${plan.iconBg} flex items-center justify-center`}>
+                        <IconComponent className="h-5 w-5 text-white" />
                       </div>
                       {plan.popular && (
-                        <Badge className="bg-primary text-white text-xs px-5 py-2 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/40 border-none animate-pulse">
+                        <Badge className="bg-primary text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider border-none">
                           MAIS POPULAR
                         </Badge>
                       )}
                     </div>
                     
                     <div>
-                      <CardTitle className="text-3xl font-black text-foreground tracking-tighter uppercase">{plan.name}</CardTitle>
-                      <CardDescription className="text-base mt-2 font-bold text-primary italic bg-primary/5 inline-block px-3 py-1 rounded-lg">
+                      <CardTitle className="text-xl font-bold text-foreground uppercase">{plan.name}</CardTitle>
+                      <CardDescription className="text-sm mt-1 font-semibold text-primary italic">
                         {plan.description}
                       </CardDescription>
                     </div>
                     
-                    <div className="pt-6 flex flex-col items-center justify-center bg-primary/10 rounded-[2rem] p-6 border-2 border-primary/20 shadow-inner">
+                    <div className="flex flex-col items-center justify-center bg-primary/5 rounded-xl p-4 border border-primary/10">
                       <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-black text-primary">R$</span>
-                        <span className="text-6xl font-black text-foreground tracking-tighter">
+                        <span className="text-base font-bold text-primary">R$</span>
+                        <span className="text-3xl font-bold text-foreground tracking-tight">
                           {plan.price.replace('R$ ', '')}
                         </span>
                       </div>
-                      <div className="mt-2 bg-primary px-4 py-1 rounded-full shadow-lg shadow-primary/30">
-                        <span className="text-white text-base font-black uppercase tracking-widest">
-                          /{plan.period.toUpperCase()}
-                        </span>
-                      </div>
+                      <Badge variant="secondary" className="mt-1.5 text-xs font-semibold uppercase">
+                        /{plan.period}
+                      </Badge>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="flex-1 pb-8 px-8 relative z-10">
-                    <ul className="space-y-4">
+                  <CardContent className="flex-1 pb-5 px-5 relative z-10">
+                    <ul className="space-y-2.5">
                       {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-3 text-base" data-testid={`feature-${plan.id}-${i}`}>
-                          <div className="p-1 rounded-full bg-muted border border-border mt-1 shadow-inner">
-                            <Check className="h-3 w-3 text-primary" />
-                          </div>
-                          <span className="font-bold text-muted-foreground leading-relaxed">{feature}</span>
+                        <li key={i} className="flex items-start gap-2.5 text-sm" data-testid={`feature-${plan.id}-${i}`}>
+                          <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground leading-snug">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </CardContent>
 
-                  <CardFooter className="pb-10 px-8 relative z-10">
+                  <CardFooter className="pb-6 px-5 relative z-10">
                     <Button 
-                      className={`w-full h-16 rounded-2xl font-black text-xl italic uppercase tracking-tighter transition-all hover:scale-[1.02] active:scale-[0.98] ${
-                        plan.popular ? 'bg-primary text-white shadow-2xl shadow-primary/40 hover:bg-primary/90' : 'bg-white dark:bg-zinc-900 text-foreground border-2 border-primary/20 hover:border-primary shadow-xl'
-                      }`}
+                      className="w-full font-bold uppercase tracking-wide"
+                      size="lg"
                       variant={plan.popular ? "default" : "outline"}
                       disabled={buttonConfig.disabled || checkoutMutation.isPending || portalMutation.isPending}
                       onClick={() => {
@@ -380,10 +374,10 @@ export default function Pricing() {
                       data-testid={`button-cta-${plan.id}`}
                     >
                       {(checkoutMutation.isPending || portalMutation.isPending) && (
-                        <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       )}
                       {buttonConfig.text}
-                      {buttonConfig.isPortal && <Settings className="h-5 w-5 ml-3" />}
+                      {buttonConfig.isPortal && <Settings className="h-4 w-4 ml-2" />}
                     </Button>
                   </CardFooter>
                 </Card>
