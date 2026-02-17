@@ -4314,7 +4314,7 @@ Responda em português do Brasil.${bibleContext}`
     try {
       const { groupId, memberId } = req.params;
       const { role } = req.body;
-      const userId = req.user.id;
+      const userId = req.user?.claims?.sub || req.user?.id;
 
       const group = await storage.getGroup(groupId);
       if (!group || group.leaderId !== userId) {
@@ -4324,6 +4324,7 @@ Responda em português do Brasil.${bibleContext}`
       await storage.updateGroupMemberRole(groupId, memberId, role);
       res.json({ success: true });
     } catch (error: any) {
+      console.error("[Groups] Error updating member role:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -4331,7 +4332,7 @@ Responda em português do Brasil.${bibleContext}`
   app.delete("/api/groups/:groupId/members/:memberId", isAuthenticated, async (req: any, res) => {
     try {
       const { groupId, memberId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user?.claims?.sub || req.user?.id;
 
       const group = await storage.getGroup(groupId);
       if (!group || group.leaderId !== userId) {
@@ -4538,6 +4539,47 @@ Responda em português do Brasil.${bibleContext}`
               type: "group_invite"
             }
           });
+        }
+
+        // Enviar email de convite
+        try {
+          const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+          const gmailUser = 'bibliafs3@gmail.com';
+          if (gmailPassword) {
+            const transporter = nodemailer.createTransport({
+              host: 'smtp.gmail.com',
+              port: 465,
+              secure: true,
+              auth: { user: gmailUser, pass: gmailPassword },
+            });
+
+            const inviter = await storage.getUser(userId);
+            const inviterName = inviter ? (inviter.firstName || inviter.email) : "Alguém";
+
+            await transporter.sendMail({
+              from: `"BíbliaFS" <${gmailUser}>`,
+              to: email,
+              subject: `Convite para Grupo de Estudo - ${group.name}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                  <h2 style="color: #667eea;">Convite para Grupo de Estudo</h2>
+                  <p>${inviterName} convidou você para participar do grupo <strong>"${group.name}"</strong> na BíbliaFS!</p>
+                  ${group.description ? `<p style="color: #666; font-style: italic;">"${group.description}"</p>` : ''}
+                  <div style="background: #f0f0f0; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0 0 8px 0; color: #666;">Use o código abaixo para entrar:</p>
+                    <h1 style="font-size: 28px; color: #667eea; letter-spacing: 3px; margin: 0;">${invite.inviteCode}</h1>
+                  </div>
+                  <p style="color: #666;">Abra o app BíbliaFS, vá em Grupos de Estudo e clique em "Usar Código".</p>
+                  <p style="color: #999; font-size: 12px;">Que a Palavra de Deus ilumine seus dias!</p>
+                </div>
+              `,
+            });
+            console.log(`[Invite] Email sent to ${email} for group ${group.name}`);
+          } else {
+            console.log(`[Invite] GMAIL_APP_PASSWORD not configured, skipping email for ${email}`);
+          }
+        } catch (emailError: any) {
+          console.error(`[Invite] Failed to send email to ${email}:`, emailError.message);
         }
       }
       
