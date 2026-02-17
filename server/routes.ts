@@ -4217,6 +4217,57 @@ Responda em português do Brasil.${bibleContext}`
     }
   });
 
+  // Get group limits for current user (free plan restrictions)
+  app.get("/api/groups/limits", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      const plan = user?.subscriptionPlan || 'free';
+      const isPremium = plan !== 'free';
+
+      if (isPremium) {
+        return res.json({
+          isPremium: true,
+          canCreateGroup: true,
+          canJoinGroup: true,
+          maxMembers: null,
+          trialExpired: false,
+          trialDaysRemaining: null,
+          groupsCreated: 0,
+          groupsJoined: 0,
+          maxGroupsCreate: null,
+          maxGroupsJoin: null,
+        });
+      }
+
+      const userGroups = await storage.getUserGroups(userId);
+      const groupsAsLeader = userGroups.filter((g: any) => g.role === 'leader').length;
+      const totalGroups = userGroups.length;
+
+      const createdAt = user?.createdAt ? new Date(user.createdAt) : new Date();
+      const now = new Date();
+      const daysSinceCreation = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      const trialExpired = daysSinceCreation > 30;
+      const trialDaysRemaining = Math.max(0, 30 - daysSinceCreation);
+
+      res.json({
+        isPremium: false,
+        canCreateGroup: !trialExpired && groupsAsLeader < 1,
+        canJoinGroup: !trialExpired && totalGroups < 2,
+        maxMembers: 5,
+        trialExpired,
+        trialDaysRemaining,
+        groupsCreated: groupsAsLeader,
+        groupsJoined: totalGroups,
+        maxGroupsCreate: 1,
+        maxGroupsJoin: 2,
+      });
+    } catch (error: any) {
+      console.error("[Groups] Error fetching limits:", error);
+      res.status(500).json({ error: "Erro ao buscar limites do plano" });
+    }
+  });
+
   // Get single group
   app.get("/api/groups/:id", async (req, res) => {
     try {
@@ -4238,6 +4289,21 @@ Responda em português do Brasil.${bibleContext}`
       
       if (!name || name.length < 3) {
         return res.status(400).json({ error: "Nome do grupo deve ter pelo menos 3 caracteres" });
+      }
+
+      const creatorUser = await storage.getUser(userId);
+      const creatorPlan = creatorUser?.subscriptionPlan || 'free';
+      if (creatorPlan === 'free') {
+        const createdAt = creatorUser?.createdAt ? new Date(creatorUser.createdAt) : new Date();
+        const daysSinceCreation = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSinceCreation > 30) {
+          return res.status(403).json({ error: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo." });
+        }
+        const userGroups = await storage.getUserGroups(userId);
+        const groupsAsLeader = userGroups.filter((g: any) => g.role === 'leader').length;
+        if (groupsAsLeader >= 1) {
+          return res.status(403).json({ error: "Usuários gratuitos podem criar apenas 1 grupo. Assine um plano para criar grupos ilimitados." });
+        }
       }
       
       const group = await storage.createGroup({
@@ -4392,6 +4458,29 @@ Responda em português do Brasil.${bibleContext}`
       if (isMember) {
         return res.status(400).json({ error: "Você já é membro deste grupo" });
       }
+
+      const joiningUser = await storage.getUser(userId);
+      const joiningPlan = joiningUser?.subscriptionPlan || 'free';
+      if (joiningPlan === 'free') {
+        const createdAt = joiningUser?.createdAt ? new Date(joiningUser.createdAt) : new Date();
+        const daysSinceCreation = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSinceCreation > 30) {
+          return res.status(403).json({ error: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo." });
+        }
+        const userGroups = await storage.getUserGroups(userId);
+        if (userGroups.length >= 2) {
+          return res.status(403).json({ error: "Usuários gratuitos podem participar de até 2 grupos. Assine um plano para participar de grupos ilimitados." });
+        }
+      }
+
+      const groupMembers = await storage.getGroupMembers(groupId);
+      if (groupMembers.length >= 5 && group.leaderId) {
+        const leaderUser = await storage.getUser(group.leaderId);
+        const leaderPlan = leaderUser?.subscriptionPlan || 'free';
+        if (leaderPlan === 'free') {
+          return res.status(403).json({ error: "Este grupo atingiu o limite de 5 membros do plano gratuito. O líder precisa assinar um plano premium." });
+        }
+      }
       
       const member = await storage.addGroupMember(groupId, userId, "member");
       res.json(member);
@@ -4514,6 +4603,14 @@ Responda em português do Brasil.${bibleContext}`
       const userMember = members.find(m => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Apenas líderes e moderadores podem convidar" });
+      }
+
+      if (members.length >= 5 && group.leaderId) {
+        const leaderUser = await storage.getUser(group.leaderId);
+        const leaderPlan = leaderUser?.subscriptionPlan || 'free';
+        if (leaderPlan === 'free') {
+          return res.status(403).json({ error: "Este grupo atingiu o limite de 5 membros do plano gratuito. O líder precisa assinar um plano premium." });
+        }
       }
       
       if (!email && !phone) {
