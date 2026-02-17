@@ -942,97 +942,82 @@ export default function Groups() {
               Voltar aos grupos
             </Button>
 
-            {isLeader && (
-              <div className="flex gap-2 w-full sm:w-auto">
-                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="rounded-xl flex-1 sm:flex-none border-primary/20 text-primary " data-testid="button-edit-group">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Editar Grupo
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl font-display font-bold">Editar Grupo</DialogTitle>
-                    </DialogHeader>
-                    <Form {...editForm}>
-                      <form onSubmit={editForm.handleSubmit((data) => updateMutation.mutate(data))} className="space-y-4">
-                        <FormField
-                          control={editForm.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Nome do Grupo</FormLabel>
-                              <FormControl>
-                                <Input {...field} data-testid="input-edit-name" className="rounded-xl h-12" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={editForm.control}
-                          name="description"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Descrição</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} data-testid="input-edit-description" className="rounded-xl min-h-[100px]" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={editForm.control}
-                          name="isPublic"
-                          render={({ field }) => (
-                            <FormItem className="flex items-center justify-between rounded-xl border p-4 bg-muted/30">
-                              <div className="space-y-0.5">
-                                <FormLabel className="text-base">Grupo Público</FormLabel>
-                                <FormDescription>Visível para toda a comunidade.</FormDescription>
-                              </div>
-                              <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-edit-public" />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        <DialogFooter>
-                          <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group" className="rounded-xl h-12 w-full font-bold">
-                            {updateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                            Salvar Alterações
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
-
-                <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="destructive" size="sm" className="rounded-xl flex-1 sm:flex-none shadow-lg shadow-destructive/20" data-testid="button-delete-group">
-                      Excluir
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl font-display font-bold text-destructive">Excluir Grupo?</DialogTitle>
-                      <DialogDescription className="text-base pt-2">
-                        Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo serão perdidos para sempre.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-4">
-                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete" className="rounded-xl h-12 flex-1 order-2 sm:order-1">Cancelar</Button>
-                      <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete" className="rounded-xl h-12 flex-1 order-1 sm:order-2 font-bold">
-                        {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        Confirmar Exclusão
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-display font-bold">Editar Grupo</DialogTitle>
+                </DialogHeader>
+                <Form {...editForm}>
+                  <form onSubmit={editForm.handleSubmit((data) => updateMutation.mutate(data))} className="space-y-4">
+                    <FormField
+                      control={editForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do Grupo</FormLabel>
+                          <FormControl>
+                            <Input {...field} data-testid="input-edit-name" className="rounded-xl" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Descrição</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} data-testid="input-edit-description" className="rounded-xl min-h-[100px]" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="isPublic"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between rounded-xl border p-4 bg-muted/30">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Grupo Público</FormLabel>
+                            <FormDescription>Visível para toda a comunidade.</FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-edit-public" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <DialogFooter>
+                      <Button type="submit" disabled={updateMutation.isPending} data-testid="button-save-group" className="rounded-xl w-full font-bold">
+                        {updateMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                        Salvar Alterações
                       </Button>
                     </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            )}
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+              <DialogContent className="rounded-[2rem] border-0 shadow-2xl">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-display font-bold text-destructive">Excluir Grupo?</DialogTitle>
+                  <DialogDescription className="text-base pt-2">
+                    Esta ação não pode ser desfeita. Todas as mensagens e dados do grupo serão perdidos para sempre.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-4">
+                  <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} data-testid="button-cancel-delete" className="rounded-xl flex-1 order-2 sm:order-1">Cancelar</Button>
+                  <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} data-testid="button-confirm-delete" className="rounded-xl flex-1 order-1 sm:order-2 font-bold">
+                    {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    Confirmar Exclusão
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <Card className="border-none glass-premium hover-premium rounded-[2.5rem] overflow-hidden ring-2 ring-primary/15">
@@ -1054,13 +1039,42 @@ export default function Groups() {
                     {selectedGroup.description || "Grupo de estudo bíblico"}
                   </CardDescription>
                 </div>
-                <Badge variant="secondary" className="rounded-full px-4 py-1.5 bg-primary/10 text-primary border-0 font-bold">
-                  {selectedGroup.isPublic ? (
-                    <><Globe className="h-3.5 w-3.5 mr-1.5" /> Público</>
-                  ) : (
-                    <><Lock className="h-3.5 w-3.5 mr-1.5" /> Privado</>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="rounded-full px-4 py-1.5 bg-primary/10 text-primary border-0 font-bold">
+                    {selectedGroup.isPublic ? (
+                      <><Globe className="h-3.5 w-3.5 mr-1.5" /> Público</>
+                    ) : (
+                      <><Lock className="h-3.5 w-3.5 mr-1.5" /> Privado</>
+                    )}
+                  </Badge>
+                  {isLeader && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-group-menu">
+                          <MoreVertical className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="rounded-xl w-48">
+                        <DropdownMenuItem 
+                          className="cursor-pointer"
+                          onClick={() => setIsEditDialogOpen(true)}
+                          data-testid="menu-edit-group"
+                        >
+                          <Settings className="h-4 w-4 mr-2" />
+                          Editar Grupo
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-destructive cursor-pointer"
+                          onClick={() => setIsDeleteDialogOpen(true)}
+                          data-testid="menu-delete-group"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir Grupo
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
-                </Badge>
+                </div>
               </div>
             </CardHeader>
 
@@ -1443,30 +1457,30 @@ export default function Groups() {
                     {groupMembers.map((member) => (
                       <div 
                         key={member.id} 
-                        className="flex items-center gap-3 p-3 rounded-lg bg-muted/50"
+                        className="flex items-center gap-2 sm:gap-3 p-3 rounded-lg bg-muted/50"
                         data-testid={`member-${member.id}`}
                       >
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0">
                           <AvatarImage src={member.userImage || ""} />
                           <AvatarFallback>
                             {member.userName?.charAt(0) || "U"}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1">
-                          <p className="font-medium">{member.userName || "Usuário"}</p>
-                          <p className="text-sm text-muted-foreground">{member.userEmail}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm sm:text-base truncate">{member.userName || "Usuário"}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{member.userEmail}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={member.role === "leader" ? "default" : "secondary"}>
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                          <Badge variant={member.role === "leader" ? "default" : "secondary"} className="text-[10px] sm:text-xs">
                             {member.role === "leader" && <Crown className="h-3 w-3 mr-1" />}
-                            {member.role === "leader" ? "Líder" : member.role === "moderator" ? "Moderador" : "Membro"}
+                            {member.role === "leader" ? "Líder" : member.role === "moderator" ? "Mod" : "Membro"}
                           </Badge>
                           
                           {isLeader && member.userId !== user?.id && (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full ">
-                                  <Settings className="h-4 w-4 text-primary" />
+                                <Button variant="ghost" size="icon" data-testid={`manage-member-${member.id}`}>
+                                  <MoreVertical className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="rounded-xl">
@@ -1474,12 +1488,14 @@ export default function Groups() {
                                   className="cursor-pointer"
                                   onClick={() => updateMemberRoleMutation.mutate({ memberId: member.id, role: member.role === "moderator" ? "member" : "moderator" })}
                                 >
+                                  <Crown className="h-4 w-4 mr-2" />
                                   {member.role === "moderator" ? "Remover Moderador" : "Tornar Moderador"}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   className="text-destructive cursor-pointer"
                                   onClick={() => removeMemberMutation.mutate(member.id)}
                                 >
+                                  <Trash2 className="h-4 w-4 mr-2" />
                                   Remover do Grupo
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -1587,16 +1603,16 @@ export default function Groups() {
                               data-testid={`invite-${invite.id}`}
                             >
                               <div className="space-y-1.5 flex-1 min-w-0">
-                                <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                   {invite.invitedEmail && (
-                                    <div className="flex items-center gap-2 text-sm font-semibold">
-                                      <Mail className="h-4 w-4 text-primary/70" />
-                                      <span className="truncate max-w-[180px] xs:max-w-none">{invite.invitedEmail}</span>
+                                    <div className="flex items-center gap-2 text-sm font-semibold min-w-0">
+                                      <Mail className="h-4 w-4 text-primary/70 flex-shrink-0" />
+                                      <span className="truncate">{invite.invitedEmail}</span>
                                     </div>
                                   )}
                                   {invite.invitedPhone && (
                                     <div className="flex items-center gap-2 text-sm font-semibold">
-                                      <Phone className="h-4 w-4 text-primary/70" />
+                                      <Phone className="h-4 w-4 text-primary/70 flex-shrink-0" />
                                       <span>{invite.invitedPhone}</span>
                                     </div>
                                   )}
@@ -1607,18 +1623,17 @@ export default function Groups() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-border/50">
-                                <div className="flex items-center gap-2">
-                                  <Badge 
-                                    variant={invite.status === "pending" ? "outline" : invite.status === "accepted" ? "default" : "secondary"}
-                                    className="capitalize font-bold text-[10px] tracking-tight"
-                                  >
-                                    {invite.status === "pending" ? "Pendente" : invite.status === "accepted" ? "Aceito" : "Expirado"}
-                                  </Badge>
+                              <div className="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                                <Badge 
+                                  variant={invite.status === "pending" ? "outline" : invite.status === "accepted" ? "default" : "secondary"}
+                                  className="capitalize font-bold text-[10px] tracking-tight"
+                                >
+                                  {invite.status === "pending" ? "Pendente" : invite.status === "accepted" ? "Aceito" : "Expirado"}
+                                </Badge>
+                                <div className="flex items-center gap-1 ml-auto">
                                   <Button 
                                     size="icon" 
                                     variant="ghost"
-                                    className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary transition-all"
                                     onClick={() => copyInviteCode(invite.inviteCode)}
                                     data-testid={`button-copy-${invite.id}`}
                                   >
@@ -1631,7 +1646,7 @@ export default function Groups() {
                                   <Button 
                                     size="icon" 
                                     variant="ghost"
-                                    className="h-9 w-9 rounded-xl text-green-600 hover:text-green-700 hover:bg-green-50 transition-all"
+                                    className="text-green-600"
                                     onClick={() => {
                                       const inviteUrl = `${window.location.origin}/groups?code=${invite.inviteCode}`;
                                       const message = `Olá! Você foi convidado para o grupo "${selectedGroup?.name}" no BíbliaFS. Use o código: ${invite.inviteCode} ou acesse: ${inviteUrl}`;
