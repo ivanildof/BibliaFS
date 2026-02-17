@@ -983,7 +983,7 @@ export default function Groups() {
 
             <CardContent>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="w-full justify-start mb-8 p-1 bg-muted/50 rounded-2xl gap-1 overflow-x-auto h-auto">
+                <TabsList className="w-full justify-start mb-8 p-1 bg-muted/50 rounded-2xl gap-1 flex-wrap h-auto">
                   <TabsTrigger value="chat" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-chat">
                     <MessageCircle className="h-3.5 w-3.5 mr-2" />
                     Chat
@@ -1034,10 +1034,10 @@ export default function Groups() {
                               <div>
                                 <h4 className="font-bold">{meeting.title}</h4>
                                 <p className="text-sm text-muted-foreground">{meeting.description}</p>
-                                <div className="flex gap-4 mt-2 text-xs font-medium text-primary">
+                                <div className="flex gap-4 mt-2 text-xs font-medium text-primary flex-wrap">
                                   <span className="flex items-center gap-1">
                                     <CalendarIcon className="h-3 w-3" />
-                                    {new Date(meeting.meetingDate).toLocaleDateString()}
+                                    {new Date(meeting.meetingDate).toLocaleDateString("pt-BR")} {new Date(meeting.meetingDate).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                                   </span>
                                   {meeting.location && (
                                     <span className="flex items-center gap-1">
