@@ -1080,36 +1080,34 @@ export default function Groups() {
 
             <CardContent className="p-2 sm:p-6">
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-                <div className="overflow-x-auto mb-4 scrollbar-hide -mx-2 px-2">
-                  <TabsList className="inline-flex w-max min-w-full justify-start p-1 bg-muted/50 rounded-xl gap-0.5 h-auto">
-                    <TabsTrigger value="chat" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] whitespace-nowrap px-2.5 py-1.5" data-testid="tab-chat">
-                      <MessageCircle className="h-3 w-3 mr-1" />
-                      Chat
+                <TabsList className="grid grid-cols-3 sm:grid-cols-6 w-full p-1 bg-muted/50 rounded-xl gap-1 h-auto mb-4">
+                  <TabsTrigger value="chat" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] px-2 py-2" data-testid="tab-chat">
+                    <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                    Chat
+                  </TabsTrigger>
+                  <TabsTrigger value="calendar" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] px-2 py-2" data-testid="tab-calendar">
+                    <CalendarIcon className="h-3.5 w-3.5 mr-1" />
+                    Agenda
+                  </TabsTrigger>
+                  <TabsTrigger value="resources" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] px-2 py-2" data-testid="tab-resources">
+                    <LinkIcon className="h-3.5 w-3.5 mr-1" />
+                    Arquivos
+                  </TabsTrigger>
+                  <TabsTrigger value="discussions" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] px-2 py-2" data-testid="tab-discussions">
+                    <GraduationCap className="h-3.5 w-3.5 mr-1" />
+                    Estudos
+                  </TabsTrigger>
+                  <TabsTrigger value="members" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] px-2 py-2" data-testid="tab-members">
+                    <Users className="h-3.5 w-3.5 mr-1" />
+                    Membros
+                  </TabsTrigger>
+                  {isLeaderOrMod && (
+                    <TabsTrigger value="invites" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] px-2 py-2" data-testid="tab-invites">
+                      <UserPlus className="h-3.5 w-3.5 mr-1" />
+                      Convites
                     </TabsTrigger>
-                    <TabsTrigger value="calendar" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] whitespace-nowrap px-2.5 py-1.5" data-testid="tab-calendar">
-                      <CalendarIcon className="h-3 w-3 mr-1" />
-                      Agenda
-                    </TabsTrigger>
-                    <TabsTrigger value="resources" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] whitespace-nowrap px-2.5 py-1.5" data-testid="tab-resources">
-                      <LinkIcon className="h-3 w-3 mr-1" />
-                      Arquivos
-                    </TabsTrigger>
-                    <TabsTrigger value="discussions" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] whitespace-nowrap px-2.5 py-1.5" data-testid="tab-discussions">
-                      <GraduationCap className="h-3 w-3 mr-1" />
-                      Estudos
-                    </TabsTrigger>
-                    <TabsTrigger value="members" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] whitespace-nowrap px-2.5 py-1.5" data-testid="tab-members">
-                      <Users className="h-3 w-3 mr-1" />
-                      Membros
-                    </TabsTrigger>
-                    {isLeaderOrMod && (
-                      <TabsTrigger value="invites" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm font-semibold text-[11px] whitespace-nowrap px-2.5 py-1.5" data-testid="tab-invites">
-                        <UserPlus className="h-3 w-3 mr-1" />
-                        Convites
-                      </TabsTrigger>
-                    )}
-                  </TabsList>
-                </div>
+                  )}
+                </TabsList>
 
                 <TabsContent value="calendar" className="space-y-4">
                   <div className="flex justify-between items-center mb-4">
