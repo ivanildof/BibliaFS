@@ -220,6 +220,7 @@ interface GroupLimits {
   maxMembers: number | null;
   trialExpired: boolean;
   trialDaysRemaining: number | null;
+  trialStarted: boolean;
   groupsCreated: number;
   groupsJoined: number;
   maxGroupsCreate: number | null;
