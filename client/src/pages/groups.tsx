@@ -224,6 +224,7 @@ interface GroupLimits {
   groupsJoined: number;
   maxGroupsCreate: number | null;
   maxGroupsJoin: number | null;
+  functionsBlocked: boolean;
 }
 
 export default function Groups() {
@@ -913,10 +914,10 @@ export default function Groups() {
 
   const handleCreateGroupClick = () => {
     if (groupLimits && !groupLimits.isPremium) {
-      if (groupLimits.trialExpired) {
+      if (groupLimits.functionsBlocked) {
         toast({
           title: "Período de teste expirado",
-          description: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo.",
+          description: "Assine um plano para criar novos grupos e usar todas as funções.",
           variant: "destructive",
         });
         return;
@@ -935,10 +936,10 @@ export default function Groups() {
 
   const handleJoinGroupClick = (groupId: string) => {
     if (groupLimits && !groupLimits.isPremium) {
-      if (groupLimits.trialExpired) {
+      if (groupLimits.functionsBlocked) {
         toast({
           title: "Período de teste expirado",
-          description: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo.",
+          description: "Assine um plano para entrar em novos grupos e usar todas as funções.",
           variant: "destructive",
         });
         return;
@@ -1180,7 +1181,18 @@ export default function Groups() {
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold">Próximas Reuniões</h3>
                     {isLeaderOrMod && (
-                      <Button onClick={() => setIsMeetingDialogOpen(true)} size="sm" className="rounded-xl">
+                      <Button 
+                        onClick={() => {
+                          if (groupLimits?.functionsBlocked) {
+                            toast({ title: "Função bloqueada", description: "Assine um plano para agendar reuniões.", variant: "destructive" });
+                            return;
+                          }
+                          setIsMeetingDialogOpen(true);
+                        }} 
+                        size="sm" 
+                        className="rounded-xl"
+                        disabled={groupLimits?.functionsBlocked}
+                      >
                         <Plus className="h-4 w-4 mr-2" />
                         Agendar
                       </Button>
@@ -1281,7 +1293,18 @@ export default function Groups() {
                 <TabsContent value="resources" className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-bold">Materiais e Links</h3>
-                    <Button onClick={() => setIsResourceDialogOpen(true)} size="sm" className="rounded-xl">
+                    <Button 
+                      onClick={() => {
+                        if (groupLimits?.functionsBlocked) {
+                          toast({ title: "Função bloqueada", description: "Assine um plano para adicionar recursos.", variant: "destructive" });
+                          return;
+                        }
+                        setIsResourceDialogOpen(true);
+                      }} 
+                      size="sm" 
+                      className="rounded-xl"
+                      disabled={groupLimits?.functionsBlocked}
+                    >
                       <Plus className="h-4 w-4 mr-2" />
                       Adicionar
                     </Button>
@@ -1449,6 +1472,22 @@ export default function Groups() {
                     </div>
                   )}
 
+                  {groupLimits?.functionsBlocked ? (
+                    <div className="flex items-center gap-2 mt-2 p-3 rounded-xl bg-destructive/5 border border-destructive/20">
+                      <Lock className="h-4 w-4 text-destructive flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground">Chat bloqueado. Assine um plano para enviar mensagens.</span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="ml-auto rounded-xl border-destructive/30 flex-shrink-0"
+                        onClick={() => navigate("/planos")}
+                        data-testid="button-upgrade-chat"
+                      >
+                        <Crown className="h-3.5 w-3.5 mr-1" />
+                        Assinar
+                      </Button>
+                    </div>
+                  ) : (
                   <Form {...messageForm}>
                     <form onSubmit={messageForm.handleSubmit(onSendMessage)} className="flex gap-2 mt-2">
                       <FormField
@@ -1482,6 +1521,7 @@ export default function Groups() {
                       </Button>
                     </form>
                   </Form>
+                  )}
 
                   <Dialog open={isMessageDeleteDialogOpen} onOpenChange={setIsMessageDeleteDialogOpen}>
                     <DialogContent>
@@ -1512,7 +1552,18 @@ export default function Groups() {
                   <div className="flex justify-between items-center mb-4 gap-2">
                     <h3 className="text-lg font-bold">Membros</h3>
                     {isLeader && (
-                      <Button onClick={() => setActiveTab("invites")} size="sm" className="rounded-xl">
+                      <Button 
+                        onClick={() => {
+                          if (groupLimits?.functionsBlocked) {
+                            toast({ title: "Função bloqueada", description: "Assine um plano para enviar convites.", variant: "destructive" });
+                            return;
+                          }
+                          setActiveTab("invites");
+                        }} 
+                        size="sm" 
+                        className="rounded-xl"
+                        disabled={groupLimits?.functionsBlocked}
+                      >
                         <UserPlus className="h-4 w-4 mr-1.5" />
                         Convidar
                       </Button>
@@ -1580,7 +1631,17 @@ export default function Groups() {
                         <h4 className="font-medium">Convites pendentes</h4>
                         <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
                           <DialogTrigger asChild>
-                            <Button size="sm" data-testid="button-new-invite">
+                            <Button 
+                              size="sm" 
+                              data-testid="button-new-invite"
+                              disabled={groupLimits?.functionsBlocked}
+                              onClick={(e) => {
+                                if (groupLimits?.functionsBlocked) {
+                                  e.preventDefault();
+                                  toast({ title: "Função bloqueada", description: "Assine um plano para enviar convites.", variant: "destructive" });
+                                }
+                              }}
+                            >
                               <Plus className="h-4 w-4 mr-2" />
                               Novo Convite
                             </Button>
@@ -1779,7 +1840,16 @@ export default function Groups() {
                           </div>
 
                           {/* Answer Form */}
-                          {discussionDetails?.status === "open" && (
+                          {discussionDetails?.status === "open" && groupLimits?.functionsBlocked && (
+                            <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/5 border border-destructive/20">
+                              <Lock className="h-4 w-4 text-destructive flex-shrink-0" />
+                              <span className="text-sm text-muted-foreground">Respostas bloqueadas. Assine um plano para participar das discussões.</span>
+                              <Button variant="outline" size="sm" className="ml-auto rounded-xl border-destructive/30 flex-shrink-0" onClick={() => navigate("/planos")}>
+                                <Crown className="h-3.5 w-3.5 mr-1" /> Assinar
+                              </Button>
+                            </div>
+                          )}
+                          {discussionDetails?.status === "open" && !groupLimits?.functionsBlocked && (
                             <Form {...answerForm}>
                               <form onSubmit={answerForm.handleSubmit((data) => submitAnswerMutation.mutate(data))} className="space-y-3">
                                 <FormField
@@ -1971,7 +2041,16 @@ export default function Groups() {
                         <div className="flex justify-end">
                           <Dialog open={isDiscussionDialogOpen} onOpenChange={setIsDiscussionDialogOpen}>
                             <DialogTrigger asChild>
-                              <Button data-testid="button-new-discussion">
+                              <Button 
+                                data-testid="button-new-discussion"
+                                disabled={groupLimits?.functionsBlocked}
+                                onClick={(e) => {
+                                  if (groupLimits?.functionsBlocked) {
+                                    e.preventDefault();
+                                    toast({ title: "Função bloqueada", description: "Assine um plano para criar discussões.", variant: "destructive" });
+                                  }
+                                }}
+                              >
                                 <Plus className="h-4 w-4 mr-2" />
                                 Nova Discussão
                               </Button>
@@ -2396,17 +2475,21 @@ export default function Groups() {
 
         {groupLimits && !groupLimits.isPremium && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <Alert className="border-primary/20 bg-primary/5 rounded-2xl">
-              <Crown className="h-4 w-4 text-primary" />
+            <Alert className={`rounded-2xl ${groupLimits.functionsBlocked ? 'border-destructive/30 bg-destructive/5' : 'border-primary/20 bg-primary/5'}`}>
+              <Crown className={`h-4 w-4 ${groupLimits.functionsBlocked ? 'text-destructive' : 'text-primary'}`} />
               <AlertTitle className="font-bold text-foreground">
-                {groupLimits.trialExpired ? "Período de teste expirado" : `Plano Gratuito - ${groupLimits.trialDaysRemaining} dias restantes`}
+                {groupLimits.functionsBlocked 
+                  ? "Teste expirado - Funções bloqueadas" 
+                  : `Plano Gratuito - ${groupLimits.trialDaysRemaining} dias restantes`
+                }
               </AlertTitle>
               <AlertDescription className="text-muted-foreground">
-                {groupLimits.trialExpired ? (
-                  <span>Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo.</span>
+                {groupLimits.functionsBlocked ? (
+                  <span>Seu período de teste de 30 dias expirou. Você ainda pode visualizar seus grupos, mas as funções (chat, convites, reuniões, recursos, discussões) estão bloqueadas. Assine um plano para desbloquear.</span>
                 ) : (
                   <span>
-                    Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
+                    Teste gratuito: {groupLimits.trialDaysRemaining} dias restantes. Após esse período, as funções do grupo serão bloqueadas.
+                    {" | "}Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
                     Participando de: {groupLimits.groupsJoined}/{groupLimits.maxGroupsJoin} grupos | 
                     Máx. membros por grupo: {groupLimits.maxMembers}
                   </span>
@@ -2414,7 +2497,7 @@ export default function Groups() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="ml-3 rounded-xl border-primary/30"
+                  className={`ml-3 rounded-xl ${groupLimits.functionsBlocked ? 'border-destructive/30' : 'border-primary/30'}`}
                   onClick={() => navigate("/planos")}
                   data-testid="button-upgrade-plan"
                 >
