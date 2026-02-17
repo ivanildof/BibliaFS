@@ -1899,23 +1899,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const numContentBlocks = duration <= 30 ? 4 : duration <= 60 ? 8 : 12;
       const numQuestions = duration <= 30 ? 5 : duration <= 60 ? 15 : 20;
 
+      const scriptureNormalized = scriptureBase.trim();
+      const isJobBook = /^(j[oó]|job)\b/i.test(scriptureNormalized) && !/^jo[aã]/i.test(scriptureNormalized);
+      const isJohnBook = /^(jo[aã]o|1\s*jo|2\s*jo|3\s*jo)/i.test(scriptureNormalized);
+      
+      let bookClarification = "";
+      if (isJobBook) {
+        bookClarification = `\n\nIMPORTANTÍSSIMO - LIVRO IDENTIFICADO: O livro mencionado é JÓ (Job em inglês) - Antigo Testamento. JÓ é sobre o homem justo que sofreu provações. NÃO É o Evangelho de João. NÃO confunda. O personagem é JÓ, o livro é JÓ. Fale sobre JÓ, sua paciência, seu sofrimento, seus amigos (Elifaz, Bildade, Zofar), a resposta de Deus no redemoinho. NUNCA mencione o Evangelho de João nesta aula.\n`;
+      } else if (isJohnBook) {
+        bookClarification = `\n\nLIVRO IDENTIFICADO: O livro mencionado é o EVANGELHO DE JOÃO (ou Epístola de João). NÃO confunda com o livro de Jó do Antigo Testamento.\n`;
+      }
+
       const prompt = `Você é um assistente especializado em educação bíblica premium. Sua tarefa é gerar conteúdo EXTREMAMENTE DETALHADO, PROFUNDO e EXTENSO para uma aula bíblica de ${duration} minutos.
 
 ATENÇÃO: O usuário reclamou que as descrições e conteúdos estão muito curtos. Você DEVE escrever textos longos, substantivos e teologicamente ricos.
 
-ATENÇÃO - ABREVIAÇÕES BÍBLICAS IMPORTANTES:
-- "Jo" ou "Jó" = Livro de JÓ (Job) - Antigo Testamento, sobre sofrimento e fé
-- "João" ou "Jo" seguido de capítulo/versículo com números altos (ex: Jo 3:16) = Evangelho de JOÃO
+REGRA CRÍTICA - DISTINÇÃO ENTRE LIVROS BÍBLICOS:
+- "Jó" (com acento) = Livro de JÓ (Job) - Antigo Testamento - sobre o homem que sofreu provações
+- "Jo" (sem acento, sem "ão") = Livro de JÓ (Job) - Antigo Testamento - NÃO é João
+- "João" (com "ão") = Evangelho de JOÃO - Novo Testamento
 - "1Jo", "2Jo", "3Jo" = Epístolas de João
-- "Js" = Josué
-- "Jz" = Juízes
-- "Jr" = Jeremias
-- "Jl" = Joel
-- "Jn" = Jonas
-- "Jd" = Judas
-
-INTERPRETE O CONTEXTO: Se o usuário mencionar "Jo" sem capítulo/versículo OU com capítulos 1-42, provavelmente é o livro de JÓ.
-
+- Se o título ou texto-base mencionar "Jó", "Jo" (sem "ão"), ou "Job", a aula é sobre o LIVRO DE JÓ do Antigo Testamento
+- NUNCA substitua Jó por João. São livros completamente diferentes.
+${bookClarification}
 Título da Aula: ${title}
 Texto-Base: ${scriptureBase}
 Duração: ${duration} minutos
@@ -2002,14 +2008,29 @@ REGRAS OBRIGATÓRIAS:
         });
       }
 
+      const questionNorm = question.trim();
+      const contextNorm = (context || "").trim();
+      const combinedText = `${questionNorm} ${contextNorm}`.toLowerCase();
+      const mentionsJob = /\bj[oó]\b/i.test(combinedText) && !/\bjo[aã]o\b/i.test(combinedText);
+      const mentionsJohn = /\bjo[aã]o\b/i.test(combinedText);
+      
+      let assistantBookContext = "";
+      if (mentionsJob) {
+        assistantBookContext = `\nATENÇÃO: O professor está falando sobre o LIVRO DE JÓ (Job) - Antigo Testamento. Jó é o homem justo que sofreu provações. NÃO confunda com o Evangelho de João. Responda EXCLUSIVAMENTE sobre JÓ.\n`;
+      } else if (mentionsJohn) {
+        assistantBookContext = `\nATENÇÃO: O professor está falando sobre o EVANGELHO DE JOÃO - Novo Testamento. NÃO confunda com o livro de Jó.\n`;
+      }
+
       const prompt = `Você é um assistente pedagógico especializado em Educação Bíblica e teologia.
 
+REGRA CRÍTICA - DISTINÇÃO ENTRE LIVROS:
+- "Jó" ou "Jo" (sem "ão") = Livro de JÓ (Job) - Antigo Testamento - homem justo que sofreu provações, amigos Elifaz, Bildade, Zofar
+- "João" (com "ão") = Evangelho de JOÃO - Novo Testamento
+- NUNCA substitua Jó por João. São livros completamente diferentes.
+${assistantBookContext}
 REGRA DE OURO - FOCO TOTAL:
 - Analise a pergunta do professor: "${question}"
 - Identifique o tema ou livro específico mencionado.
-- Se o professor mencionou "Jo" (Jó), responda sobre o livro de JÓ (o homem de paciência). 
-- Se o professor mencionou "Joao" (João), responda sobre o EVANGELHO DE JOÃO.
-- NUNCA confunda "Jo" (Jó) com "João". São livros e contextos completamente diferentes.
 - Responda EXCLUSIVAMENTE sobre o que foi perguntado.
 - NUNCA dê respostas genéricas sobre "a Bíblia em geral".
 

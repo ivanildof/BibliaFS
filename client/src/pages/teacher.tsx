@@ -747,14 +747,15 @@ export default function Teacher() {
                       name="scriptureBase"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Texto-Base</FormLabel>
+                          <FormLabel>Texto-Base (Livro da Bíblia)</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Ex: Lucas 15:11-32"
+                              placeholder="Ex: Jó 1, João 3:16, Lucas 15:11-32, Salmos 23"
                               data-testid="input-scripture-base"
                               {...field}
                             />
                           </FormControl>
+                          <p className="text-[10px] text-muted-foreground mt-1">Digite o nome completo do livro. Ex: "Jó" para o livro de Jó, "João" para o Evangelho de João.</p>
                           <FormMessage />
                         </FormItem>
                       )}
