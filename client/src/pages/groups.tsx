@@ -1078,36 +1078,38 @@ export default function Groups() {
               </div>
             </CardHeader>
 
-            <CardContent className="p-0 sm:p-6 overflow-x-hidden">
+            <CardContent className="p-2 sm:p-6 overflow-x-hidden">
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-                <TabsList className="w-full justify-start mb-6 p-1 bg-muted/50 rounded-2xl gap-1 flex-wrap h-auto overflow-hidden">
-                  <TabsTrigger value="chat" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-chat">
-                    <MessageCircle className="h-3.5 w-3.5 mr-2" />
-                    Chat
-                  </TabsTrigger>
-                  <TabsTrigger value="calendar" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-calendar" onClick={() => setActiveTab("calendar")}>
-                    <CalendarIcon className="h-3.5 w-3.5 mr-2" />
-                    Agenda
-                  </TabsTrigger>
-                  <TabsTrigger value="resources" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-resources" onClick={() => setActiveTab("resources")}>
-                    <LinkIcon className="h-3.5 w-3.5 mr-2" />
-                    Arquivos
-                  </TabsTrigger>
-                  <TabsTrigger value="discussions" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-discussions">
-                    <GraduationCap className="h-3.5 w-3.5 mr-2" />
-                    Estudos ({groupDiscussions.length})
-                  </TabsTrigger>
-                          <TabsTrigger value="members" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-members">
-                            <Users className="h-3.5 w-3.5 mr-2" />
-                            Membros ({groupMembers.length})
-                          </TabsTrigger>
-                          {isLeaderOrMod && (
-                            <TabsTrigger value="invites" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-invites">
-                              <UserPlus className="h-3.5 w-3.5 mr-2" />
-                              Convites
-                            </TabsTrigger>
-                          )}
-                        </TabsList>
+                <div className="overflow-x-auto -mx-2 px-2 mb-4 scrollbar-hide">
+                  <TabsList className="inline-flex w-max min-w-full justify-start p-1 bg-muted/50 rounded-2xl gap-1 h-auto">
+                    <TabsTrigger value="chat" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs whitespace-nowrap" data-testid="tab-chat">
+                      <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+                      Chat
+                    </TabsTrigger>
+                    <TabsTrigger value="calendar" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs whitespace-nowrap" data-testid="tab-calendar">
+                      <CalendarIcon className="h-3.5 w-3.5 mr-1.5" />
+                      Agenda
+                    </TabsTrigger>
+                    <TabsTrigger value="resources" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs whitespace-nowrap" data-testid="tab-resources">
+                      <LinkIcon className="h-3.5 w-3.5 mr-1.5" />
+                      Arquivos
+                    </TabsTrigger>
+                    <TabsTrigger value="discussions" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs whitespace-nowrap" data-testid="tab-discussions">
+                      <GraduationCap className="h-3.5 w-3.5 mr-1.5" />
+                      Estudos ({groupDiscussions.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="members" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs whitespace-nowrap" data-testid="tab-members">
+                      <Users className="h-3.5 w-3.5 mr-1.5" />
+                      Membros ({groupMembers.length})
+                    </TabsTrigger>
+                    {isLeaderOrMod && (
+                      <TabsTrigger value="invites" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs whitespace-nowrap" data-testid="tab-invites">
+                        <UserPlus className="h-3.5 w-3.5 mr-1.5" />
+                        Convites
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                </div>
 
                 <TabsContent value="calendar" className="space-y-4">
                   <div className="flex justify-between items-center mb-4">
@@ -1127,11 +1129,11 @@ export default function Groups() {
                       </div>
                     ) : (
                       groupMeetings.map((meeting) => (
-                        <Card key={meeting.id} className="hover-elevate overflow-hidden border-l-4 border-l-primary/50">
+                        <Card key={meeting.id} className="hover-elevate">
                           <CardContent className="p-4">
-                            <div className="flex justify-between items-start gap-4">
-                              <div className="flex-1">
-                                <h4 className="font-bold text-lg">{meeting.title}</h4>
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-bold text-base sm:text-lg">{meeting.title}</h4>
                                 {meeting.description && (
                                   <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{meeting.description}</p>
                                 )}
@@ -1160,7 +1162,7 @@ export default function Groups() {
                                   <Button 
                                     size="sm" 
                                     variant="outline" 
-                                    className="h-8 gap-2 rounded-lg border-primary/20 hover:bg-primary/5"
+                                    className="gap-2 rounded-lg"
                                     asChild
                                   >
                                     <a href={meeting.meetingLink} target="_blank" rel="noopener noreferrer">
@@ -1175,7 +1177,6 @@ export default function Groups() {
                                     <Button
                                       size="icon"
                                       variant="ghost"
-                                      className="h-8 w-8 text-primary hover:bg-primary/10"
                                       onClick={() => {
                                         setEditingMeeting(meeting);
                                         meetingForm.reset({
@@ -1194,7 +1195,6 @@ export default function Groups() {
                                     <Button
                                       size="icon"
                                       variant="ghost"
-                                      className="h-8 w-8 text-destructive hover:bg-destructive/10"
                                       onClick={() => {
                                         setMeetingToDelete(meeting.id);
                                         setIsMeetingDeleteDialogOpen(true);
