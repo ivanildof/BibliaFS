@@ -1368,6 +1368,7 @@ export class DatabaseStorage implements IStorage {
         name: groups.name,
         description: groups.description,
         isPublic: groups.isPublic,
+        leaderId: groups.leaderId,
         role: groupMembers.role,
         joinedAt: groupMembers.joinedAt,
       })
