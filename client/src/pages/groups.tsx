@@ -1863,6 +1863,90 @@ export default function Groups() {
             </CardFooter>
           </Card>
         </div>
+
+        {/* Modal Nova Reunião - dentro do grupo */}
+        <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+          <DialogContent className="sm:max-w-[425px] rounded-2xl">
+            <DialogHeader>
+              <DialogTitle>Agendar Reunião</DialogTitle>
+              <DialogDescription>Defina os detalhes do próximo encontro do grupo.</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Título</label>
+                <Input {...meetingForm.register("title")} placeholder="Ex: Estudo de Romanos" className="rounded-xl" data-testid="input-meeting-title" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Data e Hora</label>
+                <Input {...meetingForm.register("meetingDate")} type="datetime-local" className="rounded-xl" data-testid="input-meeting-date" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Local/Plataforma</label>
+                <Input {...meetingForm.register("location")} placeholder="Ex: Casa do João ou Google Meet" className="rounded-xl" data-testid="input-meeting-location" />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  checked={meetingForm.watch("isOnline")} 
+                  onCheckedChange={(checked) => meetingForm.setValue("isOnline", checked)} 
+                  data-testid="switch-meeting-online"
+                />
+                <label className="text-sm font-medium">Reunião Online</label>
+              </div>
+              {meetingForm.watch("isOnline") && (
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Link da Reunião</label>
+                  <Input {...meetingForm.register("meetingLink")} placeholder="https://meet.google.com/..." className="rounded-xl" data-testid="input-meeting-link" />
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button 
+                onClick={meetingForm.handleSubmit((data) => createMeetingMutation.mutate(data))} 
+                className="rounded-xl w-full"
+                disabled={createMeetingMutation.isPending}
+                data-testid="button-save-meeting"
+              >
+                {createMeetingMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CalendarIcon className="h-4 w-4 mr-2" />}
+                Agendar Reunião
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal Novo Recurso - dentro do grupo */}
+        <Dialog open={isResourceDialogOpen} onOpenChange={setIsResourceDialogOpen}>
+          <DialogContent className="sm:max-w-[425px] rounded-2xl">
+            <DialogHeader>
+              <DialogTitle>Adicionar Recurso</DialogTitle>
+              <DialogDescription>Compartilhe materiais úteis com o grupo.</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Título</label>
+                <Input {...resourceForm.register("title")} placeholder="Ex: PDF do Estudo" className="rounded-xl" data-testid="input-resource-title" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Descrição</label>
+                <Textarea {...resourceForm.register("description")} placeholder="Do que se trata este material?" className="rounded-xl" data-testid="input-resource-description" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">URL / Link</label>
+                <Input {...resourceForm.register("url")} placeholder="https://..." className="rounded-xl" data-testid="input-resource-url" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                onClick={resourceForm.handleSubmit((data) => createResourceMutation.mutate(data))} 
+                className="rounded-xl w-full"
+                disabled={createResourceMutation.isPending}
+                data-testid="button-save-resource"
+              >
+                {createResourceMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <LinkIcon className="h-4 w-4 mr-2" />}
+                Adicionar Recurso
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -2360,76 +2444,6 @@ export default function Groups() {
             <Button variant="destructive" onClick={() => gridDeleteMutation.mutate()} disabled={gridDeleteMutation.isPending} data-testid="button-grid-confirm-delete" className="rounded-xl h-12 flex-1 order-1 sm:order-2 font-bold">
               {gridDeleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Confirmar Exclusão
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      {/* Modal Nova Reunião */}
-      <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>Agendar Reunião</DialogTitle>
-            <DialogDescription>Defina os detalhes do próximo encontro do grupo.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Título</label>
-              <Input {...meetingForm.register("title")} placeholder="Ex: Estudo de Romanos" className="rounded-xl" />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Data e Hora</label>
-              <Input {...meetingForm.register("meetingDate")} type="datetime-local" className="rounded-xl" />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Local/Plataforma</label>
-              <Input {...meetingForm.register("location")} placeholder="Ex: Casa do João ou Google Meet" className="rounded-xl" />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch 
-                checked={meetingForm.watch("isOnline")} 
-                onCheckedChange={(checked) => meetingForm.setValue("isOnline", checked)} 
-              />
-              <label className="text-sm font-medium">É Online?</label>
-            </div>
-            {meetingForm.watch("isOnline") && (
-              <div className="grid gap-2">
-                <label className="text-sm font-medium">Link da Reunião</label>
-                <Input {...meetingForm.register("meetingLink")} placeholder="https://..." className="rounded-xl" />
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button onClick={meetingForm.handleSubmit((data) => createMeetingMutation.mutate(data))} className="rounded-xl w-full">
-              {createMeetingMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Agendar"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal Novo Recurso */}
-      <Dialog open={isResourceDialogOpen} onOpenChange={setIsResourceDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>Adicionar Recurso</DialogTitle>
-            <DialogDescription>Compartilhe materiais úteis com o grupo.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Título</label>
-              <Input {...resourceForm.register("title")} placeholder="Ex: PDF do Estudo" className="rounded-xl" />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Descrição</label>
-              <Textarea {...resourceForm.register("description")} placeholder="Do que se trata este material?" className="rounded-xl" />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">URL / Link</label>
-              <Input {...resourceForm.register("url")} placeholder="https://..." className="rounded-xl" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={resourceForm.handleSubmit((data) => createResourceMutation.mutate(data))} className="rounded-xl w-full">
-              {createResourceMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Adicionar"}
             </Button>
           </DialogFooter>
         </DialogContent>
