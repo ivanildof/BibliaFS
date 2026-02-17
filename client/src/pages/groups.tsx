@@ -916,17 +916,15 @@ export default function Groups() {
     if (groupLimits && !groupLimits.isPremium) {
       if (groupLimits.functionsBlocked) {
         toast({
-          title: "Período de teste expirado",
-          description: "Assine um plano para criar novos grupos e usar todas as funções.",
-          variant: "destructive",
+          title: "Recurso Premium",
+          description: "Para criar novos grupos, conheça nossos planos.",
         });
         return;
       }
       if (!groupLimits.canCreateGroup) {
         toast({
-          title: "Limite atingido",
-          description: "Usuários gratuitos podem criar apenas 1 grupo. Assine um plano para criar grupos ilimitados.",
-          variant: "destructive",
+          title: "Limite do plano gratuito",
+          description: "Você já criou o máximo de grupos do plano gratuito. Conheça nossos planos para criar mais.",
         });
         return;
       }
@@ -938,17 +936,15 @@ export default function Groups() {
     if (groupLimits && !groupLimits.isPremium) {
       if (groupLimits.functionsBlocked) {
         toast({
-          title: "Período de teste expirado",
-          description: "Assine um plano para entrar em novos grupos e usar todas as funções.",
-          variant: "destructive",
+          title: "Recurso Premium",
+          description: "Para entrar em novos grupos, conheça nossos planos.",
         });
         return;
       }
       if (!groupLimits.canJoinGroup) {
         toast({
-          title: "Limite atingido",
-          description: "Usuários gratuitos podem participar de até 2 grupos. Assine um plano para participar de grupos ilimitados.",
-          variant: "destructive",
+          title: "Limite do plano gratuito",
+          description: "Você já participa do máximo de grupos do plano gratuito. Conheça nossos planos para participar de mais.",
         });
         return;
       }
@@ -1184,7 +1180,7 @@ export default function Groups() {
                       <Button 
                         onClick={() => {
                           if (groupLimits?.functionsBlocked) {
-                            toast({ title: "Função bloqueada", description: "Assine um plano para agendar reuniões.", variant: "destructive" });
+                            toast({ title: "Recurso Premium", description: "Para agendar reuniões, conheça nossos planos." });
                             return;
                           }
                           setIsMeetingDialogOpen(true);
@@ -1296,7 +1292,7 @@ export default function Groups() {
                     <Button 
                       onClick={() => {
                         if (groupLimits?.functionsBlocked) {
-                          toast({ title: "Função bloqueada", description: "Assine um plano para adicionar recursos.", variant: "destructive" });
+                          toast({ title: "Recurso Premium", description: "Para adicionar recursos, conheça nossos planos." });
                           return;
                         }
                         setIsResourceDialogOpen(true);
@@ -1473,18 +1469,18 @@ export default function Groups() {
                   )}
 
                   {groupLimits?.functionsBlocked ? (
-                    <div className="flex items-center gap-2 mt-2 p-3 rounded-xl bg-destructive/5 border border-destructive/20">
-                      <Lock className="h-4 w-4 text-destructive flex-shrink-0" />
-                      <span className="text-sm text-muted-foreground">Chat bloqueado. Assine um plano para enviar mensagens.</span>
+                    <div className="flex items-center gap-2 mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
+                      <Crown className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground">Para enviar mensagens, conheça nossos planos premium.</span>
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="ml-auto rounded-xl border-destructive/30 flex-shrink-0"
+                        className="ml-auto rounded-xl border-primary/30 flex-shrink-0"
                         onClick={() => navigate("/planos")}
                         data-testid="button-upgrade-chat"
                       >
                         <Crown className="h-3.5 w-3.5 mr-1" />
-                        Assinar
+                        Conhecer Planos
                       </Button>
                     </div>
                   ) : (
@@ -1555,7 +1551,7 @@ export default function Groups() {
                       <Button 
                         onClick={() => {
                           if (groupLimits?.functionsBlocked) {
-                            toast({ title: "Função bloqueada", description: "Assine um plano para enviar convites.", variant: "destructive" });
+                            toast({ title: "Recurso Premium", description: "Para enviar convites, conheça nossos planos." });
                             return;
                           }
                           setActiveTab("invites");
@@ -1638,7 +1634,7 @@ export default function Groups() {
                               onClick={(e) => {
                                 if (groupLimits?.functionsBlocked) {
                                   e.preventDefault();
-                                  toast({ title: "Função bloqueada", description: "Assine um plano para enviar convites.", variant: "destructive" });
+                                  toast({ title: "Recurso Premium", description: "Para enviar convites, conheça nossos planos." });
                                 }
                               }}
                             >
@@ -1841,11 +1837,11 @@ export default function Groups() {
 
                           {/* Answer Form */}
                           {discussionDetails?.status === "open" && groupLimits?.functionsBlocked && (
-                            <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/5 border border-destructive/20">
-                              <Lock className="h-4 w-4 text-destructive flex-shrink-0" />
-                              <span className="text-sm text-muted-foreground">Respostas bloqueadas. Assine um plano para participar das discussões.</span>
-                              <Button variant="outline" size="sm" className="ml-auto rounded-xl border-destructive/30 flex-shrink-0" onClick={() => navigate("/planos")}>
-                                <Crown className="h-3.5 w-3.5 mr-1" /> Assinar
+                            <div className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
+                              <Crown className="h-4 w-4 text-primary flex-shrink-0" />
+                              <span className="text-sm text-muted-foreground">Para participar das discussões, conheça nossos planos premium.</span>
+                              <Button variant="outline" size="sm" className="ml-auto rounded-xl border-primary/30 flex-shrink-0" onClick={() => navigate("/planos")}>
+                                <Crown className="h-3.5 w-3.5 mr-1" /> Conhecer Planos
                               </Button>
                             </div>
                           )}
@@ -2047,7 +2043,7 @@ export default function Groups() {
                                 onClick={(e) => {
                                   if (groupLimits?.functionsBlocked) {
                                     e.preventDefault();
-                                    toast({ title: "Função bloqueada", description: "Assine um plano para criar discussões.", variant: "destructive" });
+                                    toast({ title: "Recurso Premium", description: "Para criar discussões, conheça nossos planos." });
                                   }
                                 }}
                               >
@@ -2475,20 +2471,20 @@ export default function Groups() {
 
         {groupLimits && !groupLimits.isPremium && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <Alert className={`rounded-2xl ${groupLimits.functionsBlocked ? 'border-destructive/30 bg-destructive/5' : 'border-primary/20 bg-primary/5'}`}>
-              <Crown className={`h-4 w-4 ${groupLimits.functionsBlocked ? 'text-destructive' : 'text-primary'}`} />
+            <Alert className="rounded-2xl border-primary/20 bg-primary/5">
+              <Crown className="h-4 w-4 text-primary" />
               <AlertTitle className="font-bold text-foreground">
                 {groupLimits.functionsBlocked 
-                  ? "Teste expirado - Funções bloqueadas" 
+                  ? "Aproveite mais dos Grupos de Estudo" 
                   : `Plano Gratuito - ${groupLimits.trialDaysRemaining} dias restantes`
                 }
               </AlertTitle>
               <AlertDescription className="text-muted-foreground">
                 {groupLimits.functionsBlocked ? (
-                  <span>Seu período de teste de 30 dias expirou. Você ainda pode visualizar seus grupos, mas as funções (chat, convites, reuniões, recursos, discussões) estão bloqueadas. Assine um plano para desbloquear.</span>
+                  <span>Para continuar enviando mensagens, criando discussões e usando todas as ferramentas do grupo, conheça nossos planos premium.</span>
                 ) : (
                   <span>
-                    Teste gratuito: {groupLimits.trialDaysRemaining} dias restantes. Após esse período, as funções do grupo serão bloqueadas.
+                    Você tem {groupLimits.trialDaysRemaining} dias para experimentar todas as funções.
                     {" | "}Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
                     Participando de: {groupLimits.groupsJoined}/{groupLimits.maxGroupsJoin} grupos | 
                     Máx. membros por grupo: {groupLimits.maxMembers}
@@ -2497,12 +2493,12 @@ export default function Groups() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className={`ml-3 rounded-xl ${groupLimits.functionsBlocked ? 'border-destructive/30' : 'border-primary/30'}`}
+                  className="ml-3 rounded-xl border-primary/30"
                   onClick={() => navigate("/planos")}
                   data-testid="button-upgrade-plan"
                 >
                   <Crown className="h-3.5 w-3.5 mr-1.5" />
-                  Assinar Plano
+                  Conhecer Planos
                 </Button>
               </AlertDescription>
             </Alert>
