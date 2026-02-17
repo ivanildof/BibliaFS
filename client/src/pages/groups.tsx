@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { SiWhatsapp } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,7 +59,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, isToday, isYesterday, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const formSchema = z.object({
@@ -124,6 +124,7 @@ interface GroupMessage {
   groupId: string;
   userId: string;
   content: string;
+  replyToId?: string | null;
   verseReference?: string;
   verseText?: string;
   messageType: string;
@@ -377,6 +378,38 @@ export default function Groups() {
     staleTime: 0,
     refetchOnWindowFocus: true,
   });
+
+  const [replyingTo, setReplyingTo] = useState<GroupMessage | null>(null);
+  const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
+  const [isMessageDeleteDialogOpen, setIsMessageDeleteDialogOpen] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const prevMessageCountRef = useRef(0);
+
+  const deleteMessageMutation = useMutation({
+    mutationFn: async (messageId: string) => {
+      await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/messages/${messageId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "messages"] });
+      setIsMessageDeleteDialogOpen(false);
+      setMessageToDelete(null);
+      toast({ title: "Mensagem apagada" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao apagar mensagem", description: error?.message, variant: "destructive" });
+    }
+  });
+
+  useEffect(() => {
+    if (groupMessages.length > 0 && groupMessages.length !== prevMessageCountRef.current) {
+      prevMessageCountRef.current = groupMessages.length;
+      setTimeout(() => {
+        if (chatScrollRef.current) {
+          chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [groupMessages.length]);
 
   const [editingMeeting, setEditingMeeting] = useState<GroupMeeting | null>(null);
 
@@ -643,11 +676,16 @@ export default function Groups() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (data: MessageFormData) => {
-      return await apiRequest("POST", `/api/groups/${selectedGroup?.id}/messages`, data);
+      const payload: any = { ...data };
+      if (replyingTo) {
+        payload.replyToId = replyingTo.id;
+      }
+      return await apiRequest("POST", `/api/groups/${selectedGroup?.id}/messages`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "messages"] });
       messageForm.reset();
+      setReplyingTo(null);
     },
     onError: (error: Error) => {
       toast({
@@ -1199,62 +1237,141 @@ export default function Groups() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="chat" className="space-y-4">
-                  <ScrollArea className="h-[400px] border rounded-lg p-4">
+                <TabsContent value="chat" className="space-y-0 flex flex-col" style={{ height: "calc(100vh - 380px)", minHeight: "400px" }}>
+                  <div 
+                    ref={chatScrollRef}
+                    className="flex-1 overflow-y-auto border rounded-lg p-3 space-y-1"
+                    data-testid="chat-scroll-area"
+                  >
                     {loadingMessages ? (
                       <div className="flex items-center justify-center h-full">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       </div>
                     ) : groupMessages.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full text-center">
+                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
                         <MessageCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground">Nenhuma mensagem ainda</p>
-                        <p className="text-sm text-muted-foreground">Seja o primeiro a iniciar a discussão!</p>
+                        <p className="text-muted-foreground font-medium">Nenhuma mensagem ainda</p>
+                        <p className="text-sm text-muted-foreground mt-1">Seja o primeiro a iniciar a conversa!</p>
                       </div>
                     ) : (
-                      <div className="space-y-4">
-                        {[...groupMessages].reverse().map((message) => {
-                          const isOwn = message.user?.id === user?.id;
-                          return (
-                            <div 
-                              key={message.id} 
-                              className={`flex gap-3 ${isOwn ? "flex-row-reverse" : ""}`}
-                              data-testid={`message-${message.id}`}
-                            >
-                              <Avatar className="h-8 w-8 flex-shrink-0">
-                                <AvatarImage src={message.user?.profileImageUrl || ""} />
-                                <AvatarFallback>
-                                  {message.user?.displayName?.charAt(0) || "U"}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className={`flex-1 max-w-[80%] ${isOwn ? "text-right" : ""}`}>
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-sm font-medium">
-                                    {message.user?.displayName || "Usuário"}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true, locale: ptBR })}
-                                  </span>
-                                </div>
-                                <div className={`rounded-lg p-3 ${isOwn ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                                  {message.verseReference && (
-                                    <div className="text-xs opacity-80 mb-1 flex items-center gap-1">
-                                      <BookOpen className="h-3 w-3" />
-                                      {message.verseReference}
-                                    </div>
+                      <div className="space-y-1">
+                        {(() => {
+                          const sorted = [...groupMessages].sort((a, b) => 
+                            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                          );
+                          let lastDate: string | null = null;
+                          return sorted.map((message) => {
+                            const msgDate = new Date(message.createdAt);
+                            const dateKey = format(msgDate, "yyyy-MM-dd");
+                            let showDateSeparator = false;
+                            if (dateKey !== lastDate) {
+                              showDateSeparator = true;
+                              lastDate = dateKey;
+                            }
+                            const isOwn = (message as any).user?.id === user?.id || message.userId === user?.id;
+                            const displayName = (message as any).user?.displayName || "Membro";
+                            const profileImg = (message as any).user?.profileImageUrl || "";
+                            const replyMsg = message.replyToId ? sorted.find(m => m.id === message.replyToId) : null;
+
+                            return (
+                              <div key={message.id}>
+                                {showDateSeparator && (
+                                  <div className="flex items-center justify-center my-3" data-testid={`date-separator-${dateKey}`}>
+                                    <div className="flex-1 h-px bg-border" />
+                                    <span className="px-3 text-xs text-muted-foreground font-medium">
+                                      {isToday(msgDate) ? "Hoje" : isYesterday(msgDate) ? "Ontem" : format(msgDate, "dd 'de' MMMM", { locale: ptBR })}
+                                    </span>
+                                    <div className="flex-1 h-px bg-border" />
+                                  </div>
+                                )}
+                                <div 
+                                  className={`group flex gap-2 py-1 ${isOwn ? "flex-row-reverse" : ""}`}
+                                  data-testid={`message-${message.id}`}
+                                >
+                                  {!isOwn && (
+                                    <Avatar className="h-7 w-7 flex-shrink-0 mt-1">
+                                      <AvatarImage src={profileImg} />
+                                      <AvatarFallback className="text-xs">
+                                        {displayName.charAt(0)}
+                                      </AvatarFallback>
+                                    </Avatar>
                                   )}
-                                  <p className="text-sm">{message.content}</p>
+                                  <div className={`max-w-[75%] ${isOwn ? "items-end" : "items-start"} flex flex-col`}>
+                                    {!isOwn && (
+                                      <span className="text-xs font-medium text-muted-foreground ml-1 mb-0.5">
+                                        {displayName}
+                                      </span>
+                                    )}
+                                    <div className={`rounded-2xl px-3 py-2 relative ${isOwn ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-muted rounded-tl-sm"}`}>
+                                      {replyMsg && (
+                                        <div className={`text-xs mb-1 pb-1 border-b ${isOwn ? "border-primary-foreground/20" : "border-border"} opacity-70`}>
+                                          <span className="font-medium">{(replyMsg as any).user?.displayName || "Membro"}</span>
+                                          <p className="truncate max-w-[200px]">{replyMsg.content}</p>
+                                        </div>
+                                      )}
+                                      {message.verseReference && (
+                                        <div className="text-xs opacity-80 mb-1 flex items-center gap-1">
+                                          <BookOpen className="h-3 w-3" />
+                                          {message.verseReference}
+                                        </div>
+                                      )}
+                                      <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                                      <span className={`text-[10px] mt-0.5 block ${isOwn ? "text-primary-foreground/60 text-right" : "text-muted-foreground"}`}>
+                                        {format(msgDate, "HH:mm")}
+                                      </span>
+                                    </div>
+                                    <div className={`flex gap-1 mt-0.5 invisible group-hover:visible ${isOwn ? "flex-row-reverse" : ""}`}>
+                                      <button
+                                        onClick={() => setReplyingTo(message)}
+                                        className="text-xs text-muted-foreground hover:text-foreground px-1"
+                                        data-testid={`reply-message-${message.id}`}
+                                      >
+                                        Responder
+                                      </button>
+                                      {isOwn && (
+                                        <button
+                                          onClick={() => {
+                                            setMessageToDelete(message.id);
+                                            setIsMessageDeleteDialogOpen(true);
+                                          }}
+                                          className="text-xs text-destructive hover:text-destructive/80 px-1"
+                                          data-testid={`delete-message-${message.id}`}
+                                        >
+                                          Apagar
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          });
+                        })()}
                       </div>
                     )}
-                  </ScrollArea>
+                  </div>
+
+                  {replyingTo && (
+                    <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 border-l-2 border-primary rounded-md mt-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-primary">
+                          Respondendo a {(replyingTo as any).user?.displayName || "Membro"}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">{replyingTo.content}</p>
+                      </div>
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        onClick={() => setReplyingTo(null)}
+                        data-testid="cancel-reply"
+                      >
+                        <AlertCircle className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
 
                   <Form {...messageForm}>
-                    <form onSubmit={messageForm.handleSubmit(onSendMessage)} className="flex flex-col sm:flex-row gap-2">
+                    <form onSubmit={messageForm.handleSubmit(onSendMessage)} className="flex gap-2 mt-2">
                       <FormField
                         control={messageForm.control}
                         name="content"
@@ -1262,7 +1379,8 @@ export default function Groups() {
                           <FormItem className="flex-1 min-w-0">
                             <FormControl>
                               <Input 
-                                placeholder="Digite sua mensagem..." 
+                                placeholder={replyingTo ? "Digite sua resposta..." : "Digite sua mensagem..."}
+                                className="rounded-full"
                                 data-testid="input-message"
                                 {...field}
                               />
@@ -1272,7 +1390,9 @@ export default function Groups() {
                       />
                       <Button 
                         type="submit" 
+                        size="icon"
                         disabled={sendMessageMutation.isPending}
+                        className="rounded-full flex-shrink-0"
                         data-testid="button-send-message"
                       >
                         {sendMessageMutation.isPending ? (
@@ -1283,6 +1403,30 @@ export default function Groups() {
                       </Button>
                     </form>
                   </Form>
+
+                  <Dialog open={isMessageDeleteDialogOpen} onOpenChange={setIsMessageDeleteDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Apagar mensagem</DialogTitle>
+                        <DialogDescription>
+                          Tem certeza que deseja apagar esta mensagem? Esta ação não pode ser desfeita.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setIsMessageDeleteDialogOpen(false)}>
+                          Cancelar
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          onClick={() => messageToDelete && deleteMessageMutation.mutate(messageToDelete)}
+                          disabled={deleteMessageMutation.isPending}
+                        >
+                          {deleteMessageMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                          Apagar
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </TabsContent>
 
                 <TabsContent value="members" className="overflow-x-hidden">

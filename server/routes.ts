@@ -4448,7 +4448,7 @@ Responda em português do Brasil.${bibleContext}`
     try {
       const userId = req.user.claims.sub;
       const groupId = req.params.id;
-      const { content, verseReference, verseText, messageType } = req.body;
+      const { content, verseReference, verseText, messageType, replyToId } = req.body;
       
       // Check if user is member
       const isMember = await storage.isGroupMember(groupId, userId);
@@ -4464,6 +4464,7 @@ Responda em português do Brasil.${bibleContext}`
         groupId,
         userId,
         content: content.trim(),
+        replyToId: replyToId || null,
         verseReference,
         verseText,
         messageType: messageType || "text",
