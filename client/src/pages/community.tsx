@@ -151,15 +151,19 @@ export default function Community() {
             Comunidade Bíblica
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Espaço exclusivo para compartilhar reflexões, versículos e aprendizados da Palavra de Deus
+            Espaço exclusivo para compartilhar reflexões, versículos e aprendizados da Palavra de Deus. Todas as publicações são públicas e visíveis para todos os usuários do aplicativo.
           </p>
         </div>
 
-        <Card className="mb-6 rounded-xl border border-primary/20 bg-primary/5">
-          <CardContent className="py-3 px-4">
-            <p className="text-xs text-center text-muted-foreground">
-              <span className="font-semibold text-foreground">Regras da comunidade:</span> Este espaço é dedicado exclusivamente ao estudo da Bíblia. Publique apenas versículos, reflexões e aprendizados bíblicos. Conteúdos fora do tema serão removidos.
-            </p>
+        <Card className="mb-6 rounded-xl border border-destructive/30 bg-destructive/5">
+          <CardContent className="py-4 px-4 space-y-3">
+            <p className="text-xs text-center font-semibold text-foreground">Regras da Comunidade Bíblica</p>
+            <div className="text-[11px] text-muted-foreground space-y-2">
+              <p>1. Este espaço é dedicado <span className="font-semibold text-foreground">exclusivamente</span> ao estudo da Bíblia Sagrada. Publique apenas versículos, reflexões e aprendizados bíblicos.</p>
+              <p>2. Conteúdos que não estejam de acordo com os princípios bíblicos, incluindo linguagem ofensiva, discurso de ódio, spam ou qualquer material não relacionado às Escrituras, serão removidos imediatamente.</p>
+              <p>3. <span className="font-semibold text-destructive">Usuários que publicarem conteúdo impróprio ou em desacordo com as regras terão suas contas permanentemente excluídas</span>, conforme previsto nos Termos de Uso da plataforma e em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei n.º 13.709/2018) e o Marco Civil da Internet (Lei n.º 12.965/2014, Art. 19).</p>
+              <p>4. Todas as publicações são públicas e visíveis para todos os usuários do BíbliaFS. Ao publicar, você concorda com estas regras.</p>
+            </div>
           </CardContent>
         </Card>
         
