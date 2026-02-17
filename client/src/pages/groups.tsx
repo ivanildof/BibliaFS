@@ -1032,33 +1032,64 @@ export default function Groups() {
                       </div>
                     ) : (
                       groupMeetings.map((meeting) => (
-                        <Card key={meeting.id} className="hover-elevate">
+                        <Card key={meeting.id} className="hover-elevate overflow-hidden border-l-4 border-l-primary/50">
                           <CardContent className="p-4">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-bold">{meeting.title}</h4>
-                                <p className="text-sm text-muted-foreground">{meeting.description}</p>
-                                <div className="flex gap-4 mt-2 text-xs font-medium text-primary flex-wrap">
-                                  <span className="flex items-center gap-1">
-                                    <CalendarIcon className="h-3 w-3" />
+                            <div className="flex justify-between items-start gap-4">
+                              <div className="flex-1">
+                                <h4 className="font-bold text-lg">{meeting.title}</h4>
+                                {meeting.description && (
+                                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{meeting.description}</p>
+                                )}
+                                <div className="flex flex-wrap gap-3 mt-3 text-xs font-semibold text-primary">
+                                  <span className="flex items-center gap-1.5 bg-primary/10 px-2 py-1 rounded-md">
+                                    <CalendarIcon className="h-3.5 w-3.5" />
                                     {new Date(meeting.meetingDate).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })} {new Date(meeting.meetingDate).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}
                                   </span>
                                   {meeting.location && (
-                                    <span className="flex items-center gap-1">
-                                      <Globe className="h-3 w-3" />
+                                    <span className="flex items-center gap-1.5 bg-muted px-2 py-1 rounded-md text-foreground/70">
+                                      <Globe className="h-3.5 w-3.5" />
                                       {meeting.location}
+                                    </span>
+                                  )}
+                                  {meeting.isOnline && (
+                                    <span className="flex items-center gap-1.5 bg-blue-500/10 text-blue-600 px-2 py-1 rounded-md">
+                                      <Video className="h-3.5 w-3.5" />
+                                      Online
                                     </span>
                                   )}
                                 </div>
                               </div>
-                              {meeting.isOnline && meeting.meetingLink && (
-                                <Button asChild size="sm" variant="outline" className="rounded-xl">
-                                  <a href={meeting.meetingLink} target="_blank" rel="noopener noreferrer">
-                                    <Video className="h-4 w-4 mr-2" />
-                                    Entrar
-                                  </a>
-                                </Button>
-                              )}
+                              
+                              <div className="flex flex-col gap-2">
+                                {meeting.isOnline && meeting.meetingLink && (
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="h-8 gap-2 rounded-lg border-primary/20 hover:bg-primary/5"
+                                    asChild
+                                  >
+                                    <a href={meeting.meetingLink} target="_blank" rel="noopener noreferrer">
+                                      <Video className="h-3.5 w-3.5" />
+                                      Entrar
+                                    </a>
+                                  </Button>
+                                )}
+                                
+                                {isLeader && (
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                    onClick={() => {
+                                      if (confirm("Deseja excluir esta reunião?")) {
+                                        deleteMeetingMutation.mutate(meeting.id);
+                                      }
+                                    }}
+                                  >
+                                    <LogOut className="h-4 w-4 rotate-180" />
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                           </CardContent>
                         </Card>

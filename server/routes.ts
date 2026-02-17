@@ -443,6 +443,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/groups/:groupId/meetings/:meetingId", isAuthenticated, async (req: any, res) => {
+    try {
+      const { groupId, meetingId } = req.params;
+      const userId = req.user.claims.sub;
+      const success = await storage.deleteGroupMeeting(meetingId, userId);
+      if (success) {
+        res.json({ message: "Reunião excluída" });
+      } else {
+        res.status(404).json({ error: "Reunião não encontrada" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao excluir reunião" });
+    }
+  });
+
   app.get("/api/groups/:groupId/resources", isAuthenticated, async (req, res) => {
     try {
       const resources = await storage.getGroupResources(req.params.groupId);
