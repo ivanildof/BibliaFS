@@ -2475,13 +2475,13 @@ export default function Groups() {
               <Crown className="h-4 w-4 text-primary" />
               <AlertTitle className="font-bold text-foreground">
                 {groupLimits.functionsBlocked 
-                  ? "Seus 30 dias gratuitos foram usados" 
+                  ? "Grupos de Estudo - Recurso Premium" 
                   : `30 dias grátis - ${groupLimits.trialDaysRemaining} dias restantes`
                 }
               </AlertTitle>
               <AlertDescription className="text-muted-foreground">
                 {groupLimits.functionsBlocked ? (
-                  <span>Você aproveitou os 30 dias gratuitos! Para continuar usando todas as ferramentas do grupo, conheça nossos planos premium.</span>
+                  <span>Os Grupos de Estudo oferecem 30 dias grátis para novos usuários. Para usar todas as ferramentas sem limite, conheça nossos planos premium.</span>
                 ) : (
                   <span>
                     Aproveite! Você tem {groupLimits.trialDaysRemaining} dias grátis para usar todas as funções dos Grupos de Estudo.
