@@ -57,8 +57,9 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDistanceToNow, format, isToday, isYesterday, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -212,6 +213,18 @@ interface GroupResource {
   createdAt: string;
 }
 
+interface GroupLimits {
+  isPremium: boolean;
+  canCreateGroup: boolean;
+  canJoinGroup: boolean;
+  maxMembers: number | null;
+  trialExpired: boolean;
+  trialDaysRemaining: number | null;
+  groupsCreated: number;
+  groupsJoined: number;
+  maxGroupsCreate: number | null;
+  maxGroupsJoin: number | null;
+}
 
 export default function Groups() {
   const { user } = useAuth();
@@ -340,6 +353,13 @@ export default function Groups() {
     retry: 0,
     enabled: !!user,
   });
+
+  const { data: groupLimits } = useQuery<GroupLimits>({
+    queryKey: ["/api/groups/limits"],
+    enabled: !!user,
+  });
+
+  const [, navigate] = useLocation();
 
   // Helper to check if user is the leader of the current group
   const isLeaderGlobal = selectedGroup ? (selectedGroup.leaderId === user?.id || selectedGroup.role === "leader") : false;
@@ -620,6 +640,7 @@ export default function Groups() {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
         queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/groups/limits"] });
       }, 500);
     },
     onError: (error: Error) => {
@@ -638,6 +659,7 @@ export default function Groups() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/limits"] });
       toast({
         title: "Bem-vindo ao grupo!",
         description: "Você agora é membro deste grupo.",
@@ -659,6 +681,7 @@ export default function Groups() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       queryClient.invalidateQueries({ queryKey: ["/api/groups/my"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups/limits"] });
       setSelectedGroup(null);
       toast({
         title: "Você saiu do grupo",
@@ -887,6 +910,50 @@ export default function Groups() {
       });
     },
   });
+
+  const handleCreateGroupClick = () => {
+    if (groupLimits && !groupLimits.isPremium) {
+      if (groupLimits.trialExpired) {
+        toast({
+          title: "Período de teste expirado",
+          description: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!groupLimits.canCreateGroup) {
+        toast({
+          title: "Limite atingido",
+          description: "Usuários gratuitos podem criar apenas 1 grupo. Assine um plano para criar grupos ilimitados.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleJoinGroupClick = (groupId: string) => {
+    if (groupLimits && !groupLimits.isPremium) {
+      if (groupLimits.trialExpired) {
+        toast({
+          title: "Período de teste expirado",
+          description: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!groupLimits.canJoinGroup) {
+        toast({
+          title: "Limite atingido",
+          description: "Usuários gratuitos podem participar de até 2 grupos. Assine um plano para participar de grupos ilimitados.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    joinMutation.mutate(groupId);
+  };
 
   const onSubmit = (data: GroupFormData) => {
     createMutation.mutate(data);
@@ -2318,7 +2385,7 @@ export default function Groups() {
 
             <Button 
               size="lg" 
-              onClick={() => setIsCreateDialogOpen(true)}
+              onClick={handleCreateGroupClick}
               className="rounded-2xl h-14 px-8 font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex-1 sm:flex-none" 
               data-testid="button-create-group"
             >
@@ -2326,6 +2393,38 @@ export default function Groups() {
               Criar Grupo
             </Button>
         </div>
+
+        {groupLimits && !groupLimits.isPremium && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Alert className="border-primary/20 bg-primary/5 rounded-2xl">
+              <Crown className="h-4 w-4 text-primary" />
+              <AlertTitle className="font-bold text-foreground">
+                {groupLimits.trialExpired ? "Período de teste expirado" : `Plano Gratuito - ${groupLimits.trialDaysRemaining} dias restantes`}
+              </AlertTitle>
+              <AlertDescription className="text-muted-foreground">
+                {groupLimits.trialExpired ? (
+                  <span>Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo.</span>
+                ) : (
+                  <span>
+                    Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
+                    Participando de: {groupLimits.groupsJoined}/{groupLimits.maxGroupsJoin} grupos | 
+                    Máx. membros por grupo: {groupLimits.maxMembers}
+                  </span>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="ml-3 rounded-xl border-primary/30"
+                  onClick={() => navigate("/planos")}
+                  data-testid="button-upgrade-plan"
+                >
+                  <Crown className="h-3.5 w-3.5 mr-1.5" />
+                  Assinar Plano
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
 
         <Tabs defaultValue="my-groups" className="space-y-8">
           <div className="overflow-x-auto scrollbar-hide">
@@ -2365,7 +2464,7 @@ export default function Groups() {
                     <Button 
                       size="lg"
                       className="rounded-2xl h-14 px-10 font-bold shadow-lg shadow-primary/20"
-                      onClick={() => setIsCreateDialogOpen(true)} 
+                      onClick={handleCreateGroupClick} 
                       data-testid="button-create-first-group"
                     >
                       <Plus className="h-5 w-5 mr-2.5" />
@@ -2524,7 +2623,7 @@ export default function Groups() {
                       ) : (
                         <Button 
                           className="w-full rounded-2xl font-bold h-12 shadow-md shadow-primary/10"
-                          onClick={() => joinMutation.mutate(group.id)}
+                          onClick={() => handleJoinGroupClick(group.id)}
                           disabled={joinMutation.isPending}
                         >
                           {joinMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Participar agora"}
