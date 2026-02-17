@@ -107,6 +107,7 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
         <Route path="/groups" component={Groups} />
+        <Route path="/grupos" component={Groups} />
         <Route path="/help" component={Help} />
         <Route path="/bible" component={BibleReader} />
         <Route path="/biblia" component={BibleReader} />
@@ -141,6 +142,7 @@ function Router() {
       <Route path="/podcasts" component={Podcasts} />
       <Route path="/teacher" component={Teacher} />
       <Route path="/groups" component={Groups} />
+      <Route path="/grupos" component={Groups} />
       <Route path="/community" component={Community} />
       <Route path="/achievements" component={Achievements} />
       <Route path="/conquistas" component={Achievements} />
