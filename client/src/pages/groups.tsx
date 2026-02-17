@@ -2476,17 +2476,25 @@ export default function Groups() {
               <AlertTitle className="font-bold text-foreground">
                 {groupLimits.functionsBlocked 
                   ? "Grupos de Estudo - Recurso Premium" 
-                  : `30 dias grátis - ${groupLimits.trialDaysRemaining} dias restantes`
+                  : groupLimits.trialStarted
+                    ? `30 dias grátis - ${groupLimits.trialDaysRemaining} dias restantes`
+                    : "Plano Gratuito - Grupos de Estudo"
                 }
               </AlertTitle>
               <AlertDescription className="text-muted-foreground">
                 {groupLimits.functionsBlocked ? (
-                  <span>Os Grupos de Estudo oferecem 30 dias grátis para novos usuários. Para usar todas as ferramentas sem limite, conheça nossos planos premium.</span>
-                ) : (
+                  <span>Seu período gratuito de 30 dias terminou. Para continuar usando todas as ferramentas do grupo, conheça nossos planos premium.</span>
+                ) : groupLimits.trialStarted ? (
                   <span>
                     Aproveite! Você tem {groupLimits.trialDaysRemaining} dias grátis para usar todas as funções dos Grupos de Estudo.
                     {" | "}Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
                     Participando de: {groupLimits.groupsJoined}/{groupLimits.maxGroupsJoin} grupos | 
+                    Máx. membros por grupo: {groupLimits.maxMembers}
+                  </span>
+                ) : (
+                  <span>
+                    Crie seu primeiro grupo e ganhe 30 dias grátis para usar todas as funções dos Grupos de Estudo!
+                    {" | "}Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
                     Máx. membros por grupo: {groupLimits.maxMembers}
                   </span>
                 )}
