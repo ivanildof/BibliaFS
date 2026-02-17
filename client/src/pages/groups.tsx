@@ -363,11 +363,15 @@ export default function Groups() {
   const { data: groupMeetings = [] } = useQuery<GroupMeeting[]>({
     queryKey: ["/api/groups", selectedGroup?.id, "meetings"],
     enabled: !!selectedGroup,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   const { data: groupResources = [] } = useQuery<GroupResource[]>({
     queryKey: ["/api/groups", selectedGroup?.id, "resources"],
     enabled: !!selectedGroup,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   const { data: discussionDetails } = useQuery<GroupDiscussion>({
@@ -1037,7 +1041,7 @@ export default function Groups() {
                                 <div className="flex gap-4 mt-2 text-xs font-medium text-primary flex-wrap">
                                   <span className="flex items-center gap-1">
                                     <CalendarIcon className="h-3 w-3" />
-                                    {new Date(meeting.meetingDate).toLocaleDateString("pt-BR")} {new Date(meeting.meetingDate).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                                    {new Date(meeting.meetingDate).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })} {new Date(meeting.meetingDate).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}
                                   </span>
                                   {meeting.location && (
                                     <span className="flex items-center gap-1">

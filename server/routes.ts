@@ -413,12 +413,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       console.log("[Meetings] Creating meeting, userId:", userId, "body:", JSON.stringify(req.body));
+      
+      let meetingDateStr = req.body.meetingDate;
+      let meetingDate: Date;
+      if (meetingDateStr) {
+        if (!meetingDateStr.includes('T') && !meetingDateStr.includes('Z') && !meetingDateStr.includes('+')) {
+          meetingDateStr = meetingDateStr + ':00';
+        }
+        meetingDate = new Date(meetingDateStr + (meetingDateStr.includes('Z') || meetingDateStr.includes('+') ? '' : '-03:00'));
+      } else {
+        meetingDate = new Date();
+      }
+      
       const meetingData = {
         groupId: req.params.groupId,
         createdBy: userId,
         title: req.body.title || "Reunião",
         description: req.body.description || null,
-        meetingDate: req.body.meetingDate ? new Date(req.body.meetingDate) : new Date(),
+        meetingDate,
         location: req.body.location || null,
         isOnline: req.body.isOnline || false,
         meetingLink: req.body.meetingLink || null,
