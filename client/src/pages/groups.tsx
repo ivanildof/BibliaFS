@@ -340,6 +340,9 @@ export default function Groups() {
     enabled: !!user,
   });
 
+  // Helper to check if user is the leader of the current group
+  const isLeaderGlobal = selectedGroup ? (selectedGroup.leaderId === user?.id || selectedGroup.role === "leader") : false;
+
   const { data: groupMembers = [] } = useQuery<GroupMember[]>({
     queryKey: ["/api/groups", selectedGroup?.id, "members"],
     enabled: !!selectedGroup,
@@ -884,12 +887,12 @@ export default function Groups() {
 
   // Group detail view
   if (selectedGroup) {
-    const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
     const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
+    const isLeader = isLeaderGlobal;
     
     return (
-      <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 relative z-10">
+      <div className="min-h-screen bg-background relative overflow-x-hidden mesh-primary">
+        <div className="max-w-4xl mx-auto p-2 sm:p-6 md:p-8 relative z-10 w-full overflow-x-hidden">
           <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
             <Button 
               variant="ghost" 
@@ -998,8 +1001,8 @@ export default function Groups() {
             <CardHeader className="pb-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="flex items-center gap-3 text-2xl sm:text-3xl font-display font-bold text-foreground">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <CardTitle className="flex items-center gap-3 text-xl sm:text-3xl font-display font-bold text-foreground flex-wrap">
+                    <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
                       <Users className="h-6 w-6" />
                     </div>
                     {selectedGroup.name}
@@ -1023,9 +1026,9 @@ export default function Groups() {
               </div>
             </CardHeader>
 
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="w-full justify-start mb-8 p-1 bg-muted/50 rounded-2xl gap-1 flex-wrap h-auto">
+            <CardContent className="p-0 sm:p-6 overflow-x-hidden">
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+                <TabsList className="w-full justify-start mb-6 p-1 bg-muted/50 rounded-2xl gap-1 flex-wrap h-auto overflow-hidden">
                   <TabsTrigger value="chat" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-chat">
                     <MessageCircle className="h-3.5 w-3.5 mr-2" />
                     Chat
@@ -1280,7 +1283,16 @@ export default function Groups() {
                   </Form>
                 </TabsContent>
 
-                <TabsContent value="members">
+                <TabsContent value="members" className="overflow-x-hidden">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold">Membros</h3>
+                    {isLeaderOrMod && (
+                      <Button onClick={() => setIsInviteDialogOpen(true)} size="sm" className="rounded-xl">
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Convidar
+                      </Button>
+                    )}
+                  </div>
                   <div className="space-y-2">
                     {groupMembers.map((member) => (
                       <div 
