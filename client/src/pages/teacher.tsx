@@ -26,7 +26,8 @@ import {
   Trash2,
   HelpCircle,
   Brain,
-  MessageSquare
+  MessageSquare,
+  Share2
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -175,6 +176,65 @@ const exportLessonToPDF = (lesson: Lesson) => {
 
   printWindow.document.write(html);
   printWindow.document.close();
+};
+
+const generateLessonTextWithoutAnswers = (lesson: Lesson): string => {
+  const objectives = lesson.objectives || [];
+  const quizQuestions = lesson.questions || [];
+  const scriptureRef = lesson.scriptureReferences?.[0];
+
+  let text = `*${lesson.title}*\n`;
+  text += `_BíbliaFS - Modo Professor_\n\n`;
+
+  if (scriptureRef) {
+    text += `*Texto-Base:* ${scriptureRef.book} ${scriptureRef.chapter}${scriptureRef.verses ? ':' + scriptureRef.verses : ''}\n\n`;
+  }
+
+  if (lesson.description) {
+    text += `*Descrição:*\n${lesson.description}\n\n`;
+  }
+
+  if (objectives.length > 0) {
+    text += `*Objetivos da Aula:*\n`;
+    objectives.forEach((obj, i) => {
+      text += `${i + 1}. ${obj}\n`;
+    });
+    text += `\n`;
+  }
+
+  if (lesson.content) {
+    text += `*Conteúdo:*\n${lesson.content}\n\n`;
+  }
+
+  if (quizQuestions.length > 0) {
+    text += `*Perguntas para Reflexão:*\n`;
+    quizQuestions.forEach((q: any, i: number) => {
+      text += `${i + 1}. ${q.question || q}\n`;
+    });
+    text += `\n`;
+  }
+
+  text += `---\nMaterial gerado pelo BíbliaFS`;
+  return text;
+};
+
+const shareLessonWhatsApp = (lesson: Lesson) => {
+  const text = generateLessonTextWithoutAnswers(lesson);
+  const encoded = encodeURIComponent(text);
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+};
+
+const downloadLessonText = (lesson: Lesson) => {
+  const text = generateLessonTextWithoutAnswers(lesson);
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${lesson.title.replace(/[^a-zA-Z0-9À-ÿ\s]/g, '').trim()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
 // Form schema - complete lesson creation
@@ -1178,10 +1238,30 @@ export default function Teacher() {
                                   size="sm"
                                   className="rounded-xl"
                                   onClick={() => exportLessonToPDF(lesson)}
-                                  data-testid="button-export-pdf"
+                                  data-testid={`button-export-pdf-${lesson.id}`}
                                 >
                                   <Download className="h-4 w-4 mr-1" />
                                   PDF
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="rounded-xl"
+                                  onClick={() => downloadLessonText(lesson)}
+                                  data-testid={`button-download-txt-${lesson.id}`}
+                                >
+                                  <FileText className="h-4 w-4 mr-1" />
+                                  Baixar
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="rounded-xl"
+                                  onClick={() => shareLessonWhatsApp(lesson)}
+                                  data-testid={`button-share-whatsapp-${lesson.id}`}
+                                >
+                                  <Share2 className="h-4 w-4 mr-1" />
+                                  WhatsApp
                                 </Button>
                                 <Button 
                                   variant="ghost" 
@@ -1195,7 +1275,7 @@ export default function Teacher() {
                                 <Button 
                                   variant="ghost" 
                                   size="icon"
-                                  className="rounded-xl hover:bg-destructive/10"
+                                  className="rounded-xl"
                                   onClick={() => handleDeleteLesson(lesson.id)}
                                   data-testid={`button-delete-lesson-${lesson.id}`}
                                 >
