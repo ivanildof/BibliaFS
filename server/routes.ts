@@ -234,6 +234,20 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
+  async function checkGroupTrialAccess(userId: string): Promise<{ allowed: boolean; message: string }> {
+    const user = await storage.getUser(userId);
+    const plan = user?.subscriptionPlan || 'free';
+    if (plan !== 'free') {
+      return { allowed: true, message: '' };
+    }
+    const createdAt = user?.createdAt ? new Date(user.createdAt) : new Date();
+    const daysSinceCreation = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSinceCreation > 30) {
+      return { allowed: false, message: 'Seu período de teste de 30 dias expirou. Assine um plano para usar as funções dos Grupos de Estudo.' };
+    }
+    return { allowed: true, message: '' };
+  }
+
   if (process.env.NODE_ENV !== 'production') {
     app.get('/sw.js', (req, res) => {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
@@ -412,6 +426,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/groups/:groupId/meetings", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
+      }
+
       console.log("[Meetings] Creating meeting, userId:", userId, "body:", JSON.stringify(req.body));
       
       let meetingDateStr = req.body.meetingDate;
@@ -501,6 +521,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/groups/:groupId/resources", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
+      }
+
       console.log("[Resources] Creating resource, userId:", userId, "body:", JSON.stringify(req.body));
       const resourceData = {
         groupId: req.params.groupId,
@@ -4237,6 +4263,7 @@ Responda em português do Brasil.${bibleContext}`
           groupsJoined: 0,
           maxGroupsCreate: null,
           maxGroupsJoin: null,
+          functionsBlocked: false,
         });
       }
 
@@ -4261,6 +4288,7 @@ Responda em português do Brasil.${bibleContext}`
         groupsJoined: totalGroups,
         maxGroupsCreate: 1,
         maxGroupsJoin: 2,
+        functionsBlocked: trialExpired,
       });
     } catch (error: any) {
       console.error("[Groups] Error fetching limits:", error);
@@ -4291,14 +4319,14 @@ Responda em português do Brasil.${bibleContext}`
         return res.status(400).json({ error: "Nome do grupo deve ter pelo menos 3 caracteres" });
       }
 
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
+      }
+
       const creatorUser = await storage.getUser(userId);
       const creatorPlan = creatorUser?.subscriptionPlan || 'free';
       if (creatorPlan === 'free') {
-        const createdAt = creatorUser?.createdAt ? new Date(creatorUser.createdAt) : new Date();
-        const daysSinceCreation = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-        if (daysSinceCreation > 30) {
-          return res.status(403).json({ error: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo." });
-        }
         const userGroups = await storage.getUserGroups(userId);
         const groupsAsLeader = userGroups.filter((g: any) => g.role === 'leader').length;
         if (groupsAsLeader >= 1) {
@@ -4459,14 +4487,14 @@ Responda em português do Brasil.${bibleContext}`
         return res.status(400).json({ error: "Você já é membro deste grupo" });
       }
 
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
+      }
+
       const joiningUser = await storage.getUser(userId);
       const joiningPlan = joiningUser?.subscriptionPlan || 'free';
       if (joiningPlan === 'free') {
-        const createdAt = joiningUser?.createdAt ? new Date(joiningUser.createdAt) : new Date();
-        const daysSinceCreation = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-        if (daysSinceCreation > 30) {
-          return res.status(403).json({ error: "Seu período de teste de 30 dias expirou. Assine um plano para continuar usando os Grupos de Estudo." });
-        }
         const userGroups = await storage.getUserGroups(userId);
         if (userGroups.length >= 2) {
           return res.status(403).json({ error: "Usuários gratuitos podem participar de até 2 grupos. Assine um plano para participar de grupos ilimitados." });
@@ -4545,6 +4573,11 @@ Responda em português do Brasil.${bibleContext}`
       if (!isMember) {
         return res.status(403).json({ error: "Você precisa ser membro do grupo para enviar mensagens" });
       }
+
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
+      }
       
       if (!content || content.trim().length === 0) {
         return res.status(400).json({ error: "Mensagem não pode estar vazia" });
@@ -4603,6 +4636,11 @@ Responda em português do Brasil.${bibleContext}`
       const userMember = members.find(m => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Apenas líderes e moderadores podem convidar" });
+      }
+
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
       }
 
       if (members.length >= 5 && group.leaderId) {
@@ -4828,6 +4866,11 @@ Responda em português do Brasil.${bibleContext}`
       const userMember = members.find(m => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Apenas líderes e moderadores podem criar discussões" });
+      }
+
+      const trialCheck = await checkGroupTrialAccess(userId);
+      if (!trialCheck.allowed) {
+        return res.status(403).json({ error: trialCheck.message });
       }
       
       if (!title) {
