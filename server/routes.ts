@@ -234,6 +234,13 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
+  try {
+    await runMigrations();
+    console.log("[MIGRATIONS] All group tables ensured in database");
+  } catch (err) {
+    console.error("[MIGRATIONS] Failed to run migrations:", err);
+  }
+
   async function getGroupTrialStartDate(userId: string): Promise<Date | null> {
     const userGroups = await storage.getUserGroups(userId);
     if (userGroups.length === 0) return null;
@@ -4247,9 +4254,12 @@ Responda em português do Brasil.${bibleContext}`
   app.get("/api/groups/my", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      console.log(`[Groups] GET /api/groups/my for user ${userId}`);
       const groups = await storage.getUserGroups(userId);
+      console.log(`[Groups] Found ${groups.length} groups for user ${userId}:`, groups.map((g: any) => ({ id: g.id, name: g.name, role: g.role })));
       res.json(groups);
     } catch (error: any) {
+      console.error(`[Groups] Error in /api/groups/my for user ${req.user?.claims?.sub}:`, error);
       res.status(500).json({ error: error.message });
     }
   });

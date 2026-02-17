@@ -352,7 +352,10 @@ export default function Groups() {
 
   const { data: myGroups = [], isLoading: loadingMy } = useQuery<Group[]>({
     queryKey: ["/api/groups/my"],
-    retry: 0,
+    retry: 2,
+    retryDelay: 1000,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
     enabled: !!user,
   });
 

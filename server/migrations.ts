@@ -324,6 +324,49 @@ export async function runMigrations() {
       ON group_answers(discussion_id, created_at DESC)
     `);
 
+    // Create group_meetings table for scheduled meetings
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS group_meetings (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        group_id VARCHAR NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        description TEXT,
+        meeting_date TIMESTAMP NOT NULL,
+        location TEXT,
+        is_online BOOLEAN DEFAULT false,
+        meeting_link TEXT,
+        created_by VARCHAR NOT NULL REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_group_meetings_group 
+      ON group_meetings(group_id, meeting_date DESC)
+    `);
+
+    // Create group_resources table for shared files/links
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS group_resources (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        group_id VARCHAR NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        description TEXT,
+        resource_type VARCHAR(50) DEFAULT 'link',
+        url TEXT,
+        lesson_id VARCHAR,
+        tags TEXT[],
+        created_by VARCHAR NOT NULL REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS idx_group_resources_group 
+      ON group_resources(group_id, created_at DESC)
+    `);
+
     // Create email_otp table for OTP verification
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS email_otp (
