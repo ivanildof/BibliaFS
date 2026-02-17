@@ -1958,12 +1958,17 @@ export default function Groups() {
           </Card>
         </div>
 
-        {/* Modal Nova Reunião - dentro do grupo */}
-        <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+        {/* Modal Nova/Editar Reunião - dentro do grupo */}
+        <Dialog open={isMeetingDialogOpen} onOpenChange={(open) => {
+          setIsMeetingDialogOpen(open);
+          if (!open) setEditingMeeting(null);
+        }}>
           <DialogContent className="sm:max-w-[425px] rounded-2xl">
             <DialogHeader>
-              <DialogTitle>Agendar Reunião</DialogTitle>
-              <DialogDescription>Defina os detalhes do próximo encontro do grupo.</DialogDescription>
+              <DialogTitle>{editingMeeting ? "Editar Reunião" : "Agendar Reunião"}</DialogTitle>
+              <DialogDescription>
+                {editingMeeting ? "Altere os detalhes da reunião selecionada." : "Defina os detalhes do próximo encontro do grupo."}
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
@@ -1995,13 +2000,23 @@ export default function Groups() {
             </div>
             <DialogFooter>
               <Button 
-                onClick={meetingForm.handleSubmit((data) => createMeetingMutation.mutate(data))} 
+                onClick={meetingForm.handleSubmit((data) => {
+                  if (editingMeeting) {
+                    updateMeetingMutation.mutate(data);
+                  } else {
+                    createMeetingMutation.mutate(data);
+                  }
+                })} 
                 className="rounded-xl w-full"
-                disabled={createMeetingMutation.isPending}
+                disabled={createMeetingMutation.isPending || updateMeetingMutation.isPending}
                 data-testid="button-save-meeting"
               >
-                {createMeetingMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CalendarIcon className="h-4 w-4 mr-2" />}
-                Agendar Reunião
+                {(createMeetingMutation.isPending || updateMeetingMutation.isPending) ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  editingMeeting ? <Check className="h-4 w-4 mr-2" /> : <CalendarIcon className="h-4 w-4 mr-2" />
+                )}
+                {editingMeeting ? "Salvar Alterações" : "Agendar Reunião"}
               </Button>
             </DialogFooter>
           </DialogContent>
