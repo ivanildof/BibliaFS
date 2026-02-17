@@ -490,6 +490,9 @@ export default function Groups() {
       setIsMeetingDialogOpen(false);
       meetingForm.reset();
       toast({ title: "Reunião agendada!" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao agendar reunião", description: error?.message || "Tente novamente.", variant: "destructive" });
     }
   });
 
@@ -503,6 +506,9 @@ export default function Groups() {
       setIsResourceDialogOpen(false);
       resourceForm.reset();
       toast({ title: "Recurso adicionado!" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao adicionar recurso", description: error?.message || "Tente novamente.", variant: "destructive" });
     }
   });
 

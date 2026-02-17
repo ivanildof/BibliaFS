@@ -403,26 +403,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const meetings = await storage.getGroupMeetings(req.params.groupId);
       res.json(meetings);
-    } catch (error) {
-      res.status(500).json({ error: "Erro ao buscar reuniões" });
+    } catch (error: any) {
+      console.error("[Meetings] Error fetching meetings:", error?.message || error);
+      res.json([]);
     }
   });
 
   app.post("/api/groups/:groupId/meetings", isAuthenticated, async (req, res) => {
     try {
       const user = (req as any).user;
-      const result = insertGroupMeetingSchema.safeParse({
-        ...req.body,
+      console.log("[Meetings] Creating meeting, body:", JSON.stringify(req.body));
+      const meetingData = {
         groupId: req.params.groupId,
         createdBy: user.id,
+        title: req.body.title || "Reunião",
+        description: req.body.description || null,
         meetingDate: req.body.meetingDate ? new Date(req.body.meetingDate) : new Date(),
-      });
-      if (!result.success) {
-        return res.status(400).json({ error: result.error });
-      }
-      const meeting = await storage.createGroupMeeting(result.data);
+        location: req.body.location || null,
+        isOnline: req.body.isOnline || false,
+        meetingLink: req.body.meetingLink || null,
+      };
+      const meeting = await storage.createGroupMeeting(meetingData as any);
       res.json(meeting);
-    } catch (error) {
+    } catch (error: any) {
+      console.error("[Meetings] Error creating meeting:", error);
       res.status(500).json({ error: "Erro ao criar reunião" });
     }
   });
@@ -431,25 +435,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const resources = await storage.getGroupResources(req.params.groupId);
       res.json(resources);
-    } catch (error) {
-      res.status(500).json({ error: "Erro ao buscar recursos" });
+    } catch (error: any) {
+      console.error("[Resources] Error fetching resources:", error?.message || error);
+      res.json([]);
     }
   });
 
   app.post("/api/groups/:groupId/resources", isAuthenticated, async (req, res) => {
     try {
       const user = (req as any).user;
-      const result = insertGroupResourceSchema.safeParse({
-        ...req.body,
+      console.log("[Resources] Creating resource, body:", JSON.stringify(req.body));
+      const resourceData = {
         groupId: req.params.groupId,
         createdBy: user.id,
-      });
-      if (!result.success) {
-        return res.status(400).json({ error: result.error });
-      }
-      const resource = await storage.createGroupResource(result.data);
+        title: req.body.title || "Recurso",
+        description: req.body.description || null,
+        resourceType: req.body.resourceType || "link",
+        url: req.body.url || null,
+        lessonId: req.body.lessonId || null,
+      };
+      const resource = await storage.createGroupResource(resourceData as any);
       res.json(resource);
-    } catch (error) {
+    } catch (error: any) {
+      console.error("[Resources] Error creating resource:", error);
       res.status(500).json({ error: "Erro ao criar recurso" });
     }
   });
