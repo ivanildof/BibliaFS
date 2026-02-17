@@ -369,17 +369,17 @@ export default function Podcasts() {
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10"
+          className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6"
         >
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Radio className="h-8 w-8 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-sm">
+              <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="font-display text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <h1 className="font-display text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 BíbliaFS Rádio
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Conteúdos cristãos integrados ao seu estudo
               </p>
             </div>
@@ -387,8 +387,8 @@ export default function Podcasts() {
           
           <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="rounded-xl h-12 px-6 shadow-lg shadow-primary/20">
-                <Plus className="h-5 w-5 mr-2" />
+              <Button className="rounded-xl px-4 shadow-sm">
+                <Plus className="h-4 w-4 mr-1.5" />
                 Criar Podcast
               </Button>
             </DialogTrigger>
@@ -433,25 +433,25 @@ export default function Podcasts() {
           </Dialog>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-10">
-          <div className="relative max-w-xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               placeholder="Buscar podcasts ou episódios..." 
-              className="pl-12 h-14 rounded-2xl bg-card/80 backdrop-blur-xl border-none shadow-lg text-lg"
+              className="pl-10 h-10 rounded-xl bg-card/80 backdrop-blur-xl border-none shadow-sm text-sm"
             />
           </div>
         </motion.div>
 
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-8">
-          <TabsList className="bg-muted/50 p-1.5 rounded-2xl h-auto flex-wrap">
-            <TabsTrigger value="discover" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Descobrir</TabsTrigger>
-            <TabsTrigger value="subscriptions" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Inscrições ({subscriptions.length})</TabsTrigger>
-            <TabsTrigger value="my-podcasts" className="rounded-xl px-6 py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg">Meus Podcasts ({myPodcasts.length})</TabsTrigger>
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
+          <TabsList className="bg-muted/50 p-1 rounded-xl h-auto flex-wrap">
+            <TabsTrigger value="discover" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">Descobrir</TabsTrigger>
+            <TabsTrigger value="subscriptions" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">Inscrições ({subscriptions.length})</TabsTrigger>
+            <TabsTrigger value="my-podcasts" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">Meus Podcasts ({myPodcasts.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="discover">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               <AnimatePresence mode="popLayout">
                 {podcasts.map((podcast: any, idx: number) => (
                   <motion.div
@@ -459,96 +459,85 @@ export default function Podcasts() {
                     layout
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.05 }}
+                    transition={{ delay: idx * 0.03 }}
                   >
-                    <Card className="glass-premium hover-premium rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
-                      <div className="h-48 relative overflow-hidden bg-primary/10">
+                    <Card className="hover-premium rounded-xl border bg-card group overflow-hidden h-full flex flex-col">
+                      <div className="h-28 relative overflow-hidden bg-primary/10">
                         {podcast.imageUrl ? (
-                          <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
+                          <img src={podcast.imageUrl} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
-                            <Radio className="h-16 w-16 text-primary/40" />
+                            <Radio className="h-8 w-8 text-primary/40" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                          <Badge className="rounded-full bg-card/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Leitura Bíblica'}</Badge>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                        <div className="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">{podcast.category || 'Leitura Bíblica'}</Badge>
+                        </div>
+                        <div className="absolute top-2 right-2 z-10">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full bg-black/30 backdrop-blur-sm text-white">
+                                <MoreVertical className="h-3 w-3" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl p-1">
+                              <DropdownMenuItem 
+                                className="text-destructive focus:text-destructive focus:bg-destructive/10 flex items-center gap-2 rounded-lg p-2 cursor-pointer text-xs"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedPodcast(podcast);
+                                  setDeleteDialogOpen(true);
+                                }}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                                Excluir Rádio
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
-                      <CardHeader className="pb-4 relative">
-                          <div className="absolute top-4 right-4 z-10">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-black/20 backdrop-blur-md border border-white/20 hover:bg-black/40 text-white shadow-xl transition-all duration-300">
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="rounded-2xl p-2 border-none bg-card/95 backdrop-blur-xl shadow-2xl">
-                                <DropdownMenuItem 
-                                  className="text-destructive focus:text-destructive focus:bg-destructive/10 flex items-center gap-2 rounded-xl p-3 cursor-pointer transition-colors"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedPodcast(podcast);
-                                    setDeleteDialogOpen(true);
-                                  }}
-                                >
-                                  <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center">
-                                    <Trash2 className="h-4 w-4" />
-                                  </div>
-                                  <div className="flex flex-col">
-                                    <span className="font-bold">Excluir Rádio</span>
-                                    <span className="text-[10px] opacity-70">Ação permanente</span>
-                                  </div>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                          <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors pr-10">{podcast.title}</CardTitle>
-                        <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
+                      <CardHeader className="p-3 pb-1">
+                        <CardTitle className="text-sm font-bold line-clamp-1">{podcast.title}</CardTitle>
+                        <CardDescription className="line-clamp-1 text-xs">{podcast.description || 'Sem descrição'}</CardDescription>
                       </CardHeader>
-                      <CardContent className="flex-1 space-y-4">
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                          <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
-                          {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                      <CardContent className="flex-1 p-3 pt-0 space-y-2">
+                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                          <span className="flex items-center gap-1"><Library className="h-2.5 w-2.5" /> {podcast.episodes?.length || 0} Ep.</span>
+                          {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-2.5 w-2.5" /> {podcast.bibleBook}</span>}
                         </div>
                         {podcast.episodes?.length > 0 && (
-                          <div className="space-y-2">
-                            {podcast.episodes.slice(0, 3).map((ep: Episode) => (
+                          <div className="space-y-1">
+                            {podcast.episodes.slice(0, 2).map((ep: Episode) => (
                               <div 
                                 key={ep.id} 
-                                className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover-elevate active-elevate-2 cursor-pointer"
+                                className="flex items-center justify-between p-1.5 rounded-lg bg-muted/50 hover-elevate active-elevate-2 cursor-pointer"
                                 onClick={() => playEpisode(ep, podcast)}
                                 data-testid={`card-episode-${ep.id}`}
                               >
-                                <div className="flex items-center gap-3 flex-1 min-w-0">
-                                  <span className="text-xs font-bold text-muted-foreground w-6 text-center flex-shrink-0">
-                                    {ep.chapterNumber || ''}
-                                  </span>
+                                <div className="flex items-center gap-2 flex-1 min-w-0">
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold truncate">{ep.title}</p>
-                                    <p className="text-xs text-muted-foreground flex items-center gap-2">
-                                      Cap. {ep.chapterNumber || '?'}
-                                      {downloadedEpisodes.has(ep.id) && <Badge variant="secondary" className="h-4 text-[8px]">OFFLINE</Badge>}
-                                    </p>
+                                    <p className="text-xs font-medium truncate">{ep.title}</p>
                                   </div>
                                 </div>
-                                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                  <Play className="h-4 w-4 fill-current" />
+                                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <Play className="h-2.5 w-2.5 fill-current" />
                                 </div>
                               </div>
                             ))}
-                            {podcast.episodes.length > 3 && (
-                              <p className="text-xs text-center text-muted-foreground pt-1">
-                                + {podcast.episodes.length - 3} episódios
+                            {podcast.episodes.length > 2 && (
+                              <p className="text-[10px] text-center text-muted-foreground">
+                                + {podcast.episodes.length - 2} episódios
                               </p>
                             )}
                           </div>
                         )}
                       </CardContent>
-                      <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
+                      <CardFooter className="p-3 pt-0 border-t border-border/50 flex justify-between gap-2">
                         <Button 
                           variant="ghost" 
-                          className="flex-1 rounded-xl h-11 font-bold transition-all"
+                          size="sm"
+                          className="flex-1 rounded-lg text-xs font-semibold"
                           onClick={() => {
                             setDetailPodcast(podcast);
                             setEpisodeSearch("");
@@ -560,7 +549,7 @@ export default function Podcasts() {
                         <Button 
                           size="icon" 
                           variant="ghost" 
-                          className="rounded-xl h-11 w-11 "
+                          className="h-8 w-8 rounded-lg"
                           onClick={() => {
                             const isSubscribed = subscriptions.some(s => s.id === podcast.id);
                             if (isSubscribed) {
@@ -572,9 +561,9 @@ export default function Podcasts() {
                           disabled={subscribeMutation.isPending || unsubscribeMutation.isPending}
                         >
                           {subscriptions.some(s => s.id === podcast.id) ? (
-                            <Check className="h-5 w-5 text-green-500" />
+                            <Check className="h-4 w-4 text-green-500" />
                           ) : (
-                            <Plus className="h-5 w-5" />
+                            <Plus className="h-4 w-4" />
                           )}
                         </Button>
                       </CardFooter>
@@ -586,7 +575,7 @@ export default function Podcasts() {
           </TabsContent>
 
           <TabsContent value="subscriptions">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               <AnimatePresence mode="popLayout">
                 {subscriptions.length > 0 ? (
                   subscriptions.map((podcast: any, idx: number) => (
@@ -595,36 +584,37 @@ export default function Podcasts() {
                       layout
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
+                      transition={{ delay: idx * 0.03 }}
                     >
-                      <Card className="glass-premium hover-premium rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col">
-                        <div className="h-48 relative overflow-hidden bg-primary/10">
+                      <Card className="hover-premium rounded-xl border bg-card group overflow-hidden h-full flex flex-col">
+                        <div className="h-28 relative overflow-hidden bg-primary/10">
                           {podcast.imageUrl ? (
-                            <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
+                            <img src={podcast.imageUrl} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Headphones className="h-16 w-16 text-primary/40" />
+                              <Headphones className="h-8 w-8 text-primary/40" />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                            <Badge className="rounded-full bg-card/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                          <div className="absolute bottom-2 left-2">
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">{podcast.category || 'Geral'}</Badge>
                           </div>
                         </div>
-                        <CardHeader className="pb-4">
-                          <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
-                          <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
+                        <CardHeader className="p-3 pb-1">
+                          <CardTitle className="text-sm font-bold line-clamp-1">{podcast.title}</CardTitle>
+                          <CardDescription className="line-clamp-1 text-xs">{podcast.description || 'Sem descrição'}</CardDescription>
                         </CardHeader>
-                        <CardContent className="flex-1 space-y-4">
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                            <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
-                            {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                        <CardContent className="flex-1 p-3 pt-0">
+                          <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                            <span className="flex items-center gap-1"><Library className="h-2.5 w-2.5" /> {podcast.episodes?.length || 0} Ep.</span>
+                            {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-2.5 w-2.5" /> {podcast.bibleBook}</span>}
                           </div>
                         </CardContent>
-                        <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
+                        <CardFooter className="p-3 pt-0 border-t border-border/50 flex justify-between gap-2">
                           <Button 
                             variant="ghost" 
-                            className="flex-1 rounded-xl h-11 font-bold transition-all"
+                            size="sm"
+                            className="flex-1 rounded-lg text-xs font-semibold"
                             onClick={() => {
                               setDetailPodcast(podcast);
                               setEpisodeSearch("");
@@ -636,21 +626,21 @@ export default function Podcasts() {
                           <Button 
                             size="icon" 
                             variant="ghost" 
-                            className="rounded-xl h-11 w-11 text-destructive"
+                            className="h-8 w-8 rounded-lg text-destructive"
                             onClick={() => {
                               setSelectedPodcast(podcast);
                               setDeleteDialogOpen(true);
                             }}
                           >
-                            <Trash2 className="h-5 w-5" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </CardFooter>
                       </Card>
                     </motion.div>
                   ))
                 ) : (
-                  <div className="col-span-full py-20 text-center">
-                    <p className="text-muted-foreground">Você ainda não se inscreveu em nenhum podcast.</p>
+                  <div className="col-span-full py-12 text-center">
+                    <p className="text-sm text-muted-foreground">Você ainda não se inscreveu em nenhum podcast.</p>
                   </div>
                 )}
               </AnimatePresence>
@@ -728,9 +718,8 @@ export default function Podcasts() {
               )}
             </div>
 
-            {/* Grid View */}
             {viewMode === "grid" && (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <AnimatePresence mode="popLayout">
                   {myPodcasts.length > 0 ? (
                     myPodcasts.map((podcast: any, idx: number) => (
@@ -739,57 +728,57 @@ export default function Podcasts() {
                         layout
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: idx * 0.05 }}
+                        transition={{ delay: idx * 0.03 }}
                       >
-                        <Card className={`glass-premium hover-premium rounded-[2rem] border-none bg-card/80 backdrop-blur-xl shadow-lg group overflow-hidden h-full flex flex-col ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : 'ring-2 ring-primary/10'}`}>
-                          <div className="h-48 relative overflow-hidden bg-primary/10">
+                        <Card className={`hover-premium rounded-xl border bg-card group overflow-hidden h-full flex flex-col ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : ''}`}>
+                          <div className="h-28 relative overflow-hidden bg-primary/10">
                             {selectionMode && (
                               <div 
-                                className="absolute top-4 left-4 z-10 cursor-pointer"
+                                className="absolute top-2 left-2 z-10 cursor-pointer"
                                 onClick={() => togglePodcastSelection(podcast.id)}
                               >
-                                <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-card/80 border-white/50'}`}>
-                                  {selectedPodcasts.has(podcast.id) && <Check className="h-4 w-4 text-white" />}
+                                <div className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-card/80 border-white/50'}`}>
+                                  {selectedPodcasts.has(podcast.id) && <Check className="h-3 w-3 text-white" />}
                                 </div>
                               </div>
                             )}
                             {podcast.imageUrl ? (
-                              <img src={podcast.imageUrl} className="w-full h-full object-cover transition-transform duration-500 " />
+                              <img src={podcast.imageUrl} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Headphones className="h-16 w-16 text-primary/40" />
+                                <Headphones className="h-8 w-8 text-primary/40" />
                               </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                              <Badge className="rounded-full bg-card/20 backdrop-blur-md border-none text-white font-bold">{podcast.category || 'Geral'}</Badge>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                            <div className="absolute bottom-2 left-2">
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">{podcast.category || 'Geral'}</Badge>
                             </div>
                           </div>
-                          <CardHeader className="pb-4">
-                            <CardTitle className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</CardTitle>
-                            <CardDescription className="line-clamp-2 text-sm leading-relaxed">{podcast.description || 'Sem descrição'}</CardDescription>
+                          <CardHeader className="p-3 pb-1">
+                            <CardTitle className="text-sm font-bold line-clamp-1">{podcast.title}</CardTitle>
+                            <CardDescription className="line-clamp-1 text-xs">{podcast.description || 'Sem descrição'}</CardDescription>
                           </CardHeader>
-                          <CardContent className="flex-1 space-y-4">
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                              <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
-                              {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                          <CardContent className="flex-1 p-3 pt-0">
+                            <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                              <span className="flex items-center gap-1"><Library className="h-2.5 w-2.5" /> {podcast.episodes?.length || 0} Ep.</span>
+                              {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-2.5 w-2.5" /> {podcast.bibleBook}</span>}
                             </div>
                           </CardContent>
-                          <CardFooter className="pt-0 border-t border-border/50 p-6 flex justify-between gap-4">
-                            <Button variant="ghost" className="flex-1 rounded-xl h-11 font-bold transition-all" onClick={() => { setDetailPodcast(podcast); setEpisodeSearch(""); }} data-testid={`button-manage-podcast-${podcast.id}`}>
+                          <CardFooter className="p-3 pt-0 border-t border-border/50 flex justify-between gap-2">
+                            <Button variant="ghost" size="sm" className="flex-1 rounded-lg text-xs font-semibold" onClick={() => { setDetailPodcast(podcast); setEpisodeSearch(""); }} data-testid={`button-manage-podcast-${podcast.id}`}>
                               Gerenciar
                             </Button>
                             {!selectionMode && (
                               <Button 
                                 size="icon" 
                                 variant="ghost" 
-                                className="rounded-xl h-11 w-11"
+                                className="h-8 w-8 rounded-lg"
                                 onClick={() => {
                                   setSelectedPodcast(podcast);
                                   setDeleteDialogOpen(true);
                                 }}
                               >
-                                <Trash2 className="h-5 w-5" />
+                                <Trash2 className="h-3.5 w-3.5" />
                               </Button>
                             )}
                           </CardFooter>
@@ -797,8 +786,8 @@ export default function Podcasts() {
                       </motion.div>
                     ))
                   ) : (
-                    <div className="col-span-full py-20 text-center">
-                      <p className="text-muted-foreground">Você ainda não criou nenhum podcast.</p>
+                    <div className="col-span-full py-12 text-center">
+                      <p className="text-sm text-muted-foreground">Você ainda não criou nenhum podcast.</p>
                     </div>
                   )}
                 </AnimatePresence>
@@ -807,7 +796,7 @@ export default function Podcasts() {
 
             {/* List View */}
             {viewMode === "list" && (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <AnimatePresence mode="popLayout">
                   {myPodcasts.length > 0 ? (
                     myPodcasts.map((podcast: any, idx: number) => (
@@ -818,48 +807,47 @@ export default function Podcasts() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.03 }}
                       >
-                        <Card className={`glass-premium hover-premium rounded-2xl border-none bg-card/80 backdrop-blur-xl shadow-sm group overflow-hidden ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : 'ring-2 ring-primary/10'}`}>
-                          <div className="flex items-center gap-4 p-4">
+                        <Card className={`hover-premium rounded-xl border bg-card group overflow-hidden ${selectionMode && selectedPodcasts.has(podcast.id) ? 'ring-2 ring-primary' : ''}`}>
+                          <div className="flex items-center gap-3 p-3">
                             {selectionMode && (
                               <div 
                                 className="cursor-pointer flex-shrink-0"
                                 onClick={() => togglePodcastSelection(podcast.id)}
                               >
-                                <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-muted border-border'}`}>
-                                  {selectedPodcasts.has(podcast.id) && <Check className="h-4 w-4 text-white" />}
+                                <div className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-colors ${selectedPodcasts.has(podcast.id) ? 'bg-primary border-primary' : 'bg-muted border-border'}`}>
+                                  {selectedPodcasts.has(podcast.id) && <Check className="h-3 w-3 text-white" />}
                                 </div>
                               </div>
                             )}
-                            <div className="h-16 w-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {podcast.imageUrl ? (
                                 <img src={podcast.imageUrl} className="w-full h-full object-cover" />
                               ) : (
-                                <Headphones className="h-8 w-8 text-primary/40" />
+                                <Headphones className="h-5 w-5 text-primary/40" />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-lg line-clamp-1 group-hover:text-primary transition-colors">{podcast.title}</h3>
-                              <p className="text-sm text-muted-foreground line-clamp-1">{podcast.description || 'Sem descrição'}</p>
-                              <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                                <span className="flex items-center gap-1"><Library className="h-3 w-3" /> {podcast.episodes?.length || 0} Episódios</span>
-                                {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-3 w-3" /> {podcast.bibleBook}</span>}
+                              <h3 className="font-semibold text-sm line-clamp-1">{podcast.title}</h3>
+                              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                                <span className="flex items-center gap-1"><Library className="h-2.5 w-2.5" /> {podcast.episodes?.length || 0} Ep.</span>
+                                {podcast.bibleBook && <span className="flex items-center gap-1"><Bookmark className="h-2.5 w-2.5" /> {podcast.bibleBook}</span>}
                               </div>
                             </div>
-                            <div className="flex items-center gap-2 flex-shrink-0">
-                              <Button variant="ghost" className="rounded-xl h-9 font-bold" onClick={() => { setDetailPodcast(podcast); setEpisodeSearch(""); }} data-testid={`button-manage-list-podcast-${podcast.id}`}>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <Button variant="ghost" size="sm" className="rounded-lg text-xs font-semibold" onClick={() => { setDetailPodcast(podcast); setEpisodeSearch(""); }} data-testid={`button-manage-list-podcast-${podcast.id}`}>
                                 Gerenciar
                               </Button>
                               {!selectionMode && (
                                 <Button 
                                   size="icon" 
                                   variant="ghost" 
-                                  className="rounded-xl h-9 w-9 text-destructive"
+                                  className="h-8 w-8 rounded-lg text-destructive"
                                   onClick={() => {
                                     setSelectedPodcast(podcast);
                                     setDeleteDialogOpen(true);
                                   }}
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
                               )}
                             </div>
@@ -868,8 +856,8 @@ export default function Podcasts() {
                       </motion.div>
                     ))
                   ) : (
-                    <div className="py-20 text-center">
-                      <p className="text-muted-foreground">Você ainda não criou nenhum podcast.</p>
+                    <div className="py-12 text-center">
+                      <p className="text-sm text-muted-foreground">Você ainda não criou nenhum podcast.</p>
                     </div>
                   )}
                 </AnimatePresence>
