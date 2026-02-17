@@ -929,8 +929,8 @@ export default function Groups() {
     const isLeader = isLeaderGlobal;
     
     return (
-      <div className="min-h-screen bg-background relative overflow-x-hidden mesh-primary">
-        <div className="max-w-4xl mx-auto p-2 sm:p-6 md:p-8 relative z-10 w-full overflow-x-hidden">
+      <div className="min-h-screen bg-background relative mesh-primary">
+        <div className="max-w-4xl mx-auto p-2 sm:p-6 md:p-8 relative z-10 w-full">
           <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
             <Button 
               variant="ghost" 
@@ -1078,7 +1078,7 @@ export default function Groups() {
               </div>
             </CardHeader>
 
-            <CardContent className="p-2 sm:p-6 overflow-x-hidden">
+            <CardContent className="p-2 sm:p-6">
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
                 <div className="overflow-x-auto -mx-2 px-2 mb-4 scrollbar-hide">
                   <TabsList className="inline-flex w-max min-w-full justify-start p-1 bg-muted/50 rounded-2xl gap-1 h-auto">
@@ -1443,7 +1443,7 @@ export default function Groups() {
                   </Dialog>
                 </TabsContent>
 
-                <TabsContent value="members" className="overflow-x-hidden">
+                <TabsContent value="members">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold">Membros</h3>
                     {isLeader && (
@@ -2285,7 +2285,7 @@ export default function Groups() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
+    <div className="min-h-screen bg-background relative mesh-primary">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
@@ -2329,22 +2329,24 @@ export default function Groups() {
         </div>
 
         <Tabs defaultValue="my-groups" className="space-y-8">
-          <TabsList className="bg-muted/30 p-1.5 rounded-2xl border border-primary/5">
-            <TabsTrigger 
-              value="my-groups" 
-              className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
-              data-testid="tab-my-groups"
-            >
-              Meus Grupos ({myGroups.length})
-            </TabsTrigger>
-                    <TabsTrigger 
-                      value="discover" 
-                      className="rounded-xl px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all"
-                      data-testid="tab-discover"
-                    >
-                      Descobrir Novos Grupos ({publicGroups.length})
-                    </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto scrollbar-hide">
+            <TabsList className="inline-flex w-max min-w-full bg-muted/30 p-1.5 rounded-2xl border border-primary/5">
+              <TabsTrigger 
+                value="my-groups" 
+                className="rounded-xl px-4 sm:px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all whitespace-nowrap text-sm"
+                data-testid="tab-my-groups"
+              >
+                Meus Grupos ({myGroups.length})
+              </TabsTrigger>
+              <TabsTrigger 
+                value="discover" 
+                className="rounded-xl px-4 sm:px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all whitespace-nowrap text-sm"
+                data-testid="tab-discover"
+              >
+                Descobrir Novos Grupos ({publicGroups.length})
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="my-groups" className="mt-0">
             {myGroups.length === 0 ? (
