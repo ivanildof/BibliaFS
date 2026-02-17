@@ -4524,6 +4524,21 @@ Responda em português do Brasil.${bibleContext}`
         invitedEmail: email || null,
         invitedPhone: phone || null,
       });
+
+      // Enviar notificação push para o convidado se ele existir no sistema
+      if (email) {
+        const invitedUser = await storage.getUserByEmail(email);
+        if (invitedUser) {
+          await sendPushNotification(invitedUser.id, {
+            title: "Convite de Grupo",
+            body: `Você foi convidado para o grupo "${group.name}"`,
+            data: {
+              url: `/groups?code=${invite.inviteCode}`,
+              type: "group_invite"
+            }
+          });
+        }
+      }
       
       res.json(invite);
     } catch (error: any) {

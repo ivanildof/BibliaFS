@@ -1045,25 +1045,25 @@ export default function Groups() {
                     <GraduationCap className="h-3.5 w-3.5 mr-2" />
                     Estudos ({groupDiscussions.length})
                   </TabsTrigger>
-                  <TabsTrigger value="members" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-members">
-                    <Users className="h-3.5 w-3.5 mr-2" />
-                    Membros ({groupMembers.length})
-                  </TabsTrigger>
-                  {isLeaderOrMod && (
-                    <TabsTrigger value="invites" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-invites">
-                      <UserPlus className="h-3.5 w-3.5 mr-2" />
-                      Convites
-                    </TabsTrigger>
-                  )}
-                </TabsList>
+                          <TabsTrigger value="members" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-members">
+                            <Users className="h-3.5 w-3.5 mr-2" />
+                            Membros ({groupMembers.length})
+                          </TabsTrigger>
+                          <TabsTrigger value="invites" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold text-xs" data-testid="tab-invites">
+                            <UserPlus className="h-3.5 w-3.5 mr-2" />
+                            Convites
+                          </TabsTrigger>
+                        </TabsList>
 
                 <TabsContent value="calendar" className="space-y-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold">Próximas Reuniões</h3>
-                    <Button onClick={() => setIsMeetingDialogOpen(true)} size="sm" className="rounded-xl">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Agendar
-                    </Button>
+                    {isLeaderOrMod && (
+                      <Button onClick={() => setIsMeetingDialogOpen(true)} size="sm" className="rounded-xl">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Agendar
+                      </Button>
+                    )}
                   </div>
                   <div className="grid gap-4">
                     {groupMeetings.length === 0 ? (
@@ -1286,6 +1286,10 @@ export default function Groups() {
                 <TabsContent value="members" className="overflow-x-hidden">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold">Membros</h3>
+                    <Button onClick={() => setActiveTab("invites")} size="sm" className="rounded-xl">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Convidar
+                    </Button>
                   </div>
                   <div className="space-y-2">
                     {groupMembers.map((member) => (
