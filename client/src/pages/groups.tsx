@@ -1286,12 +1286,6 @@ export default function Groups() {
                 <TabsContent value="members" className="overflow-x-hidden">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold">Membros</h3>
-                    {isLeaderOrMod && (
-                      <Button onClick={() => setIsInviteDialogOpen(true)} size="sm" className="rounded-xl">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Convidar
-                      </Button>
-                    )}
                   </div>
                   <div className="space-y-2">
                     {groupMembers.map((member) => (
