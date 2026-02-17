@@ -6,16 +6,35 @@ const config: CapacitorConfig = {
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',
-    // Allow connections to the API server
+    iosScheme: 'https',
     allowNavigation: [
       'https://bibliafs.com.br/*',
       'https://*.supabase.co/*',
-      'https://olvumxgyoazdftdyasmx.supabase.co/*'
+      'https://olvumxgyoazdftdyasmx.supabase.co/*',
+      'https://accounts.google.com/*'
     ]
   },
   plugins: {
     CapacitorHttp: {
       enabled: true
+    },
+    SplashScreen: {
+      launchShowDuration: 2000,
+      launchAutoHide: true,
+      backgroundColor: '#1a1a2e',
+      showSpinner: true,
+      spinnerColor: '#d4a574',
+      androidScaleType: 'CENTER_CROP',
+      splashFullScreen: true,
+      splashImmersive: true
+    },
+    StatusBar: {
+      style: 'DARK',
+      backgroundColor: '#1a1a2e'
+    },
+    Keyboard: {
+      resize: 'body',
+      resizeOnFullScreen: true
     }
   },
   android: {
@@ -26,6 +45,11 @@ const config: CapacitorConfig = {
       keystoreAlias: undefined,
       keystoreAliasPassword: undefined,
     }
+  },
+  ios: {
+    contentInset: 'automatic',
+    scrollEnabled: true,
+    allowsLinkPreview: true
   }
 };
 
