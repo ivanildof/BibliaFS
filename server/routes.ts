@@ -234,16 +234,27 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
+  async function getGroupTrialStartDate(userId: string): Promise<Date | null> {
+    const userGroups = await storage.getUserGroups(userId);
+    if (userGroups.length === 0) return null;
+    const dates = userGroups.map((g: any) => g.joinedAt ? new Date(g.joinedAt) : new Date()).filter((d: Date) => !isNaN(d.getTime()));
+    if (dates.length === 0) return null;
+    return new Date(Math.min(...dates.map((d: Date) => d.getTime())));
+  }
+
   async function checkGroupTrialAccess(userId: string): Promise<{ allowed: boolean; message: string }> {
     const user = await storage.getUser(userId);
     const plan = user?.subscriptionPlan || 'free';
     if (plan !== 'free') {
       return { allowed: true, message: '' };
     }
-    const createdAt = user?.createdAt ? new Date(user.createdAt) : new Date();
-    const daysSinceCreation = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-    if (daysSinceCreation > 30) {
-      return { allowed: false, message: 'Seu período de teste de 30 dias expirou. Assine um plano para usar as funções dos Grupos de Estudo.' };
+    const trialStart = await getGroupTrialStartDate(userId);
+    if (!trialStart) {
+      return { allowed: true, message: '' };
+    }
+    const daysSinceFirstGroup = Math.floor((Date.now() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSinceFirstGroup > 30) {
+      return { allowed: false, message: 'Seu período gratuito de 30 dias terminou. Conheça nossos planos premium para continuar.' };
     }
     return { allowed: true, message: '' };
   }
@@ -4271,19 +4282,26 @@ Responda em português do Brasil.${bibleContext}`
       const groupsAsLeader = userGroups.filter((g: any) => g.role === 'leader').length;
       const totalGroups = userGroups.length;
 
-      const createdAt = user?.createdAt ? new Date(user.createdAt) : new Date();
-      const now = new Date();
-      const daysSinceCreation = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-      const trialExpired = daysSinceCreation > 30;
-      const trialDaysRemaining = Math.max(0, 30 - daysSinceCreation);
+      const trialStart = await getGroupTrialStartDate(userId);
+      let trialExpired = false;
+      let trialDaysRemaining: number | null = null;
+      let trialStarted = false;
+
+      if (trialStart) {
+        trialStarted = true;
+        const daysSinceFirstGroup = Math.floor((Date.now() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
+        trialExpired = daysSinceFirstGroup > 30;
+        trialDaysRemaining = Math.max(0, 30 - daysSinceFirstGroup);
+      }
 
       res.json({
         isPremium: false,
-        canCreateGroup: !trialExpired && groupsAsLeader < 1,
-        canJoinGroup: !trialExpired && totalGroups < 2,
+        canCreateGroup: groupsAsLeader < 1,
+        canJoinGroup: totalGroups < 2,
         maxMembers: 5,
         trialExpired,
         trialDaysRemaining,
+        trialStarted,
         groupsCreated: groupsAsLeader,
         groupsJoined: totalGroups,
         maxGroupsCreate: 1,
