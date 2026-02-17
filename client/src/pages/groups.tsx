@@ -36,6 +36,7 @@ import {
   AlertCircle,
   FileText,
   ChevronRight,
+  Trash2,
   Settings,
   MoreVertical,
   Calendar as CalendarIcon,
@@ -393,6 +394,9 @@ export default function Groups() {
     }
   });
 
+  const [isMeetingDeleteDialogOpen, setIsMeetingDeleteDialogOpen] = useState(false);
+  const [meetingToDelete, setMeetingToDelete] = useState<string | null>(null);
+
   const deleteMeetingMutation = useMutation({
     mutationFn: async (meetingId: string) => {
       await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/meetings/${meetingId}`);
@@ -400,6 +404,8 @@ export default function Groups() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
       toast({ title: "Reunião removida" });
+      setIsMeetingDeleteDialogOpen(false);
+      setMeetingToDelete(null);
     },
     onError: (error: any) => {
       toast({ title: "Erro ao remover reunião", description: error?.message, variant: "destructive" });
@@ -1133,12 +1139,11 @@ export default function Groups() {
                                       variant="ghost"
                                       className="h-8 w-8 text-destructive hover:bg-destructive/10"
                                       onClick={() => {
-                                        if (confirm("Deseja excluir esta reunião?")) {
-                                          deleteMeetingMutation.mutate(meeting.id);
-                                        }
+                                        setMeetingToDelete(meeting.id);
+                                        setIsMeetingDeleteDialogOpen(true);
                                       }}
                                     >
-                                      <LogOut className="h-4 w-4 rotate-180" />
+                                      <Trash2 className="h-4 w-4" />
                                     </Button>
                                   </div>
                                 )}
@@ -2017,6 +2022,36 @@ export default function Groups() {
                   editingMeeting ? <Check className="h-4 w-4 mr-2" /> : <CalendarIcon className="h-4 w-4 mr-2" />
                 )}
                 {editingMeeting ? "Salvar Alterações" : "Agendar Reunião"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal Confirmação de Exclusão de Reunião */}
+        <Dialog open={isMeetingDeleteDialogOpen} onOpenChange={setIsMeetingDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-[425px] rounded-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-destructive">Excluir Reunião?</DialogTitle>
+              <DialogDescription>
+                Esta ação não pode ser desfeita. A reunião será removida permanentemente da agenda do grupo.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsMeetingDeleteDialogOpen(false)}
+                className="rounded-xl flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={() => meetingToDelete && deleteMeetingMutation.mutate(meetingToDelete)}
+                disabled={deleteMeetingMutation.isPending}
+                className="rounded-xl flex-1"
+              >
+                {deleteMeetingMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                Confirmar Exclusão
               </Button>
             </DialogFooter>
           </DialogContent>
