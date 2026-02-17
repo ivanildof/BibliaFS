@@ -374,6 +374,38 @@ export default function Groups() {
     refetchOnWindowFocus: true,
   });
 
+  const [editingMeeting, setEditingMeeting] = useState<GroupMeeting | null>(null);
+
+  const updateMeetingMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("PATCH", `/api/groups/${selectedGroup?.id}/meetings/${editingMeeting?.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
+      setEditingMeeting(null);
+      setIsMeetingDialogOpen(false);
+      meetingForm.reset();
+      toast({ title: "Reunião atualizada!" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao atualizar reunião", description: error?.message, variant: "destructive" });
+    }
+  });
+
+  const deleteMeetingMutation = useMutation({
+    mutationFn: async (meetingId: string) => {
+      await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/meetings/${meetingId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
+      toast({ title: "Reunião removida" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao remover reunião", description: error?.message, variant: "destructive" });
+    }
+  });
+
   const { data: discussionDetails } = useQuery<GroupDiscussion>({
     queryKey: ["/api/discussions", selectedDiscussion?.id],
     enabled: !!selectedDiscussion,
@@ -847,39 +879,7 @@ export default function Groups() {
   // Group detail view
   if (selectedGroup) {
     const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
-  const [editingMeeting, setEditingMeeting] = useState<GroupMeeting | null>(null);
-
-  const updateMeetingMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const res = await apiRequest("PATCH", `/api/groups/${selectedGroup?.id}/meetings/${editingMeeting?.id}`, data);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
-      setEditingMeeting(null);
-      setIsMeetingDialogOpen(false);
-      meetingForm.reset();
-      toast({ title: "Reunião atualizada!" });
-    },
-    onError: (error: any) => {
-      toast({ title: "Erro ao atualizar reunião", description: error?.message, variant: "destructive" });
-    }
-  });
-
-  const deleteMeetingMutation = useMutation({
-    mutationFn: async (meetingId: string) => {
-      await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/meetings/${meetingId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
-      toast({ title: "Reunião removida" });
-    },
-    onError: (error: any) => {
-      toast({ title: "Erro ao remover reunião", description: error?.message, variant: "destructive" });
-    }
-  });
-
-  const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
+    const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
     
     return (
       <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
