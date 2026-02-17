@@ -409,13 +409,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/groups/:groupId/meetings", isAuthenticated, async (req, res) => {
+  app.post("/api/groups/:groupId/meetings", isAuthenticated, async (req: any, res) => {
     try {
-      const user = (req as any).user;
-      console.log("[Meetings] Creating meeting, body:", JSON.stringify(req.body));
+      const userId = req.user.claims.sub;
+      console.log("[Meetings] Creating meeting, userId:", userId, "body:", JSON.stringify(req.body));
       const meetingData = {
         groupId: req.params.groupId,
-        createdBy: user.id,
+        createdBy: userId,
         title: req.body.title || "Reunião",
         description: req.body.description || null,
         meetingDate: req.body.meetingDate ? new Date(req.body.meetingDate) : new Date(),
@@ -441,13 +441,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/groups/:groupId/resources", isAuthenticated, async (req, res) => {
+  app.post("/api/groups/:groupId/resources", isAuthenticated, async (req: any, res) => {
     try {
-      const user = (req as any).user;
-      console.log("[Resources] Creating resource, body:", JSON.stringify(req.body));
+      const userId = req.user.claims.sub;
+      console.log("[Resources] Creating resource, userId:", userId, "body:", JSON.stringify(req.body));
       const resourceData = {
         groupId: req.params.groupId,
-        createdBy: user.id,
+        createdBy: userId,
         title: req.body.title || "Recurso",
         description: req.body.description || null,
         resourceType: req.body.resourceType || "link",
