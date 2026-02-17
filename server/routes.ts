@@ -4519,6 +4519,23 @@ Responda em português do Brasil.${bibleContext}`
       if (!email && !phone) {
         return res.status(400).json({ error: "Email ou telefone é obrigatório" });
       }
+
+      // Verificar se já existe convite pendente para esse email neste grupo
+      if (email) {
+        const existingInvites = await storage.getGroupInvites(groupId);
+        const pendingInvite = existingInvites.find(
+          (inv: any) => inv.invitedEmail === email && inv.status === "pending"
+        );
+        if (pendingInvite) {
+          return res.status(400).json({ error: "Já existe um convite pendente para este email" });
+        }
+
+        // Verificar se o email já é membro do grupo
+        const existingMember = members.find(m => m.userEmail === email);
+        if (existingMember) {
+          return res.status(400).json({ error: "Este usuário já é membro do grupo" });
+        }
+      }
       
       const invite = await storage.createGroupInvite({
         groupId,
