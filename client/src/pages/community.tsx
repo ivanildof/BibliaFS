@@ -142,30 +142,40 @@ export default function Community() {
       </div>
       <div className="max-w-4xl mx-auto px-6 sm:px-8 py-6 sm:py-8 relative z-10">
         {/* Header */}
-        <div className="text-center space-y-2 mb-8">
-          <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">CONEXÕES</p>
+        <div className="text-center space-y-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">ESTUDO BÍBLICO</p>
+          </div>
           <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground" data-testid="text-page-title">
-            {t.community.title}
+            Comunidade Bíblica
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Compartilhe insights e conecte-se com outros
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            Espaço exclusivo para compartilhar reflexões, versículos e aprendizados da Palavra de Deus
           </p>
         </div>
+
+        <Card className="mb-6 rounded-xl border border-primary/20 bg-primary/5">
+          <CardContent className="py-3 px-4">
+            <p className="text-xs text-center text-muted-foreground">
+              <span className="font-semibold text-foreground">Regras da comunidade:</span> Este espaço é dedicado exclusivamente ao estudo da Bíblia. Publique apenas versículos, reflexões e aprendizados bíblicos. Conteúdos fora do tema serão removidos.
+            </p>
+          </CardContent>
+        </Card>
         
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" data-testid="button-create-post" className="flex-shrink-0">
-                <Plus className="h-5 w-5 mr-2" />
-                <span className="hidden sm:inline">{t.community.post}</span>
-                <span className="sm:hidden">Post</span>
+              <Button data-testid="button-create-post" className="flex-shrink-0">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Compartilhar Estudo
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{t.community.what_studying}</DialogTitle>
+                <DialogTitle>Compartilhar Estudo Bíblico</DialogTitle>
                 <DialogDescription>
-                  Compartilhe um versículo e sua reflexão
+                  Compartilhe um versículo da Bíblia e sua reflexão com a comunidade. Somente conteúdo bíblico é permitido.
                 </DialogDescription>
               </DialogHeader>
               
@@ -176,10 +186,10 @@ export default function Community() {
                     name="verseReference"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.community.verse_reference}</FormLabel>
+                        <FormLabel>Referência Bíblica *</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Ex: João 3:16"
+                            placeholder="Ex: João 3:16, Salmos 23:1, Romanos 8:28"
                             data-testid="input-verse-reference"
                             {...field}
                           />
@@ -194,10 +204,10 @@ export default function Community() {
                     name="verseText"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Texto do Versículo</FormLabel>
+                        <FormLabel>Texto do Versículo *</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Cole o texto do versículo..."
+                            placeholder="Cole aqui o texto exato do versículo bíblico..."
                             className="min-h-[100px] font-serif"
                             data-testid="textarea-verse-text"
                             {...field}
@@ -213,10 +223,10 @@ export default function Community() {
                     name="note"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.community.your_reflection}</FormLabel>
+                        <FormLabel>Sua Reflexão Bíblica *</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Compartilhe o que você aprendeu ou como esse versículo te tocou..."
+                            placeholder="O que Deus falou ao seu coração através deste versículo? Compartilhe sua reflexão..."
                             className="min-h-[120px]"
                             data-testid="textarea-post-note"
                             {...field}
@@ -226,6 +236,10 @@ export default function Community() {
                       </FormItem>
                     )}
                   />
+
+                  <p className="text-[10px] text-muted-foreground text-center">
+                    Ao publicar, você confirma que o conteúdo está relacionado ao estudo da Bíblia Sagrada.
+                  </p>
                   
                   <DialogFooter>
                     <Button 
@@ -247,7 +261,7 @@ export default function Community() {
                           Publicando...
                         </>
                       ) : (
-                        t.community.post
+                        "Publicar Estudo"
                       )}
                     </Button>
                   </DialogFooter>
