@@ -2435,14 +2435,14 @@ export default function Groups() {
         <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/10 dark:bg-primary/5 blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-muted/50 dark:bg-muted/30 blur-3xl" />
       </div>
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-2"
+          className="text-center space-y-1"
         >
           <p className="text-[10px] font-semibold text-primary uppercase tracking-[0.2em]">COMUNIDADE</p>
-          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground" data-testid="text-page-title">
+          <h1 className="font-display text-lg sm:text-xl font-bold text-foreground" data-testid="text-page-title">
             Grupos de Estudo
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -2453,22 +2453,20 @@ export default function Groups() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button 
               variant="outline" 
-              size="lg" 
               onClick={() => setIsJoinByCodeDialogOpen(true)}
-              className="rounded-2xl h-14 px-8 border-primary/20  hover:border-primary/40 transition-all font-bold flex-1 sm:flex-none shadow-sm" 
+              className="rounded-2xl h-10 px-5 border-primary/20  hover:border-primary/40 transition-all font-bold flex-1 sm:flex-none shadow-sm" 
               data-testid="button-use-code"
             >
-              <UserPlus className="h-5 w-5 mr-2.5 text-primary" />
+              <UserPlus className="h-4 w-4 mr-2 text-primary" />
               Usar Código
             </Button>
 
             <Button 
-              size="lg" 
               onClick={handleCreateGroupClick}
-              className="rounded-2xl h-14 px-8 font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex-1 sm:flex-none" 
+              className="rounded-2xl h-10 px-5 font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex-1 sm:flex-none" 
               data-testid="button-create-group"
             >
-              <Plus className="h-5 w-5 mr-2.5" />
+              <Plus className="h-4 w-4 mr-2" />
               Criar Grupo
             </Button>
         </div>
@@ -2517,22 +2515,22 @@ export default function Groups() {
           </motion.div>
         )}
 
-        <Tabs defaultValue="my-groups" className="space-y-8">
+        <Tabs defaultValue="my-groups" className="space-y-4">
           <div className="overflow-x-auto scrollbar-hide">
             <TabsList className="inline-flex w-max min-w-full bg-muted/30 p-1.5 rounded-2xl border border-primary/5">
               <TabsTrigger 
                 value="my-groups" 
-                className="rounded-xl px-4 sm:px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all whitespace-nowrap text-sm"
+                className="rounded-xl px-3 sm:px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all whitespace-nowrap text-sm"
                 data-testid="tab-my-groups"
               >
                 Meus Grupos ({myGroups.length})
               </TabsTrigger>
               <TabsTrigger 
                 value="discover" 
-                className="rounded-xl px-4 sm:px-8 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all whitespace-nowrap text-sm"
+                className="rounded-xl px-3 sm:px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-lg font-bold transition-all whitespace-nowrap text-sm"
                 data-testid="tab-discover"
               >
-                Descobrir Novos Grupos ({publicGroups.length})
+                Novos Grupos ({publicGroups.length})
               </TabsTrigger>
             </TabsList>
           </div>
@@ -2545,16 +2543,15 @@ export default function Groups() {
               >
                 <Card className="border-none glass-premium rounded-2xl ring-1 ring-primary/10">
                   <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary/10 mb-6 rotate-3">
-                      <Users className="h-10 w-10 text-primary" />
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-6 rotate-3">
+                      <Users className="h-7 w-7 text-primary" />
                     </div>
-                    <h3 className="font-bold text-2xl text-foreground mb-3">Sua jornada começa aqui</h3>
-                    <p className="text-muted-foreground mb-8 max-w-sm font-medium">
+                    <h3 className="font-bold text-lg text-foreground mb-3">Sua jornada começa aqui</h3>
+                    <p className="text-muted-foreground mb-4 max-w-sm font-medium">
                       Você ainda não participa de nenhum grupo. Comece criando o seu ou explorando comunidades existentes.
                     </p>
                     <Button 
-                      size="lg"
-                      className="rounded-2xl h-14 px-10 font-bold shadow-lg shadow-primary/20"
+                      className="rounded-2xl h-10 px-6 font-bold shadow-lg shadow-primary/20"
                       onClick={handleCreateGroupClick} 
                       data-testid="button-create-first-group"
                     >
@@ -2565,7 +2562,7 @@ export default function Groups() {
                 </Card>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {myGroups.map((group, index) => (
                   <motion.div
                     key={group.id}
@@ -2584,9 +2581,9 @@ export default function Groups() {
                     >
                       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/80 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <CardHeader className="pb-4">
-                        <div className="flex justify-between items-start gap-2 mb-4 flex-wrap">
-                          <div className="p-3.5 rounded-2xl bg-primary/5 group- transition-colors">
-                            <Users className="h-7 w-7 text-primary" />
+                        <div className="flex justify-between items-start gap-2 mb-2 flex-wrap">
+                          <div className="p-2.5 rounded-xl bg-primary/5 group- transition-colors">
+                            <Users className="h-5 w-5 text-primary" />
                           </div>
                           <div className="flex flex-col items-end gap-2" data-group-menu>
                             <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-200 rounded-xl px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
@@ -2651,14 +2648,14 @@ export default function Groups() {
                             </div>
                           </div>
                         </div>
-                        <CardTitle className="text-2xl font-bold group-hover:text-primary transition-colors leading-tight">
+                        <CardTitle className="text-base font-bold group-hover:text-primary transition-colors leading-tight">
                           {group.name}
                         </CardTitle>
                         <CardDescription className="line-clamp-2 text-sm font-medium leading-relaxed mt-2 text-muted-foreground/80">
                           {group.description || "Nenhuma descrição fornecida para este grupo."}
                         </CardDescription>
                       </CardHeader>
-                      <CardFooter className="pt-4 border-t border-primary/5 flex items-center justify-between">
+                      <CardFooter className="pt-3 border-t border-primary/5 flex items-center justify-between">
                         <div className="flex items-center gap-1.5 text-xs font-bold text-primary/60 uppercase tracking-widest">
                           {group.isPublic ? (
                             <><Globe className="h-3.5 w-3.5" /> Público</>
