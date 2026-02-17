@@ -1249,7 +1249,7 @@ export default function Groups() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="chat" className="space-y-0 flex flex-col" style={{ height: "calc(100vh - 380px)", minHeight: "400px" }}>
+                <TabsContent value="chat" className="space-y-0 flex flex-col h-[calc(100vh-420px)] min-h-[300px]">
                   <div 
                     ref={chatScrollRef}
                     className="flex-1 overflow-y-auto border rounded-lg p-3 space-y-1"
