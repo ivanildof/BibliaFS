@@ -847,7 +847,20 @@ export default function Groups() {
   // Group detail view
   if (selectedGroup) {
     const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
-    const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
+  const deleteMeetingMutation = useMutation({
+    mutationFn: async (meetingId: string) => {
+      await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/meetings/${meetingId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
+      toast({ title: "Reunião removida" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao remover reunião", description: error?.message, variant: "destructive" });
+    }
+  });
+
+  const isLeaderOrMod = selectedGroup.role === "leader" || selectedGroup.role === "moderator" || selectedGroup.leaderId === user?.id;
     
     return (
       <div className="min-h-screen bg-background relative overflow-hidden mesh-primary">
