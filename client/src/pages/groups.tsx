@@ -2475,16 +2475,16 @@ export default function Groups() {
               <Crown className="h-4 w-4 text-primary" />
               <AlertTitle className="font-bold text-foreground">
                 {groupLimits.functionsBlocked 
-                  ? "Aproveite mais dos Grupos de Estudo" 
-                  : `Plano Gratuito - ${groupLimits.trialDaysRemaining} dias restantes`
+                  ? "Seus 30 dias gratuitos foram usados" 
+                  : `30 dias grátis - ${groupLimits.trialDaysRemaining} dias restantes`
                 }
               </AlertTitle>
               <AlertDescription className="text-muted-foreground">
                 {groupLimits.functionsBlocked ? (
-                  <span>Para continuar enviando mensagens, criando discussões e usando todas as ferramentas do grupo, conheça nossos planos premium.</span>
+                  <span>Você aproveitou os 30 dias gratuitos! Para continuar usando todas as ferramentas do grupo, conheça nossos planos premium.</span>
                 ) : (
                   <span>
-                    Você tem {groupLimits.trialDaysRemaining} dias para experimentar todas as funções.
+                    Aproveite! Você tem {groupLimits.trialDaysRemaining} dias grátis para usar todas as funções dos Grupos de Estudo.
                     {" | "}Grupos criados: {groupLimits.groupsCreated}/{groupLimits.maxGroupsCreate} | 
                     Participando de: {groupLimits.groupsJoined}/{groupLimits.maxGroupsJoin} grupos | 
                     Máx. membros por grupo: {groupLimits.maxMembers}
