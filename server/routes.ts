@@ -443,6 +443,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/groups/:groupId/meetings/:meetingId", isAuthenticated, async (req: any, res) => {
+    try {
+      const { groupId, meetingId } = req.params;
+      const userId = req.user.claims.sub;
+      
+      let meetingDateStr = req.body.meetingDate;
+      let meetingDate: Date | undefined;
+      if (meetingDateStr) {
+        if (!meetingDateStr.includes('T') && !meetingDateStr.includes('Z') && !meetingDateStr.includes('+')) {
+          meetingDateStr = meetingDateStr + ':00';
+        }
+        meetingDate = new Date(meetingDateStr + (meetingDateStr.includes('Z') || meetingDateStr.includes('+') ? '' : '-03:00'));
+      }
+
+      const updated = await storage.updateGroupMeeting(meetingId, userId, {
+        ...req.body,
+        meetingDate: meetingDate || undefined,
+      });
+      
+      if (updated) {
+        res.json(updated);
+      } else {
+        res.status(404).json({ error: "Reunião não encontrada ou sem permissão" });
+      }
+    } catch (error) {
+      console.error("[Meetings] Error updating meeting:", error);
+      res.status(500).json({ error: "Erro ao atualizar reunião" });
+    }
+  });
+
   app.delete("/api/groups/:groupId/meetings/:meetingId", isAuthenticated, async (req: any, res) => {
     try {
       const { groupId, meetingId } = req.params;

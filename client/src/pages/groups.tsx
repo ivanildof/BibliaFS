@@ -847,6 +847,25 @@ export default function Groups() {
   // Group detail view
   if (selectedGroup) {
     const isLeader = selectedGroup.role === "leader" || selectedGroup.leaderId === user?.id;
+  const [editingMeeting, setEditingMeeting] = useState<GroupMeeting | null>(null);
+
+  const updateMeetingMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("PATCH", `/api/groups/${selectedGroup?.id}/meetings/${editingMeeting?.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", selectedGroup?.id, "meetings"] });
+      setEditingMeeting(null);
+      setIsMeetingDialogOpen(false);
+      meetingForm.reset();
+      toast({ title: "Reunião atualizada!" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Erro ao atualizar reunião", description: error?.message, variant: "destructive" });
+    }
+  });
+
   const deleteMeetingMutation = useMutation({
     mutationFn: async (meetingId: string) => {
       await apiRequest("DELETE", `/api/groups/${selectedGroup?.id}/meetings/${meetingId}`);
@@ -1089,18 +1108,39 @@ export default function Groups() {
                                 )}
                                 
                                 {isLeader && (
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                                    onClick={() => {
-                                      if (confirm("Deseja excluir esta reunião?")) {
-                                        deleteMeetingMutation.mutate(meeting.id);
-                                      }
-                                    }}
-                                  >
-                                    <LogOut className="h-4 w-4 rotate-180" />
-                                  </Button>
+                                  <div className="flex gap-1">
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-8 w-8 text-primary hover:bg-primary/10"
+                                      onClick={() => {
+                                        setEditingMeeting(meeting);
+                                        meetingForm.reset({
+                                          title: meeting.title,
+                                          description: meeting.description || "",
+                                          meetingDate: new Date(meeting.meetingDate).toISOString().slice(0, 16),
+                                          location: meeting.location || "",
+                                          isOnline: meeting.isOnline,
+                                          meetingLink: meeting.meetingLink || "",
+                                        });
+                                        setIsMeetingDialogOpen(true);
+                                      }}
+                                    >
+                                      <Settings className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                      onClick={() => {
+                                        if (confirm("Deseja excluir esta reunião?")) {
+                                          deleteMeetingMutation.mutate(meeting.id);
+                                        }
+                                      }}
+                                    >
+                                      <LogOut className="h-4 w-4 rotate-180" />
+                                    </Button>
+                                  </div>
                                 )}
                               </div>
                             </div>

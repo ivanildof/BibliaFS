@@ -1885,6 +1885,15 @@ export class DatabaseStorage implements IStorage {
     return result.length > 0;
   }
 
+  async updateGroupMeeting(id: string, userId: string, data: Partial<InsertGroupMeeting>): Promise<GroupMeeting | null> {
+    const [updated] = await db
+      .update(groupMeetings)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(groupMeetings.id, id))
+      .returning();
+    return updated || null;
+  }
+
   // Group Resources
   async getGroupResources(groupId: string): Promise<GroupResource[]> {
     return await db.select().from(groupResources).where(eq(groupResources.groupId, groupId)).orderBy(desc(groupResources.createdAt));
