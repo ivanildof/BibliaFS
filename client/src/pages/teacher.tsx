@@ -1315,23 +1315,57 @@ export default function Teacher() {
                                   <Badge variant="secondary" className="rounded-full px-3 py-1 border-none font-bold text-[10px] uppercase tracking-widest shrink-0">Rascunho</Badge>
                                 </div>
                               </CardHeader>
-                              <CardFooter className="gap-3">
-                                <Button 
-                                  className="flex-1 rounded-xl h-11 font-bold"
-                                  onClick={() => handleEditLesson(lesson)}
-                                  data-testid={`button-edit-draft-${lesson.id}`}
-                                >
-                                  Continuar Editando
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-xl hover:bg-destructive/10"
-                                  onClick={() => handleDeleteLesson(lesson.id)}
-                                  data-testid={`button-delete-draft-${lesson.id}`}
-                                >
-                                  <Trash2 className="h-4 w-4 text-destructive/70" />
-                                </Button>
+                              <CardFooter className="flex-col gap-3">
+                                <div className="flex gap-2 w-full">
+                                  <Button 
+                                    className="flex-1 rounded-xl h-11 font-bold"
+                                    onClick={() => handleEditLesson(lesson)}
+                                    data-testid={`button-edit-draft-${lesson.id}`}
+                                  >
+                                    Continuar Editando
+                                  </Button>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    className="rounded-xl"
+                                    onClick={() => handleDeleteLesson(lesson.id)}
+                                    data-testid={`button-delete-draft-${lesson.id}`}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive/70" />
+                                  </Button>
+                                </div>
+                                <div className="flex gap-2 w-full flex-wrap">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="rounded-xl"
+                                    onClick={() => exportLessonToPDF(lesson)}
+                                    data-testid={`button-export-pdf-draft-${lesson.id}`}
+                                  >
+                                    <Download className="h-4 w-4 mr-1" />
+                                    PDF
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="rounded-xl"
+                                    onClick={() => downloadLessonText(lesson)}
+                                    data-testid={`button-download-txt-draft-${lesson.id}`}
+                                  >
+                                    <FileText className="h-4 w-4 mr-1" />
+                                    Baixar
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="rounded-xl"
+                                    onClick={() => shareLessonWhatsApp(lesson)}
+                                    data-testid={`button-share-whatsapp-draft-${lesson.id}`}
+                                  >
+                                    <Share2 className="h-4 w-4 mr-1" />
+                                    WhatsApp
+                                  </Button>
+                                </div>
                               </CardFooter>
                             </Card>
                           </motion.div>
