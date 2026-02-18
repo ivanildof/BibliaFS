@@ -1894,10 +1894,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Calcular quantidade de conteúdo baseado em duração
-      const numObjectives = duration <= 30 ? 3 : duration <= 60 ? 5 : 8;
-      const numContentBlocks = duration <= 30 ? 4 : duration <= 60 ? 8 : 12;
-      const numQuestions = duration <= 30 ? 5 : duration <= 60 ? 15 : 20;
+      // Calcular quantidade de conteúdo PROPORCIONAL à duração real
+      const d = Number(duration);
+      const numObjectives = d <= 10 ? 1 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 60 ? 5 : 8;
+      const numContentBlocks = d <= 10 ? 1 : d <= 15 ? 2 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 45 ? 5 : d <= 60 ? 6 : d <= 90 ? 8 : 12;
+      const numQuestions = d <= 10 ? 2 : d <= 15 ? 3 : d <= 20 ? 4 : d <= 30 ? 5 : d <= 45 ? 8 : d <= 60 ? 10 : d <= 90 ? 15 : 20;
+      const descriptionSize = d <= 10 ? "1 parágrafo curto (3-4 frases)" : d <= 20 ? "1 parágrafo" : d <= 30 ? "1 a 2 parágrafos" : "2 a 3 parágrafos robustos";
+      const blockSize = d <= 10 ? "1 parágrafo breve e direto" : d <= 20 ? "1 a 2 parágrafos" : d <= 30 ? "2 parágrafos" : "3 a 4 parágrafos substanciais";
 
       const scriptureNormalized = scriptureBase.trim();
       const isJobBook = /^(j[oó]|job)\b/i.test(scriptureNormalized) && !/^jo[aã]/i.test(scriptureNormalized);
@@ -1910,49 +1913,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         bookClarification = `\n\nLIVRO IDENTIFICADO: O livro mencionado é o EVANGELHO DE JOÃO (ou Epístola de João). NÃO confunda com o livro de Jó do Antigo Testamento.\n`;
       }
 
-      const prompt = `Você é um assistente especializado em educação bíblica premium. Sua tarefa é gerar conteúdo EXTREMAMENTE DETALHADO, PROFUNDO e EXTENSO para uma aula bíblica de ${duration} minutos.
+      const prompt = `Você é um assistente especializado em educação bíblica. Sua tarefa é gerar conteúdo para uma aula bíblica de EXATAMENTE ${duration} minutos.
 
-ATENÇÃO: O usuário reclamou que as descrições e conteúdos estão muito curtos. Você DEVE escrever textos longos, substantivos e teologicamente ricos.
+REGRA FUNDAMENTAL - DURAÇÃO DEFINE O CONTEÚDO:
+- Esta aula tem ${duration} minutos. O conteúdo DEVE ser proporcional a esse tempo.
+- Uma aula de 10 minutos é CURTA: conteúdo breve, direto e objetivo.
+- Uma aula de 30 minutos é MÉDIA: conteúdo moderado.
+- Uma aula de 60+ minutos é LONGA: conteúdo extenso e aprofundado.
+- NÃO gere conteúdo de 60 minutos para uma aula de 10 minutos. Isso é proibido.
 
 REGRA CRÍTICA - DISTINÇÃO ENTRE LIVROS BÍBLICOS:
-- "Jó" (com acento) = Livro de JÓ (Job) - Antigo Testamento - sobre o homem que sofreu provações
-- "Jo" (sem acento, sem "ão") = Livro de JÓ (Job) - Antigo Testamento - NÃO é João
+- "Jó" ou "Jo" (sem "ão") = Livro de JÓ (Job) - Antigo Testamento - homem justo que sofreu provações
 - "João" (com "ão") = Evangelho de JOÃO - Novo Testamento
-- "1Jo", "2Jo", "3Jo" = Epístolas de João
-- Se o título ou texto-base mencionar "Jó", "Jo" (sem "ão"), ou "Job", a aula é sobre o LIVRO DE JÓ do Antigo Testamento
 - NUNCA substitua Jó por João. São livros completamente diferentes.
 ${bookClarification}
 Título da Aula: ${title}
 Texto-Base: ${scriptureBase}
 Duração: ${duration} minutos
 
-ESTRUTURA DA AULA (SEJA EXTENSO):
-1. Descrição Detalhada: Um texto de 2 a 3 parágrafos robustos explicando a importância teológica e o propósito da aula.
-2. ${numObjectives} Objetivos de aprendizado claros e pedagógicos.
-3. ${numContentBlocks} BLOCOS DE CONTEÚDO PRINCIPAL: Cada bloco deve ter um título e um texto de 3 a 4 parágrafos substanciais, com análise exegética, referências bíblicas (ex: João 3:16) e aplicações práticas profundas. Não use bullet points curtos, use prosa rica.
-4. ${numQuestions} PERGUNTAS PARA DISCUSSÃO com RESPOSTAS DETALHADAS: Cada resposta deve ter pelo menos 3 frases explicando a fundamentação bíblica.
+ESTRUTURA DA AULA (proporcional a ${duration} min):
+1. Descrição: ${descriptionSize} explicando o propósito da aula.
+2. EXATAMENTE ${numObjectives} objetivo(s) de aprendizado.
+3. EXATAMENTE ${numContentBlocks} bloco(s) de conteúdo: Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas.
+4. EXATAMENTE ${numQuestions} pergunta(s) para discussão com respostas fundamentadas (cada resposta com 2-3 frases).
 
 Responda em JSON com a seguinte estrutura:
 {
-  "description": "Texto longo e detalhado da descrição...",
-  "objectives": ["Objetivo 1", "Objetivo 2", ...],
+  "description": "Descrição proporcional à duração...",
+  "objectives": ["Objetivo 1", ...],
   "contentBlocks": [
     {
-      "title": "Título do bloco 1",
-      "content": "Texto longo e profundo do bloco 1..."
-    },
-    ...
+      "title": "Título do bloco",
+      "content": "Conteúdo proporcional à duração..."
+    }
   ],
   "questions": [
-    {"question": "Pergunta 1", "answer": "Resposta detalhada 1"},
-    ...
+    {"question": "Pergunta", "answer": "Resposta fundamentada"}
   ]
 }
 
 REGRAS OBRIGATÓRIAS:
-- Escreva MUITO conteúdo. Para uma aula de ${duration} minutos, o professor precisa de muito material de leitura.
-- ${numContentBlocks} blocos de conteúdo é o MÍNIMO absoluto.
-- ${numQuestions} perguntas e respostas é o MÍNIMO absoluto.
+- Gere EXATAMENTE ${numContentBlocks} blocos de conteúdo. Nem mais, nem menos.
+- Gere EXATAMENTE ${numQuestions} perguntas. Nem mais, nem menos.
+- O volume de texto deve ser REALISTA para ${duration} minutos de aula.
 - Use versículos bíblicos reais para fundamentar cada ponto.
 - TODAS as respostas em português do Brasil.`;
 
