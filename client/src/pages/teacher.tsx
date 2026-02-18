@@ -574,6 +574,15 @@ export default function Teacher() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/teacher/lessons"] });
+      setIsCreateDialogOpen(false);
+      setEditingLessonId(null);
+      form.reset({ title: "", description: "", scriptureBase: "", duration: 50, objectives: [], discussionQuestions: [], applicationPoints: [] });
+      setObjectives([]);
+      setContentBlocks([]);
+      setQuestions([]);
+      setNewBlockTitle("");
+      setNewBlockContent("");
+      setExpandedAnswerIndex(null);
       toast({ title: "Aula deletada!", description: "A aula foi removida com sucesso." });
     },
     onError: (error: Error) => {
