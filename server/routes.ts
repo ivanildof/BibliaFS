@@ -1935,10 +1935,17 @@ Duração: ${duration} minutos
 ESTRUTURA DA AULA (proporcional a ${duration} min):
 1. Descrição: ${descriptionSize} explicando o propósito da aula.
 2. EXATAMENTE ${numObjectives} objetivo(s) de aprendizado.
-3. EXATAMENTE ${numContentBlocksFinal} bloco(s) de conteúdo: Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas. Cada bloco aborda um tópico ou aspecto diferente do tema.
-4. EXATAMENTE ${numQuestions} pergunta(s) para discussão: Cada pergunta DEVE ser baseada no conteúdo de um dos blocos acima. Distribua as perguntas entre os blocos. Cada resposta deve ter 2-3 frases com fundamentação bíblica baseada no conteúdo do bloco correspondente.
+3. EXATAMENTE ${numContentBlocksFinal} bloco(s) de conteúdo: Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas. Cada bloco aborda um tópico ou aspecto diferente do texto-base.
+4. EXATAMENTE ${numQuestions} pergunta(s) para discussão baseadas nos blocos de conteúdo.
 
-REGRA IMPORTANTE: As perguntas NÃO podem ser genéricas. Cada pergunta deve referenciar diretamente o conteúdo de um bloco específico, de modo que o professor possa fazer a pergunta APÓS ensinar aquele bloco.
+REGRAS PARA AS PERGUNTAS E RESPOSTAS:
+- Cada pergunta deve ser SIMPLES e DIRETA, relacionada ao que foi ensinado no bloco correspondente.
+- A resposta deve ter NO MÁXIMO 1-2 frases curtas. Sem explicações longas.
+- A resposta deve citar o versículo bíblico específico do texto-base que fundamenta a resposta.
+- NÃO use linguagem acadêmica ou teológica complexa. Use linguagem simples e clara.
+- Exemplo de pergunta boa: "De acordo com Romanos 5:8, como Deus demonstrou seu amor por nós?"
+- Exemplo de resposta boa: "Cristo morreu por nós quando ainda éramos pecadores, mostrando que o amor de Deus não depende do nosso merecimento."
+- Exemplo de resposta RUIM (muito longa): "A demonstração do amor divino se manifesta na kenosis cristológica soteriológica em que..."
 
 Responda em JSON com a seguinte estrutura:
 {
@@ -1951,16 +1958,18 @@ Responda em JSON com a seguinte estrutura:
     }
   ],
   "questions": [
-    {"question": "Pergunta baseada no bloco X", "answer": "Resposta fundamentada no conteúdo do bloco"}
+    {"question": "Pergunta simples e direta", "answer": "Resposta curta de 1-2 frases com versículo"}
   ]
 }
 
 REGRAS OBRIGATÓRIAS:
 - Gere EXATAMENTE ${numContentBlocksFinal} blocos de conteúdo. Nem mais, nem menos.
 - Gere EXATAMENTE ${numQuestions} perguntas. Nem mais, nem menos.
-- Cada pergunta deve estar diretamente ligada ao conteúdo de um bloco.
+- Cada pergunta deve estar ligada ao conteúdo de um bloco e ao texto-base bíblico.
+- Respostas CURTAS: máximo 1-2 frases. Nunca mais que isso.
+- Linguagem SIMPLES, como se estivesse explicando para um grupo de estudo bíblico comum.
 - O volume de texto deve ser REALISTA para ${duration} minutos de aula.
-- Use versículos bíblicos reais para fundamentar cada ponto.
+- Use versículos bíblicos reais do texto-base para fundamentar cada ponto.
 - TODAS as respostas em português do Brasil.`;
 
       const openaiInstance = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
