@@ -27,6 +27,7 @@ import {
   HelpCircle,
   Brain,
   MessageSquare,
+  MessageCircle,
   Share2
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -262,6 +263,7 @@ export default function Teacher() {
   const [newBlockTitle, setNewBlockTitle] = useState("");
   const [newBlockContent, setNewBlockContent] = useState("");
   const [questions, setQuestions] = useState<Array<{question: string; answer: string}>>([]);
+  const [numQuestionsInput, setNumQuestionsInput] = useState(5);
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
   const [expandedAnswerIndex, setExpandedAnswerIndex] = useState<number | null>(null);
@@ -455,7 +457,7 @@ export default function Teacher() {
 
     setIsGeneratingAI(true);
     try {
-      const res = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase, duration });
+      const res = await apiRequest("POST", "/api/teacher/generate-lesson-content", { title, scriptureBase, duration, numQuestions: numQuestionsInput });
       const data = await res.json();
       
       if (data.description) form.setValue("description", data.description);
@@ -580,6 +582,7 @@ export default function Teacher() {
       setObjectives([]);
       setContentBlocks([]);
       setQuestions([]);
+      setNumQuestionsInput(5);
       setNewBlockTitle("");
       setNewBlockContent("");
       setExpandedAnswerIndex(null);
@@ -624,6 +627,7 @@ export default function Teacher() {
     setObjectives([]);
     setContentBlocks([]);
     setQuestions([]);
+    setNumQuestionsInput(5);
     setNewBlockTitle("");
     setNewBlockContent("");
     setExpandedAnswerIndex(null);
@@ -794,6 +798,23 @@ export default function Teacher() {
                         </FormItem>
                       )}
                     />
+
+                    <div>
+                      <label className="text-sm font-medium flex items-center gap-2 mb-2">
+                        <MessageCircle className="h-4 w-4" />
+                        Quantidade de Perguntas e Respostas
+                      </label>
+                      <Input 
+                        type="number"
+                        min={1}
+                        max={30}
+                        value={numQuestionsInput}
+                        onChange={(e) => setNumQuestionsInput(Math.max(1, Math.min(30, parseInt(e.target.value) || 1)))}
+                        placeholder="Ex: 5"
+                        data-testid="input-num-questions"
+                      />
+                      <p className="text-[10px] text-muted-foreground mt-1">A IA vai gerar esse número de perguntas já com as respostas prontas.</p>
+                    </div>
 
                     {/* AI Generation Button */}
                     <div className="flex justify-center pt-2">

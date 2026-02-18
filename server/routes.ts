@@ -1873,7 +1873,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI-powered lesson content generation
   app.post("/api/teacher/generate-lesson-content", isAuthenticated, async (req: any, res) => {
     try {
-      const { title, scriptureBase, duration = 50 } = req.body;
+      const { title, scriptureBase, duration = 50, numQuestions: userNumQuestions } = req.body;
       const userId = req.user?.id || req.user?.claims?.sub;
       
       if (!title || !scriptureBase) {
@@ -1898,7 +1898,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const d = Number(duration);
       const numObjectives = d <= 10 ? 1 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 60 ? 5 : 8;
       const numContentBlocks = d <= 10 ? 1 : d <= 15 ? 2 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 45 ? 5 : d <= 60 ? 6 : d <= 90 ? 8 : 12;
-      const numQuestions = d <= 10 ? 2 : d <= 15 ? 3 : d <= 20 ? 4 : d <= 30 ? 5 : d <= 45 ? 8 : d <= 60 ? 10 : d <= 90 ? 15 : 20;
+      const numQuestions = userNumQuestions ? Math.max(1, Math.min(30, Number(userNumQuestions))) : (d <= 10 ? 2 : d <= 15 ? 3 : d <= 20 ? 4 : d <= 30 ? 5 : d <= 45 ? 8 : d <= 60 ? 10 : d <= 90 ? 15 : 20);
       const descriptionSize = d <= 10 ? "1 parágrafo curto (3-4 frases)" : d <= 20 ? "1 parágrafo" : d <= 30 ? "1 a 2 parágrafos" : "2 a 3 parágrafos robustos";
       const blockSize = d <= 10 ? "1 parágrafo breve e direto" : d <= 20 ? "1 a 2 parágrafos" : d <= 30 ? "2 parágrafos" : "3 a 4 parágrafos substanciais";
 
