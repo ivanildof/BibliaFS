@@ -1899,6 +1899,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const numObjectives = d <= 10 ? 1 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 60 ? 5 : 8;
       const numContentBlocks = d <= 10 ? 1 : d <= 15 ? 2 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 45 ? 5 : d <= 60 ? 6 : d <= 90 ? 8 : 12;
       const numQuestions = userNumQuestions ? Math.max(1, Math.min(30, Number(userNumQuestions))) : (d <= 10 ? 2 : d <= 15 ? 3 : d <= 20 ? 4 : d <= 30 ? 5 : d <= 45 ? 8 : d <= 60 ? 10 : d <= 90 ? 15 : 20);
+      const numContentBlocksFinal = Math.max(numContentBlocks, numQuestions);
       const descriptionSize = d <= 10 ? "1 parágrafo curto (3-4 frases)" : d <= 20 ? "1 parágrafo" : d <= 30 ? "1 a 2 parágrafos" : "2 a 3 parágrafos robustos";
       const blockSize = d <= 10 ? "1 parágrafo breve e direto" : d <= 20 ? "1 a 2 parágrafos" : d <= 30 ? "2 parágrafos" : "3 a 4 parágrafos substanciais";
 
@@ -1934,8 +1935,10 @@ Duração: ${duration} minutos
 ESTRUTURA DA AULA (proporcional a ${duration} min):
 1. Descrição: ${descriptionSize} explicando o propósito da aula.
 2. EXATAMENTE ${numObjectives} objetivo(s) de aprendizado.
-3. EXATAMENTE ${numContentBlocks} bloco(s) de conteúdo: Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas.
-4. EXATAMENTE ${numQuestions} pergunta(s) para discussão com respostas fundamentadas (cada resposta com 2-3 frases).
+3. EXATAMENTE ${numContentBlocksFinal} bloco(s) de conteúdo: Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas. Cada bloco aborda um tópico ou aspecto diferente do tema.
+4. EXATAMENTE ${numQuestions} pergunta(s) para discussão: Cada pergunta DEVE ser baseada no conteúdo de um dos blocos acima. Distribua as perguntas entre os blocos. Cada resposta deve ter 2-3 frases com fundamentação bíblica baseada no conteúdo do bloco correspondente.
+
+REGRA IMPORTANTE: As perguntas NÃO podem ser genéricas. Cada pergunta deve referenciar diretamente o conteúdo de um bloco específico, de modo que o professor possa fazer a pergunta APÓS ensinar aquele bloco.
 
 Responda em JSON com a seguinte estrutura:
 {
@@ -1948,13 +1951,14 @@ Responda em JSON com a seguinte estrutura:
     }
   ],
   "questions": [
-    {"question": "Pergunta", "answer": "Resposta fundamentada"}
+    {"question": "Pergunta baseada no bloco X", "answer": "Resposta fundamentada no conteúdo do bloco"}
   ]
 }
 
 REGRAS OBRIGATÓRIAS:
-- Gere EXATAMENTE ${numContentBlocks} blocos de conteúdo. Nem mais, nem menos.
+- Gere EXATAMENTE ${numContentBlocksFinal} blocos de conteúdo. Nem mais, nem menos.
 - Gere EXATAMENTE ${numQuestions} perguntas. Nem mais, nem menos.
+- Cada pergunta deve estar diretamente ligada ao conteúdo de um bloco.
 - O volume de texto deve ser REALISTA para ${duration} minutos de aula.
 - Use versículos bíblicos reais para fundamentar cada ponto.
 - TODAS as respostas em português do Brasil.`;
