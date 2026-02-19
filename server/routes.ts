@@ -327,7 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // App version check endpoint for update popup
   // LATEST_VERSION: Update this when releasing a new version to Play Store
   // Quando lançar nova versão na Play Store, atualize este valor para mostrar o popup de atualização
-  const LATEST_VERSION = process.env.APP_LATEST_VERSION || "1.0.9";
+  const LATEST_VERSION = process.env.APP_LATEST_VERSION || "1.0.10";
   
   app.get("/api/app/version", (req, res) => {
     const currentVersion = req.query.current as string;
@@ -353,9 +353,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       updateAvailable,
       downloadSize: "~18 MB",
       releaseNotes: [
-        { icon: "sparkles", title: "Design Premium", description: "Novo visual com cores suaves e elegantes" },
-        { icon: "zap", title: "Modo Offline", description: "Leia a Bíblia sem internet" },
-        { icon: "bug", title: "Correções", description: "Melhorias de estabilidade e performance" },
+        { icon: "sparkles", title: "Modo Professor", description: "Escolha a quantidade de perguntas e respostas para suas aulas" },
+        { icon: "zap", title: "Conteúdo Inteligente", description: "Blocos de conteúdo alinhados com as perguntas geradas pela IA" },
+        { icon: "bug", title: "Correções", description: "Melhorias de estabilidade e salvamento no banco de dados" },
       ]
     });
   });
