@@ -617,8 +617,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ message: "Google OAuth not configured" });
       }
 
+      const isNativePlatform = req.query.platform === 'native';
       const redirectUri = `${GOOGLE_OAUTH_APP_URL}/api/auth/google/callback`;
-      const state = crypto.randomBytes(32).toString('hex');
+      const stateData = crypto.randomBytes(32).toString('hex');
+      const state = isNativePlatform ? `native_${stateData}` : stateData;
 
       res.cookie('oauth_state', state, {
         httpOnly: true,
@@ -637,7 +639,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-      console.log("[Google OAuth] Redirecting to Google with redirect_uri:", redirectUri);
+      console.log("[Google OAuth] Redirecting to Google with redirect_uri:", redirectUri, "isNative:", isNativePlatform);
       res.redirect(googleAuthUrl);
     } catch (error: any) {
       console.error("[Google OAuth] Error initiating flow:", error);
@@ -655,6 +657,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const cookieState = req.cookies?.oauth_state;
+      const isNativeCallback = typeof state === 'string' && state.startsWith('native_');
 
       if (!state || typeof state !== 'string') {
         console.error("[Google OAuth Callback] Missing state parameter");
@@ -730,6 +733,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const accessToken = authData.session.access_token;
       const refreshToken = authData.session.refresh_token;
+
+      if (isNativeCallback) {
+        const nativeRedirectUrl = `bibliafs://login-callback#access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&token_type=bearer&type=signup`;
+        console.log("[Google OAuth Callback] Redirecting to native app via custom scheme");
+        return res.redirect(nativeRedirectUrl);
+      }
 
       const redirectUrl = `${GOOGLE_OAUTH_APP_URL}/auth/callback#access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&token_type=bearer&type=signup`;
 

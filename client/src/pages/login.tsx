@@ -125,9 +125,10 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    console.log("[Google Login] Redirecting to backend OAuth flow");
+    console.log("[Google Login] Redirecting to backend OAuth flow, isNative:", isNative);
     const baseUrl = APP_URL || window.location.origin;
-    window.location.href = `${baseUrl}/api/auth/google`;
+    const nativeParam = isNative ? '?platform=native' : '';
+    window.location.href = `${baseUrl}/api/auth/google${nativeParam}`;
   };
 
   const onSubmit = (data: LoginFormData) => {
