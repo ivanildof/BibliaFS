@@ -804,16 +804,32 @@ export default function Teacher() {
                         <MessageCircle className="h-4 w-4" />
                         Quantidade de Perguntas e Respostas
                       </label>
-                      <Input 
-                        type="number"
-                        min={1}
-                        max={30}
-                        value={numQuestionsInput}
-                        onChange={(e) => setNumQuestionsInput(Math.max(1, Math.min(30, parseInt(e.target.value) || 1)))}
-                        placeholder="Ex: 5"
-                        data-testid="input-num-questions"
-                      />
-                      <p className="text-[10px] text-muted-foreground mt-1">A IA vai gerar esse número de perguntas já com as respostas prontas.</p>
+                      <div className="flex items-center gap-3">
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="outline"
+                          onClick={() => setNumQuestionsInput(Math.max(1, numQuestionsInput - 1))}
+                          disabled={numQuestionsInput <= 1}
+                          data-testid="button-decrease-questions"
+                        >
+                          <span className="text-lg font-bold">-</span>
+                        </Button>
+                        <span className="text-lg font-semibold min-w-[2.5rem] text-center" data-testid="text-num-questions">
+                          {numQuestionsInput}
+                        </span>
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="outline"
+                          onClick={() => setNumQuestionsInput(Math.min(30, numQuestionsInput + 1))}
+                          disabled={numQuestionsInput >= 30}
+                          data-testid="button-increase-questions"
+                        >
+                          <span className="text-lg font-bold">+</span>
+                        </Button>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-1">A IA vai gerar esse número de perguntas já com as respostas prontas (1 a 30).</p>
                     </div>
 
                     {/* AI Generation Button */}
