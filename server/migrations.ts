@@ -408,6 +408,27 @@ export async function runMigrations() {
       ON feedback(user_id)
     `);
 
+    // Add missing columns to lessons table for Teacher Mode
+    await db.execute(sql`
+      ALTER TABLE lessons 
+      ADD COLUMN IF NOT EXISTS content_blocks JSONB
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE lessons 
+      ADD COLUMN IF NOT EXISTS objectives TEXT[]
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE lessons 
+      ADD COLUMN IF NOT EXISTS questions JSONB
+    `);
+
+    await db.execute(sql`
+      ALTER TABLE lessons 
+      ADD COLUMN IF NOT EXISTS scheduled_for TIMESTAMPTZ
+    `);
+
     console.log("Migrations completed successfully!");
   } catch (error) {
     console.error("Migration error:", error);
