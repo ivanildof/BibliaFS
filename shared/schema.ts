@@ -659,9 +659,14 @@ export const lessons = pgTable("lessons", {
   resources: jsonb("resources"),
   
   objectives: text("objectives").array(),
+  contentBlocks: jsonb("content_blocks").$type<Array<{
+    title: string;
+    content: string;
+  }>>(),
   questions: jsonb("questions").$type<Array<{
     id: string;
     question: string;
+    answer?: string;
     options: string[];
     correctAnswer: number;
   }>>(),
