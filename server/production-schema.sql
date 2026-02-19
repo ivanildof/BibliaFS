@@ -395,7 +395,11 @@ CREATE TABLE IF NOT EXISTS lessons (
     tags VARCHAR[],
     scripture_references JSONB,
     resources JSONB,
+    objectives TEXT[],
+    content_blocks JSONB,
+    questions JSONB,
     is_published BOOLEAN DEFAULT false,
+    scheduled_for TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
