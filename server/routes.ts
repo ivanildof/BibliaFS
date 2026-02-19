@@ -1900,7 +1900,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const numContentBlocks = d <= 10 ? 1 : d <= 15 ? 2 : d <= 20 ? 2 : d <= 30 ? 3 : d <= 45 ? 5 : d <= 60 ? 6 : d <= 90 ? 8 : 12;
       const numQuestions = userNumQuestions ? Math.max(1, Math.min(30, Number(userNumQuestions))) : (d <= 10 ? 2 : d <= 15 ? 3 : d <= 20 ? 4 : d <= 30 ? 5 : d <= 45 ? 8 : d <= 60 ? 10 : d <= 90 ? 15 : 20);
       const numContentBlocksFinal = Math.max(numContentBlocks, numQuestions);
-      const descriptionSize = d <= 10 ? "1 parágrafo curto (3-4 frases)" : d <= 20 ? "1 parágrafo" : d <= 30 ? "1 a 2 parágrafos" : "2 a 3 parágrafos robustos";
+      const verseRangeMatch = scriptureBase.match(/(\d+)\s*[-:]\s*(\d+)\s*[-–]\s*(\d+)/);
+      const verseCount = verseRangeMatch ? Math.abs(Number(verseRangeMatch[3]) - Number(verseRangeMatch[2])) + 1 : 0;
+      const isLargePassage = verseCount >= 10;
+      const descriptionSize = isLargePassage 
+        ? `2 a 3 parágrafos detalhados que resumam TODOS os eventos e temas presentes nos ${verseCount} versículos do trecho. Mencione cada evento principal que acontece no texto.`
+        : (d <= 10 ? "1 parágrafo curto (3-4 frases)" : d <= 20 ? "1 parágrafo" : d <= 30 ? "1 a 2 parágrafos" : "2 a 3 parágrafos robustos");
       const blockSize = d <= 10 ? "1 parágrafo breve e direto" : d <= 20 ? "1 a 2 parágrafos" : d <= 30 ? "2 parágrafos" : "3 a 4 parágrafos substanciais";
 
       const scriptureNormalized = scriptureBase.trim();
@@ -1933,9 +1938,9 @@ Texto-Base: ${scriptureBase}
 Duração: ${duration} minutos
 
 ESTRUTURA DA AULA (proporcional a ${duration} min):
-1. Descrição: ${descriptionSize} explicando o propósito da aula.
+1. Descrição: ${descriptionSize} explicando o propósito da aula. A descrição DEVE mencionar cada evento, personagem e tema principal que aparece no trecho bíblico. Leia o texto-base versículo por versículo e resuma TODOS os acontecimentos — não pule nenhum evento.
 2. EXATAMENTE ${numObjectives} objetivo(s) de aprendizado.
-3. EXATAMENTE ${numContentBlocksFinal} bloco(s) de conteúdo: Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas. Cada bloco aborda um tópico ou aspecto diferente do texto-base.
+3. EXATAMENTE ${numContentBlocksFinal} bloco(s) de conteúdo: Cada bloco deve cobrir um trecho específico dos versículos (ex: "Versículos 3-5: A perturbação de Herodes"). Cada bloco deve ter um título e ${blockSize} com referências bíblicas e aplicações práticas. Todos os versículos do texto-base devem ser cobertos pelos blocos — nenhum versículo pode ser ignorado.
 4. EXATAMENTE ${numQuestions} pergunta(s) para discussão baseadas nos blocos de conteúdo.
 
 REGRAS PARA AS PERGUNTAS E RESPOSTAS:
