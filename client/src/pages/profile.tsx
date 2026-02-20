@@ -129,6 +129,28 @@ export default function Profile() {
     },
   });
 
+  const handleShareApp = async () => {
+    const shareUrl = "https://play.google.com/store/apps/details?id=com.bibliafullstack.app&pcampaignid=web_share";
+    const shareData = {
+      title: "BíbliaFS",
+      text: "Conheça o BíbliaFS - seu app de estudo bíblico com IA, áudio, planos de leitura e muito mais!",
+      url: shareUrl,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({ title: "Link copiado!", description: "O link do app foi copiado para a área de transferência" });
+      }
+    } catch {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({ title: "Link copiado!", description: "O link do app foi copiado para a área de transferência" });
+      } catch {}
+    }
+  };
+
   // Show loading state while auth is being checked
   if (isLoading) {
     return (
@@ -201,7 +223,7 @@ export default function Profile() {
       {/* Mobile Header with Action Buttons */}
       <div className="md:hidden sticky top-0 z-20 bg-background/90 backdrop-blur-2xl border-b border-border px-4 py-3">
         <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-share-profile-mobile">
+          <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-share-profile-mobile" onClick={handleShareApp}>
             <Share2 className="h-5 w-5" />
           </Button>
           <Link href="/configurações">
@@ -402,7 +424,7 @@ export default function Profile() {
               
               {/* Desktop Action Buttons */}
               <div className="hidden md:flex flex-row gap-2">
-                <Button variant="outline" data-testid="button-share-profile">
+                <Button variant="outline" data-testid="button-share-profile" onClick={handleShareApp}>
                   <Share2 className="h-4 w-4 mr-2" />
                   Compartilhar
                 </Button>
