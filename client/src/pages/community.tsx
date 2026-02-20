@@ -507,6 +507,23 @@ export default function Community() {
                         size="sm"
                         className="flex-1 rounded-xl h-9 font-bold text-xs text-muted-foreground"
                         data-testid="button-share-post"
+                        onClick={async () => {
+                          const shareText = `${post.verseReference}\n"${post.verseText}"\n\n${post.note}\n\n— ${post.user?.firstName || ""}`;
+                          const shareUrl = `${window.location.origin}/community`;
+                          try {
+                            if (navigator.share) {
+                              await navigator.share({ title: `Estudo Bíblico - ${post.verseReference}`, text: shareText, url: shareUrl });
+                            } else {
+                              await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+                              toast({ title: "Copiado!", description: "Texto copiado para a área de transferência" });
+                            }
+                          } catch {
+                            try {
+                              await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+                              toast({ title: "Copiado!", description: "Texto copiado para a área de transferência" });
+                            } catch {}
+                          }
+                        }}
                       >
                         <Share2 className="h-4 w-4 mr-2" />
                         Compartilhar
