@@ -2214,10 +2214,19 @@ IMPORTANTE:
 
   const ADMIN_EMAIL = "fabrisite1@gmail.com";
 
+  const isAdminUser = async (req: any): Promise<boolean> => {
+    const userEmail = req.user?.claims?.email;
+    if (userEmail === ADMIN_EMAIL) return true;
+    const userId = req.user?.claims?.sub;
+    if (!userId) return false;
+    const user = await storage.getUser(userId);
+    return user?.email === ADMIN_EMAIL && user?.role === "admin";
+  };
+
   app.delete("/api/community/posts/:id", isAuthenticated, async (req: any, res) => {
     try {
-      const userEmail = req.user.claims.email;
-      if (userEmail !== ADMIN_EMAIL) {
+      const admin = await isAdminUser(req);
+      if (!admin) {
         return res.status(403).json({ error: "Acesso negado. Apenas administradores podem deletar posts." });
       }
       const deleted = await storage.deleteCommunityPost(req.params.id);
@@ -2232,8 +2241,8 @@ IMPORTANTE:
 
   app.patch("/api/community/posts/:id", isAuthenticated, async (req: any, res) => {
     try {
-      const userEmail = req.user.claims.email;
-      if (userEmail !== ADMIN_EMAIL) {
+      const admin = await isAdminUser(req);
+      if (!admin) {
         return res.status(403).json({ error: "Acesso negado. Apenas administradores podem editar posts." });
       }
       const { verseReference, verseText, note } = req.body;

@@ -58,7 +58,7 @@ export default function Community() {
   const [editData, setEditData] = useState({ verseReference: "", verseText: "", note: "" });
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
 
-  const isAdmin = user?.email === ADMIN_EMAIL;
+  const isAdmin = user?.email === ADMIN_EMAIL && user?.role === "admin";
 
   const { data: posts = [], isLoading, error } = useQuery<(CommunityPost & { user: any; isLikedByCurrentUser?: boolean })[]>({
     queryKey: ["/api/community/posts"],
