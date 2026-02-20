@@ -4,6 +4,8 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +18,13 @@ import {
   Share2,
   BookOpen,
   TrendingUp,
-  Loader2
+  Loader2,
+  Trash2,
+  Pencil,
+  Check,
+  X,
+  MoreVertical,
+  ShieldCheck
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -39,11 +47,18 @@ const formSchema = insertCommunityPostSchema.extend({
 
 type FormData = z.infer<typeof formSchema>;
 
+const ADMIN_EMAIL = "fabrisite1@gmail.com";
+
 export default function Community() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<string | null>(null);
+  const [editData, setEditData] = useState({ verseReference: "", verseText: "", note: "" });
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   const { data: posts = [], isLoading, error } = useQuery<(CommunityPost & { user: any; isLikedByCurrentUser?: boolean })[]>({
     queryKey: ["/api/community/posts"],
@@ -93,6 +108,43 @@ export default function Community() {
       queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      return await apiRequest("DELETE", `/api/community/posts/${postId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
+      setDeletePostId(null);
+      toast({ title: "Post deletado", description: "O post foi removido com sucesso." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Erro ao deletar", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const editMutation = useMutation({
+    mutationFn: async ({ postId, data }: { postId: string; data: { verseReference: string; verseText: string; note: string } }) => {
+      return await apiRequest("PATCH", `/api/community/posts/${postId}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/posts"] });
+      setEditingPost(null);
+      toast({ title: "Post atualizado", description: "O post foi editado com sucesso." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Erro ao editar", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const startEditing = (post: CommunityPost) => {
+    setEditingPost(post.id);
+    setEditData({
+      verseReference: post.verseReference || "",
+      verseText: post.verseText || "",
+      note: post.note || "",
+    });
+  };
 
   const onSubmit = (data: FormData) => {
     createMutation.mutate(data);
@@ -337,24 +389,88 @@ export default function Community() {
                           })}
                         </p>
                       </div>
+                      {isAdmin && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="shrink-0" data-testid={`button-admin-menu-${post.id}`}>
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => startEditing(post)} data-testid={`button-edit-post-${post.id}`}>
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive" onClick={() => setDeletePostId(post.id)} data-testid={`button-delete-post-${post.id}`}>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Deletar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </div>
                   </CardHeader>
 
                   <CardContent className="space-y-4 pt-2">
-                    {/* Verse */}
-                    <div className="relative overflow-hidden p-4 bg-muted/30 rounded-2xl">
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
-                      <div className="flex items-center gap-2 mb-2">
-                        <BookOpen className="h-3.5 w-3.5 text-primary" />
-                        <span className="font-bold text-xs text-primary">{post.verseReference}</span>
+                    {editingPost === post.id ? (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-xs font-semibold text-muted-foreground mb-1 block">Referência</label>
+                          <Input
+                            value={editData.verseReference}
+                            onChange={(e) => setEditData(prev => ({ ...prev, verseReference: e.target.value }))}
+                            data-testid={`input-edit-reference-${post.id}`}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-muted-foreground mb-1 block">Versículo</label>
+                          <Textarea
+                            value={editData.verseText}
+                            onChange={(e) => setEditData(prev => ({ ...prev, verseText: e.target.value }))}
+                            className="min-h-[80px] font-serif"
+                            data-testid={`textarea-edit-verse-${post.id}`}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-muted-foreground mb-1 block">Reflexão</label>
+                          <Textarea
+                            value={editData.note}
+                            onChange={(e) => setEditData(prev => ({ ...prev, note: e.target.value }))}
+                            className="min-h-[80px]"
+                            data-testid={`textarea-edit-note-${post.id}`}
+                          />
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                          <Button variant="outline" size="sm" onClick={() => setEditingPost(null)} data-testid={`button-cancel-edit-${post.id}`}>
+                            <X className="h-3.5 w-3.5 mr-1" />
+                            Cancelar
+                          </Button>
+                          <Button
+                            size="sm"
+                            disabled={editMutation.isPending}
+                            onClick={() => editMutation.mutate({ postId: post.id, data: editData })}
+                            data-testid={`button-save-edit-${post.id}`}
+                          >
+                            {editMutation.isPending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Check className="h-3.5 w-3.5 mr-1" />}
+                            Salvar
+                          </Button>
+                        </div>
                       </div>
-                      <p className="font-serif text-base sm:text-lg leading-relaxed italic text-foreground/90">
-                        "{post.verseText}"
-                      </p>
-                    </div>
-
-                    {/* User's Note */}
-                    <p className="text-sm leading-relaxed text-foreground/80 font-medium">{post.note}</p>
+                    ) : (
+                      <>
+                        <div className="relative overflow-hidden p-4 bg-muted/30 rounded-2xl">
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
+                          <div className="flex items-center gap-2 mb-2">
+                            <BookOpen className="h-3.5 w-3.5 text-primary" />
+                            <span className="font-bold text-xs text-primary">{post.verseReference}</span>
+                          </div>
+                          <p className="font-serif text-base sm:text-lg leading-relaxed italic text-foreground/90">
+                            "{post.verseText}"
+                          </p>
+                        </div>
+                        <p className="text-sm leading-relaxed text-foreground/80 font-medium">{post.note}</p>
+                      </>
+                    )}
                   </CardContent>
 
                   <Separator className="opacity-50" />
@@ -440,6 +556,38 @@ export default function Community() {
           );
         })()}
       </div>
+
+      <AlertDialog open={!!deletePostId} onOpenChange={(open) => !open && setDeletePostId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deletar Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground"
+              onClick={() => deletePostId && deleteMutation.mutate(deletePostId)}
+              disabled={deleteMutation.isPending}
+              data-testid="button-confirm-delete"
+            >
+              {deleteMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Deletar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {isAdmin && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Badge variant="secondary" className="bg-primary/10 text-primary border-0 text-[10px] font-bold gap-1">
+            <ShieldCheck className="h-3 w-3" />
+            Admin
+          </Badge>
+        </div>
+      )}
     </div>
   );
 }

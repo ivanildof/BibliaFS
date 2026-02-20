@@ -168,6 +168,8 @@ export interface IStorage {
   createCommunityPost(post: InsertCommunityPost): Promise<CommunityPost>;
   likePost(postId: string, userId: string): Promise<void>;
   unlikePost(postId: string, userId: string): Promise<void>;
+  deleteCommunityPost(postId: string): Promise<boolean>;
+  updateCommunityPost(postId: string, data: { verseReference?: string; verseText?: string; note?: string }): Promise<CommunityPost | null>;
   addComment(comment: InsertPostComment): Promise<PostComment>;
   
   // Offline Content
@@ -984,6 +986,16 @@ export class DatabaseStorage implements IStorage {
       .update(communityPosts)
       .set({ likeCount: sql`${communityPosts.likeCount} - 1` })
       .where(eq(communityPosts.id, postId));
+  }
+
+  async deleteCommunityPost(postId: string): Promise<boolean> {
+    const result = await db.delete(communityPosts).where(eq(communityPosts.id, postId)).returning();
+    return result.length > 0;
+  }
+
+  async updateCommunityPost(postId: string, data: { verseReference?: string; verseText?: string; note?: string }): Promise<CommunityPost | null> {
+    const [updated] = await db.update(communityPosts).set(data).where(eq(communityPosts.id, postId)).returning();
+    return updated || null;
   }
 
   async addComment(comment: InsertPostComment): Promise<PostComment> {

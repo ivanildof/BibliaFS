@@ -2212,6 +2212,41 @@ IMPORTANTE:
     }
   });
 
+  const ADMIN_EMAIL = "fabrisite1@gmail.com";
+
+  app.delete("/api/community/posts/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userEmail = req.user.claims.email;
+      if (userEmail !== ADMIN_EMAIL) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores podem deletar posts." });
+      }
+      const deleted = await storage.deleteCommunityPost(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Post não encontrado" });
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/community/posts/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userEmail = req.user.claims.email;
+      if (userEmail !== ADMIN_EMAIL) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores podem editar posts." });
+      }
+      const { verseReference, verseText, note } = req.body;
+      const updated = await storage.updateCommunityPost(req.params.id, { verseReference, verseText, note });
+      if (!updated) {
+        return res.status(404).json({ error: "Post não encontrado" });
+      }
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Bible Audio Route - Single Verse (FAST - only a few seconds!)
   app.get("/api/bible/audio/verse/:language/:version/:book/:chapter/:verse", isAuthenticated, async (req: any, res) => {
     try {
