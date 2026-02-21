@@ -200,7 +200,7 @@ function AppContent() {
     const script = document.createElement("script");
     script.id = "relpflow-script";
     script.src = "https://relpflow.com.br/api/widget/embed.js";
-    script.setAttribute("data-relpflow", "true");
+    script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://relpflow.com.br");
     script.setAttribute("data-key", "wk_fe9b9e4462b76ba1fb6de03f99e3d6394fb26a8ab8e9a491");
     script.defer = true;
@@ -273,10 +273,6 @@ function AppContent() {
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
                   onClick={() => {
-                    if ((window as any).RelpFlow && typeof (window as any).RelpFlow.toggle === 'function') {
-                      (window as any).RelpFlow.toggle();
-                      return;
-                    }
                     const panel = document.getElementById('hf-widget-panel');
                     if (panel) {
                       panel.classList.toggle('hf-open');
@@ -292,18 +288,14 @@ function AppContent() {
                       const script = document.createElement("script");
                       script.id = "relpflow-script";
                       script.src = "https://relpflow.com.br/api/widget/embed.js?v=" + Date.now();
-                      script.setAttribute("data-relpflow", "true");
+                      script.setAttribute("data-helpflow", "true");
                       script.setAttribute("data-api", "https://relpflow.com.br");
                       script.setAttribute("data-key", "wk_fe9b9e4462b76ba1fb6de03f99e3d6394fb26a8ab8e9a491");
                       document.head.appendChild(script);
                       script.onload = () => {
                         setTimeout(() => {
-                          if ((window as any).RelpFlow && typeof (window as any).RelpFlow.toggle === 'function') {
-                            (window as any).RelpFlow.toggle();
-                          } else {
-                            const p = document.getElementById('hf-widget-panel');
-                            if (p) p.classList.add('hf-open');
-                          }
+                          const p = document.getElementById('hf-widget-panel');
+                          if (p) p.classList.add('hf-open');
                         }, 500);
                       };
                     }
