@@ -201,11 +201,10 @@ function AppContent() {
     
     const script = document.createElement("script");
     script.id = "helpflow-script";
-    const cacheBuster = `?v=${new Date().getTime()}`;
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
+    script.src = "https://relpflow.com.br/api/widget/embed.js";
     script.setAttribute("data-helpflow", "true");
-    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
-    script.setAttribute("data-key", "wk_c612baef70c3e285fe5cc1a9147f4283747ac328fd3e7334");
+    script.setAttribute("data-api", "https://relpflow.com.br");
+    script.setAttribute("data-key", "wk_871652de24aee788f5d3ca3a6cafcfb1093576b81cc45c65");
     script.defer = true;
     document.head.appendChild(script);
   }, []);
