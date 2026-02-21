@@ -195,20 +195,6 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
 
-  useEffect(() => {
-    // Check if script already exists
-    if (document.getElementById("helpflow-script")) return;
-    
-    const script = document.createElement("script");
-    script.id = "helpflow-script";
-    script.src = "https://relpflow.com.br/api/widget/embed.js";
-    script.setAttribute("data-helpflow", "true");
-    script.setAttribute("data-api", "https://relpflow.com.br");
-    script.setAttribute("data-key", "wk_871652de24aee788f5d3ca3a6cafcfb1093576b81cc45c65");
-    script.defer = true;
-    document.head.appendChild(script);
-  }, []);
-
   const handleAuthCallback = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     window.location.href = '/';
