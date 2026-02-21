@@ -58,12 +58,11 @@ import { UpdatePopup } from "@/components/UpdatePopup";
 
 function SupportButton() {
   useEffect(() => {
-    // Remove existing script if it exists to ensure clean reload with new config
+    // Remove any existing script or widget elements
     const existingScript = document.getElementById("helpflow-script");
-    if (existingScript) {
-      existingScript.remove();
-    }
-
+    if (existingScript) existingScript.remove();
+    
+    // Create and append the new script
     const script = document.createElement("script");
     script.id = "helpflow-script";
     script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
@@ -74,21 +73,18 @@ function SupportButton() {
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup on unmount if needed
       const scriptToRemove = document.getElementById("helpflow-script");
       if (scriptToRemove) scriptToRemove.remove();
     };
   }, []);
 
   const openHelpFlow = useCallback(() => {
-    // The new widget might use a different global or method
-    // If it's a standard embed, it might just inject the button itself
-    // but we keep the manual trigger as a fallback
-    if ((window as any).HelpFlow?.open) {
-      (window as any).HelpFlow.open();
-    } else if ((window as any).helpFlow?.open) {
-      (window as any).helpFlow.open();
+    // Check various possible global objects injected by the script
+    const hf = (window as any).HelpFlow || (window as any).helpFlow || (window as any).HF;
+    if (hf?.open) {
+      hf.open();
     } else {
+      // Fallback if widget not yet initialized or global not found
       window.open("https://helpflow.pro", "_blank");
     }
   }, []);
@@ -97,7 +93,7 @@ function SupportButton() {
     <Button
       data-testid="button-support"
       onClick={openHelpFlow}
-      className="bg-sky-500 text-white font-semibold animate-pulse"
+      className="bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg transition-all hover:scale-105 active:scale-95 animate-pulse"
     >
       <Headphones className="w-4 h-4 mr-1.5" />
       Suporte
