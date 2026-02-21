@@ -56,7 +56,11 @@ import { NPSDialog } from "@/components/NPSDialog";
 import { InstallPrompt } from "@/components/install-prompt/InstallPrompt";
 import { UpdatePopup } from "@/components/UpdatePopup";
 
-function SupportButton() {
+function Router() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useLanguage();
+  const [location, setLocation] = useLocation();
+
   useEffect(() => {
     const scriptId = "helpflow-script";
     const existingScript = document.getElementById(scriptId);
@@ -77,32 +81,6 @@ function SupportButton() {
       if (scriptToRemove) scriptToRemove.remove();
     };
   }, []);
-
-  const openHelpFlow = useCallback(() => {
-    const hf = (window as any).HelpFlow || (window as any).helpFlow || (window as any).HF;
-    if (hf?.open) {
-      hf.open();
-    } else {
-      window.open("https://helpflow.pro", "_blank");
-    }
-  }, []);
-
-  return (
-    <Button
-      data-testid="button-support"
-      onClick={openHelpFlow}
-      className="bg-[#0ea5e9] hover:bg-[#0ea5e9]/90 text-white font-semibold shadow-lg transition-all hover:scale-105 active:scale-95 animate-pulse"
-    >
-      <Headphones className="w-4 h-4 mr-1.5" />
-      Duvida
-    </Button>
-  );
-}
-
-function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const { t } = useLanguage();
-  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
@@ -296,7 +274,6 @@ function AppContent() {
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-3">
-                <SupportButton />
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
