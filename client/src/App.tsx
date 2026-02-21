@@ -202,7 +202,7 @@ function AppContent() {
     script.src = "https://relpflow.com.br/api/widget/embed.js";
     script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://relpflow.com.br");
-    script.setAttribute("data-key", "wk_af9ac0f2e0507e19b7c759e3014f5a15752c3a37741def0d");
+    script.setAttribute("data-key", "wk_ff0fb42323705cd16d429c4dcf12262c8487db92bc0ac23c");
     script.defer = true;
     document.head.appendChild(script);
 
