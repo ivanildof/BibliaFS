@@ -62,27 +62,6 @@ function Router() {
   const [location, setLocation] = useLocation();
 
   useEffect(() => {
-    const scriptId = "helpflow-script";
-    const existingScript = document.getElementById(scriptId);
-    if (existingScript) existingScript.remove();
-    
-    const script = document.createElement("script");
-    script.id = scriptId;
-    const cacheBuster = `?v=${new Date().getTime()}-${Math.random().toString(36).substring(7)}`;
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
-    script.setAttribute("data-helpflow", "true");
-    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
-    script.setAttribute("data-key", "wk_c612baef70c3e285fe5cc1a9147f4283747ac328fd3e7334");
-    script.defer = true;
-    document.head.appendChild(script);
-
-    return () => {
-      const scriptToRemove = document.getElementById(scriptId);
-      if (scriptToRemove) scriptToRemove.remove();
-    };
-  }, []);
-
-  useEffect(() => {
     const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
     if (!isLoading && !isAuthenticated && isNative && (location === "/" || isProfileRoute)) {
       const timer = setTimeout(() => {
@@ -215,7 +194,22 @@ function hexToHSL(hex: string): string {
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
-  
+
+  useEffect(() => {
+    // Check if script already exists
+    if (document.getElementById("helpflow-script")) return;
+    
+    const script = document.createElement("script");
+    script.id = "helpflow-script";
+    const cacheBuster = `?v=${new Date().getTime()}`;
+    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
+    script.setAttribute("data-helpflow", "true");
+    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
+    script.setAttribute("data-key", "wk_c612baef70c3e285fe5cc1a9147f4283747ac328fd3e7334");
+    script.defer = true;
+    document.head.appendChild(script);
+  }, []);
+
   const handleAuthCallback = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     window.location.href = '/';
