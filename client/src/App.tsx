@@ -17,6 +17,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useCallback } from "react";
 import { isNative } from "@/lib/config";
 import { useDeepLinks } from "@/hooks/useDeepLinks";
+import { Headphones } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Pages
 import Landing from "@/pages/landing";
@@ -53,6 +55,47 @@ import Achievements from "@/pages/achievements";
 import { NPSDialog } from "@/components/NPSDialog";
 import { InstallPrompt } from "@/components/install-prompt/InstallPrompt";
 import { UpdatePopup } from "@/components/UpdatePopup";
+
+function SupportButton() {
+  useEffect(() => {
+    if (document.getElementById("helpflow-script")) return;
+    const script = document.createElement("script");
+    script.id = "helpflow-script";
+    script.src = "https://helpflow.pro/widget.js";
+    script.setAttribute("data-api-key", "hf_live_test_key_bibliafs_2026");
+    script.setAttribute("data-app-id", "1");
+    script.async = true;
+    document.head.appendChild(script);
+    script.onload = () => {
+      if ((window as any).HelpFlow) {
+        (window as any).HelpFlow.init({
+          buttonText: "Ajuda",
+          primaryColor: "#0ea5e9",
+          position: "bottom-right",
+        });
+      }
+    };
+  }, []);
+
+  const openHelpFlow = useCallback(() => {
+    if ((window as any).HelpFlow?.open) {
+      (window as any).HelpFlow.open();
+    } else {
+      window.open("https://helpflow.pro", "_blank");
+    }
+  }, []);
+
+  return (
+    <Button
+      data-testid="button-support"
+      onClick={openHelpFlow}
+      className="bg-sky-500 text-white font-semibold animate-pulse"
+    >
+      <Headphones className="w-4 h-4 mr-1.5" />
+      Suporte
+    </Button>
+  );
+}
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -251,6 +294,7 @@ function AppContent() {
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-3">
+                <SupportButton />
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
