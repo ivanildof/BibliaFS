@@ -58,14 +58,15 @@ import { UpdatePopup } from "@/components/UpdatePopup";
 
 function SupportButton() {
   useEffect(() => {
-    // Remove any existing script or widget elements
-    const existingScript = document.getElementById("helpflow-script");
+    const scriptId = "helpflow-script";
+    const existingScript = document.getElementById(scriptId);
     if (existingScript) existingScript.remove();
     
-    // Create and append the new script exactly as provided
     const script = document.createElement("script");
-    script.id = "helpflow-script";
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
+    script.id = scriptId;
+    // Adding a timestamp to the URL to bypass browser cache
+    const cacheBuster = `?t=${new Date().getTime()}`;
+    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
     script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
     script.setAttribute("data-key", "wk_7076d8dcf5e813e8f206a342a7cb472b9bfc52fae88cba0c");
@@ -73,7 +74,7 @@ function SupportButton() {
     document.head.appendChild(script);
 
     return () => {
-      const scriptToRemove = document.getElementById("helpflow-script");
+      const scriptToRemove = document.getElementById(scriptId);
       if (scriptToRemove) scriptToRemove.remove();
     };
   }, []);
@@ -96,7 +97,7 @@ function SupportButton() {
       className="bg-[#0ea5e9] hover:bg-[#0ea5e9]/90 text-white font-semibold shadow-lg transition-all hover:scale-105 active:scale-95 animate-pulse"
     >
       <Headphones className="w-4 h-4 mr-1.5" />
-      Suporte
+      Duvida
     </Button>
   );
 }
