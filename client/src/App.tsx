@@ -17,6 +17,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useCallback } from "react";
 import { isNative } from "@/lib/config";
 import { useDeepLinks } from "@/hooks/useDeepLinks";
+import { Headphones } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Pages
 import Landing from "@/pages/landing";
@@ -53,6 +55,49 @@ import Achievements from "@/pages/achievements";
 import { NPSDialog } from "@/components/NPSDialog";
 import { InstallPrompt } from "@/components/install-prompt/InstallPrompt";
 import { UpdatePopup } from "@/components/UpdatePopup";
+
+function SupportButton() {
+  useEffect(() => {
+    const scriptId = "helpflow-script";
+    const existingScript = document.getElementById(scriptId);
+    if (existingScript) existingScript.remove();
+    
+    const script = document.createElement("script");
+    script.id = scriptId;
+    const cacheBuster = `?v=${new Date().getTime()}-${Math.random().toString(36).substring(7)}`;
+    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
+    script.setAttribute("data-helpflow", "true");
+    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
+    script.setAttribute("data-key", "wk_2e155bb5f3e092b32c0e9ef59dbc1323648db89c52ae6d71");
+    script.defer = true;
+    document.head.appendChild(script);
+
+    return () => {
+      const scriptToRemove = document.getElementById(scriptId);
+      if (scriptToRemove) scriptToRemove.remove();
+    };
+  }, []);
+
+  const openHelpFlow = useCallback(() => {
+    const hf = (window as any).HelpFlow || (window as any).helpFlow || (window as any).HF;
+    if (hf?.open) {
+      hf.open();
+    } else {
+      window.open("https://helpflow.pro", "_blank");
+    }
+  }, []);
+
+  return (
+    <Button
+      data-testid="button-support"
+      onClick={openHelpFlow}
+      className="bg-[#0ea5e9] hover:bg-[#0ea5e9]/90 text-white font-semibold shadow-lg transition-all hover:scale-105 active:scale-95 animate-pulse"
+    >
+      <Headphones className="w-4 h-4 mr-1.5" />
+      Duvida
+    </Button>
+  );
+}
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -251,6 +296,7 @@ function AppContent() {
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-3">
+                <SupportButton />
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
