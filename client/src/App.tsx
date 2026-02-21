@@ -200,7 +200,7 @@ function AppContent() {
     const script = document.createElement("script");
     script.id = "relpflow-script";
     script.src = "https://relpflow.com.br/api/widget/embed.js";
-    script.setAttribute("data-helpflow", "true");
+    script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-api", "https://relpflow.com.br");
     script.setAttribute("data-key", "wk_fe9b9e4462b76ba1fb6de03f99e3d6394fb26a8ab8e9a491");
     script.defer = true;
@@ -273,13 +273,39 @@ function AppContent() {
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
                   onClick={() => {
+                    if ((window as any).RelpFlow && typeof (window as any).RelpFlow.toggle === 'function') {
+                      (window as any).RelpFlow.toggle();
+                      return;
+                    }
                     const panel = document.getElementById('hf-widget-panel');
                     if (panel) {
                       panel.classList.toggle('hf-open');
                       if (panel.classList.contains('hf-open')) {
                         const input = document.getElementById('hf-widget-input') as HTMLInputElement;
-                        if (input) input.focus();
+                        if (input) setTimeout(() => input.focus(), 100);
                       }
+                    } else {
+                      const existing = document.getElementById('hf-widget-container');
+                      if (existing) existing.remove();
+                      const old = document.getElementById('relpflow-script');
+                      if (old) old.remove();
+                      const script = document.createElement("script");
+                      script.id = "relpflow-script";
+                      script.src = "https://relpflow.com.br/api/widget/embed.js?v=" + Date.now();
+                      script.setAttribute("data-relpflow", "true");
+                      script.setAttribute("data-api", "https://relpflow.com.br");
+                      script.setAttribute("data-key", "wk_fe9b9e4462b76ba1fb6de03f99e3d6394fb26a8ab8e9a491");
+                      document.head.appendChild(script);
+                      script.onload = () => {
+                        setTimeout(() => {
+                          if ((window as any).RelpFlow && typeof (window as any).RelpFlow.toggle === 'function') {
+                            (window as any).RelpFlow.toggle();
+                          } else {
+                            const p = document.getElementById('hf-widget-panel');
+                            if (p) p.classList.add('hf-open');
+                          }
+                        }, 500);
+                      };
                     }
                   }}
                   className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
