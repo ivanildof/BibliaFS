@@ -69,7 +69,7 @@ function SupportButton() {
     script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
     script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
-    script.setAttribute("data-key", "wk_7076d8dcf5e813e8f206a342a7cb472b9bfc52fae88cba0c");
+    script.setAttribute("data-key", "wk_6c3f26a3f3cb4f3b1bc4f0556069f5ba4b5d7c958eb8380f");
     script.defer = true;
     document.head.appendChild(script);
 
