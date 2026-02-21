@@ -50,13 +50,47 @@ export function useAuth() {
     queryFn: async () => {
       if (!session?.access_token) return null;
       
+      const supabase = getSupabase();
+      let token = session.access_token;
+      
+      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+      const now = Date.now();
+      const isExpiredOrNearExpiry = expiresAt > 0 && (expiresAt <= now || expiresAt - now < 5 * 60 * 1000);
+      if (isExpiredOrNearExpiry) {
+        try {
+          const { data: refreshed } = await supabase.auth.refreshSession();
+          if (refreshed?.session?.access_token) {
+            token = refreshed.session.access_token;
+          }
+        } catch (e) {
+          console.warn("[Auth] Pre-fetch token refresh failed:", e);
+        }
+      }
+      
       const res = await apiFetch("/api/auth/user", {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       
-      if (res.status === 401) return null;
+      if (res.status === 401) {
+        try {
+          const { data: refreshed } = await supabase.auth.refreshSession();
+          if (refreshed?.session?.access_token) {
+            const retryRes = await apiFetch("/api/auth/user", {
+              headers: {
+                Authorization: `Bearer ${refreshed.session.access_token}`,
+              },
+            });
+            if (retryRes.status === 401) return null;
+            if (!retryRes.ok) throw new Error("Failed to fetch user");
+            return retryRes.json();
+          }
+        } catch (e) {
+          console.warn("[Auth] Post-401 token refresh failed:", e);
+        }
+        return null;
+      }
       if (!res.ok) throw new Error("Failed to fetch user");
       
       return res.json();

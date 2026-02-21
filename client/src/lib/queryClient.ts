@@ -23,10 +23,15 @@ export async function getAuthHeaders(): Promise<Record<string, string>> {
   if (session?.access_token) {
     const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
     const now = Date.now();
-    if (expiresAt > 0 && expiresAt - now < 60000) {
-      const { data: refreshed } = await supabase.auth.refreshSession();
-      if (refreshed?.session?.access_token) {
-        return { Authorization: `Bearer ${refreshed.session.access_token}` };
+    const isExpiredOrNearExpiry = expiresAt > 0 && (expiresAt <= now || expiresAt - now < 5 * 60 * 1000);
+    if (isExpiredOrNearExpiry) {
+      try {
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        if (refreshed?.session?.access_token) {
+          return { Authorization: `Bearer ${refreshed.session.access_token}` };
+        }
+      } catch (e) {
+        console.warn("[Auth] Token refresh failed:", e);
       }
     }
     return { Authorization: `Bearer ${session.access_token}` };
@@ -52,6 +57,23 @@ export async function apiRequest(
     credentials: "include",
   });
 
+  if (res.status === 401) {
+    const { data: refreshed } = await supabase.auth.refreshSession();
+    if (refreshed?.session?.access_token) {
+      const retryRes = await fetch(fullUrl, {
+        method,
+        headers: {
+          Authorization: `Bearer ${refreshed.session.access_token}`,
+          ...(data ? { "Content-Type": "application/json" } : {}),
+        },
+        body: data ? JSON.stringify(data) : undefined,
+        credentials: "include",
+      });
+      await throwIfResNotOk(retryRes);
+      return retryRes;
+    }
+  }
+
   await throwIfResNotOk(res);
   return res;
 }
@@ -71,8 +93,22 @@ export const getQueryFn: <T>(options: {
       headers: authHeaders,
     });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    if (res.status === 401) {
+      const { data: refreshed } = await supabase.auth.refreshSession();
+      if (refreshed?.session?.access_token) {
+        const retryRes = await fetch(fullUrl, {
+          credentials: "include",
+          headers: { Authorization: `Bearer ${refreshed.session.access_token}` },
+        });
+        if (unauthorizedBehavior === "returnNull" && retryRes.status === 401) {
+          return null;
+        }
+        await throwIfResNotOk(retryRes);
+        return await retryRes.json();
+      }
+      if (unauthorizedBehavior === "returnNull") {
+        return null;
+      }
     }
 
     await throwIfResNotOk(res);
