@@ -205,6 +205,10 @@ function AppContent() {
     script.setAttribute("data-key", "wk_af9ac0f2e0507e19b7c759e3014f5a15752c3a37741def0d");
     script.defer = true;
     document.head.appendChild(script);
+
+    const style = document.createElement("style");
+    style.textContent = "#hf-widget-btn { display: none !important; }";
+    document.head.appendChild(style);
   }, []);
 
   const handleAuthCallback = useCallback(() => {
