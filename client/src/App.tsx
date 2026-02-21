@@ -200,7 +200,7 @@ function AppContent() {
     const script = document.createElement("script");
     script.id = "relpflow-script";
     script.src = "https://relpflow.com.br/api/widget/embed.js";
-    script.setAttribute("data-relpflow", "true");
+    script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://relpflow.com.br");
     script.setAttribute("data-key", "wk_af9ac0f2e0507e19b7c759e3014f5a15752c3a37741def0d");
     script.defer = true;
@@ -268,7 +268,7 @@ function AppContent() {
                 <button
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
-                  onClick={() => { if ((window as any).RelpFlow) (window as any).RelpFlow.toggle(); }}
+                  onClick={() => { if ((window as any).HelpFlow) (window as any).HelpFlow.toggle(); }}
                   className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
                   style={{
                     background: "linear-gradient(135deg, #7c3aed, #6366f1, #8b5cf6)",
