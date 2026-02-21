@@ -72,7 +72,7 @@ function Router() {
     script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
     script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
-    script.setAttribute("data-key", "wk_dbe0fdcda313a2feb5311780a4c8ad44889a01fffbc475e8");
+    script.setAttribute("data-key", "wk_c612baef70c3e285fe5cc1a9147f4283747ac328fd3e7334");
     script.defer = true;
     document.head.appendChild(script);
 
