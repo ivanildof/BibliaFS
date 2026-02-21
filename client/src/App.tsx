@@ -201,8 +201,9 @@ function AppContent() {
     script.id = "relpflow-script";
     script.src = "https://relpflow.com.br/api/widget/embed.js";
     script.setAttribute("data-helpflow", "true");
+    script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-api", "https://relpflow.com.br");
-    script.setAttribute("data-key", "wk_fe9b9e4462b76ba1fb6de03f99e3d6394fb26a8ab8e9a491");
+    script.setAttribute("data-key", "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b");
     script.defer = true;
     document.head.appendChild(script);
 
@@ -289,8 +290,9 @@ function AppContent() {
                       script.id = "relpflow-script";
                       script.src = "https://relpflow.com.br/api/widget/embed.js?v=" + Date.now();
                       script.setAttribute("data-helpflow", "true");
+                      script.setAttribute("data-relpflow", "true");
                       script.setAttribute("data-api", "https://relpflow.com.br");
-                      script.setAttribute("data-key", "wk_fe9b9e4462b76ba1fb6de03f99e3d6394fb26a8ab8e9a491");
+                      script.setAttribute("data-key", "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b");
                       document.head.appendChild(script);
                       script.onload = () => {
                         setTimeout(() => {
