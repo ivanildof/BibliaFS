@@ -62,7 +62,7 @@ function SupportButton() {
     const existingScript = document.getElementById("helpflow-script");
     if (existingScript) existingScript.remove();
     
-    // Create and append the new script
+    // Create and append the new script exactly as provided
     const script = document.createElement("script");
     script.id = "helpflow-script";
     script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
@@ -79,12 +79,12 @@ function SupportButton() {
   }, []);
 
   const openHelpFlow = useCallback(() => {
-    // Check various possible global objects injected by the script
+    // The widget usually handles its own trigger if embedded correctly,
+    // but we keep a manual check for common global objects as fallback.
     const hf = (window as any).HelpFlow || (window as any).helpFlow || (window as any).HF;
     if (hf?.open) {
       hf.open();
     } else {
-      // Fallback if widget not yet initialized or global not found
       window.open("https://helpflow.pro", "_blank");
     }
   }, []);
