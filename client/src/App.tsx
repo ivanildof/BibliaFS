@@ -207,7 +207,7 @@ function AppContent() {
     document.head.appendChild(script);
 
     const style = document.createElement("style");
-    style.textContent = "#hf-widget-btn { display: none !important; }";
+    style.textContent = "#hf-widget-btn { opacity: 0 !important; pointer-events: none !important; position: fixed !important; top: -100px !important; left: -100px !important; }";
     document.head.appendChild(style);
   }, []);
 
@@ -272,7 +272,16 @@ function AppContent() {
                 <button
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
-                  onClick={() => { if ((window as any).HelpFlow) (window as any).HelpFlow.toggle(); }}
+                  onClick={() => {
+                    const panel = document.getElementById('hf-widget-panel');
+                    if (panel) {
+                      panel.classList.toggle('hf-open');
+                      if (panel.classList.contains('hf-open')) {
+                        const input = document.getElementById('hf-widget-input') as HTMLInputElement;
+                        if (input) input.focus();
+                      }
+                    }
+                  }}
                   className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
                   style={{
                     background: "linear-gradient(135deg, #7c3aed, #6366f1, #8b5cf6)",
