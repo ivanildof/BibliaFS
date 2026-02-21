@@ -56,6 +56,30 @@ import { NPSDialog } from "@/components/NPSDialog";
 import { InstallPrompt } from "@/components/install-prompt/InstallPrompt";
 import { UpdatePopup } from "@/components/UpdatePopup";
 
+function SupportButton() {
+  const openHelpFlow = useCallback(() => {
+    const hf = (window as any).HelpFlow || (window as any).helpFlow || (window as any).HF;
+    if (hf?.open) {
+      hf.open();
+    } else {
+      window.open("https://helpflow.pro", "_blank");
+    }
+  }, []);
+
+  return (
+    <Button
+      variant="outline"
+      size="default"
+      data-testid="button-support"
+      onClick={openHelpFlow}
+      className="h-9 px-4 border-[#0ea5e9] text-[#0ea5e9] hover:bg-[#0ea5e9] hover:text-white font-medium transition-all"
+    >
+      <Headphones className="w-4 h-4 mr-2" />
+      Duvida
+    </Button>
+  );
+}
+
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
@@ -274,6 +298,7 @@ function AppContent() {
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-3">
+                <SupportButton />
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
