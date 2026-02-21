@@ -93,7 +93,7 @@ function SupportButton() {
     <Button
       data-testid="button-support"
       onClick={openHelpFlow}
-      className="bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-lg transition-all hover:scale-105 active:scale-95 animate-pulse"
+      className="bg-[#0ea5e9] hover:bg-[#0ea5e9]/90 text-white font-semibold shadow-lg transition-all hover:scale-105 active:scale-95 animate-pulse"
     >
       <Headphones className="w-4 h-4 mr-1.5" />
       Suporte
