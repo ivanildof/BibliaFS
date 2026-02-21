@@ -61,20 +61,12 @@ function SupportButton() {
     if (document.getElementById("helpflow-script")) return;
     const script = document.createElement("script");
     script.id = "helpflow-script";
-    script.src = "https://helpflow.pro/widget.js";
-    script.setAttribute("data-api-key", "hf_live_test_key_bibliafs_2026");
-    script.setAttribute("data-app-id", "1");
-    script.async = true;
+    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
+    script.setAttribute("data-helpflow", "true");
+    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
+    script.setAttribute("data-key", "wk_7076d8dcf5e813e8f206a342a7cb472b9bfc52fae88cba0c");
+    script.defer = true;
     document.head.appendChild(script);
-    script.onload = () => {
-      if ((window as any).HelpFlow) {
-        (window as any).HelpFlow.init({
-          buttonText: "Ajuda",
-          primaryColor: "#0ea5e9",
-          position: "bottom-right",
-        });
-      }
-    };
   }, []);
 
   const openHelpFlow = useCallback(() => {
