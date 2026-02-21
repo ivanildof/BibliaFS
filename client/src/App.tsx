@@ -62,10 +62,13 @@ function SupportButton() {
     const existingScript = document.getElementById(scriptId);
     if (existingScript) existingScript.remove();
     
+    // Clear any leftover widget containers or elements from the DOM if possible
+    // Note: Some widgets inject iframes or divs at the end of body
+    
     const script = document.createElement("script");
     script.id = scriptId;
-    // Adding a timestamp to the URL to bypass browser cache
-    const cacheBuster = `?t=${new Date().getTime()}`;
+    // Adding a stronger cache buster with random number
+    const cacheBuster = `?v=${new Date().getTime()}-${Math.random().toString(36).substring(7)}`;
     script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js" + cacheBuster;
     script.setAttribute("data-helpflow", "true");
     script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
