@@ -203,36 +203,36 @@ function AppContent() {
     style.textContent = `
       .help-button-fixed {
         position: fixed;
-        top: 14px; /* Desceu mais de 10px para 14px */
+        top: 0;
         right: 172px;
         z-index: 9999;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
-        border-radius: 8px; /* Bordas um pouco mais quadradas */
-        padding: 0 8px;
+        border-radius: 12px;
+        padding: 0 12px;
         color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 11px; /* Diminuiu para 11px */
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         transition: all 0.3s ease;
-        height: 28px; /* Diminuiu de 36px para 28px */
+        height: 56px; /* Altura padrão do header do Shadcn Sidebar */
       }
       .help-button-fixed:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
       }
       .help-button-fixed:active {
         transform: translateY(0);
       }
       .help-button-fixed svg {
-        width: 14px; /* Diminuiu de 16px para 14px */
-        height: 14px;
+        width: 18px;
+        height: 18px;
         flex-shrink: 0;
       }
       @media (max-width: 768px) {
@@ -246,8 +246,8 @@ function AppContent() {
         }
         .help-button-fixed {
           padding: 0;
-          width: 28px;
-          height: 28px;
+          width: 56px;
+          height: 56px;
           right: 172px !important;
         }
       }
