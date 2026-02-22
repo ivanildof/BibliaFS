@@ -234,6 +234,19 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
+  app.get("/api/proxy/relpflow-embed.js", async (_req, res) => {
+    try {
+      const resp = await fetch("https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js");
+      let code = await resp.text();
+      code = code.replace(/\.join\('[^']*\n[^']*'\)/g, ".join('\\n')");
+      res.setHeader("Content-Type", "application/javascript");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.send(code);
+    } catch {
+      res.status(502).send("// RelpFlow unavailable");
+    }
+  });
+
   try {
     await runMigrations();
     console.log("[MIGRATIONS] All group tables ensured in database");
