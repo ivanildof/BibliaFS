@@ -119,7 +119,7 @@ export function HelpButton() {
     const script = document.createElement("script");
     script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_eb84c7ad05a43a0b77025ca39ff3630b126b5b1fb816fd13");
+    script.setAttribute("data-key", "wk_5d687cc7148fddb98f3418b349f9dfb78d8e5259837a74c2");
     script.defer = true;
 
     const cleanup = () => {
