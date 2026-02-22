@@ -203,24 +203,24 @@ function AppContent() {
     style.textContent = `
       .help-button-fixed {
         position: fixed;
-        top: 14px;
-        right: 68px; /* Lado esquerdo do seletor de idioma */
+        top: 12px;
+        right: 110px; /* Mais para a esquerda para não sobrepor */
         z-index: 9999;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
         border-radius: 10px;
-        padding: 6px 12px;
+        padding: 4px 10px;
         color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
-        height: 36px;
+        height: 32px;
       }
       .help-button-fixed:hover {
         transform: translateY(-2px);
@@ -230,8 +230,8 @@ function AppContent() {
         transform: translateY(0);
       }
       .help-button-fixed svg {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
         flex-shrink: 0;
       }
       @media (max-width: 480px) {
@@ -239,12 +239,12 @@ function AppContent() {
           display: none;
         }
         .help-button-fixed {
-          padding: 8px;
-          border-radius: 10px;
-          width: 36px;
-          height: 36px;
+          padding: 6px;
+          border-radius: 8px;
+          width: 32px;
+          height: 32px;
           justify-content: center;
-          right: 60px;
+          right: 105px;
         }
       }
       .relpflow-widget,
