@@ -195,21 +195,6 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
 
-  useEffect(() => {
-    if (document.getElementById("relpflow-script")) return;
-    const script = document.createElement("script");
-    script.id = "relpflow-script";
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
-    script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
-    script.setAttribute("data-key", "wk_d76697f95a86b521f77508926f3ffdb702fb5bb0bcfaac5c");
-    script.defer = true;
-    document.head.appendChild(script);
-
-    const style = document.createElement("style");
-    style.textContent = "#hf-widget-btn { opacity: 0 !important; pointer-events: none !important; position: fixed !important; top: -100px !important; left: -100px !important; }";
-    document.head.appendChild(style);
-  }, []);
 
   const handleAuthCallback = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
