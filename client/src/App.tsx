@@ -203,40 +203,41 @@ function AppContent() {
     style.textContent = `
       .help-button-fixed {
         position: fixed;
-        top: 12px;
-        right: 220px !important; /* Forçado para 220px conforme solicitado */
+        top: 8px;
+        right: 172px; /* Ajustado para alinhar visualmente com os outros ícones */
         z-index: 9999;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
-        border-radius: 10px;
-        padding: 4px 10px;
+        border-radius: 12px;
+        padding: 0 12px;
         color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 4px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        justify-content: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         transition: all 0.3s ease;
-        height: 32px;
+        height: 40px; /* Mesma altura dos botões do header */
       }
       .help-button-fixed:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
       }
       .help-button-fixed:active {
         transform: translateY(0);
       }
       .help-button-fixed svg {
-        width: 14px;
-        height: 14px;
+        width: 18px;
+        height: 18px;
         flex-shrink: 0;
       }
       @media (max-width: 768px) {
         .help-button-fixed {
-          right: 220px !important; /* Mantém a mesma posição no celular */
+          right: 172px !important;
         }
       }
       @media (max-width: 480px) {
@@ -244,12 +245,10 @@ function AppContent() {
           display: none;
         }
         .help-button-fixed {
-          padding: 6px;
-          border-radius: 8px;
-          width: 32px;
-          height: 32px;
-          justify-content: center;
-          right: 220px !important; /* Garante que não mude de lugar no mobile */
+          padding: 0;
+          width: 40px;
+          height: 40px;
+          right: 172px !important;
         }
       }
       .relpflow-widget,
