@@ -203,25 +203,25 @@ function AppContent() {
     style.textContent = `
       .help-button-fixed {
         position: fixed;
-        top: 0;
+        top: 10px;
         right: 172px;
         z-index: 9999;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
-        border-radius: 12px;
-        padding: 0 12px;
+        border-radius: 8px;
+        padding: 0 10px;
         color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 4px;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         transition: all 0.3s ease;
-        height: 56px; /* Altura padrão do header do Shadcn Sidebar */
+        height: 36px; /* Altura reduzida para alinhar com os outros botões */
       }
       .help-button-fixed:hover {
         transform: translateY(-1px);
@@ -231,8 +231,8 @@ function AppContent() {
         transform: translateY(0);
       }
       .help-button-fixed svg {
-        width: 18px;
-        height: 18px;
+        width: 15px;
+        height: 15px;
         flex-shrink: 0;
       }
       @media (max-width: 768px) {
@@ -246,8 +246,8 @@ function AppContent() {
         }
         .help-button-fixed {
           padding: 0;
-          width: 56px;
-          height: 56px;
+          width: 36px;
+          height: 36px;
           right: 172px !important;
         }
       }
