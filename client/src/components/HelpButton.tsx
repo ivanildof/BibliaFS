@@ -1,8 +1,13 @@
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+const RELPFLOW_BASE = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
+const RELPFLOW_KEY = "wk_eb84c7ad05a43a0b77025ca39ff3630b126b5b1fb816fd13";
 
 export function HelpButton() {
+  const scriptLoaded = useRef(false);
+
   useEffect(() => {
     if ((window as any).__relpflow_loaded) return;
     (window as any).__relpflow_loaded = true;
@@ -109,6 +114,10 @@ export function HelpButton() {
     `;
     document.head.appendChild(style);
 
+    loadScript();
+  }, []);
+
+  function loadScript(attempt = 1) {
     const suppress = (e: Event) => {
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -117,9 +126,9 @@ export function HelpButton() {
     window.addEventListener("unhandledrejection", suppress, true);
 
     const script = document.createElement("script");
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
+    script.src = `${RELPFLOW_BASE}/api/widget/embed.js`;
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_eb84c7ad05a43a0b77025ca39ff3630b126b5b1fb816fd13");
+    script.setAttribute("data-key", RELPFLOW_KEY);
     script.defer = true;
 
     const cleanup = () => {
@@ -128,19 +137,43 @@ export function HelpButton() {
         window.removeEventListener("unhandledrejection", suppress, true);
       }, 3000);
     };
-    script.onload = cleanup;
-    script.onerror = cleanup;
+
+    script.onload = () => {
+      scriptLoaded.current = true;
+      cleanup();
+    };
+
+    script.onerror = () => {
+      cleanup();
+      if (attempt < 3) {
+        setTimeout(() => {
+          fetch(RELPFLOW_BASE, { mode: "no-cors" }).catch(() => {});
+          setTimeout(() => loadScript(attempt + 1), 2000);
+        }, attempt * 2000);
+      }
+    };
 
     document.body.appendChild(script);
-  }, []);
+  }
 
   const handleClick = () => {
     if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
       (window as any).RelpFlow.open();
-    } else if (typeof (window as any).RelpFlowWidget !== "undefined" && typeof (window as any).RelpFlowWidget.open === "function") {
+      return;
+    }
+    if (typeof (window as any).RelpFlowWidget !== "undefined" && typeof (window as any).RelpFlowWidget.open === "function") {
       (window as any).RelpFlowWidget.open();
-    } else {
-      window.dispatchEvent(new CustomEvent("relpflow:open"));
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent("relpflow:open"));
+
+    if (!scriptLoaded.current) {
+      window.open(
+        `${RELPFLOW_BASE}/widget/chat?key=${RELPFLOW_KEY}`,
+        "relpflow_chat",
+        "width=400,height=600,scrollbars=yes,resizable=yes"
+      );
     }
   };
 
