@@ -117,8 +117,8 @@ export function HelpButton() {
     window.addEventListener("unhandledrejection", suppress, true);
 
     const script = document.createElement("script");
-    script.src = "/api/proxy/relpflow-embed.js";
-    script.setAttribute("data-BibliaFS", "true");
+    script.src = "https://relpflow.com.br/api/widget/embed.js";
+    script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-key", "wk_0a36b7097965b578c6e192240586d709de5236dd45989081");
     script.defer = true;
 
