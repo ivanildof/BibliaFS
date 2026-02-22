@@ -238,11 +238,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const resp = await fetch("https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js");
       let code = await resp.text();
+      // Correção de sintaxe para evitar quebras no runtime do Replit/Vite
       code = code.replace(/\.join\('[^']*\n[^']*'\)/g, ".join('\\n')");
       res.setHeader("Content-Type", "application/javascript");
-      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.setHeader("Cache-Control", "no-store"); // Desativa cache para testar mudanças imediatas
       res.send(code);
-    } catch {
+    } catch (err) {
+      console.error("RelpFlow Proxy Error:", err);
       res.status(502).send("// RelpFlow unavailable");
     }
   });
