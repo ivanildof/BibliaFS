@@ -199,8 +199,7 @@ function AppContent() {
     if ((window as any).__relpflow_loaded) return;
     (window as any).__relpflow_loaded = true;
 
-    const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
-    const rf_key = "wk_9851a7f828cb7e4fc2fe7190c9803c4a8c4e29462e8fbaf6";
+    const rf_key = "wk_08ef0e5a6b0cbe812df666d347a746ad9f210095ef58943c";
 
     const suppress = (e: Event) => {
       e.stopImmediatePropagation();
@@ -212,7 +211,6 @@ function AppContent() {
     const script = document.createElement("script");
     script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-api", rf_api);
     script.setAttribute("data-key", rf_key);
     script.defer = true;
 
