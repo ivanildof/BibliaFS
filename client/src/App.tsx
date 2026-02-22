@@ -400,7 +400,7 @@ function AppContent() {
     const script = document.createElement("script");
     script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_8040318c3aeba1fd7c2ae47f250665440ad005f9e545a56e");
+    script.setAttribute("data-key", "wk_004cd0268736b77caf8cdb89f57734c2a04846515341669b");
     script.defer = true;
 
     const cleanup = () => {
