@@ -200,8 +200,8 @@ function AppContent() {
   useEffect(() => {
     if (document.getElementById("relpflow-script")) return;
 
-    const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
-    const rf_key = "wk_1692ab25a4e9aa88e8e1e86b083b173ec007c1eaeeab1c26";
+    const rf_api = "https://fabrisite.replit.app";
+    const rf_key = "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b";
 
     const errorHandler = (e: ErrorEvent) => {
       if (e.filename?.includes("relpflow") || e.filename?.includes("embed")) {
