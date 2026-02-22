@@ -200,7 +200,7 @@ function AppContent() {
     (window as any).__relpflow_loaded = true;
 
     const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
-    const rf_key = "wk_55b29179c99f420006fcd3ef5c128e6360cdbde81dcf5afe";
+    const rf_key = "wk_9851a7f828cb7e4fc2fe7190c9803c4a8c4e29462e8fbaf6";
 
     const suppress = (e: Event) => {
       e.stopImmediatePropagation();
