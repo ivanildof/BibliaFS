@@ -195,7 +195,57 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
 
-  const [showHelpChat, setShowHelpChat] = useState(false);
+  const [relpFlowReady, setRelpFlowReady] = useState(false);
+
+  useEffect(() => {
+    if (document.getElementById("relpflow-script")) return;
+
+    const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
+    const rf_key = "wk_1692ab25a4e9aa88e8e1e86b083b173ec007c1eaeeab1c26";
+
+    const errorHandler = (e: ErrorEvent) => {
+      if (e.filename?.includes("relpflow") || e.filename?.includes("embed")) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return true;
+      }
+    };
+    window.addEventListener("error", errorHandler);
+
+    const unhandledHandler = (e: PromiseRejectionEvent) => {
+      const msg = String(e.reason || "");
+      if (msg.includes("relpflow") || msg.includes("RelpFlow")) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("unhandledrejection", unhandledHandler);
+
+    const script = document.createElement("script");
+    script.id = "relpflow-script";
+    script.src = `${rf_api}/api/widget/embed.js`;
+    script.setAttribute("data-relpflow", "true");
+    script.setAttribute("data-api", rf_api);
+    script.setAttribute("data-key", rf_key);
+    script.setAttribute("data-headless", "true");
+    script.async = true;
+
+    script.onload = () => {
+      const check = setInterval(() => {
+        if ((window as any).RelpFlow) {
+          setRelpFlowReady(true);
+          clearInterval(check);
+        }
+      }, 300);
+      setTimeout(() => clearInterval(check), 10000);
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      window.removeEventListener("error", errorHandler);
+      window.removeEventListener("unhandledrejection", unhandledHandler);
+    };
+  }, []);
 
   const handleAuthCallback = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -258,7 +308,12 @@ function AppContent() {
                 <button
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
-                  onClick={() => setShowHelpChat(prev => !prev)}
+                  onClick={() => {
+                    const rf = (window as any).RelpFlow;
+                    if (rf && typeof rf.toggle === "function") {
+                      rf.toggle();
+                    }
+                  }}
                   className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
                   style={{
                     background: "linear-gradient(135deg, #7c3aed, #6366f1, #8b5cf6)",
@@ -274,31 +329,6 @@ function AppContent() {
                 <UserProfile />
               </div>
             </header>
-            {showHelpChat && (
-              <div
-                data-testid="helpflow-chat-panel"
-                className="fixed bottom-4 right-4 z-[9999] rounded-md overflow-hidden shadow-2xl border border-border"
-                style={{ width: 380, height: 520 }}
-              >
-                <div className="flex items-center justify-between px-3 py-2 text-white text-sm font-semibold" style={{ background: "linear-gradient(135deg, #7c3aed, #6366f1)" }}>
-                  <span>Suporte - BíbliaFS</span>
-                  <button
-                    data-testid="button-close-helpflow"
-                    onClick={() => setShowHelpChat(false)}
-                    className="text-white/80 hover:text-white transition-colors bg-transparent border-0 cursor-pointer text-lg leading-none"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <iframe
-                  src="https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/widget/chat?key=wk_1692ab25a4e9aa88e8e1e86b083b173ec007c1eaeeab1c26"
-                  className="w-full bg-white dark:bg-slate-900"
-                  style={{ height: "calc(100% - 36px)", border: "none" }}
-                  title="Suporte BíbliaFS"
-                  allow="microphone"
-                />
-              </div>
-            )}
             <main className="flex-1 overflow-y-auto pb-16 md:pb-0 transition-opacity duration-200 ease-in-out">
               <Router />
             </main>
