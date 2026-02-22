@@ -204,7 +204,7 @@ function AppContent() {
       .help-button-fixed {
         position: fixed;
         top: 12px;
-        right: 110px; /* Mais para a esquerda para não sobrepor */
+        right: 220px !important; /* Forçado para 220px conforme solicitado */
         z-index: 9999;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
@@ -234,6 +234,11 @@ function AppContent() {
         height: 14px;
         flex-shrink: 0;
       }
+      @media (max-width: 768px) {
+        .help-button-fixed {
+          right: 220px !important; /* Mantém a mesma posição no celular */
+        }
+      }
       @media (max-width: 480px) {
         .help-button-fixed span {
           display: none;
@@ -244,7 +249,7 @@ function AppContent() {
           width: 32px;
           height: 32px;
           justify-content: center;
-          right: 105px;
+          right: 220px !important; /* Garante que não mude de lugar no mobile */
         }
       }
       .relpflow-widget,
