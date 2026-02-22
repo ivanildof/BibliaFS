@@ -199,11 +199,10 @@ function AppContent() {
     if (document.getElementById("relpflow-script")) return;
     const script = document.createElement("script");
     script.id = "relpflow-script";
-    script.src = "https://relpflow.com.br/api/widget/embed.js";
-    script.setAttribute("data-helpflow", "true");
+    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-api", "https://relpflow.com.br");
-    script.setAttribute("data-key", "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b");
+    script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
+    script.setAttribute("data-key", "wk_d76697f95a86b521f77508926f3ffdb702fb5bb0bcfaac5c");
     script.defer = true;
     document.head.appendChild(script);
 
@@ -288,11 +287,10 @@ function AppContent() {
                       if (old) old.remove();
                       const script = document.createElement("script");
                       script.id = "relpflow-script";
-                      script.src = "https://relpflow.com.br/api/widget/embed.js?v=" + Date.now();
-                      script.setAttribute("data-helpflow", "true");
+                      script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js?v=" + Date.now();
                       script.setAttribute("data-relpflow", "true");
-                      script.setAttribute("data-api", "https://relpflow.com.br");
-                      script.setAttribute("data-key", "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b");
+                      script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
+                      script.setAttribute("data-key", "wk_d76697f95a86b521f77508926f3ffdb702fb5bb0bcfaac5c");
                       document.head.appendChild(script);
                       script.onload = () => {
                         setTimeout(() => {
