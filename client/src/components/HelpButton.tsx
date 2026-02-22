@@ -168,7 +168,7 @@ export function HelpButton() {
         className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15 dark:from-purple-500/25 dark:to-indigo-500/25 backdrop-blur-sm border-purple-400/40 dark:border-purple-400/50 hover:border-purple-500/70 hover:from-purple-500/25 hover:to-indigo-500/25 dark:hover:from-purple-500/35 dark:hover:to-indigo-500/35 transition-all shadow-sm shadow-purple-500/10 active-elevate-2 group relative overflow-visible"
       >
         <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-purple-500/10 via-transparent to-indigo-500/10 dark:from-purple-500/20 dark:to-indigo-500/15 opacity-0 group-hover:opacity-100 transition-opacity" />
-        <HelpCircle className="h-5 w-5 relative z-10 text-purple-500 dark:text-purple-400" />
+        <HelpCircle className="h-5 w-5 relative z-10 text-purple-500 dark:text-purple-400 animate-pulse" />
         <span className="sr-only">Central de Ajuda</span>
       </Button>
     </div>
