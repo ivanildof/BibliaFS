@@ -195,55 +195,30 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
 
-  const [relpFlowReady, setRelpFlowReady] = useState(false);
-
   useEffect(() => {
-    if (document.getElementById("relpflow-script")) return;
+    if ((window as any).__relpflow_loaded) return;
+    (window as any).__relpflow_loaded = true;
 
     const rf_api = "https://fabrisite.replit.app";
     const rf_key = "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b";
 
-    const errorHandler = (e: ErrorEvent) => {
-      if (e.filename?.includes("relpflow") || e.filename?.includes("embed")) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return true;
-      }
-    };
-    window.addEventListener("error", errorHandler);
+    const marker = document.createElement("script");
+    marker.id = "relpflow-config";
+    marker.setAttribute("data-relpflow", "true");
+    marker.setAttribute("data-api", rf_api);
+    marker.setAttribute("data-key", rf_key);
+    marker.type = "text/plain";
+    document.head.appendChild(marker);
 
-    const unhandledHandler = (e: PromiseRejectionEvent) => {
-      const msg = String(e.reason || "");
-      if (msg.includes("relpflow") || msg.includes("RelpFlow")) {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener("unhandledrejection", unhandledHandler);
-
-    const script = document.createElement("script");
-    script.id = "relpflow-script";
-    script.src = `${rf_api}/api/widget/embed.js`;
-    script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-api", rf_api);
-    script.setAttribute("data-key", rf_key);
-    script.defer = true;
-
-    script.onload = () => {
-      const check = setInterval(() => {
-        if ((window as any).RelpFlow) {
-          setRelpFlowReady(true);
-          clearInterval(check);
-        }
-      }, 300);
-      setTimeout(() => clearInterval(check), 10000);
-    };
-
-    document.body.appendChild(script);
-
-    return () => {
-      window.removeEventListener("error", errorHandler);
-      window.removeEventListener("unhandledrejection", unhandledHandler);
-    };
+    fetch(`${rf_api}/api/widget/embed.js`)
+      .then(res => res.text())
+      .then(code => {
+        try {
+          const fn = new Function(code);
+          fn();
+        } catch (_) {}
+      })
+      .catch(() => {});
   }, []);
 
   const handleAuthCallback = useCallback(() => {
