@@ -203,23 +203,24 @@ function AppContent() {
     style.textContent = `
       .help-button-fixed {
         position: fixed;
-        top: 16px;
-        right: 16px;
+        top: 14px;
+        right: 68px; /* Lado esquerdo do seletor de idioma */
         z-index: 9999;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
-        border-radius: 50px;
-        padding: 10px 20px;
+        border-radius: 10px;
+        padding: 6px 12px;
         color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
+        height: 36px;
       }
       .help-button-fixed:hover {
         transform: translateY(-2px);
@@ -229,8 +230,8 @@ function AppContent() {
         transform: translateY(0);
       }
       .help-button-fixed svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         flex-shrink: 0;
       }
       @media (max-width: 480px) {
@@ -238,11 +239,12 @@ function AppContent() {
           display: none;
         }
         .help-button-fixed {
-          padding: 10px;
-          border-radius: 50%;
-          width: 44px;
-          height: 44px;
+          padding: 8px;
+          border-radius: 10px;
+          width: 36px;
+          height: 36px;
           justify-content: center;
+          right: 60px;
         }
       }
       .relpflow-widget,
@@ -347,7 +349,7 @@ function AppContent() {
 
     const btn = document.createElement("button");
     btn.className = "help-button-fixed";
-    btn.style.display = "flex"; // Força o display flex
+    btn.style.display = "flex";
     btn.title = "Central de Ajuda";
     btn.setAttribute("aria-label", "Abrir central de ajuda");
     btn.setAttribute("data-testid", "button-help-relpflow");
@@ -355,7 +357,7 @@ function AppContent() {
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>
-      <span>Ajuda</span>
+      <span style="margin-left: 2px">Ajuda</span>
     `;
     btn.addEventListener("click", () => {
       if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
