@@ -202,13 +202,25 @@ function AppContent() {
     const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
     const rf_key = "wk_55b29179c99f420006fcd3ef5c128e6360cdbde81dcf5afe";
 
-    const script = document.createElement("script");
-    script.src = `${rf_api}/api/widget/embed.js`;
-    script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-api", rf_api);
-    script.setAttribute("data-key", rf_key);
-    script.defer = true;
-    document.body.appendChild(script);
+    const configScript = document.createElement("script");
+    configScript.setAttribute("data-relpflow", "true");
+    configScript.setAttribute("data-api", rf_api);
+    configScript.setAttribute("data-key", rf_key);
+    configScript.setAttribute("src", `${rf_api}/api/widget/embed.js`);
+    configScript.textContent = " ";
+    document.head.appendChild(configScript);
+
+    fetch(`${rf_api}/api/widget/embed.js`)
+      .then(r => r.text())
+      .then(code => {
+        const blob = new Blob([code], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const s = document.createElement("script");
+        s.src = url;
+        s.onload = () => URL.revokeObjectURL(url);
+        document.body.appendChild(s);
+      })
+      .catch(() => {});
   }, []);
 
   const handleAuthCallback = useCallback(() => {
