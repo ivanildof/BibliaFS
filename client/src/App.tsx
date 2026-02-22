@@ -30,6 +30,7 @@ import ReadingPlans from "@/pages/reading-plans";
 import Progress from "@/pages/progress";
 import Prayers from "@/pages/prayers";
 import Podcasts from "@/pages/podcasts";
+import Teacher from "@/pages/teacher";
 import Community from "@/pages/community";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
@@ -142,6 +143,7 @@ function Router() {
       <Route path="/progress" component={Progress} />
       <Route path="/prayers" component={Prayers} />
       <Route path="/podcasts" component={Podcasts} />
+      <Route path="/teacher" component={Teacher} />
       <Route path="/groups" component={Groups} />
       <Route path="/grupos" component={Groups} />
       <Route path="/community" component={Community} />

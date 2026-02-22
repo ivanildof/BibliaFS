@@ -94,6 +94,7 @@ export function AppSidebar() {
 
   const studyItems = [
     { title: t.nav.compareVersions, url: "/compare", icon: Columns, color: "text-indigo-400" },
+    { title: t.nav.teacherMode, url: "/teacher", icon: GraduationCap, color: "text-slate-600" },
     { title: t.nav.podcasts, url: "/podcasts", icon: Headphones, color: "text-teal-500" },
   ];
 
