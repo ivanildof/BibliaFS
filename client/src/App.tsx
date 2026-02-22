@@ -347,6 +347,7 @@ function AppContent() {
 
     const btn = document.createElement("button");
     btn.className = "help-button-fixed";
+    btn.style.display = "flex"; // Força o display flex
     btn.title = "Central de Ajuda";
     btn.setAttribute("aria-label", "Abrir central de ajuda");
     btn.setAttribute("data-testid", "button-help-relpflow");
