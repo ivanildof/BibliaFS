@@ -398,7 +398,7 @@ function AppContent() {
     window.addEventListener("unhandledrejection", suppress, true);
 
     const script = document.createElement("script");
-    script.src = "/api/proxy/relpflow-embed.js";
+    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
     script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-key", "wk_004cd0268736b77caf8cdb89f57734c2a04846515341669b");
     script.defer = true;
