@@ -199,26 +199,16 @@ function AppContent() {
     if ((window as any).__relpflow_loaded) return;
     (window as any).__relpflow_loaded = true;
 
-    const rf_api = "https://fabrisite.replit.app";
-    const rf_key = "wk_4fcc83081c0d0b8d2f33ed188f538d5b14f00462c7283c6b";
+    const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
+    const rf_key = "wk_55b29179c99f420006fcd3ef5c128e6360cdbde81dcf5afe";
 
-    const marker = document.createElement("script");
-    marker.id = "relpflow-config";
-    marker.setAttribute("data-relpflow", "true");
-    marker.setAttribute("data-api", rf_api);
-    marker.setAttribute("data-key", rf_key);
-    marker.type = "text/plain";
-    document.head.appendChild(marker);
-
-    fetch(`${rf_api}/api/widget/embed.js`)
-      .then(res => res.text())
-      .then(code => {
-        try {
-          const fn = new Function(code);
-          fn();
-        } catch (_) {}
-      })
-      .catch(() => {});
+    const script = document.createElement("script");
+    script.src = `${rf_api}/api/widget/embed.js`;
+    script.setAttribute("data-relpflow", "true");
+    script.setAttribute("data-api", rf_api);
+    script.setAttribute("data-key", rf_key);
+    script.defer = true;
+    document.body.appendChild(script);
   }, []);
 
   const handleAuthCallback = useCallback(() => {
