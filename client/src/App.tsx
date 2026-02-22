@@ -226,8 +226,7 @@ function AppContent() {
     script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-api", rf_api);
     script.setAttribute("data-key", rf_key);
-    script.setAttribute("data-headless", "true");
-    script.async = true;
+    script.defer = true;
 
     script.onload = () => {
       const check = setInterval(() => {
@@ -305,25 +304,6 @@ function AppContent() {
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-3">
-                <button
-                  id="helpflow-btn"
-                  data-testid="button-helpflow-support"
-                  onClick={() => {
-                    const rf = (window as any).RelpFlow;
-                    if (rf && typeof rf.toggle === "function") {
-                      rf.toggle();
-                    }
-                  }}
-                  className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
-                  style={{
-                    background: "linear-gradient(135deg, #7c3aed, #6366f1, #8b5cf6)",
-                    boxShadow: "0 2px 8px rgba(124, 58, 237, 0.3)",
-                  }}
-                >
-                  <span className="absolute inset-0 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(135deg, #6d28d9, #4f46e5, #7c3aed)" }} />
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                  <span className="relative z-10">Ajuda</span>
-                </button>
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
