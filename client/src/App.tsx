@@ -199,6 +199,9 @@ function AppContent() {
     if ((window as any).__relpflow_loaded) return;
     (window as any).__relpflow_loaded = true;
 
+    const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
+    const rf_key = "wk_55b29179c99f420006fcd3ef5c128e6360cdbde81dcf5afe";
+
     const suppress = (e: Event) => {
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -207,28 +210,20 @@ function AppContent() {
     window.addEventListener("unhandledrejection", suppress, true);
 
     const script = document.createElement("script");
-    script.src = "https://relpflow.pro/widget.js";
-    script.setAttribute("data-api-key", "SOLICITE_UMA_CHAVE");
-    script.setAttribute("data-app-id", "7");
-    script.async = true;
+    script.src = "/api/proxy/relpflow-embed.js";
+    script.setAttribute("data-relpflow", "true");
+    script.setAttribute("data-api", rf_api);
+    script.setAttribute("data-key", rf_key);
+    script.defer = true;
 
-    script.onload = () => {
-      try {
-        (window as any).relpFlow?.init({
-          buttonText: "Ajuda",
-          primaryColor: "#0ea5e9",
-          position: "bottom-right"
-        });
-      } catch (_) {}
+    const cleanup = () => {
       setTimeout(() => {
         window.removeEventListener("error", suppress, true);
         window.removeEventListener("unhandledrejection", suppress, true);
       }, 3000);
     };
-    script.onerror = () => {
-      window.removeEventListener("error", suppress, true);
-      window.removeEventListener("unhandledrejection", suppress, true);
-    };
+    script.onload = cleanup;
+    script.onerror = cleanup;
 
     document.body.appendChild(script);
   }, []);
