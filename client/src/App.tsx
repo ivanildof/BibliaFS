@@ -195,6 +195,24 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    const rf_key = "wk_1692ab25a4e9aa88e8e1e86b083b173ec007c1eaeeab1c26";
+    const rf_api = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev";
+    
+    if (document.getElementById("relpflow-script")) return;
+    
+    const script = document.createElement("script");
+    script.id = "relpflow-script";
+    script.src = `${rf_api}/api/widget/embed.js`;
+    script.setAttribute("data-relpflow", "true");
+    script.setAttribute("data-api", rf_api);
+    script.setAttribute("data-key", rf_key);
+    script.setAttribute("data-headless", "true");
+    script.async = true;
+    
+    document.body.appendChild(script);
+  }, []);
+
   const handleAuthCallback = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     window.location.href = '/';
