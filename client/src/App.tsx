@@ -199,7 +199,189 @@ function AppContent() {
     if ((window as any).__relpflow_loaded) return;
     (window as any).__relpflow_loaded = true;
 
-    const rf_key = "wk_08ef0e5a6b0cbe812df666d347a746ad9f210095ef58943c";
+    const style = document.createElement("style");
+    style.textContent = `
+      .help-button-fixed {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+      }
+      .help-button-fixed:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+      .help-button-fixed:active {
+        transform: translateY(0);
+      }
+      .help-button-fixed svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+      @media (max-width: 480px) {
+        .help-button-fixed span {
+          display: none;
+        }
+        .help-button-fixed {
+          padding: 10px;
+          border-radius: 50%;
+          width: 44px;
+          height: 44px;
+          justify-content: center;
+        }
+      }
+      .relpflow-widget,
+      .relpflow-container,
+      [data-relpflow] iframe,
+      iframe[src*="relpflow"],
+      .relpflow-modal {
+        max-width: calc(100vw - 32px) !important;
+        width: 380px !important;
+        max-height: calc(100vh - 120px) !important;
+        height: auto !important;
+        bottom: 60px !important;
+        top: auto !important;
+        right: 16px !important;
+        left: auto !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important;
+        z-index: 9998 !important;
+      }
+      @media (max-width: 768px) {
+        .relpflow-widget,
+        .relpflow-container,
+        [data-relpflow] iframe,
+        iframe[src*="relpflow"],
+        .relpflow-modal {
+          width: calc(100vw - 24px) !important;
+          max-width: 360px !important;
+          max-height: calc(100vh - 110px) !important;
+          height: 70vh !important;
+          bottom: 55px !important;
+          top: 60px !important;
+          right: 12px !important;
+          left: 12px !important;
+          border-radius: 12px !important;
+        }
+      }
+      .relpflow-message,
+      .relpflow-message-content,
+      .message-bubble,
+      .chat-message {
+        max-width: 85% !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        font-size: 14px !important;
+        padding: 8px 12px !important;
+        line-height: 1.4 !important;
+      }
+      .relpflow-input-area,
+      .chat-input-wrapper,
+      textarea[name="message"],
+      input[type="text"][name="message"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 16px !important;
+        padding: 12px !important;
+        box-sizing: border-box !important;
+      }
+      .relpflow-header,
+      .chat-header {
+        padding: 12px 16px !important;
+        font-size: 15px !important;
+        min-height: 50px !important;
+      }
+      .relpflow-messages,
+      .chat-messages,
+      .messages-container {
+        max-height: calc(100% - 110px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px 4px !important;
+      }
+      .relpflow-button,
+      .chat-button,
+      .send-button {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+      }
+      .relpflow-close,
+      .chat-close {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .relpflow-message img,
+      .message-content img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+      }
+      .relpflow-widget *,
+      .relpflow-container * {
+        box-sizing: border-box !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    const btn = document.createElement("button");
+    btn.className = "help-button-fixed";
+    btn.title = "Central de Ajuda";
+    btn.setAttribute("aria-label", "Abrir central de ajuda");
+    btn.setAttribute("data-testid", "button-help-relpflow");
+    btn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+      <span>Ajuda</span>
+    `;
+    btn.addEventListener("click", () => {
+      if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
+        (window as any).RelpFlow.open();
+      } else if (typeof (window as any).RelpFlowWidget !== "undefined" && typeof (window as any).RelpFlowWidget.open === "function") {
+        (window as any).RelpFlowWidget.open();
+      } else {
+        window.dispatchEvent(new CustomEvent("relpflow:open"));
+      }
+      setTimeout(ajustarChatMobile, 300);
+    });
+    document.body.appendChild(btn);
+
+    function ajustarChatMobile() {
+      if (window.innerWidth <= 768) {
+        const chatWidget = document.querySelector(".relpflow-widget, .relpflow-container, [data-relpflow] iframe") as HTMLElement | null;
+        if (chatWidget) {
+          chatWidget.style.maxHeight = "calc(100vh - 110px)";
+          chatWidget.style.bottom = "55px";
+          chatWidget.style.top = "60px";
+        }
+      }
+    }
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth <= 768) ajustarChatMobile();
+    });
 
     const suppress = (e: Event) => {
       e.stopImmediatePropagation();
@@ -211,7 +393,7 @@ function AppContent() {
     const script = document.createElement("script");
     script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", rf_key);
+    script.setAttribute("data-key", "wk_8040318c3aeba1fd7c2ae47f250665440ad005f9e545a56e");
     script.defer = true;
 
     const cleanup = () => {
@@ -220,7 +402,10 @@ function AppContent() {
         window.removeEventListener("unhandledrejection", suppress, true);
       }, 3000);
     };
-    script.onload = cleanup;
+    script.onload = () => {
+      cleanup();
+      setTimeout(ajustarChatMobile, 500);
+    };
     script.onerror = cleanup;
 
     document.body.appendChild(script);
