@@ -257,34 +257,7 @@ function AppContent() {
                 <button
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
-                  onClick={() => {
-                    const panel = document.getElementById('hf-widget-panel');
-                    if (panel) {
-                      panel.classList.toggle('hf-open');
-                      if (panel.classList.contains('hf-open')) {
-                        const input = document.getElementById('hf-widget-input') as HTMLInputElement;
-                        if (input) setTimeout(() => input.focus(), 100);
-                      }
-                    } else {
-                      const existing = document.getElementById('hf-widget-container');
-                      if (existing) existing.remove();
-                      const old = document.getElementById('relpflow-script');
-                      if (old) old.remove();
-                      const script = document.createElement("script");
-                      script.id = "relpflow-script";
-                      script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js?v=" + Date.now();
-                      script.setAttribute("data-relpflow", "true");
-                      script.setAttribute("data-api", "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev");
-                      script.setAttribute("data-key", "wk_d76697f95a86b521f77508926f3ffdb702fb5bb0bcfaac5c");
-                      document.head.appendChild(script);
-                      script.onload = () => {
-                        setTimeout(() => {
-                          const p = document.getElementById('hf-widget-panel');
-                          if (p) p.classList.add('hf-open');
-                        }, 500);
-                      };
-                    }
-                  }}
+                  onClick={() => {}}
                   className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
                   style={{
                     background: "linear-gradient(135deg, #7c3aed, #6366f1, #8b5cf6)",
