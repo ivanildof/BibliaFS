@@ -11,6 +11,7 @@ import { OfflineProvider } from "@/contexts/OfflineContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { UserProfile } from "@/components/UserProfile";
+import { HelpButton } from "@/components/HelpButton";
 import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -476,6 +477,7 @@ function AppContent() {
             <header className="flex items-center justify-between gap-2 p-4 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shrink-0 sticky top-0 z-50">
               <SidebarTrigger data-testid="button-sidebar-toggle" />
               <div className="flex items-center gap-3">
+                <HelpButton />
                 <LanguageSelector />
                 <ThemeToggle />
                 <UserProfile />
