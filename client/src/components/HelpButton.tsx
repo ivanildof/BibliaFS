@@ -117,9 +117,9 @@ export function HelpButton() {
     window.addEventListener("unhandledrejection", suppress, true);
 
     const script = document.createElement("script");
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
+    script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_5d687cc7148fddb98f3418b349f9dfb78d8e5259837a74c2");
+    script.setAttribute("data-key", "wk_0a36b7097965b578c6e192240586d709de5236dd45989081");
     script.defer = true;
 
     const cleanup = () => {
