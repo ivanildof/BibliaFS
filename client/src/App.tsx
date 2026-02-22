@@ -195,7 +195,6 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { t } = useLanguage();
 
-
   const handleAuthCallback = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     window.location.href = '/';
@@ -258,8 +257,9 @@ function AppContent() {
                   id="helpflow-btn"
                   data-testid="button-helpflow-support"
                   onClick={() => {
-                    if ((window as any).RelpFlow && typeof (window as any).RelpFlow.toggle === 'function') {
-                      (window as any).RelpFlow.toggle();
+                    const rf = (window as any).RelpFlow;
+                    if (rf && typeof rf.toggle === 'function') {
+                      rf.toggle();
                     }
                   }}
                   className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full overflow-visible cursor-pointer border-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
