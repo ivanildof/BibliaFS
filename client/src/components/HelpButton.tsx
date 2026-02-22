@@ -1,8 +1,15 @@
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function HelpButton() {
+  const [pulse, setPulse] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setPulse(false), 8000);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     if ((window as any).__relpflow_loaded) return;
     (window as any).__relpflow_loaded = true;
@@ -145,17 +152,25 @@ export function HelpButton() {
   };
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={handleClick}
-      data-testid="button-help-relpflow"
-      title="Central de Ajuda"
-      className="h-10 w-10 rounded-xl bg-background/50 dark:bg-card/40 backdrop-blur-sm border-primary/20 dark:border-primary/30 hover:border-primary/50 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary transition-all shadow-sm active-elevate-2 group relative overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-primary/5 dark:from-primary/20 dark:to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <MessageCircle className="h-5 w-5 relative z-10 text-purple-500" />
-      <span className="sr-only">Central de Ajuda</span>
-    </Button>
+    <div className="relative">
+      {pulse && (
+        <span className="absolute -top-1 -right-1 z-20 flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500" />
+        </span>
+      )}
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => { setPulse(false); handleClick(); }}
+        data-testid="button-help-relpflow"
+        title="Central de Ajuda"
+        className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15 dark:from-purple-500/25 dark:to-indigo-500/25 backdrop-blur-sm border-purple-400/40 dark:border-purple-400/50 hover:border-purple-500/70 hover:from-purple-500/25 hover:to-indigo-500/25 dark:hover:from-purple-500/35 dark:hover:to-indigo-500/35 transition-all shadow-sm shadow-purple-500/10 active-elevate-2 group relative overflow-visible"
+      >
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-purple-500/10 via-transparent to-indigo-500/10 dark:from-purple-500/20 dark:to-indigo-500/15 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <MessageCircle className="h-5 w-5 relative z-10 text-purple-500 dark:text-purple-400" />
+        <span className="sr-only">Central de Ajuda</span>
+      </Button>
+    </div>
   );
 }
