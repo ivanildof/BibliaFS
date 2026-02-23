@@ -108,9 +108,6 @@ export function HelpButton() {
       .relpflow-container * {
         box-sizing: border-box !important;
       }
-      #rf-fab {
-        display: none !important;
-      }
     `;
     document.head.appendChild(style);
 
@@ -118,6 +115,7 @@ export function HelpButton() {
     script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-key", "wk_1cdf50959c0f256695cb396e986ae15bf1f7c8b3b114f792");
+    script.setAttribute("data-hide-fab", "true");
     script.defer = true;
     document.body.appendChild(script);
   }, []);
