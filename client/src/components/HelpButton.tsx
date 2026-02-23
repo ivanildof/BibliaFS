@@ -1,11 +1,13 @@
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function HelpButton() {
+  const loaded = useRef(false);
+
   useEffect(() => {
-    if ((window as any).__relpflow_loaded) return;
-    (window as any).__relpflow_loaded = true;
+    if (loaded.current) return;
+    loaded.current = true;
 
     const style = document.createElement("style");
     style.textContent = `
@@ -109,38 +111,28 @@ export function HelpButton() {
     `;
     document.head.appendChild(style);
 
-    const suppress = (e: Event) => {
-      e.stopImmediatePropagation();
-      e.preventDefault();
-    };
-    window.addEventListener("error", suppress, true);
-    window.addEventListener("unhandledrejection", suppress, true);
-
     const script = document.createElement("script");
     script.src = "https://relpflow.com.br/api/widget/embed.js";
     script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-key", "wk_53424dcc9779a439d0221f3a018b84884c8c007def2e97df");
     script.defer = true;
-
-    const cleanup = () => {
-      setTimeout(() => {
-        window.removeEventListener("error", suppress, true);
-        window.removeEventListener("unhandledrejection", suppress, true);
-      }, 3000);
-    };
-    script.onload = cleanup;
-    script.onerror = cleanup;
-
+    script.crossOrigin = "anonymous";
     document.body.appendChild(script);
   }, []);
 
   const handleClick = () => {
-    if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
-      (window as any).RelpFlow.open();
-    } else if (typeof (window as any).RelpFlowWidget !== "undefined" && typeof (window as any).RelpFlowWidget.open === "function") {
-      (window as any).RelpFlowWidget.open();
-    } else {
-      window.dispatchEvent(new CustomEvent("relpflow:open"));
+    try {
+      if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
+        (window as any).RelpFlow.open();
+      } else if (typeof (window as any).RelpFlowWidget !== "undefined" && typeof (window as any).RelpFlowWidget.open === "function") {
+        (window as any).RelpFlowWidget.open();
+      } else {
+        window.dispatchEvent(new CustomEvent("relpflow:open"));
+        const chatBtn = document.querySelector('[data-relpflow-trigger], .relpflow-trigger, .relpflow-button') as HTMLElement | null;
+        if (chatBtn) chatBtn.click();
+      }
+    } catch (e) {
+      console.warn("[HelpButton] Could not open widget:", e);
     }
   };
 

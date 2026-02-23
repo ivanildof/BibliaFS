@@ -236,7 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/proxy/relpflow-embed.js", async (_req, res) => {
     try {
-      const resp = await fetch("https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js");
+      const resp = await fetch("https://relpflow.com.br/api/widget/embed.js");
       let code = await resp.text();
       // Correção de sintaxe para evitar quebras no runtime do Replit/Vite
       code = code.replace(/\.join\('[^']*\n[^']*'\)/g, ".join('\\n')");
