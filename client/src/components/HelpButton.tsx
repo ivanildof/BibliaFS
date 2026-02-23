@@ -108,7 +108,7 @@ export function HelpButton() {
       .relpflow-container * {
         box-sizing: border-box !important;
       }
-      #rf-btn {
+      #rf-fab {
         display: none !important;
       }
     `;
