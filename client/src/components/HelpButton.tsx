@@ -108,6 +108,9 @@ export function HelpButton() {
       .relpflow-container * {
         box-sizing: border-box !important;
       }
+      #rf-btn {
+        display: none !important;
+      }
     `;
     document.head.appendChild(style);
 
@@ -124,12 +127,16 @@ export function HelpButton() {
     try {
       if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
         (window as any).RelpFlow.open();
-      } else if (typeof (window as any).RelpFlowWidget !== "undefined" && typeof (window as any).RelpFlowWidget.open === "function") {
-        (window as any).RelpFlowWidget.open();
-      } else {
-        window.dispatchEvent(new CustomEvent("relpflow:open"));
-        const chatBtn = document.querySelector('[data-relpflow-trigger], .relpflow-trigger, .relpflow-button') as HTMLElement | null;
-        if (chatBtn) chatBtn.click();
+        return;
+      }
+      const panel = document.getElementById("rf-panel");
+      if (panel) {
+        panel.classList.toggle("rf-open");
+        return;
+      }
+      const triggerBtn = document.querySelector("#rf-btn, [data-relpflow-trigger], .relpflow-trigger") as HTMLElement | null;
+      if (triggerBtn) {
+        triggerBtn.click();
       }
     } catch (e) {
       console.warn("[HelpButton] Could not open widget:", e);
