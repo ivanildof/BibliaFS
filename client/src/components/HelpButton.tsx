@@ -114,7 +114,7 @@ export function HelpButton() {
     const script = document.createElement("script");
     script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_53424dcc9779a439d0221f3a018b84884c8c007def2e97df");
+    script.setAttribute("data-key", "wk_1cdf50959c0f256695cb396e986ae15bf1f7c8b3b114f792");
     script.defer = true;
     document.body.appendChild(script);
   }, []);
