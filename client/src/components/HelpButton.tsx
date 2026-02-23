@@ -119,7 +119,7 @@ export function HelpButton() {
     const script = document.createElement("script");
     script.src = "https://relpflow.com.br/api/widget/embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_e856a7bea47e684294c577f766e37d6f7ffcb3ca1147f5ad");
+    script.setAttribute("data-key", "wk_53424dcc9779a439d0221f3a018b84884c8c007def2e97df");
     script.defer = true;
 
     const cleanup = () => {
