@@ -247,6 +247,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "if(s&&s.src){try{var u=new URL(s.src);API_URL=u.origin;}catch(e){}}",
         "/* origin detection removed - using same-domain proxy */"
       );
+      code = code.replace(
+        "container.appendChild(fab);",
+        "var hideFab=document.querySelector('script[data-hide-fab=\"true\"]');if(!hideFab){container.appendChild(fab);}"
+      );
       res.setHeader("Content-Type", "application/javascript");
       res.setHeader("Cache-Control", "public, max-age=3600");
       res.send(code);
