@@ -108,18 +108,14 @@ export function HelpButton() {
       .relpflow-container * {
         box-sizing: border-box !important;
       }
-      #rf-btn {
-        display: none !important;
-      }
     `;
     document.head.appendChild(style);
 
     const script = document.createElement("script");
-    script.src = "https://relpflow.com.br/api/widget/embed.js";
+    script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
     script.setAttribute("data-key", "wk_53424dcc9779a439d0221f3a018b84884c8c007def2e97df");
     script.defer = true;
-    script.crossOrigin = "anonymous";
     document.body.appendChild(script);
   }, []);
 

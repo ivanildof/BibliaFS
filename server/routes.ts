@@ -238,10 +238,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const resp = await fetch("https://relpflow.com.br/api/widget/embed.js");
       let code = await resp.text();
-      // Correção de sintaxe para evitar quebras no runtime do Replit/Vite
       code = code.replace(/\.join\('[^']*\n[^']*'\)/g, ".join('\\n')");
+      code = code.replace(
+        "if(s&&s.src){try{var u=new URL(s.src);API_URL=u.origin;}catch(e){}}",
+        "/* API_URL forced to relpflow.com.br */"
+      );
       res.setHeader("Content-Type", "application/javascript");
-      res.setHeader("Cache-Control", "no-store"); // Desativa cache para testar mudanças imediatas
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.setHeader("Access-Control-Allow-Origin", "*");
       res.send(code);
     } catch (err) {
       console.error("RelpFlow Proxy Error:", err);
