@@ -234,56 +234,6 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
-  app.get("/api/proxy/relpflow-embed.js", async (_req, res) => {
-    try {
-      const resp = await fetch("https://relpflow.com.br/api/widget/embed.js");
-      let code = await resp.text();
-      code = code.replace(/\.join\('[^']*\n[^']*'\)/g, ".join('\\n')");
-      code = code.replace(
-        "var API_URL='https://relpflow.com.br';",
-        "var API_URL=window.location.origin+'/api/relpflow-proxy';"
-      );
-      code = code.replace(
-        "if(s&&s.src){try{var u=new URL(s.src);API_URL=u.origin;}catch(e){}}",
-        "/* origin detection removed - using same-domain proxy */"
-      );
-      code = code.replace(
-        "container.appendChild(fab);",
-        "var hideFab=document.querySelector('script[data-hide-fab=\"true\"]');if(!hideFab){container.appendChild(fab);}"
-      );
-      res.setHeader("Content-Type", "application/javascript");
-      res.setHeader("Cache-Control", "public, max-age=3600");
-      res.send(code);
-    } catch (err) {
-      console.error("RelpFlow Proxy Error:", err);
-      res.status(502).send("// RelpFlow unavailable");
-    }
-  });
-
-  app.post("/api/relpflow-proxy/api/widget/:action", async (req, res) => {
-    const { action } = req.params;
-    const widgetKey = req.headers["x-widget-key"] as string;
-    const origin = req.headers["origin"] || req.headers["referer"] || "";
-    try {
-      const resp = await fetch(`https://relpflow.com.br/api/widget/${action}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-widget-key": widgetKey || "",
-          "Origin": origin as string,
-          "Referer": origin as string,
-        },
-        body: JSON.stringify(req.body),
-      });
-      const data = await resp.text();
-      res.setHeader("Content-Type", resp.headers.get("content-type") || "application/json");
-      res.status(resp.status).send(data);
-    } catch (err) {
-      console.error("RelpFlow API Proxy Error:", err);
-      res.status(502).json({ error: "RelpFlow API unavailable" });
-    }
-  });
-
   try {
     await runMigrations();
     console.log("[MIGRATIONS] All group tables ensured in database");

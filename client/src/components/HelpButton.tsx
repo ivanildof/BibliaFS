@@ -112,8 +112,7 @@ export function HelpButton() {
     document.head.appendChild(style);
 
     const script = document.createElement("script");
-    script.src = "/api/proxy/relpflow-embed.js";
-    script.setAttribute("data-relpflow", "true");
+    script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js";
     script.setAttribute("data-key", "wk_26ab14f77fac22c7026c190cd9960b7c17d382c31692a452");
     script.setAttribute("data-hide-fab", "true");
     script.defer = true;
