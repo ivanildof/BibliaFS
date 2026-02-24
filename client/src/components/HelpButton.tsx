@@ -10,18 +10,16 @@ export function HelpButton() {
     loaded.current = true;
 
     const script = document.createElement("script");
-    script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js?key=wk_5366637160d561125be4c0f874bbd2347282e94a17d46e2a&hide-fab=true";
+    script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js?key=wk_bibliafs2026b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1&hide-fab=true";
     script.async = true;
-    script.onerror = (e) => console.error("[HelpButton] Falha ao carregar widget", e);
+    script.onerror = () => console.error("[HelpButton] Falha ao carregar widget");
     document.body.appendChild(script);
   }, []);
 
   const handleClick = () => {
     const rf = (window as any).RelpFlow;
-    if (rf && rf.isReady) {
+    if (rf?.toggle) {
       rf.toggle();
-    } else {
-      console.warn("[HelpButton] Widget ainda carregando...");
     }
   };
 
@@ -30,7 +28,6 @@ export function HelpButton() {
       variant="outline"
       size="icon"
       onClick={handleClick}
-      data-testid="button-help-relpflow"
       title="Central de Ajuda"
       className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15"
     >
