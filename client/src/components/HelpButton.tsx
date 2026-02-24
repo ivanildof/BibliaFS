@@ -10,10 +10,8 @@ export function HelpButton() {
     loaded.current = true;
 
     const script = document.createElement("script");
-    script.src = "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev/api/widget/embed.js";
-    script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_8040318c3aeba1fd7c2ae47f250665440ad005f9e545a56e");
-    script.defer = true;
+    script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js?key=wk_5366637160d561125be4c0f874bbd2347282e94a17d46e2a&hide-fab=true";
+    script.async = true;
     script.onerror = (e) => console.error("[HelpButton] Falha ao carregar widget", e);
     document.body.appendChild(script);
   }, []);
