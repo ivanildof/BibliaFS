@@ -114,7 +114,7 @@ export function HelpButton() {
     const script = document.createElement("script");
     script.src = "/api/proxy/relpflow-embed.js";
     script.setAttribute("data-relpflow", "true");
-    script.setAttribute("data-key", "wk_1cdf50959c0f256695cb396e986ae15bf1f7c8b3b114f792");
+    script.setAttribute("data-key", "wk_26ab14f77fac22c7026c190cd9960b7c17d382c31692a452");
     script.setAttribute("data-hide-fab", "true");
     script.defer = true;
     document.body.appendChild(script);
