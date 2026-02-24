@@ -1,9 +1,10 @@
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function HelpButton() {
   const loaded = useRef(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (loaded.current) return;
@@ -11,102 +12,29 @@ export function HelpButton() {
 
     const style = document.createElement("style");
     style.textContent = `
-      .relpflow-widget,
-      .relpflow-container,
-      [data-relpflow] iframe,
-      iframe[src*="relpflow"],
-      .relpflow-modal {
+      #rf-panel {
         max-width: calc(100vw - 32px) !important;
-        width: 380px !important;
+        width: 370px !important;
         max-height: calc(100vh - 120px) !important;
-        height: auto !important;
         bottom: 60px !important;
-        top: auto !important;
+        top: 80px !important;
         right: 16px !important;
-        left: auto !important;
         border-radius: 16px !important;
         box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important;
         z-index: 9998 !important;
       }
       @media (max-width: 768px) {
-        .relpflow-widget,
-        .relpflow-container,
-        [data-relpflow] iframe,
-        iframe[src*="relpflow"],
-        .relpflow-modal {
-          width: calc(100vw - 24px) !important;
-          max-width: 360px !important;
-          max-height: calc(100vh - 110px) !important;
-          height: 70vh !important;
-          bottom: 55px !important;
-          top: 60px !important;
+        #rf-panel {
+          width: auto !important;
+          max-width: none !important;
+          max-height: 420px !important;
+          height: 60vh !important;
+          top: auto !important;
+          bottom: 12px !important;
           right: 12px !important;
           left: 12px !important;
           border-radius: 12px !important;
         }
-      }
-      .relpflow-message,
-      .relpflow-message-content,
-      .message-bubble,
-      .chat-message {
-        max-width: 85% !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-        font-size: 14px !important;
-        padding: 8px 12px !important;
-        line-height: 1.4 !important;
-      }
-      .relpflow-input-area,
-      .chat-input-wrapper,
-      textarea[name="message"],
-      input[type="text"][name="message"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        font-size: 16px !important;
-        padding: 12px !important;
-        box-sizing: border-box !important;
-      }
-      .relpflow-header,
-      .chat-header {
-        padding: 12px 16px !important;
-        font-size: 15px !important;
-        min-height: 50px !important;
-      }
-      .relpflow-messages,
-      .chat-messages,
-      .messages-container {
-        max-height: calc(100% - 110px) !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-        padding: 8px 4px !important;
-      }
-      .relpflow-button,
-      .chat-button,
-      .send-button {
-        min-height: 44px !important;
-        min-width: 44px !important;
-        padding: 10px 16px !important;
-        font-size: 14px !important;
-      }
-      .relpflow-close,
-      .chat-close {
-        width: 40px !important;
-        height: 40px !important;
-        min-width: 40px !important;
-        min-height: 40px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-      }
-      .relpflow-message img,
-      .message-content img {
-        max-width: 100% !important;
-        height: auto !important;
-        display: block !important;
-      }
-      .relpflow-widget *,
-      .relpflow-container * {
-        box-sizing: border-box !important;
       }
     `;
     document.head.appendChild(style);
@@ -115,25 +43,19 @@ export function HelpButton() {
     script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js";
     script.setAttribute("data-key", "wk_26ab14f77fac22c7026c190cd9960b7c17d382c31692a452");
     script.setAttribute("data-hide-fab", "true");
-    script.defer = true;
+    script.onload = () => setReady(true);
     document.body.appendChild(script);
   }, []);
 
   const handleClick = () => {
     try {
-      if (typeof (window as any).RelpFlow !== "undefined" && typeof (window as any).RelpFlow.open === "function") {
-        (window as any).RelpFlow.open();
+      const relpflow = (window as any).RelpFlow;
+      if (relpflow && typeof relpflow.toggle === "function") {
+        relpflow.toggle();
         return;
       }
       const panel = document.getElementById("rf-panel");
-      if (panel) {
-        panel.classList.toggle("rf-open");
-        return;
-      }
-      const triggerBtn = document.querySelector("#rf-btn, [data-relpflow-trigger], .relpflow-trigger") as HTMLElement | null;
-      if (triggerBtn) {
-        triggerBtn.click();
-      }
+      if (panel) panel.classList.toggle("rf-open");
     } catch (e) {
       console.warn("[HelpButton] Could not open widget:", e);
     }
@@ -146,10 +68,9 @@ export function HelpButton() {
       onClick={handleClick}
       data-testid="button-help-relpflow"
       title="Central de Ajuda"
-      className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15 dark:from-purple-500/25 dark:to-indigo-500/25 backdrop-blur-sm border-purple-400/40 dark:border-purple-400/50 hover:border-purple-500/70 hover:from-purple-500/25 hover:to-indigo-500/25 dark:hover:from-purple-500/35 dark:hover:to-indigo-500/35 transition-all shadow-sm shadow-purple-500/10 active-elevate-2 group relative overflow-visible"
+      className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15"
     >
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-purple-500/10 via-transparent to-indigo-500/10 dark:from-purple-500/20 dark:to-indigo-500/15 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <HelpCircle className="h-9 w-9 relative z-10 text-purple-500 dark:text-purple-400 animate-pulse" />
+      <HelpCircle className="h-9 w-9 text-purple-500 dark:text-purple-400 animate-pulse" />
       <span className="sr-only">Central de Ajuda</span>
     </Button>
   );
