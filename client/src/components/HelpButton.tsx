@@ -10,39 +10,8 @@ export function HelpButton() {
     if (loaded.current) return;
     loaded.current = true;
 
-    const style = document.createElement("style");
-    style.textContent = `
-      #rf-panel {
-        max-width: calc(100vw - 32px) !important;
-        width: 370px !important;
-        max-height: calc(100vh - 120px) !important;
-        bottom: 60px !important;
-        top: 80px !important;
-        right: 16px !important;
-        border-radius: 16px !important;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important;
-        z-index: 9998 !important;
-      }
-      @media (max-width: 768px) {
-        #rf-panel {
-          width: auto !important;
-          max-width: none !important;
-          max-height: 420px !important;
-          height: 60vh !important;
-          top: auto !important;
-          bottom: 12px !important;
-          right: 12px !important;
-          left: 12px !important;
-          border-radius: 12px !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-
     const script = document.createElement("script");
-    script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js";
-    script.setAttribute("data-key", "wk_26ab14f77fac22c7026c190cd9960b7c17d382c31692a452");
-    script.setAttribute("data-hide-fab", "true");
+    script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js?key=wk_5366637160d561125be4c0f874bbd2347282e94a17d46e2a&hide-fab=true";
     script.onload = () => setReady(true);
     document.body.appendChild(script);
   }, []);
