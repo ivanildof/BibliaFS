@@ -13,6 +13,7 @@ export function HelpButton() {
     const script = document.createElement("script");
     script.src = "https://relpflow-fabriciosantossilva.replit.app/widget.js?key=wk_5366637160d561125be4c0f874bbd2347282e94a17d46e2a&hide-fab=true";
     script.onload = () => setReady(true);
+    script.onerror = () => console.warn("[HelpButton] widget.js failed to load — app may be offline or domain not whitelisted");
     document.body.appendChild(script);
   }, []);
 
