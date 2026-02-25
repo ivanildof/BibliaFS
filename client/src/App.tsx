@@ -124,7 +124,7 @@ function Router() {
         <Route path="/doar" component={Donate} />
         <Route path="/perfil" component={Profile} />
         <Route path="/profile" component={Profile} />
-        <Route component={NotFound} />
+        <Route component={Login} />
       </Switch>
     );
   }
@@ -147,6 +147,7 @@ function Router() {
       <Route path="/prayers" component={Prayers} />
       <Route path="/podcasts" component={Podcasts} />
       <Route path="/teacher" component={Teacher} />
+      <Route path="/professor" component={Teacher} />
       <Route path="/groups" component={Groups} />
       <Route path="/grupos" component={Groups} />
       <Route path="/community" component={Community} />
