@@ -75,7 +75,7 @@ export default function Home() {
   }
 
   const quickActions = [
-    { icon: GraduationCap, label: "Modo Professor", href: "/teacher", gradient: "from-blue-700 to-indigo-900", shadow: "shadow-blue-500/30" },
+    { icon: GraduationCap, label: "Modo Professor", href: "/professor", gradient: "from-blue-700 to-indigo-900", shadow: "shadow-blue-500/30" },
     { icon: MessageSquare, label: "Nova Oração", href: "/prayers", gradient: "from-rose-500 to-pink-700", shadow: "shadow-rose-500/30" },
     { icon: Headphones, label: "Ouvir Podcast", href: "/podcasts", gradient: "from-teal-500 to-emerald-700", shadow: "shadow-teal-500/30" },
     { icon: Users, label: "Comunidade", href: "/community", gradient: "from-amber-500 to-orange-700", shadow: "shadow-amber-500/30" },
