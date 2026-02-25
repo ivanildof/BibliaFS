@@ -105,8 +105,11 @@ function Router() {
         <Route path="/progress" component={Progress} />
         <Route path="/progresso" component={Progress} />
         <Route path="/terms" component={Terms} />
+        <Route path="/termos" component={Terms} />
         <Route path="/privacy" component={Privacy} />
+        <Route path="/privacidade" component={Privacy} />
         <Route path="/security" component={Security} />
+        <Route path="/seguranca" component={Security} />
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
         <Route path="/groups" component={Groups} />
@@ -161,8 +164,11 @@ function Router() {
       <Route path="/help" component={Help} />
       <Route path="/about" component={About} />
       <Route path="/terms" component={Terms} />
+      <Route path="/termos" component={Terms} />
       <Route path="/privacy" component={Privacy} />
+      <Route path="/privacidade" component={Privacy} />
       <Route path="/security" component={Security} />
+      <Route path="/seguranca" component={Security} />
       <Route path="/contact" component={Contact} />
       <Route component={NotFound} />
     </Switch>
