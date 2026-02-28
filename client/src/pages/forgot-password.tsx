@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Book, Loader2, ArrowLeft, CheckCircle, Mail } from "lucide-react";
 import { Link } from "wouter";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -18,7 +19,7 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
-export default function ForgotPassword() {
+function ForgotPasswordContent() {
   const { toast } = useToast();
   const [emailSent, setEmailSent] = useState(false);
 
@@ -162,5 +163,13 @@ export default function ForgotPassword() {
       </Card>
       </div>
     </div>
+  );
+}
+
+export default function ForgotPassword() {
+  return (
+    <ProtectedRoute>
+      <ForgotPasswordContent />
+    </ProtectedRoute>
   );
 }

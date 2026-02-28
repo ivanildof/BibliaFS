@@ -28,10 +28,11 @@ import { Link } from "wouter";
 import type { ReadingPlan } from "@shared/schema";
 import { DailyVerse } from "@/components/DailyVerse";
 import { GamificationBanner } from "@/components/GamificationBanner";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AISearch } from "@/components/AISearch";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Home() {
+function HomeContent() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
 
@@ -289,5 +290,13 @@ export default function Home() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ProtectedRoute>
+      <HomeContent />
+    </ProtectedRoute>
   );
 }

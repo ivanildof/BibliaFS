@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import { 
   Users, 
   Plus, 
@@ -49,7 +51,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const ADMIN_EMAIL = "fabrisite1@gmail.com";
 
-export default function Community() {
+function CommunityContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -60,7 +62,7 @@ export default function Community() {
 
   const isAdmin = user?.email === ADMIN_EMAIL && user?.role === "admin";
 
-  const { data: posts = [], isLoading, error } = useQuery<(CommunityPost & { user: any; isLikedByCurrentUser?: boolean })[]>({
+  const { data: posts = [], isLoading, isError, error, refetch } = useQuery<(CommunityPost & { user: any; isLikedByCurrentUser?: boolean })[]>({
     queryKey: ["/api/community/posts"],
     retry: 2,
   });
@@ -606,5 +608,13 @@ export default function Community() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Community() {
+  return (
+    <ProtectedRoute>
+      <CommunityContent />
+    </ProtectedRoute>
   );
 }

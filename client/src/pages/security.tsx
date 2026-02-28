@@ -17,8 +17,9 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { Link } from "wouter";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
-export default function Security() {
+function SecurityContent() {
   const securityMeasures = [
     {
       icon: Lock,
@@ -330,5 +331,13 @@ export default function Security() {
         </footer>
       </div>
     </div>
+  );
+}
+
+export default function Security() {
+  return (
+    <ProtectedRoute>
+      <SecurityContent />
+    </ProtectedRoute>
   );
 }

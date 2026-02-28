@@ -14,6 +14,7 @@ import { apiFetch } from "@/lib/config";
 import { Book, Loader2, Eye, EyeOff, CheckCircle, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { getSupabase } from "@/lib/supabase";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const resetPasswordSchema = z.object({
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
@@ -25,7 +26,7 @@ const resetPasswordSchema = z.object({
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
-export default function ResetPassword() {
+function ResetPasswordContent() {
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const { toast } = useToast();
@@ -273,5 +274,13 @@ export default function ResetPassword() {
       </Card>
       </div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <ProtectedRoute>
+      <ResetPasswordContent />
+    </ProtectedRoute>
   );
 }

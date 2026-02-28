@@ -7,12 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, RefreshCw, Edit2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/lib/queryClient";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 interface EmailVerificationProps {
   email?: string;
 }
 
-export default function EmailVerification(props: EmailVerificationProps) {
+function EmailVerificationContent(props: EmailVerificationProps) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [email, setEmail] = useState(props.email || "");
@@ -305,5 +306,13 @@ export default function EmailVerification(props: EmailVerificationProps) {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+export default function EmailVerification(props: EmailVerificationProps) {
+  return (
+    <ProtectedRoute>
+      <EmailVerificationContent {...props} />
+    </ProtectedRoute>
   );
 }

@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useOffline } from "@/contexts/OfflineContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiFetch } from "@/lib/config";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 // Multilingual Bible Books
 const BIBLE_BOOKS = {
@@ -174,7 +175,7 @@ interface VersionData {
   error?: string;
 }
 
-export default function VersionCompare() {
+function VersionCompareContent() {
   const { toast } = useToast();
   const { language } = useLanguage();
   const { sqliteReady, getSqliteChapter } = useOffline();
@@ -445,5 +446,13 @@ export default function VersionCompare() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VersionCompare() {
+  return (
+    <ProtectedRoute>
+      <VersionCompareContent />
+    </ProtectedRoute>
   );
 }

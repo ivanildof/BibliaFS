@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import {
   CloudOff,
   Cloud,
@@ -18,7 +19,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-export default function OfflinePage() {
+function OfflinePageContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const {
@@ -200,5 +201,13 @@ export default function OfflinePage() {
       </Card>
       </div>
     </div>
+  );
+}
+
+export default function OfflinePage() {
+  return (
+    <ProtectedRoute>
+      <OfflinePageContent />
+    </ProtectedRoute>
   );
 }

@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Progress as ProgressBar } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 
 interface Achievement {
   id: string;
@@ -62,22 +64,13 @@ const categoryIcons: Record<string, typeof Users> = {
   general: Award,
 };
 
-export default function Achievements() {
+function AchievementsContent() {
   const { t } = useLanguage();
-  const { data: achievements, isLoading } = useQuery<Achievement[]>({
+  const { data: achievements, isLoading, isError, error, refetch } = useQuery<Achievement[]>({
     queryKey: ["/api/achievements/user"],
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground animate-pulse" data-testid="text-loading">Carregando conquistas...</p>
-        </div>
-      </div>
-    );
-  }
+
 
   const allAchievements = achievements || [];
   const unlockedCount = allAchievements.filter((a) => a.unlockedAt).length;
@@ -255,5 +248,13 @@ export default function Achievements() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Achievements() {
+  return (
+    <ProtectedRoute>
+      <AchievementsContent />
+    </ProtectedRoute>
   );
 }

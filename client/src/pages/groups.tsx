@@ -43,6 +43,7 @@ import {
   Link as LinkIcon,
   Video
 } from "lucide-react";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -228,7 +229,7 @@ interface GroupLimits {
   functionsBlocked: boolean;
 }
 
-export default function Groups() {
+function GroupsContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -2954,5 +2955,13 @@ export default function Groups() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function Groups() {
+  return (
+    <ProtectedRoute>
+      <GroupsContent />
+    </ProtectedRoute>
   );
 }

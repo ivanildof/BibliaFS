@@ -30,6 +30,7 @@ import {
   MessageCircle,
   Share2
 } from "lucide-react";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -251,7 +252,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function Teacher() {
+function TeacherContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -1427,5 +1428,13 @@ export default function Teacher() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Teacher() {
+  return (
+    <ProtectedRoute>
+      <TeacherContent />
+    </ProtectedRoute>
   );
 }

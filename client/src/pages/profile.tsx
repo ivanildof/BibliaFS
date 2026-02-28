@@ -11,6 +11,8 @@ import { ProfileImageUpload } from "@/components/ProfileImageUpload";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import {
   Sheet,
   SheetContent,
@@ -54,11 +56,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { APP_VERSION, APP_NAME } from "@/lib/config";
+import { supabase } from "@/lib/supabase";
 import type { ReadingPlan, Highlight, Note, Bookmark, Prayer, Achievement as AchievementType } from "@shared/schema";
 
 import { getLevelByXp, getXpProgressInLevel, GAMIFICATION_LEVELS } from "@/lib/gamification-levels";
 
-export default function Profile() {
+function ProfileContent() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -287,7 +290,6 @@ export default function Profile() {
                   variant="ghost" 
                   className="w-full justify-start text-destructive hover:text-destructive" 
                   onClick={async () => {
-                    const { supabase } = await import("@/lib/supabase");
                     await supabase.auth.signOut();
                     window.location.href = "/";
                   }}
@@ -520,7 +522,6 @@ export default function Profile() {
                         variant="ghost" 
                         className="w-full justify-start text-destructive hover:text-destructive" 
                         onClick={async () => {
-                          const { supabase } = await import("@/lib/supabase");
                           await supabase.auth.signOut();
                           window.location.href = "/";
                         }}
@@ -1036,5 +1037,13 @@ export default function Profile() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Profile() {
+  return (
+    <ProtectedRoute>
+      <ProfileContent />
+    </ProtectedRoute>
   );
 }

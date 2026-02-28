@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import { 
   Headphones, 
   Search, 
@@ -75,7 +77,7 @@ interface Episode {
   bookAbbrev?: string;
 }
 
-export default function Podcasts() {
+function PodcastsContent() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -156,9 +158,9 @@ export default function Podcasts() {
 
   const [selectedTab, setSelectedTab] = useState("discover");
 
-  const { data: podcasts = [] } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts"] });
-  const { data: subscriptions = [] } = useQuery<any[]>({ queryKey: ["/api/podcasts/subscriptions"] });
-  const { data: myPodcasts = [] } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts/my"] });
+  const { data: podcasts = [], isError: isErrorPodcasts, error: errorPodcasts, refetch: refetchPodcasts } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts"] });
+  const { data: subscriptions = [], isError: isErrorSubs, error: errorSubs, refetch: refetchSubs } = useQuery<any[]>({ queryKey: ["/api/podcasts/subscriptions"] });
+  const { data: myPodcasts = [], isError: isErrorMy, error: errorMy, refetch: refetchMy } = useQuery<Podcast[]>({ queryKey: ["/api/podcasts/my"] });
 
   const subscribeMutation = useMutation({
     mutationFn: async (podcastId: string) => {
@@ -1053,5 +1055,13 @@ export default function Podcasts() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function Podcasts() {
+  return (
+    <ProtectedRoute>
+      <PodcastsContent />
+    </ProtectedRoute>
   );
 }

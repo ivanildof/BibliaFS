@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/accordion";
 import { HelpCircle, MessageCircle, Book, Video, Mail, ArrowLeft, Sparkles, Heart, Globe, Smartphone, Clock } from "lucide-react";
 import { Link } from "wouter";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
-export default function Help() {
+function HelpContent() {
   const faqs = [
     {
       q: "Como criar um plano de leitura?",
@@ -184,5 +185,13 @@ export default function Help() {
         </footer>
       </div>
     </div>
+  );
+}
+
+export default function Help() {
+  return (
+    <ProtectedRoute>
+      <HelpContent />
+    </ProtectedRoute>
   );
 }

@@ -25,8 +25,10 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { ShareSheet } from "@/components/ShareSheet";
 import { motion } from "framer-motion";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 
-export default function Favorites() {
+function FavoritesContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -375,5 +377,13 @@ function EmptyState({ icon: Icon, text }: { icon: any, text: string }) {
         {text}
       </p>
     </motion.div>
+  );
+}
+
+export default function Favorites() {
+  return (
+    <ProtectedRoute>
+      <FavoritesContent />
+    </ProtectedRoute>
   );
 }

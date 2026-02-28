@@ -7,7 +7,9 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     iosScheme: 'https',
+    cleartext: true,
     allowNavigation: [
+      'http://192.169.0.104:5000/*',
       'https://bibliafs.com.br/*',
       'https://*.supabase.co/*',
       'https://olvumxgyoazdftdyasmx.supabase.co/*',
@@ -38,7 +40,7 @@ const config: CapacitorConfig = {
     }
   },
   android: {
-    allowMixedContent: false,
+    allowMixedContent: true,
     buildOptions: {
       keystorePath: undefined,
       keystorePassword: undefined,

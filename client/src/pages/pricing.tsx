@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, STRIPE_PREMIUM_PLUS_PRICE_ID } from "@/lib/env-config";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 interface SubscriptionStatus {
   plan: string;
@@ -141,7 +142,7 @@ const faqs = [
   },
 ];
 
-export default function Pricing() {
+function PricingContent() {
   const { toast } = useToast();
   const [location] = useLocation();
 
@@ -459,5 +460,13 @@ export default function Pricing() {
         </motion.div>
       </section>
     </div>
+  );
+}
+
+export default function Pricing() {
+  return (
+    <ProtectedRoute>
+      <PricingContent />
+    </ProtectedRoute>
   );
 }

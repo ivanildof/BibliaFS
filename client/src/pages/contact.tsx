@@ -14,6 +14,7 @@ import { Mail, Send, CheckCircle2, MessageSquare, Heart, Clock, ExternalLink, St
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -24,7 +25,7 @@ const contactSchema = z.object({
 
 type ContactForm = z.infer<typeof contactSchema>;
 
-export default function Contact() {
+function ContactContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
@@ -372,5 +373,13 @@ export default function Contact() {
         </footer>
       </div>
     </div>
+  );
+}
+
+export default function Contact() {
+  return (
+    <ProtectedRoute>
+      <ContactContent />
+    </ProtectedRoute>
   );
 }

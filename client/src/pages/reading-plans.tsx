@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import { 
   Calendar, 
   BookOpen, 
@@ -42,7 +44,7 @@ const BIBLE_BOOKS = [
   "1 João", "2 João", "3 João", "Judas", "Apocalipse"
 ];
 
-export default function ReadingPlans() {
+function ReadingPlansContent() {
   const { toast } = useToast();
   const { language, t } = useLanguage();
   const [isTemplatesDialogOpen, setIsTemplatesDialogOpen] = useState(false);
@@ -609,5 +611,13 @@ export default function ReadingPlans() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ReadingPlans() {
+  return (
+    <ProtectedRoute>
+      <ReadingPlansContent />
+    </ProtectedRoute>
   );
 }

@@ -857,7 +857,6 @@ export default function BibleReader() {
   // Set initial book
   useEffect(() => {
     const booksArray = Array.isArray(books) ? books : [];
-    console.log(`[Books] Loaded ${booksArray.length} books:`, booksArray.map(b => ({ name: b.name, abbrev: b.abbrev.pt, chapters: b.chapters })));
     if (booksArray.length > 0 && !selectedBook) {
       setSelectedBook(booksArray[0].abbrev.pt);
     }
@@ -1391,7 +1390,6 @@ export default function BibleReader() {
                                   variant={selectedBook === book.abbrev.pt ? "default" : "outline"}
                                   className="justify-start"
                                   onClick={() => {
-                                    console.log(`[Book Click] Selected: ${book.name} (${book.abbrev.pt}) - ${book.chapters} chapters`);
                                     setSelectedBook(book.abbrev.pt);
                                     setSelectedChapter(1);
                                   }}
@@ -1416,7 +1414,6 @@ export default function BibleReader() {
                             <Button
                               variant={version === v.value ? "default" : "outline"}
                               onClick={() => {
-                                console.log(`[Version] Changing from ${version} to ${v.value}`);
                                 setVersion(v.value);
                               }}
                               data-testid={`button-version-${v.value}`}

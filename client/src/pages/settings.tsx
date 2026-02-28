@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import { 
   Settings as SettingsIcon, 
   Palette,
@@ -200,7 +202,7 @@ function ReadingThemeCard() {
   );
 }
 
-export default function Settings() {
+function SettingsContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedTheme, setSelectedTheme] = useState(user?.selectedTheme || "classico");
@@ -1114,5 +1116,13 @@ export default function Settings() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function Settings() {
+  return (
+    <ProtectedRoute>
+      <SettingsContent />
+    </ProtectedRoute>
   );
 }

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest } from "@/lib/queryClient";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,7 @@ const donationFormSchema = z.object({
 
 type DonationForm = z.infer<typeof donationFormSchema>;
 
-export default function Donate() {
+function DonateContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -386,5 +387,13 @@ export default function Donate() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function Donate() {
+  return (
+    <ProtectedRoute>
+      <DonateContent />
+    </ProtectedRoute>
   );
 }

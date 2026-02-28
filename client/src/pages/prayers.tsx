@@ -8,6 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import { 
   MessageSquare, 
   Plus, 
@@ -41,13 +43,13 @@ const formSchema = insertPrayerSchema.extend({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function Prayers() {
+function PrayersContent() {
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [activeTab, setActiveTab] = useState("active");
 
-  const { data: prayers = [], isLoading, error } = useQuery<Prayer[]>({
+  const { data: prayers = [], isLoading, isError, error, refetch } = useQuery<Prayer[]>({
     queryKey: ["/api/prayers"],
     retry: 2,
   });
@@ -701,5 +703,13 @@ export default function Prayers() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function Prayers() {
+  return (
+    <ProtectedRoute>
+      <PrayersContent />
+    </ProtectedRoute>
   );
 }

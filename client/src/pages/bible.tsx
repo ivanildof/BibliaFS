@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -43,7 +44,7 @@ const bibleBookAbbrevs = [
   '1pe', '2pe', '1jo', '2jo', '3jo', 'jd', 'ap'
 ];
 
-export default function Bible() {
+function BibleContent() {
   const { language } = useLanguage();
   const [selectedBook, setSelectedBook] = useState("jo");
   const [selectedChapter, setSelectedChapter] = useState(3);
@@ -238,5 +239,13 @@ export default function Bible() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function Bible() {
+  return (
+    <ProtectedRoute>
+      <BibleContent />
+    </ProtectedRoute>
   );
 }

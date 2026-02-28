@@ -10,7 +10,6 @@ async function saveSessionToPersistentStorage(session: any) {
   try {
     await persistentStorage.setItem(SESSION_KEY, JSON.stringify(session));
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    console.log('[AuthCallback] Session saved to persistent storage');
   } catch (error) {
     console.error('[AuthCallback] Error saving session:', error);
   }
@@ -29,7 +28,6 @@ export default function AuthCallback() {
         const refreshToken = hashParams.get('refresh_token');
 
         if (accessToken && refreshToken) {
-          console.log('[AuthCallback] Setting session from hash tokens');
           const { error } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -54,7 +52,6 @@ export default function AuthCallback() {
 
         const code = new URLSearchParams(window.location.search).get('code');
         if (code) {
-          console.log('[AuthCallback] Exchanging code for session');
           const { error } = await supabase.auth.exchangeCodeForSession(code);
           
           if (error) {

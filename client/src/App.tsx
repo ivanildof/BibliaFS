@@ -1,6 +1,7 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -15,7 +16,6 @@ import { HelpButton } from "@/components/HelpButton";
 import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect, useCallback, useState } from "react";
 import { isNative } from "@/lib/config";
 import { useDeepLinks } from "@/hooks/useDeepLinks";
 import { Headphones } from "lucide-react";
@@ -61,6 +61,7 @@ function Router() {
   const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
   const [location, setLocation] = useLocation();
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
     const isProfileRoute = location === "/perfil" || location === "/profile" || location === "/configurações" || location === "/settings";
@@ -72,11 +73,18 @@ function Router() {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [isLoading, isAuthenticated, location, setLocation]);
+    // setLocation is stable and doesn't need to be in dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isAuthenticated, location]);
 
   useEffect(() => {
-    if (isAuthenticated && location === "/login") {
+    if (isAuthenticated && location === "/login" && !hasRedirectedRef.current) {
+      hasRedirectedRef.current = true;
       setLocation("/", { replace: true });
+    }
+    // Reset flag when leaving login page
+    if (location !== "/login") {
+      hasRedirectedRef.current = false;
     }
   }, [isAuthenticated, location, setLocation]);
 

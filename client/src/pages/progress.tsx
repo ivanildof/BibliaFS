@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress as ProgressBar } from "@/components/ui/progress";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QueryErrorBoundary, LoadingBoundary } from "@/components/QueryErrorBoundary";
 import { 
   Trophy, 
   Flame, 
@@ -61,36 +63,27 @@ const getCategoryIcon = (category: string) => {
   }
 };
 
-export default function Progress() {
+function ProgressContent() {
   const { t } = useLanguage();
   
-  const { data: stats, isLoading: statsLoading } = useQuery<GamificationStats>({
+  const { data: stats, isLoading: statsLoading, isError: statsError, error: statsErrorMsg, refetch: refetchStats } = useQuery<GamificationStats>({
     queryKey: ["/api/stats/gamification"],
     retry: 2,
   });
 
-  const { data: achievements = [], isLoading: achievementsLoading } = useQuery<Achievement[]>({
+  const { data: achievements = [], isLoading: achievementsLoading, isError: achievementsError, error: achievementsErrorMsg } = useQuery<Achievement[]>({
     queryKey: ["/api/achievements"],
     retry: 2,
   });
 
-  const { data: userAchievements = [], isLoading: userAchievementsLoading } = useQuery<UserAchievementWithDetails[]>({
+  const { data: userAchievements = [], isLoading: userAchievementsLoading, isError: userAchievementsError, error: userAchievementsErrorMsg } = useQuery<UserAchievementWithDetails[]>({
     queryKey: ["/api/my-achievements"],
     retry: 2,
   });
 
   const isLoading = statsLoading || achievementsLoading || userAchievementsLoading;
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-muted-foreground font-bold italic">{t.progress.loadingProgress}</p>
-        </div>
-      </div>
-    );
-  }
+  const isError = statsError || achievementsError || userAchievementsError;
+  const error = statsErrorMsg || achievementsErrorMsg || userAchievementsErrorMsg;
 
   const currentLevel = stats?.level || 1;
   const totalXp = stats?.experiencePoints || 0;
@@ -312,5 +305,17 @@ export default function Progress() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function Progress() {
+  return (
+    <ProtectedRoute>
+      <QueryErrorBoundary error={null} isError={false}>
+        <LoadingBoundary isLoading={false}>
+          <ProgressContent />
+        </LoadingBoundary>
+      </QueryErrorBoundary>
+    </ProtectedRoute>
   );
 }
