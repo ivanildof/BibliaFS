@@ -1,7 +1,12 @@
 import webpush from 'web-push';
-import { db } from './db';
+import { db, hasDatabase } from './db';
 import { pushSubscriptions, notificationPreferences, notificationHistory, users } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
+
+if (!hasDatabase) {
+  console.warn('[Push] database not configured, push notification helpers disabled');
+}
+
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || '';
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
@@ -19,6 +24,7 @@ export function getVapidPublicKey(): string {
 }
 
 export async function initPushTables(): Promise<void> {
+  if (!hasDatabase) return;
   try {
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS push_subscriptions (
@@ -78,6 +84,7 @@ export async function savePushSubscription(
   subscription: { endpoint: string; keys: { p256dh: string; auth: string } },
   userAgent?: string
 ): Promise<void> {
+  if (!hasDatabase) return;
   await db.delete(pushSubscriptions).where(
     and(
       eq(pushSubscriptions.userId, userId),
@@ -96,6 +103,7 @@ export async function savePushSubscription(
 }
 
 export async function removePushSubscription(userId: string, endpoint: string): Promise<void> {
+  if (!hasDatabase) return;
   await db.delete(pushSubscriptions).where(
     and(
       eq(pushSubscriptions.userId, userId),
@@ -105,6 +113,9 @@ export async function removePushSubscription(userId: string, endpoint: string): 
 }
 
 export async function getNotificationPreferences(userId: string) {
+  if (!hasDatabase) {
+    return null;
+  }
   const [prefs] = await db.select().from(notificationPreferences).where(eq(notificationPreferences.userId, userId));
   
   if (!prefs) {

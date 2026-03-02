@@ -33,6 +33,7 @@ import { readingPlanTemplates } from "./seed-reading-plans";
 import { achievements as seedAchievements } from "./seed-achievements";
 import { runMigrations } from "./migrations";
 import { fetchBibleChapter } from "./multilingual-bible-apis";
+import { hasDatabase } from "./db";
 
 // Temporary email domain blocklist
 const BLOCKED_DOMAINS = new Set([
@@ -234,11 +235,18 @@ async function checkAiQuota(userId: string): Promise<{ allowed: boolean; remaini
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(cookieParser());
 
-  try {
-    await runMigrations();
-    console.log("[MIGRATIONS] All group tables ensured in database");
-  } catch (err) {
-    console.error("[MIGRATIONS] Failed to run migrations:", err);
+  // Only attempt migrations when we actually have a database. In preview mode
+  // (`hasDatabase === false`) the dummy pool doesn't support execute() and the
+  // migration code will blow up, so skip it entirely.
+  if (hasDatabase) {
+    try {
+      await runMigrations();
+      console.log("[MIGRATIONS] All group tables ensured in database");
+    } catch (err) {
+      console.error("[MIGRATIONS] Failed to run migrations:", err);
+    }
+  } else {
+    console.warn("[MIGRATIONS] skipping because no database configured");
   }
 
   async function getGroupTrialStartDate(userId: string): Promise<Date | null> {
@@ -388,7 +396,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Buscar orações recentes
       const prayers = await storage.getPrayers(userId);
-      const recentPrayers = (prayers || []).slice(0, 2).map(p => ({
+      const recentPrayers = (prayers || []).slice(0, 2).map((p: any) => ({
         type: 'prayer',
         text: "Nova oração registrada",
         time: formatDistanceToNow(new Date(p.createdAt || new Date()), { addSuffix: true, locale: ptBR }),
@@ -398,9 +406,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Buscar posts recentes
       const posts = await storage.getCommunityPosts(10, userId);
       const recentPosts = (posts || [])
-        .filter(p => p.userId === userId)
+        .filter((p: any) => p.userId === userId)
         .slice(0, 2)
-        .map(p => ({
+        .map((p: any) => ({
           type: 'post',
           text: "Você publicou na comunidade",
           time: formatDistanceToNow(new Date(p.createdAt || new Date()), { addSuffix: true, locale: ptBR }),
@@ -410,9 +418,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Buscar planos de leitura ativos
       const plans = await storage.getReadingPlans(userId);
       const recentPlans = (plans || [])
-        .filter(p => p.updatedAt) // Somente planos que tiveram progresso real
+        .filter((p: any) => p.updatedAt) // Somente planos que tiveram progresso real
         .slice(0, 1)
-        .map(p => ({
+        .map((p: any) => ({
           type: 'read',
           text: `Você progrediu no plano: ${p.title}`,
           time: formatDistanceToNow(new Date(p.updatedAt!), { addSuffix: true, locale: ptBR }),
@@ -564,8 +572,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Initialize push notification tables
-  await initPushTables();
+  // Initialize push notification tables (skip if preview mode)
+  if (hasDatabase) {
+    await initPushTables();
+  } else {
+    console.warn("[Push] skipping table initialization, no database");
+  }
   
   // Import bcrypt for password reset
   const bcrypt = await import("bcryptjs");
@@ -3208,7 +3220,7 @@ REGRAS OBRIGATÓRIAS:
       }
 
       // Add isCompleted: false to each day in schedule
-      const scheduleWithCompletion = template.schedule.map(day => ({
+      const scheduleWithCompletion = template.schedule.map((day: any) => ({
         ...day,
         isCompleted: false
       }));
@@ -3361,7 +3373,7 @@ REGRAS OBRIGATÓRIAS:
       }
 
       const userAchievements = await storage.getUserAchievements(userId);
-      const unlockedCount = userAchievements.filter(ua => ua.isUnlocked).length;
+      const unlockedCount = userAchievements.filter((ua: any) => ua.isUnlocked).length;
       
       const xp = user.experiencePoints || 0;
       const level = Math.floor(xp / 100) + 1;
@@ -3436,7 +3448,7 @@ REGRAS OBRIGATÓRIAS:
 
       for (const achievement of allAchievements) {
         const isUnlocked = await storage.getUserAchievements(userId)
-          .then(uas => uas.some(ua => ua.achievementId === achievement.id && ua.isUnlocked));
+          .then((uas: any[]) => uas.some((ua: any) => ua.achievementId === achievement.id && ua.isUnlocked));
 
         if (!isUnlocked && achievement.requirement) {
           const req = achievement.requirement as { type: string; value: number };
@@ -4560,7 +4572,7 @@ Responda em português do Brasil.${bibleContext}`
       // No storage.ts, o método removeGroupMember espera (groupId, memberUserId)
       // Precisamos do userId do membro, não o ID da linha na tabela members
       const members = await storage.getGroupMembers(groupId);
-      const member = members.find(m => m.id === memberId);
+      const member = members.find((m: any) => m.id === memberId);
       
       if (!member) {
         return res.status(404).json({ message: "Membro não encontrado" });
@@ -4757,7 +4769,7 @@ Responda em português do Brasil.${bibleContext}`
       }
       
       const members = await storage.getGroupMembers(groupId);
-      const userMember = members.find(m => m.userId === userId);
+      const userMember = members.find((m: any) => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Apenas líderes e moderadores podem convidar" });
       }
@@ -4790,7 +4802,7 @@ Responda em português do Brasil.${bibleContext}`
         }
 
         // Verificar se o email já é membro do grupo
-        const existingMember = members.find(m => m.userEmail === email);
+        const existingMember = members.find((m: any) => m.userEmail === email);
         if (existingMember) {
           return res.status(400).json({ error: "Este usuário já é membro do grupo" });
         }
@@ -4873,7 +4885,7 @@ Responda em português do Brasil.${bibleContext}`
       
       // Check if user is leader or moderator
       const members = await storage.getGroupMembers(groupId);
-      const userMember = members.find(m => m.userId === userId);
+      const userMember = members.find((m: any) => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Acesso negado" });
       }
@@ -4987,7 +4999,7 @@ Responda em português do Brasil.${bibleContext}`
       
       // Check if user is leader or moderator
       const members = await storage.getGroupMembers(groupId);
-      const userMember = members.find(m => m.userId === userId);
+      const userMember = members.find((m: any) => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Apenas líderes e moderadores podem criar discussões" });
       }
@@ -5128,7 +5140,7 @@ Responda APENAS com a pergunta, sem introdução ou explicação.`;
       
       // Get the answer and discussion to verify permissions
       const answers = await storage.getDiscussionAnswers(answerId);
-      const answer = answers.find(a => a.id === answerId);
+      const answer = answers.find((a: any) => a.id === answerId);
       
       if (!answer) {
         // Try getting answers for the discussion containing this answer
@@ -5156,7 +5168,7 @@ Responda APENAS com a pergunta, sem introdução ou explicação.`;
       
       // Check if user is leader
       const members = await storage.getGroupMembers(discussion.groupId);
-      const userMember = members.find(m => m.userId === userId);
+      const userMember = members.find((m: any) => m.userId === userId);
       if (!userMember || userMember.role !== "leader") {
         return res.status(403).json({ error: "Apenas o líder pode sintetizar as respostas" });
       }
@@ -5183,7 +5195,7 @@ Responda APENAS com a pergunta, sem introdução ou explicação.`;
       }
       
       // Build answers text for AI
-      const answersText = answers.map((a, i) => {
+      const answersText = answers.map((a: any, i: number) => {
         const name = a.isAnonymous ? "Anônimo" : (a.userName || "Membro");
         return `${i + 1}. ${name}: "${a.content}"${a.verseReference ? ` (${a.verseReference})` : ""}`;
       }).join("\n\n");
@@ -5258,7 +5270,7 @@ Formato da resposta:
       
       // Check if user is leader or moderator
       const members = await storage.getGroupMembers(discussion.groupId);
-      const userMember = members.find(m => m.userId === userId);
+      const userMember = members.find((m: any) => m.userId === userId);
       if (!userMember || (userMember.role !== "leader" && userMember.role !== "moderator")) {
         return res.status(403).json({ error: "Apenas líderes podem encerrar discussões" });
       }

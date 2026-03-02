@@ -1,6 +1,16 @@
 import { InsertReadingPlanTemplate } from "@shared/schema";
 
-export const readingPlanTemplates: InsertReadingPlanTemplate[] = [
+type ReadingPlanDay = {
+  day: number;
+  readings: { book: string; chapter: number; verses?: string }[];
+};
+
+type RawReadingPlanTemplate = Omit<InsertReadingPlanTemplate, "schedule"> & {
+  difficulty?: string;
+  schedule: Array<ReadingPlanDay & { isCompleted?: boolean }>;
+};
+
+const rawReadingPlanTemplates: RawReadingPlanTemplate[] = [
   {
     name: "Plano de 30 Dias - Novo Testamento",
     description: "Leia todo o Novo Testamento em 30 dias com leituras diárias equilibradas",
@@ -91,3 +101,10 @@ export const readingPlanTemplates: InsertReadingPlanTemplate[] = [
     })),
   },
 ];
+
+export const readingPlanTemplates: InsertReadingPlanTemplate[] = rawReadingPlanTemplates.map(
+  ({ difficulty: _difficulty, schedule, ...template }: RawReadingPlanTemplate) => ({
+    ...template,
+    schedule: schedule.map(({ isCompleted: _isCompleted, ...day }): ReadingPlanDay => day),
+  })
+);

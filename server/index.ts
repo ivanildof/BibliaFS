@@ -19,7 +19,15 @@ if (isProduction) {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-hashes'", "https://js.stripe.com", "https://m.stripe.network"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-eval'",
+          "'unsafe-hashes'",
+          "https://js.stripe.com",
+          "https://m.stripe.network",
+          "https://relpflow-fabriciosantossilva.replit.app",
+          "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev"
+        ],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
         imgSrc: ["'self'", "data:", "https:", "blob:", "https://*.stripe.com"],
@@ -31,13 +39,17 @@ if (isProduction) {
           "https://*.supabase.co", 
           "wss://*.supabase.co", 
           "https://api.openai.com",
-          "https://sql.js.org"
+          "https://sql.js.org",
+          "https://relpflow-fabriciosantossilva.replit.app",
+          "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev"
         ],
         frameSrc: [
           "'self'", 
           "https://js.stripe.com", 
           "https://hooks.stripe.com",
-          "https://checkout.stripe.com"
+          "https://checkout.stripe.com",
+          "https://relpflow-fabriciosantossilva.replit.app",
+          "https://3e0dfee4-aa06-4172-bc03-18c40281e88b-00-2tn2hamxjchu4.spock.replit.dev"
         ],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
@@ -164,11 +176,14 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  const listenOpts: any = { port, host: "0.0.0.0" };
+  // reusePort is not supported on Windows, which is the environment used by the
+  // Copilot sandbox. Only enable it on other platforms.
+  if (process.platform !== 'win32') {
+    listenOpts.reusePort = true;
+  }
+
+  server.listen(listenOpts, () => {
     log(`serving on port ${port}`);
     
     startNotificationScheduler();

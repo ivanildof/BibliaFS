@@ -76,7 +76,7 @@ import {
   type InsertGroupResource,
 } from "@shared/schema";
 
-import { db } from "./db";
+import { db, hasDatabase } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
 
 export interface IStorage {
@@ -374,7 +374,7 @@ export class DatabaseStorage implements IStorage {
     newStreak: number, 
     lastReadDate: Date
   ): Promise<{ user: User; unlockedAchievements: UserAchievement[] }> {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       // 1. Get current user data
       const [currentUser] = await tx.select().from(users).where(eq(users.id, userId));
       if (!currentUser) {
@@ -406,7 +406,7 @@ export class DatabaseStorage implements IStorage {
       
       for (const achievement of allAchievements) {
         const isUnlocked = userAchs.some(
-          ua => ua.achievementId === achievement.id && ua.isUnlocked
+          (ua: UserAchievement) => ua.achievementId === achievement.id && ua.isUnlocked
         );
 
         if (!isUnlocked && achievement.category === "streak") {
@@ -424,7 +424,7 @@ export class DatabaseStorage implements IStorage {
           }
 
           if (shouldUnlock) {
-            const existingUserAch = userAchs.find(ua => ua.achievementId === achievement.id);
+            const existingUserAch = userAchs.find((ua: UserAchievement) => ua.achievementId === achievement.id);
             
             let unlocked: UserAchievement;
             if (existingUserAch) {
@@ -579,7 +579,7 @@ export class DatabaseStorage implements IStorage {
       .from(userAchievements)
       .leftJoin(achievements, eq(userAchievements.achievementId, achievements.id))
       .where(eq(userAchievements.userId, userId))
-      .then(rows => rows.map(row => ({
+      .then((rows: Array<{ user_achievements: UserAchievement | null; achievements: Achievement | null }>) => rows.map((row) => ({
         ...row.user_achievements!,
         achievement: row.achievements!
       })));
@@ -839,7 +839,7 @@ export class DatabaseStorage implements IStorage {
       .innerJoin(podcasts, eq(podcastSubscriptions.podcastId, podcasts.id))
       .where(eq(podcastSubscriptions.userId, userId));
     
-    return subs.map(s => ({
+    return subs.map((s: typeof subs[number]) => ({
       ...s.subscription,
       podcast: s.podcast,
     }));
@@ -938,7 +938,7 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
     
     if (!userId) {
-      return posts.map(p => ({
+      return posts.map((p: typeof posts[number]) => ({
         ...p.post,
         user: p.user,
         isLikedByCurrentUser: false,
@@ -950,9 +950,9 @@ export class DatabaseStorage implements IStorage {
       .from(postLikes)
       .where(eq(postLikes.userId, userId));
 
-    const likedPostIds = new Set(likes.map(l => l.postId));
+    const likedPostIds = new Set(likes.map((l: typeof likes[number]) => l.postId));
     
-    return posts.map(p => ({
+    return posts.map((p: typeof posts[number]) => ({
       ...p.post,
       user: p.user,
       isLikedByCurrentUser: likedPostIds.has(p.post.id),
@@ -1314,7 +1314,7 @@ export class DatabaseStorage implements IStorage {
     const [existing] = await db.select().from(groups).where(eq(groups.id, id));
     if (!existing || existing.leaderId !== leaderId) return false;
     
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       // Deletar convites relacionados
       await tx.delete(groupInvites).where(eq(groupInvites.groupId, id));
       // Deletar mensagens relacionadas
@@ -1923,4 +1923,211 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+function makePreviewEntity(data: Record<string, any> = {}) {
+  return {
+    id: data.id || `preview-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    createdAt: data.createdAt || new Date(),
+    updatedAt: data.updatedAt || new Date(),
+    ...data,
+  };
+}
+
+function createPreviewStorage(): any {
+  const usersById = new Map<string, any>();
+  const previewAchievements = [
+    makePreviewEntity({
+      id: "achv-preview-1",
+      name: "Primeira Leitura",
+      description: "Complete sua primeira leitura de capítulo",
+      icon: "book-open",
+      category: "leitura",
+      requirement: { type: "chapters_read", value: 1 },
+      xpReward: 10,
+    }),
+    makePreviewEntity({
+      id: "achv-preview-2",
+      name: "Sequência de 7 Dias",
+      description: "Mantenha uma sequência de leitura por 7 dias",
+      icon: "flame",
+      category: "streak",
+      requirement: { type: "days_streak", value: 7 },
+      xpReward: 100,
+    }),
+  ];
+
+  const previewReadingPlanTemplates = [
+    makePreviewEntity({
+      id: "rpt-preview-1",
+      name: "Plano de 7 Dias - Salmos",
+      description: "Leitura curta para começar hoje.",
+      duration: 7,
+      category: "devocional",
+      schedule: [
+        { day: 1, readings: [{ book: "Salmos", chapter: 23 }] },
+        { day: 2, readings: [{ book: "Salmos", chapter: 91 }] },
+        { day: 3, readings: [{ book: "Salmos", chapter: 121 }] },
+      ],
+    }),
+    makePreviewEntity({
+      id: "rpt-preview-2",
+      name: "Plano de 14 Dias - João",
+      description: "Conheça o evangelho de João em duas semanas.",
+      duration: 14,
+      category: "evangelhos",
+      schedule: [
+        { day: 1, readings: [{ book: "João", chapter: 1 }] },
+        { day: 2, readings: [{ book: "João", chapter: 2 }] },
+        { day: 3, readings: [{ book: "João", chapter: 3 }] },
+      ],
+    }),
+  ];
+
+  const previewDailyVerses: any[] = [
+    makePreviewEntity({
+      id: "dv-preview-1",
+      dayOfYear: 1,
+      book: "João",
+      chapter: 3,
+      verse: 16,
+      version: "nvi",
+      theme: "amor",
+    }),
+    makePreviewEntity({
+      id: "dv-preview-2",
+      dayOfYear: 2,
+      book: "Salmos",
+      chapter: 23,
+      verse: 1,
+      version: "nvi",
+      theme: "confiança",
+    }),
+  ];
+
+  return new Proxy({} as IStorage, {
+    get(_target, prop) {
+      const method = String(prop);
+
+      return async (...args: any[]) => {
+        switch (method) {
+          case "getUser":
+            return usersById.get(args[0]);
+          case "getUserByEmail":
+            return Array.from(usersById.values()).find((u) => u.email === args[0]);
+          case "upsertUser": {
+            const user = makePreviewEntity(args[0] || {});
+            usersById.set(user.id, user);
+            return user;
+          }
+          case "createUserWithPassword": {
+            const payload = args[0] || {};
+            const user = makePreviewEntity({
+              ...payload,
+              id: payload.id || `user-${Date.now()}`,
+            });
+            usersById.set(user.id, user);
+            return user;
+          }
+          case "updateUserLastLogin":
+            return;
+          case "getReadingPlanTemplates":
+            return previewReadingPlanTemplates;
+          case "getReadingPlanTemplate":
+            return previewReadingPlanTemplates.find((p) => p.id === args[0]);
+          case "getReadingPlans":
+            return [];
+          case "getCurrentReadingPlan":
+            return undefined;
+          case "getAchievements":
+            return previewAchievements;
+          case "getUserAchievements":
+            return previewAchievements.map((achievement, index) => ({
+              ...makePreviewEntity({
+                id: `ua-preview-${index + 1}`,
+                userId: args[0],
+                achievementId: achievement.id,
+                progress: index === 0 ? 1 : 3,
+                progressValue: index === 0 ? 1 : 3,
+                isUnlocked: index === 0,
+                unlockedAt: index === 0 ? new Date() : null,
+              }),
+              achievement,
+            }));
+          case "getDashboardStats":
+            return { communityPosts: 0 };
+          case "trackAISpending":
+            return {
+              user: makePreviewEntity({ id: args[0] }),
+              withinBudget: true,
+              monthlyRemaining: 0,
+              yearlyRemaining: 0,
+            };
+          case "processGamificationRewards":
+            return {
+              user: makePreviewEntity({ id: args[0] }),
+              unlockedAchievements: [],
+            };
+          case "verifyOTP":
+            return false;
+          case "getDailyVerseByDayOfYear": {
+            const day = Number(args[0]);
+            return previewDailyVerses.find((v) => v.dayOfYear === day) || undefined;
+          }
+          case "getRecentDailyVerses":
+            return previewDailyVerses;
+          case "getAllDailyVerses":
+            return previewDailyVerses;
+          case "createDailyVerse": {
+            const verse = args[0] || {};
+            return makePreviewEntity({
+              dayOfYear: verse.dayOfYear,
+              book: verse.book,
+              chapter: verse.chapter,
+              verse: verse.verse,
+              version: verse.version,
+              theme: verse.theme,
+            });
+          }
+          default:
+            if (method.startsWith("get") || method.startsWith("list")) {
+              if (
+                method.endsWith("s") ||
+                method.includes("Recent") ||
+                method.includes("All") ||
+                method.includes("Progress") ||
+                method.includes("Members") ||
+                method.includes("Resources") ||
+                method.includes("Meetings")
+              ) {
+                return [];
+              }
+              return undefined;
+            }
+
+            if (
+              method.startsWith("create") ||
+              method.startsWith("upsert") ||
+              method.startsWith("update") ||
+              method.startsWith("mark") ||
+              method.startsWith("unlock")
+            ) {
+              return makePreviewEntity(args[0] || {});
+            }
+
+            if (
+              method.startsWith("delete") ||
+              method.startsWith("like") ||
+              method.startsWith("unlike") ||
+              method.startsWith("subscribe") ||
+              method.startsWith("unsubscribe")
+            ) {
+              return true;
+            }
+
+            return undefined;
+        }
+      };
+    },
+  });
+}
+
+export const storage: any = hasDatabase ? new DatabaseStorage() : createPreviewStorage();

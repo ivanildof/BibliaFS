@@ -1,7 +1,12 @@
-import { db } from './db';
+import { db, hasDatabase } from './db';
 import { notificationPreferences, users } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { sendPushNotification, getRandomInsight } from './push-notifications';
+
+if (!hasDatabase) {
+  console.warn('[Scheduler] database not configured, scheduler disabled');
+}
+
 
 const CHECK_INTERVAL_MS = 60000;
 const lastSentCache = new Map<string, string>();
@@ -75,6 +80,7 @@ function markAsSent(userId: string, notificationType: string): void {
 }
 
 async function checkAndSendNotifications(): Promise<void> {
+  if (!hasDatabase) return;
   try {
     const allPrefs = await db.select().from(notificationPreferences);
     
@@ -169,6 +175,11 @@ async function checkAndSendNotifications(): Promise<void> {
 let schedulerInterval: NodeJS.Timeout | null = null;
 
 export function startNotificationScheduler(): void {
+  if (!hasDatabase) {
+    console.log('[Scheduler] skipped startup because no database');
+    return;
+  }
+
   if (schedulerInterval) {
     console.log('[Scheduler] Already running');
     return;

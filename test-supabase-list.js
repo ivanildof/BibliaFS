@@ -1,10 +1,10 @@
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://olvumxgyoazdftdyasmx.supabase.co";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseKey) {
-  console.error("❌ SUPABASE_SERVICE_ROLE_KEY not set");
+if (!supabaseUrl || !supabaseKey) {
+  console.error("❌ Missing env vars. Configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY).");
   process.exit(1);
 }
 
@@ -37,4 +37,4 @@ async function listFiles() {
   }
 }
 
-listFiles();
+await listFiles();

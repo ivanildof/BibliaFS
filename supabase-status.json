@@ -1,0 +1,33 @@
+{
+  "data_verificacao": "2026-02-27T23:17:56.857Z",
+  "url": "https://olvumxgyoazdftdyasmx.supabase.co",
+  "tabelas_existentes": [
+    "users",
+    "bible_books",
+    "bible_chapters",
+    "bible_translations",
+    "bible_verses",
+    "bible_settings",
+    "bookmarks",
+    "notes",
+    "highlights",
+    "favorites",
+    "reading_plans",
+    "reading_progress",
+    "reading_history",
+    "user_achievements",
+    "achievements",
+    "achievement_definitions",
+    "churches",
+    "community_posts",
+    "prayer_requests",
+    "study_groups",
+    "subscriptions",
+    "notifications",
+    "audio_cache",
+    "additional_content"
+  ],
+  "tabelas_faltando": [],
+  "total_esperadas": 24,
+  "status": "COMPLETO"
+}

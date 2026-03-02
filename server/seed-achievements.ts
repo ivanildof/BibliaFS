@@ -1,6 +1,21 @@
 import { InsertAchievement } from "@shared/schema";
 
-export const achievements: InsertAchievement[] = [
+type RawAchievement = Omit<InsertAchievement, "requirement"> & {
+  requirement: string;
+};
+
+const requirementTypeByCategory: Record<string, string> = {
+  leitura: "chapters_read",
+  streak: "days_streak",
+  planos: "plans_completed",
+  oração: "prayers_logged",
+  notas: "notes_created",
+  destaques: "highlights_created",
+  comunidade: "posts_created",
+  exploração: "features_used",
+};
+
+const rawAchievements: RawAchievement[] = [
   {
     name: "Primeira Leitura",
     description: "Complete sua primeira leitura de capítulo",
@@ -146,3 +161,11 @@ export const achievements: InsertAchievement[] = [
     requirement: "Usar todas as funcionalidades",
   },
 ];
+
+export const achievements: InsertAchievement[] = rawAchievements.map((achievement) => ({
+  ...achievement,
+  requirement: {
+    type: requirementTypeByCategory[achievement.category ?? ""] ?? "count",
+    value: Number(achievement.requirement.match(/\d+/)?.[0] ?? 1),
+  },
+}));

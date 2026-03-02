@@ -1,6 +1,17 @@
 import type { InsertDailyVerse } from "@shared/schema";
 
-export const seedDailyVerses: InsertDailyVerse[] = [
+type RawDailyVerse = {
+  dayOfYear: number;
+  book: string;
+  chapter: number;
+  verseNumber: number;
+  version: string;
+  text: string;
+  reference: string;
+  theme: string;
+};
+
+const rawDailyVerses: RawDailyVerse[] = [
   {
     dayOfYear: 1,
     book: "João",
@@ -302,3 +313,12 @@ export const seedDailyVerses: InsertDailyVerse[] = [
     theme: "justiça",
   },
 ];
+
+export const seedDailyVerses: InsertDailyVerse[] = rawDailyVerses.map((verse) => ({
+  dayOfYear: verse.dayOfYear,
+  book: verse.book,
+  chapter: verse.chapter,
+  verse: verse.verseNumber,
+  version: verse.version,
+  theme: verse.theme,
+}));

@@ -21,7 +21,7 @@ async function seedProducts() {
   }
   
   const stripe = new Stripe(secretKey, {
-    apiVersion: '2025-08-27.basil',
+    apiVersion: '2025-11-17.clover',
   });
 
   console.log('🚀 Creating BíbliaFS subscription products...\n');

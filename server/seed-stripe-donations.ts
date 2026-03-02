@@ -1,5 +1,10 @@
 import Stripe from 'stripe';
 
+type DonationResult = {
+  productId: string;
+  priceId: string;
+};
+
 async function getStripeClient() {
   const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
   const xReplitToken = process.env.REPL_IDENTITY
@@ -32,7 +37,7 @@ async function getStripeClient() {
   }
 
   return new Stripe(connectionSettings.settings.secret, {
-    apiVersion: '2025-08-27.basil' as any,
+    apiVersion: '2025-11-17.clover',
   });
 }
 
@@ -51,7 +56,7 @@ async function createDonationProducts() {
 
   console.log('📋 Creating donation products:\n');
   
-  const results: any = {};
+  const results: Record<string, DonationResult> = {};
 
   for (const donation of donations) {
     try {
